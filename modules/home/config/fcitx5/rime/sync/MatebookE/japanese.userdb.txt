@@ -1,0 +1,17 @@
+# Rime user dictionary
+#@/db_name	japanese
+#@/db_type	userdb
+#@/rime_version	1.11.0
+#@/tick	13
+#@/user_id	MatebookE
+anone 	あのね	c=1 d=1 t=9
+kino 	きの	c=1 d=1 t=10
+kirei 	きれい	c=2 d=1.95551 t=13
+mizutama mou 	水玉もう	c=1 d=1 t=12
+no 	の	c=1 d=1 t=8
+sama 	様	c=1 d=1 t=13
+shi 	し	c=2 d=1.95084 t=13
+so 	そ	c=1 d=0.985112 t=13
+te 	て	c=1 d=0.995012 t=13
+yasumi 	休み	c=1 d=0.970446 t=13
+zutto 	ずっと	c=1 d=1 t=13

@@ -1,0 +1,6 @@
+# Rime user dictionary
+#@/db_name	melt_eng
+#@/db_type	userdb
+#@/rime_version	1.11.2
+#@/tick	0
+#@/user_id	MatebookE

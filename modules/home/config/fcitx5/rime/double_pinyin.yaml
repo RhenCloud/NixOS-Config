@@ -1,0 +1,256 @@
+switches_engine:
+  switches:
+    - name: emoji_suggestion
+      reset: 0
+      states: ["😭", "🙂"]
+    - name: traditionalization
+      states: [简, 繁]
+    - name: full_shape
+      reset: 0
+      states: [半角, 全角]
+    - name: ascii_punct
+      reset: 0
+      states: [。，, ．，]
+    # - name: zrm_tishi
+    #   reset: 1
+    #   states: [ 启用 , 禁用 ]
+    # - name: chaifen
+    #   reset: 1
+    #   states: [ 不拆, 扌斥 ]
+    # - name: pinyin_single
+    #   reset: 0
+    #   states: [ 禁用, 字拼]
+
+  engine:
+    processors:
+      # - lua_processor@*sbxlm.key_binder # 绑定按键
+      - lua_processor@cold_word_drop_processor
+      - lua_processor@select_character
+      - ascii_composer
+      - recognizer
+      - key_binder
+      - speller
+      - punctuator
+      - selector
+      - navigator
+      - express_editor
+    segmentors:
+      - ascii_segmentor
+      - matcher
+      - abc_segmentor
+      - punct_segmentor
+      - affix_segmentor@add_user_dict
+      - fallback_segmentor
+    translators:
+      - lua_translator@*mint_date_time_translator # 时间、日期、星期、月份
+      - lua_translator@*force_gc # 暴力GC，尝试解决小狼毫长期使用的卡顿
+      - punct_translator
+      # - table_translator@melt_eng # 英文输入
+      - reverse_lookup_translator
+      - script_translator
+      - script_translator@user_dict_set
+      # - script_translator@add_user_dict
+    filters:
+      - reverse_lookup_filter@reverse_lookup
+      # - lua_filter@*show_cand_type_filter
+      # - lua_filter@corrector                          # 错音错字提示
+      # - lua_filter@pin_cand_filter                    # 置顶候选项（顺序要求：置顶候选项 > Emoji > 简繁切换）
+      # - lua_filter@*is_in_user_dict
+      # - lua_filter@*stick
+      # - lua_filter@long_phrase_first # 最长词组和单字优先
+      - lua_filter@*long_word_filter # 长词优先（顺序要求：长词优先 > Emoji）
+      - lua_filter@*cand_escape_filter
+      # - lua_filter@single_char_first # 单字优先
+      - lua_filter@cold_word_drop_filter
+      - simplifier@emoji_suggestion
+      - lua_filter@*reduce_emoji_filter # 按需启用，作用是降低Emoji在候选项中的位置排序(顺序要求：Emoji > 降低排序)
+      - simplifier@traditionalize # 简繁切换
+      - simplifier@pinyin_single
+      # - simplifier@zrm_tishi
+      - simplifier@chaifen
+      - uniquifier
+
+# lua:
+# corrector: "{comment}"
+
+# pin_cand_filter:  # 格式：编码<Tab>字词1<Space>字词2……
+#   - d	的
+#   - k	可
+#   - m 吗
+#   - ma 吗
+
+# is_in_user_dict: true
+
+phrase:
+  custom_phrase:
+    dictionary: ""
+    user_dict: custom_phrase/custom_phrase
+    db_class: stabledb
+    enable_completion: false
+    enable_sentence: false
+    initial_quality: 1
+
+  custom_phrase:_bj:
+    dictionary: ""
+    user_dict: custom_phrase/custom_phrase_bj
+    db_class: stabledb
+    enable_completion: false
+    enable_sentence: false
+    initial_quality: 1
+
+  # 无冲突的3简
+  custom_phrase_super_3jian_no_conflict:
+    dictionary: ""
+    user_dict: custom_phrase/custom_phrase_super_3jian_no_conflict
+    db_class: stabledb
+    enable_sentence: false
+    enable_completion: false
+    initial_quality: -1 #本表词和系统词重码居后
+
+  # 无冲突的4简
+  custom_phrase_super_4jian_no_conflict:
+    dictionary: ""
+    user_dict: custom_phrase/custom_phrase_super_4jian_no_conflict
+    db_class: stabledb
+    enable_sentence: false
+    enable_completion: false
+    initial_quality: -1 #本表词和系统词重码居后
+
+  # 超强tab 1码
+  custom_phrase_super_1jian:
+    dictionary: ""
+    user_dict: custom_phrase/custom_phrase_super_1jian
+    db_class: stabledb
+    enable_sentence: false
+    enable_completion: false
+    initial_quality: -1 #本表词和系统词重码居后
+
+  # 超强tab 2码
+  custom_phrase_super_2jian:
+    dictionary: ""
+    user_dict: custom_phrase/custom_phrase_super_2jian
+    db_class: stabledb
+    enable_sentence: false
+    enable_completion: false
+    initial_quality: -1 #本表词和系统词重码居后
+
+  # 超强tab 3码
+  custom_phrase_super_3jian:
+    dictionary: ""
+    user_dict: custom_phrase/custom_phrase_super_3jian
+    db_class: stabledb
+    enable_sentence: false
+    enable_completion: false
+    initial_quality: -1 #本表词和系统词重码居后
+
+opencc_config:
+  traditionalize:
+    option_name: traditionalization
+    opencc_config: s2t.json # s2t.json | s2hk.json | s2tw.json | s2twp.json
+    tips: all # 转换提示: all 都显示 | char 仅单字显示 | none 不显示。
+    tags: [abc] # 限制在对应 tag，不对其他如反查的内容做简繁转换
+
+  emoji_suggestion:
+    opencc_config: emoji.json
+    option_name: emoji_suggestion
+    tips: all
+    inherit_comment: true
+
+  chaifen:
+    option_name: chaifen
+    opencc_config: moqi_chaifen.json
+    tips: char
+    show_in_comment: true
+    comment_format:
+      - "xform/	/ /"
+
+  chaifen_all:
+    option_name: chaifen_all
+    opencc_config: moqi_chaifen_all.json
+    tips: char
+    show_in_comment: true
+    comment_format:
+      - "xform/	/ /"
+
+  # 注音显示
+  pinyin_single:
+    option_name: pinyin_single
+    opencc_config: pinyin_single.json
+    tips: char
+    show_in_comment: true
+    comment_format:
+      - "xform/	/ /"
+
+  # 自然码提示
+  # zrm_tishi:
+  #   option_name: zrm_tishi
+  #   opencc_config: zrm_tishi.json
+  #   tips: char
+  #   show_in_comment: true
+  #   comment_format:
+  #     - "xform/	/ /"
+
+guide:
+  punctuator:
+    import_preset: default
+
+  recognizer:
+    import_preset: default
+    patterns:
+      punct: "^;([A-Z|a-z]*|[0-9]|10)$"
+      # add_user_dict: "^pm[A-Za-z]*$"
+
+dictionary_and_user_dict:
+  user_dict_set:
+    dictionary: rime_ice
+    initial_quality: 0
+    enable_completion: true
+    enable_sentence: true
+    enable_user_dict: true # 是否开启自动调频
+    ##  默认为不超过 2 个字的候选项显示输入码；将 2 改为 0 可关闭编码提示，
+    ##  改为 1 则是只显示单字的输入码，依此类推。
+    # spelling_hints: 2
+    comment_format:
+      - "xform/(^|[ '])[^[]+[[]/$1/" ## 编码提示只显示辅助码部分
+    user_dict: user.custom.dict
+    db_class: tabledb
+
+  # 自定义词典加词(pm引导)
+  # add_user_dict:
+  #   tag: add_user_dict
+  #   # dictionary: people
+  #   dictionary: rime_ice
+  #   prism: double_pinyin_c
+  #   initial_quality: -1
+  #   user_dict: user.custom.dict
+  #   # ↓ 用户词典格式，tabledb（文本） 或 userdb （二进制）。
+  #   db_class: tabledb
+  #   enable_charset_filter: false # 是否开启字符集过滤
+  #   enable_completion: true # 提前显示尚未输入完整码的字〔仅 table_translator 有效〕
+  #   enable_encoder: true # 是否开启自动造词〔仅 table_translator 有效〕
+  #   enable_sentence: true #  是否开启自动造句
+  #   enable_user_dict: true # 是否开启用户词典
+  #   encode_commit_history: false # 是否对已上屛词自动成词〔仅 table_translator 有效〕
+  #   # preedit_format:
+  #   comment_format:
+  #     - "xform/(^|[ '])[^[]+[[]/$1/" ## 编码提示只显示辅助码部分
+  #   prefix: "pm"
+  #   tips: "〔自造词〕"
+
+key:
+  key_binder:
+    import_preset: default
+    bindings:
+      - { when: has_menu, accept: "Control+o", toggle: chaifen }
+      - { when: has_menu, accept: "Control+l", toggle: chaifen_all }
+      - { when: has_menu, accept: "Control+p", toggle: pinyin_single }
+      - { when: has_menu, accept: "Up", send: Page_Up }
+      - { when: has_menu, accept: "Down", send: Page_Down }
+      - { when: has_menu, accept: "Right", send: Down }
+      - { when: has_menu, accept: "Left", send: Up }
+      # - { when: has_menu, accept: apostrophe, send: 2 }               # 使用单引号二选
+      - { when: has_menu, accept: "Control+j", toogle: turn_down_cand } # 匹配当前输入码后隐藏指定的候选字词 或候选词条放到第四候选位置
+      - { when: has_menu, accept: "Control+d", toggle: drop_cand } # 强制删词, 无视输入的编码
+      - { when: has_menu, accept: Tab, send: slash }
+      - { when: has_menu, accept: Tab, send: Control+Shift+Return } # Tab上屏comment中的词
+      # - { match: "[a-z]{1,3}", accept: Tab,  send_sequence: "/1" }

@@ -1,0 +1,10 @@
+customization:
+  distribution_code_name: Weasel
+  distribution_version: 0.16.1
+  generator: "Weasel::UIStyleSettings"
+  modified_time: "Fri Jun 28 19:05:01 2024"
+  rime_version: 1.11.2
+patch:
+  "style/color_scheme": win11dark
+  # "style/color_scheme": Amen
+  # "style/layout": {border_width: 1, candidate_spacing: 3, spacing: 10, hilite_padding: 3, hilite_spacing: 3, margin_x: 7, margin_y: 7, corner_radius: 3, round_corner: 3}

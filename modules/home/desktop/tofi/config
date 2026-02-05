@@ -1,0 +1,165 @@
+### Dracula dmenu theme start
+# Dmenu-like position
+anchor = top
+width = 100%
+horizontal = true
+
+# Height of bar
+height = 45
+
+# Padding
+padding-top = 5
+padding-bottom = 0
+padding-left = 5
+padding-right = 0
+
+# Font size
+# font-size = 12
+# font = monospace
+min-input-width = 120
+result-spacing = 15
+
+## Dracula theme
+background-color = #282A36
+
+# Prompt
+prompt-text = "Search: "
+prompt-color = #F8F8F2
+
+# Input
+input-color = #50FA7B
+input-background = #44475A
+input-background-padding = 3
+input-background-corner-radius = 8
+
+# Result color
+default-result-color = #6272A4
+
+# Selection text
+selection-color = #8BE9FD
+selection-match-color = #50FA7B
+
+# Border color
+border-width = 0
+border-color = #6272A4
+
+# Outline width
+outline-width = 0
+### Dracula dmenu theme end
+
+# ### Dracula rofi theme start
+# # Padding
+# padding-top = 5
+# padding-bottom = 0
+# padding-left = 5
+# padding-right = 0
+
+# # Font size
+# font-size = 12
+# font = monospace
+# min-input-width = 120
+# result-spacing = 15
+
+# ## Dracula theme
+# background-color = #282A36
+
+# # Prompt
+# prompt-text = "Search: "
+# prompt-color = #F8F8F2
+
+# # Input
+# input-color = #50FA7B
+# input-background = #44475A
+# input-background-padding = 3
+# input-background-corner-radius = 8
+
+# # Result color
+# default-result-color = #6272A4
+
+# # Selection text
+# selection-color = #8BE9FD
+# selection-match-color = #50FA7B
+
+# # Border color
+# border-width = 3
+# border-color = #6272A4
+
+# # Outline width
+# outline-width = 0
+# ### Dracula rofi theme end
+
+# # Text theming
+# text-color = #FFFFFF
+# prompt-background = #00000000
+# prompt-background-padding = 0
+# prompt-background-corner-radius = 0
+# placeholder-color = #FFFFFFA8
+# placeholder-background = #00000000
+# placeholder-background-padding = 0
+# placeholder-background-corner-radius = 0
+# input-background = #00000000
+# input-background-padding = 0
+# input-background-corner-radius = 0
+# default-result-background = #00000000
+# default-result-background-padding = 0
+# default-result-background-corner-radius = 0
+# selection-color = #F92672
+# selection-background = #00000000
+# selection-background-padding = 0
+# selection-background-corner-radius = 0
+# selection-match-color = #00000000
+# # Text cursor theme
+# text-cursor-style = bar
+# text-cursor-corner-radius = 0
+# prompt-text = "run: "
+# prompt-padding = 0
+# placeholder-text = ""
+# num-results = 0
+# result-spacing = 0
+# horizontal = false
+# min-input-width = 0
+# # Window theming
+# width = 1100
+# height = 500
+# background-color = #1B1D1E
+# outline-width = 4
+# outline-color = #080800
+# border-width = 3
+# border-color = #F92672
+# corner-radius = 20
+# padding-top = 8
+# padding-bottom = 8
+# padding-left = 8
+# padding-right = 8
+# clip-to-padding = true
+# scale = true
+# # Window positioning
+# output = ""
+# anchor = center
+# exclusive-zone = -1
+# margin-top = 0
+# margin-bottom = 0
+# margin-left = 0
+# margin-right = 0
+
+
+
+font = "Maple Mono NF CN"
+font-size = 16
+# font-features = "zero,cv03,ss03,ss05,cv97,cv98"a
+# font-variations = "zero,cv03,ss03,ss05,cv97,cv98"
+hint-font = true
+
+# hide-cursor = false
+# text-cursor = true
+history = false
+fuzzy-match = false
+require-match = true
+auto-accept-single = false
+hide-input = false
+hidden-character = "*"
+drun-launch = false
+terminal = kitty
+late-keyboard-init = false
+multi-instance = false
+ascii-input = false

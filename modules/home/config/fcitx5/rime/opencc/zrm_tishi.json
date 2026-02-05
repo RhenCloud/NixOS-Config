@@ -1,0 +1,23 @@
+{
+  "name": "zrm_tishi",
+  "segmentation": {
+    "type": "mmseg",
+    "dict": {
+      "type": "text",
+      "file": "zrm_tishi.txt"
+    }
+  },
+  "conversion_chain": [
+    {
+      "dict": {
+        "type": "group",
+        "dicts": [
+          {
+            "type": "text",
+            "file": "zrm_tishi.txt"
+          }
+        ]
+      }
+    }
+  ]
+}

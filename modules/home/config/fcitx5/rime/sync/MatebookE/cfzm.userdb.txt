@@ -1,0 +1,12 @@
+# Rime user dictionary
+#@/db_name	cfzm
+#@/db_type	userdb
+#@/rime_version	1.11.0
+#@/tick	11
+#@/user_id	MatebookE
+bai 	白	c=1 d=0.995012 t=11
+de 	的	c=1 d=0.99005 t=11
+deh 	的	c=1 d=0.960789 t=11
+ni 	你	c=6 d=5.80858 t=11
+ni de 	你的	c=1 d=0.97531 t=11
+yi[t 	一	c=1 d=1 t=11

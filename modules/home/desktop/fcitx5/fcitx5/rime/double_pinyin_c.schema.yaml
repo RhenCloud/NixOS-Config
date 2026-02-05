@@ -1,0 +1,539 @@
+  # Rime schema
+# encoding: utf-8
+
+schema:
+  schema_id: double_pinyin_c
+  name: C双拼
+  version: "0.20"
+  # dependencies:
+    # - melt_eng
+
+grammar:
+  # language: zh-hans-t-huayu-v7-bgw
+  language: zhs-fivegrams-3-8
+  collocation_max_length: 8
+  collocation_min_length: 3
+  collocation_penalty: -16
+  non_collocation_penalty: -16
+  weak_collocation_penalty: -20
+  rear_penalty: -24
+
+__include: double_pinyin.yaml:/switches_engine                # 选单&引擎
+__include: double_pinyin.yaml:/opencc_config                  # opencc配置
+# __include: double_pinyin.yaml:/lua                            # lua配置
+# __include: double_pinyin.yaml:/reverse                        # 反查
+__include: double_pinyin.yaml:/guide                          # 符号&引导
+__include: double_pinyin.yaml:/key                            # 快捷键
+# __include: double_pinyin.yaml:/dictionary_and_user_dict       # 自造词
+# __include: double_pinyin.yaml:/octagram/enable_for_sentence   # 输入引擎
+
+speller:
+  # auto_select: true  # 顶字上屏
+  # auto_select_unique_candidate: true # 无重码自动上屏
+  # max_code_length: 5
+  initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA;/
+  alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA;/
+  # initials: zyxwvutsrqponmlkjihgfedcba;
+  # alphabet: zyxwvutsrqponmlkjihgfedcba;
+  delimiter: " '"
+  algebra:
+    - derive/([nl])ü/$1v/
+    - derive/([nl])üe/$1ue/
+    - derive/([nl])üe/$1ve/
+    - derive/([jqxy])u/$1v/
+    - derive/ve$/ue/
+    # 拼写运算：C双拼方案
+    # - dervie/shei/i;/
+    # - dervie/zhai/VH/
+    # - derive/zhai/OH/
+    - derive/ou/OH/
+    - derive/zhou/VO/
+    - derive/hao/HB/
+    - derive/huo/HB/
+    - derive/ye/EE/
+    - derive/ming/MP/
+    - derive/xuan/XR/
+    - derive/xian/XW/
+    - derive/ceng/CD/
+    - derive/guai/GX/
+    - derive/lou/LO/
+    - derive/qiang/QG/
+    - derive/quan/QR/
+    - derive/xiang/XG/
+    - derive/bei/BS/
+    - derive/zheng/VD/
+    - derive/zhan/ON/
+    - derive/zhan/VN/
+    - derive/xuan/XR/
+
+    - derive/fa/FJ/
+    - derive/bang/BM/
+    - derive/bei/B;/
+    - derive/ji/JD/
+    - derive/bin/BK/
+    - derive/cou/CO/
+    - derive/cuan/CM/
+    - derive/gun/G;/
+    - derive/wa/WJ/
+    - derive/cang/CG/
+    - derive/fei/FI/
+    - derive/li/LD/
+    - derive/jin/JT/
+    - derive/chou/UQ/
+    - derive/chuan/UR/
+    - derive/qun/Q;/
+    - derive/za/ZM/
+    - derive/tang/TM/
+    - derive/gei/GS/
+    - derive/mi/MZ/
+    - derive/lin/LT/
+    - derive/dou/DO/
+    - derive/duan/DM/
+    - derive/run/R;/
+    - derive/wang/WG/
+    - derive/hei/HS/
+    - derive/ni/NZ/
+    - derive/min/MT/
+    - derive/fou/FO/
+    - derive/guan/GM/
+    - derive/sun/S;/
+    - derive/a/AH/
+    - derive/chang/UG/
+    - derive/lei/LS/
+    - derive/pi/PE/
+    - derive/nin/NT/
+    - derive/gou/GO/
+    - derive/huan/HR/
+    - derive/tun/T;/
+    - derive/dang/DG/
+    - derive/mei/MS/
+    - derive/pin/PT/
+    - derive/hou/HQ/
+    - derive/juan/JR/
+    - derive/cun/CC/
+    - derive/fang/FH/
+    - derive/nei/NS/
+    - derive/qin/QK/
+    - derive/kou/KQ/
+    - derive/kuan/KR/
+    - derive/chun/UC/
+    - derive/cha/UA/
+    - derive/gang/GG/
+    - derive/pei/PS/
+    - derive/xin/XK/
+    - derive/lou/LQ/
+    - derive/luan/LR/
+    - derive/dun/DC/
+    - derive/hang/HG/
+    - derive/wei/WI/
+    - derive/shi/IS/
+    - derive/yin/EK/
+    - derive/mou/MQ/
+    - derive/nuan/NR/
+    - derive/hun/HC/
+    - derive/kang/KG/
+    - derive/zei/Z;/
+    - derive/bing/BP/
+    - derive/nou/NQ/
+    - derive/quan/QM/
+    - derive/jun/JC/
+    - derive/lang/LG/
+    - derive/ben/BK/
+    - derive/ding/DF/
+    - derive/pou/PQ/
+    - derive/ruan/RM/
+    - derive/kun/KC/
+    - derive/mang/MG/
+    - derive/cen/CK/
+    - derive/yi/EI/
+    - derive/jing/JF/
+    - derive/rou/RO/
+    - derive/suan/SM/
+    - derive/lun/LC/
+    - derive/nang/NG/
+    - derive/chen/UT/
+    - derive/ling/LF/
+    - derive/sou/SO/
+    - derive/shuan/IR/
+    - derive/shun/IC/
+    - derive/pang/PG/
+    - derive/fen/FK/
+    - derive/zhi/VI/
+    - derive/ming/MF/
+    - derive/shou/IQ/
+    - derive/tuan/TM/
+    - derive/xun/XC/
+    - derive/rang/RH/
+    - derive/gen/GK/
+    - derive/dia/DX/
+    - derive/ning/NF/
+    - derive/tou/TO/
+    - derive/xuan/XM/
+    - derive/yun/YC/
+    - derive/sang/SG/
+    - derive/hen/HD/
+    - derive/xia/XL/
+    - derive/ping/PF/
+    - derive/you/EO/
+    - derive/you/YO/
+    - derive/yuan/EM/
+    - derive/zun/ZC/
+    - derive/sha/IA/
+    - derive/shang/IG/
+    - derive/ken/KD/
+    - derive/lia/LX/
+    - derive/qing/QP/
+    - derive/zou/ZO/
+    - derive/zuan/ZM/
+    - derive/zhun/OC/
+    - derive/yang/EG/
+    - derive/men/MD/
+    - derive/jia/JA/
+    - derive/ting/TP/
+    - derive/zhou/OQ/
+    - derive/zhuan/OR/
+    - derive/cuo/CP/
+    - derive/zang/ZG/
+    - derive/nen/NK/
+    - derive/qia/QL/
+    - derive/xing/XP/
+    - derive/er/EZ/
+    - derive/e/EH/
+    - derive/chuang/UZ/
+    - derive/chuo/UP/
+    - derive/zha/OA/
+    - derive/zhang/OG/
+    - derive/pen/PK/
+    - derive/bian/BL/
+    - derive/ying/EP/
+    - derive/guang/GZ/
+    - derive/duo/DP/
+    - derive/bai/BH/
+    - derive/bao/BJ/
+    - derive/ren/RK/
+    - derive/tian/TK/
+    - derive/jiong/JS/
+    - derive/huang/HZ/
+    - derive/guo/GP/
+    - derive/cai/CH/
+    - derive/cao/CJ/
+    - derive/sen/SK/
+    - derive/dian/DW/
+    - derive/qiong/QL/
+    - derive/chu/UF/
+    - derive/kuang/KZ/
+    - derive/huo/HB/
+    - derive/chai/UX/
+    - derive/chao/UJ/
+    - derive/chao/UB/
+    - derive/shen/IT/
+    - derive/jian/JW/
+    - derive/xiong/XL/
+    - derive/shuang/IZ/
+    - derive/kuo/KB/
+    - derive/dai/DH/
+    - derive/dao/DJ/
+    - derive/wen/WK/
+    - derive/lian/LW/
+    - derive/diu/DQ/
+    - derive/zhuang/OZ/
+    - derive/luo/LB/
+    - derive/gai/GH/
+    - derive/gao/GJ/
+    - derive/zen/ZK/
+    - derive/mian/MW/
+    - derive/jiu/JQ/
+    - derive/jue/JB/
+    - derive/nuo/NP/
+    - derive/hai/HH/
+    - derive/hao/HJ/
+    - derive/zhen/OT/
+    - derive/nian/NW/
+    - derive/liu/LQ/
+    - derive/hu/HF/
+    - derive/lue/LB/
+    - derive/ruo/RP/
+    - derive/kai/KH/
+    - derive/kao/KJ/
+    - derive/beng/BD/
+    - derive/pian/PW/
+    - derive/miu/MQ/
+    - derive/ju/JV/
+    - derive/nue/N;/
+    - derive/suo/SP/
+    - derive/lai/LH/
+    - derive/lao/LJ/
+    - derive/ceng/CK/
+    - derive/qian/QN/
+    - derive/niu/NQ/
+    - derive/ku/KF/
+    - derive/que/Q;/
+    - derive/shuo/IB/
+    - derive/mai/MX/
+    - derive/mao/MB/
+    - derive/cheng/UD/
+    - derive/xian/XN/
+    - derive/qiu/QO/
+    - derive/lu/LV/
+    - derive/xue/X;/
+    - derive/tuo/TP/
+    - derive/nai/NX/
+    - derive/nao/NB/
+    - derive/deng/DD/
+    - derive/jiang/JG/
+    - derive/xiu/XO/
+    - derive/mu/MV/
+    - derive/yue/E;/
+    - derive/zuo/ZP/
+    - derive/pai/PH/
+    - derive/pao/PJ/
+    - derive/feng/FD/
+    - derive/liang/LG/
+    - derive/nu/NV/
+    - derive/cui/C;/
+    - derive/zhuo/OB/
+    - derive/sai/SH/
+    - derive/rao/RJ/
+    - derive/geng/GK/
+    - derive/niang/NG/
+    - derive/sui/S;/
+    - derive/shai/IX/
+    - derive/sao/SJ/
+    - derive/heng/HD/
+    - derive/qiang/QH/
+    - derive/ang/AG/
+    - derive/pu/PV/
+    - derive/zui/Z;/
+    - derive/tai/TH/
+    - derive/shao/AJ/
+    - derive/keng/KD/
+    - derive/xiang/XH/
+    - derive/mo/MQ/
+    - derive/chui/UV/
+    - derive/wai/WH/
+    - derive/tao/TJ/
+    - derive/leng/LK/
+    - derive/biao/BB/
+    - derive/po/PQ/
+    - derive/dui/D;/
+    - derive/zai/ZH/
+    - derive/yao/EJ/
+    - derive/meng/MD/
+    - derive/diao/DB/
+    - derive/gui/G;/
+    - derive/zhai/OX/
+    - derive/zao/ZJ/
+    - derive/neng/ND/
+    - derive/jiao/JJ/
+    - derive/shu/IF/
+    - derive/hui/HV/
+    - derive/hui/H;
+    - derive/ban/BN/
+    - derive/zhao/OJ/
+    - derive/peng/PD/
+    - derive/liao/LZ/
+    - derive/o/OH/
+    - derive/kui/KV/
+    - derive/can/CN/
+    - derive/ge/GI/
+    - derive/reng/RD/
+    - derive/miao/MB/
+    - derive/miao/MJ/
+    - derive/wu/WU/
+    - derive/rui/R;/
+    - derive/chan/UW/
+    - derive/ce/CY/
+    - derive/seng/SK/
+    - derive/niao/NB/
+    - derive/yo/EO/
+    - derive/shui/IV/
+    - derive/dan/DN/
+    - derive/che/UE/
+    - derive/sheng/ID/
+    - derive/piao/PJ/
+    - derive/cong/CL/
+    - derive/yu/EU/
+    - derive/tui/T;/
+    - derive/fan/FN/
+    - derive/de/DK/
+    - derive/teng/TD/
+    - derive/qiao/QJ/
+    - derive/chong/US/
+    - derive/zhui/OV/
+    - derive/gan/GN/
+    - derive/e/E;/
+    - derive/weng/WD/
+    - derive/tiao/TJ/
+    - derive/dong/DL/
+    - derive/zhu/OF/
+    - derive/han/HW/
+    - derive/zeng/ZK/
+    - derive/xiao/XJ/
+    - derive/gong/GL/
+    - derive/gua/GA/
+    - derive/kan/KW/
+    - derive/zheng/OD/
+    - derive/bie/BY/
+    - derive/hong/HL/
+    - derive/hua/HA/
+    - derive/lan/LN/
+    - derive/die/DY/
+    - derive/kong/KS/
+    - derive/kua/KM/
+    - derive/man/MN/
+    - derive/jie/JE/
+    - derive/long/LL/
+    - derive/shua/IM/
+    - derive/nan/NN/
+    - derive/lie/LZ/
+    - derive/nong/NL/
+    - derive/zhua/OM/
+    - derive/pan/PN/
+    - derive/re/RY/
+    # - derive/chi/;I/
+    - derive/mie/ME/
+    - derive/rong/RL/
+    - derive/chuai/UX/
+    - derive/ran/RN/
+    - derive/se/SY/
+    - derive/nie/NE/
+    - derive/song/SL/
+    - derive/guai/GH/
+    - derive/san/SN/
+    - derive/she/IE/
+    - derive/pie/PZ/
+    - derive/tong/TL/
+    - derive/huai/HX/
+    - derive/shan/IW/
+    - derive/te/TY/
+    - derive/qie/QY/
+    - derive/yong/EL/
+    - derive/kuai/KX/
+    - derive/tan/TN/
+    - derive/tie/TY/
+    - derive/zong/ZL/
+    - derive/shuai/IX/
+    - derive/wan/WN/
+    - derive/ze/ZY/
+    - derive/xie/XY/
+    - derive/zhong/OS/
+    - derive/zhuai/OX/
+    - derive/yan/EN/
+    - derive/yan/YN/
+    - derive/ya/EA/
+    - derive/zhe/OE/
+    - derive/zan/ZN/
+    - derive/zhan/OW/
+
+    - derive/^y/E/
+    - derive/^sh/A/
+    - derive/^zh/V/
+    # - xform/^zh/U/
+    # - xform/^ch/I/
+    # - xform/^sh/O/
+    - xform/^ch/U/
+    - xform/^sh/I/
+    - xform/^zh/O/
+
+    - derive/ai/AL/
+    - erase/ai/
+    # - derive/II/AI/
+    # - derive/shi/AI/
+
+    - derive/^(\w)ou$/$1Q/
+    - derive/^(\w)an$/$1W/
+    - derive/^(\w)ie$/$1E/
+    - derive/^(\w)ua$/$1T/
+    - derive/^(\w)en$/$1T/
+    - derive/^(\w)iu$/$1O/
+    - derive/^(\w)ing$/$1P/
+    - derive/^(\w)ong$/$1S/
+    - derive/^(\w)en$/$1D/
+    - derive/^(\w)u$/$1F/
+    # - derive/^(\w)uai$/$1H/
+    # - derive/^(\w)ang$/$1H/
+    # - derive/^(\w)iang$/$1H/
+    - derive/^(\w)in$/$1K/
+    - derive/^(\w)ian$/$1K/
+    - derive/^(\w)ia$/$1L/
+    - derive/^(\w)iong$/$1L/
+    - derive/^(\w)ei$/$1;/
+    - derive/^(\w)un$/$1;/
+    - derive/^(\w)ue$/$1;/
+    - derive/^(\w)ie$/$1E/
+    - derive/^(\w)ie$/$1;/
+    - derive/^(\w)ie$/$1Z/
+    - derive/^(\w)ai$/$1X/
+    - derive/^(\w)ia$/$1X/
+    - derive/^(\w)iao$/$1B/
+    - derive/^(\w)ue$/$1B/
+    - derive/^(\w)uo$/$1B/
+    - derive/^(\w)ao$/$1B/
+    - derive/^(\w)ian$/$1N/
+    - derive/^(\w)ua$/$1M/
+    - derive/^(\w)uan$/$1R/
+    - derive/^(\w)ui$/$1;/
+
+    - xform/^(\w)uang$/$1Z/
+    - xform/^(\w)iang$/$1G/
+    - xform/^(\w)ian$/$1W/
+    - xform/^(\w)iao$/$1J/
+    - xform/^(\w)uai$/$1X/
+    - xform/^(\w)uan$/$1M/
+    - xform/^(\w)ua$/$1A/
+    - xform/^(\w)ia$/$1A/
+    - xform/^(\w)iong$/$1L/
+    - xform/^(\w)uo$/$1P/
+
+    - xform/^(\w)eng$/$1D/
+    - xform/^(\w)ing$/$1F/
+    - xform/^(\w)ang$/$1G/
+    - xform/^(\w)iu$/$1Q/
+    - xform/^(\w)ie$/$1Y/
+    - xform/^(\w)in$/$1T/
+    - xform/^(\w)ou$/$1O/
+    - xform/^(\w)ei$/$1S/
+    - xform/^(\w)ai$/$1H/
+    - xform/^(\w)ao$/$1J/
+    - xform/^(\w)en$/$1K/
+    - xform/^(\w)ong$/$1L/
+    - xform/^(\w)ue$/$1;/
+    - xform/^(\w)üe$/$1;/
+    - xform/^(\w)ve$/$1;/
+    - xform/^(\w)un$/$1C/
+    - xform/^(\w)ui$/$1V/
+    - xform/^(\w)an$/$1N/
+
+    # - derive/^(..[[].).+$/$1/ # 双拼+一位辅助码的情况
+
+    - xlit/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/
+
+
+translator:
+  dictionary: rime_ice
+  prism: double_pinyin_c
+  initial_quality: 1.2        # 拼音的权重应该比英文大
+  enable_completion: true
+  contextual_suggestions: true
+  max_homophones: 2
+  max_homographs: 2
+  enable_encoder: true
+  # encode_commit_history: false
+  enable_sentence: true   # 禁止造句
+  enable_user_dict: true  # 禁用用户词典
+  spelling_hints: 0           # corrector.lua ：为了让错音错字提示的 Lua 同时适配全拼双拼，将拼音显示在 comment 中
+  # always_show_comments: true  # corrector.lua ：Rime 默认在 preedit 等于 comment 时取消显示 comment，这里强制一直显示，供 corrector.lua 做判断用。
+  # comment_format:             # 标记拼音注释，供 corrector.lua 做判断用
+    # - xform/^/［/
+    # - xform/$/］/
+  user_dict: user.custom.dict
+  db_class: tabledb
+
+# melt_eng:
+#   dictionary: melt_eng     # 挂载词库 melt_eng.dict.yaml
+#   prism: double_pinyin_c
+#   enable_sentence: false   # 禁止造句
+#   enable_user_dict: false  # 禁用用户词典
+#   initial_quality: 1.1     # 初始权重
+#   comment_format:          # 自定义提示码
+#     - xform/.*//           # 清空提示码

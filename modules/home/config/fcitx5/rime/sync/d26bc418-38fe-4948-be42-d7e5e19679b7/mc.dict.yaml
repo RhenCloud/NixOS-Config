@@ -1,0 +1,24 @@
+---
+name: mc
+version: 0.1
+sort: by_weight
+use_preset_vocabulary: true
+import_tables:
+  # - "dict/cn_dict/mc_dict_all"
+...
+
+
+
+僵尸	jiang shi
+小白	xiao bai
+苦力怕	ku li pa
+寻声守卫	xun sheng shou wei
+红石	hong shi
+钻石	zuan shi
+下届合金	xia jie he jin
+镐子	gao zi
+锹	qiao
+
+刷怪塔	shua guai ta
+袭击塔	xi ji ta
+世吞	shi tun
