@@ -6,10 +6,10 @@
   age = {
     # secretsDir = "/home/${config.home.username}/.agenix";
     secrets = {
-      musicfoxCookie = {
-        file = ./musicfoxCookie.age;
-        path = "/home/${config.home.username}/.local/share/go-musicfox/cookie";
-      };
+      # musicfoxCookie = {
+      #   file = ./musicfoxCookie.age;
+      #   path = "/home/${config.home.username}/.local/share/go-musicfox/cookie";
+      # };
       peopleName = {
         file = ./people_name.dict.yaml.age;
         path = "/home/${config.home.username}/.local/share/fcitx5/rime/people_name.dict.yaml";

@@ -5,6 +5,9 @@
 
 let
   cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.system}.default;
+  # pythonEnv = pkgs.python312.withPackages (ps: with ps; [
+  #   cloudPyprland
+  # ]);
 in
 {
 
@@ -29,14 +32,20 @@ in
     waypaper
     waylyrics
     hyprcursor
-    pyprland
-    cloudPyprland
     # pavucontrol
     hyprpolkitagent
     wl-clipboard
     clipse
     kdePackages.dolphin
     grim
+    pyprland
+    (pkgs.writeShellScriptBin "cloud-pyprland" ''
+      # 把插件的 site-packages 加进 PYTHONPATH
+      export PYTHONPATH="${cloudPyprland}/${pkgs.python3.sitePackages}:$PYTHONPATH"
+      exec "${pkgs.pyprland}/bin/pypr" "$@"
+    '')
+    # pythonEnv
+    # cloudPyprland
   ];
 
   xdg.portal = {

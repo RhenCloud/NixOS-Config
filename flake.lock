@@ -83,11 +83,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770292284,
-        "narHash": "sha256-X/0YT3JxM7dw1hGwIMA6H/WoEs3lmcVBXY1JTu+1Y7I=",
+        "lastModified": 1770303662,
+        "narHash": "sha256-jc9/gWbi8kLU+fK9w7nqpAGCeZDMouvnU7iHtkhzFJs=",
         "owner": "RhenCloud",
         "repo": "cloud-pyprland",
-        "rev": "2dfc84ba93897deea249b4b2d19af7d9ac28ae4b",
+        "rev": "835c1d6e138b8a037ec886ff2a8c974cbb2486d5",
         "type": "github"
       },
       "original": {

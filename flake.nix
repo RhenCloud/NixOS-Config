@@ -86,6 +86,7 @@
               nix.settings.trusted-users = [ username ];
             }
             ./hosts/${hostname}/configuration.nix
+            ./modules/overlays
 
             nur.modules.nixos.default
 
