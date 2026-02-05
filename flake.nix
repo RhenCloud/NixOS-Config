@@ -4,15 +4,15 @@
   nixConfig = {
     substituters = [
       "https://hyprland.cachix.org"
-      "https://mirrors.ustc.edu.cn/nix-channels/store"
-      "https://mirror.sjtu.edu.cn/nix-channels/store"
-      "https://cache.nixos.org"
       "https://nix-community.cachix.org"
+      "https://mirror.sjtu.edu.cn/nix-channels/store"
+      "https://mirrors.ustc.edu.cn/nix-channels/store"
+      "https://cache.nixos.org"
     ];
     trusted-substituters = [
       "https://hyprland.cachix.org"
-      "https://mirror.sjtu.edu.cn"
       "https://nix-community.cachix.org"
+      "https://mirror.sjtu.edu.cn"
       "https://mirrors.ustc.edu.cn"
     ];
     trusted-public-keys = [
@@ -43,6 +43,11 @@
 
     hyprland = {
       url = "https://gh-proxy.com/github.com/hyprwm/Hyprland/archive/master.tar.gz";
+    };
+
+    cloud-pyprland = {
+      url = "github:RhenCloud/cloud-pyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     Hyprspace = {

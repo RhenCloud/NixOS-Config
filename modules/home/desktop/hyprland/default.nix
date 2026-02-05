@@ -3,6 +3,9 @@
 , ...
 }:
 
+let
+  cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.system}.default;
+in
 {
 
   # imports = [inputs.Hyprspace.nixModule];
@@ -12,10 +15,10 @@
       source = ./hypr;
       recursive = true; # 递归整个文件夹
     };
-    "pypr" = {
-      source = ./pypr;
-      recursive = true; # 递归整个文件夹
-    };
+    # "pypr" = {
+    #   source = ./pypr;
+    #   recursive = true; # 递归整个文件夹
+    # };
   };
 
   home.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -27,6 +30,7 @@
     waylyrics
     hyprcursor
     pyprland
+    cloudPyprland
     # pavucontrol
     hyprpolkitagent
     wl-clipboard
