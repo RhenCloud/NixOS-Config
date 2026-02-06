@@ -41,6 +41,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    zen-browser = {
+      url = "https://gh-proxy.com/github.com/0xc000022070/zen-browser-flake/archive/main.tar.gz";
+      inputs = {
+        # IMPORTANT: To ensure compatibility with the latest Firefox version, use nixpkgs-unstable.
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
+    };
+
+    # mango = {
+    #   url = "github:DreamMaoMao/mango";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+
     hyprland = {
       url = "https://gh-proxy.com/github.com/hyprwm/Hyprland/archive/master.tar.gz";
     };
@@ -99,12 +113,13 @@
 
               home-manager.users.${username} = {
                 imports = [
+                  # inputs.mango.hmModules.mango
                   agenix.homeManagerModules.default
+                  inputs.zen-browser.homeModules.beta
                   ./modules/home
                 ];
               };
 
-              # 取消注释下面这一行，就可以在 home.nix 中使用 flake 的所有 inputs 参数了
               home-manager.extraSpecialArgs = { inherit inputs username stateVersion agenix; };
             }
           ];

@@ -223,8 +223,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1770263241,
-        "narHash": "sha256-R1WFtIvp38hS9x63dnijdJw1KyIiy30KGea6e6N7LHs=",
+        "lastModified": 1770318660,
+        "narHash": "sha256-yFVde8QZK7Dc0Xa8eQDsmxLX4NJNfL1NKfctSyiQgMY=",
         "type": "tarball",
         "url": "https://gh-proxy.com/github.com/nix-community/home-manager/archive/master.tar.gz"
       },
@@ -308,8 +308,8 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1770208963,
-        "narHash": "sha256-5oMhKcLzNLMy9GFpHtrZ6XJdgJpthhprv2ZC88DPN5Q=",
+        "lastModified": 1770330959,
+        "narHash": "sha256-OPmJ6dBL615GGX7ENJXtJm4zeMv5uXDjmO8WB1MI5wM=",
         "type": "tarball",
         "url": "https://gh-proxy.com/github.com/hyprwm/Hyprland/archive/master.tar.gz"
       },
@@ -604,8 +604,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1770291305,
-        "narHash": "sha256-xXz8EYmXiDspye26+sXijd8+dcWZKPzXGTLkdMh7xfI=",
+        "lastModified": 1770385257,
+        "narHash": "sha256-hgHAzmyvkd7xgwjGRCM/TvZp/ML4jPnE4r49dW/2uI4=",
         "type": "tarball",
         "url": "https://gh-proxy.com/github.com/noctalia-dev/noctalia-shell/archive/master.tar.gz"
       },
@@ -622,11 +622,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770290507,
-        "narHash": "sha256-0d5GN66TUXBQLqu+Fz+oZCI2MHdEckQw2l7Lgr6VRm0=",
+        "lastModified": 1770382969,
+        "narHash": "sha256-/o2cDo1pcybZxaoa+HJSLDODqv9oiR3HXlWnmE2NFCg=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "4a544c9c09075d1646a02a08e3a3d10b362d4146",
+        "rev": "d8df3ab20294305cccd0961282f7dd20ef02ca3a",
         "type": "github"
       },
       "original": {
@@ -667,7 +667,8 @@
         "hyprland": "hyprland",
         "nixpkgs": "nixpkgs_3",
         "noctalia": "noctalia",
-        "nur": "nur"
+        "nur": "nur",
+        "zen-browser": "zen-browser"
       }
     },
     "systems": {
@@ -769,6 +770,26 @@
         "owner": "hyprwm",
         "repo": "xdg-desktop-portal-hyprland",
         "type": "github"
+      }
+    },
+    "zen-browser": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770382887,
+        "narHash": "sha256-on4vg7ctpMPzKWcvXPtV095aal6KUPDSKV9+I8HhQtY=",
+        "type": "tarball",
+        "url": "https://gh-proxy.com/github.com/0xc000022070/zen-browser-flake/archive/main.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://gh-proxy.com/github.com/0xc000022070/zen-browser-flake/archive/main.tar.gz"
       }
     }
   },

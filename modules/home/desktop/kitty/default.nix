@@ -1,8 +1,7 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 {
@@ -24,6 +23,8 @@
       enable_audio_bell = "no";
       linux_display_server = "wayland";
       wayland_enable_ime = "yes";
+      cursor_trail = 3;
+      cursor_trail_decay = "0.1 0.4";
     };
     keybindings = {
       "ctrl + v" = "paste_from_clipboard";

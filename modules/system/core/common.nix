@@ -65,18 +65,25 @@
     "zh_CN.UTF-8/UTF-8"
     "en_US.UTF-8/UTF-8"
   ];
-  i18n.defaultLocale = "en_US.UTF-8";
+  i18n.defaultLocale = "zh_CN.UTF-8";
 
   services.udisks2.enable = true;
 
   xdg.menus.enable = true;
   xdg.mime.enable = true;
 
+  services.dbus.enable = true;
+
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
-    config.common.default = "*";
+    configPackages = [ pkgs.xdg-desktop-portal-hyprland ];
+    # config.common.default = "*";
+    # xdgOpenUsePortal = true;
   };
+
+  environment.etc."xdg/menus/applications.menu".source =
+    "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
 
   environment.pathsToLink = [
     "/share/applications"

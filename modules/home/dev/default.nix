@@ -1,6 +1,7 @@
 { ... }:
 {
   imports = [
-    ./mpd.nix
+    ./node.nix
+    ./python.nix
   ];
 }

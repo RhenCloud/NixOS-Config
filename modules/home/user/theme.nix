@@ -3,10 +3,10 @@
 
   home.packages = with pkgs; [
     # catppuccin-cursors
-    catppuccin-fcitx5
-    catppuccin-qt5ct
-    catppuccin-gtk
-    catppuccin-kvantum
+    # catppuccin-fcitx5
+    # catppuccin-qt5ct
+    # catppuccin-gtk
+    # catppuccin-kvantum
     dracula-theme
     dracula-qt5-theme
     papirus-icon-theme
@@ -28,11 +28,12 @@
 
   qt = {
     enable = true;
-    platformTheme.name = "gkt3";
-    # style = {
-    # package = pkgs.dracula-qt5-theme;
-    # name = "kvantum";
-    # };
+    platformTheme.name = "gtk3";
+    style = {
+      package = pkgs.dracula-qt5-theme;
+      name = "Dracula";
+      # name = "kvantum";
+    };
   };
 
   gtk = {
@@ -51,33 +52,15 @@
     };
   };
 
-  # xdg.configFile = {
-  #   "gtk-3.0/settings.ini.backup".force = true;
-  #   "gtk-4.0/settings.ini.backup".force = true;
-  # };
+  home.sessionVariables = {
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    GTK_USE_PORTAL = "1";
+  };
 
-  # xdg.configFile = {
-  #   "Kvantum/kvantum.kvconfig".text = ''
-  #     [General]
-  #     theme=Draculak
-  #   '';
-  # };
-
-  # theme = {
-  #   package = pkgs.catppuccin-gtk;
-  #   name = "catppucin";
-  #   # package = pkgs.dracula-theme;
-  #   # name = "Dracula";
-  # };
-  # gtk3.extraConfig = {
-  #   Settings = ''
-  #     gtk-application-prefer-dark-theme=1
-  #   '';
-  # };
-  # gtk4.extraConfig = {
-  #   Settings = ''
-  #     gtk-application-prefer-dark-theme=1
-  #   '';
-  # };
-  # };
+  xdg.configFile = {
+    "kvantum/kvantum.kvconfig".text = ''
+      [General]
+      theme=Dracula
+    '';
+  };
 }

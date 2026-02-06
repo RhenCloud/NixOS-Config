@@ -156,7 +156,7 @@ maxPlayErrCount = 3
 # 期望的歌曲音质
 # 可选: "standard", "exhigh", "higher", "lossless", "hires",
 #       "jyeffect"(高清环绕声), "sky"(沉浸环绕声), "jymaster"(超清母带)
-songLevel = "higher"
+songLevel = "hires"
 # 是否获取并显示歌单下的所有歌曲，默认前 1000 首
 # 开启后可能会占用更多内存（大量歌曲数据）和带宽（会同时发送多个请求获取歌单下歌曲数据）
 showAllSongsOfPlaylist = false
@@ -177,11 +177,11 @@ bin = "mpd"
 # 注意：配置文件中必须设置 pid_file，否则应用退出时无法正确关闭 mpd 进程
 configFile = ""
 # 与mpd服务的连接方式，可选: "tcp", "unix"
-network = "unix"
+network = "tcp"
 # 连接地址
 # network 为 "tcp" 时，填写 "ip:port" (如 "127.0.0.1:6600")
 # network 为 "unix" 时，填写 socket 文件路径
-addr = ""
+addr = "127.0.0.1:6600"
 # 是否在需要时自动启动 mpd 服务
 autoStart = true
 
@@ -209,10 +209,10 @@ mode = "last"
 # UNM (Unlock NetEase Music) 相关配置，用于解锁灰色或无版权歌曲
 [unm]
 # 是否启用 UNM 功能
-enable = false
+enable = true
 # 音源匹配来源，可配置多个，用逗号分隔
 # 可选: "kuwo", "kugou", "migu", "qq"
-sources = ["kuwo"]
+sources = ["kuwo", "kugou"]
 # UNM搜索其他平台限制 0-3
 searchLimit = 0
 # 解除会员限制
@@ -222,7 +222,7 @@ unlockSoundEffects = true
 # 用于获取QQ音乐音源的Cookie文件路径
 qqCookieFile = ""
 # 检测到无效的歌（如提示酷我...）时跳过播放，该效果计入播放错误计数
-skipInvalidTracks = false
+skipInvalidTracks = true
 
 
 # 播放状态上报配置
@@ -230,7 +230,7 @@ skipInvalidTracks = false
 # 是否将播放状态上报回网易云音乐（“听歌排行”）
 # 注意：可能存在风控风险
 [reporter.netease]
-enable = false
+enable = true
 
 # 上报至 Last.fm
 [reporter.lastfm]

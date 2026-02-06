@@ -10,9 +10,6 @@ let
   # ]);
 in
 {
-
-  # imports = [inputs.Hyprspace.nixModule];
-
   xdg.configFile = {
     "hypr" = {
       source = ./hypr;
@@ -26,6 +23,7 @@ in
 
   home.sessionVariables.NIXOS_OZONE_WL = "1";
   home.sessionVariables.WLR_NO_HARDWARE_CURSORS = "1";
+  home.sessionVariables.XDG_MENU_PREFIX = "plasma-";
 
   home.packages = with pkgs; [
     swww
@@ -37,6 +35,10 @@ in
     wl-clipboard
     clipse
     kdePackages.dolphin
+    kdePackages.dolphin-plugins
+    kdePackages.kservice
+    shared-mime-info
+    xdg-utils
     grim
     pyprland
     (pkgs.writeShellScriptBin "cloud-pyprland" ''
@@ -60,6 +62,8 @@ in
       settings = {
         General = {
           useGrimAdapter = true;
+          showDesktopNotification = false;
+          showStartupLaunchMessage = false;
         };
       };
     };

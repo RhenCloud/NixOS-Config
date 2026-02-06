@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 {
   imports = [
     ./fcitx5
@@ -6,5 +6,7 @@
     ./kitty
     ./musicfox
     ./tofi
+    ./mango
+    ./zen
   ];
 }
