@@ -7,6 +7,6 @@
     ./musicfox
     ./tofi
     ./mango
-    ./zen
+    # ./zen
   ];
 }

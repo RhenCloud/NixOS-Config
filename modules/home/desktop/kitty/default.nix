@@ -23,6 +23,7 @@
       enable_audio_bell = "no";
       linux_display_server = "wayland";
       wayland_enable_ime = "yes";
+      confirm_os_window_close = 0;
       cursor_trail = 3;
       cursor_trail_decay = "0.1 0.4";
     };

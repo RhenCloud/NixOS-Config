@@ -3,6 +3,7 @@
 
   nixConfig = {
     substituters = [
+      "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
       "https://mirror.sjtu.edu.cn/nix-channels/store"
@@ -10,12 +11,14 @@
       "https://cache.nixos.org"
     ];
     trusted-substituters = [
+      "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
       "https://mirror.sjtu.edu.cn"
       "https://mirrors.ustc.edu.cn"
     ];
     trusted-public-keys = [
+      "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
@@ -30,10 +33,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nur = {
-      url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+
+    # nur = {
+    #   url = "github:nix-community/NUR";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     noctalia = {
       # url = "github:noctalia-dev/noctalia-shell";
@@ -41,14 +45,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    zen-browser = {
-      url = "https://gh-proxy.com/github.com/0xc000022070/zen-browser-flake/archive/main.tar.gz";
-      inputs = {
-        # IMPORTANT: To ensure compatibility with the latest Firefox version, use nixpkgs-unstable.
-        nixpkgs.follows = "nixpkgs";
-        home-manager.follows = "home-manager";
-      };
-    };
+    # zen-browser = {
+    #   url = "https://gh-proxy.com/github.com/0xc000022070/zen-browser-flake/archive/main.tar.gz";
+    #   inputs = {
+    #     # IMPORTANT: To ensure compatibility with the latest Firefox version, use nixpkgs-unstable.
+    #     nixpkgs.follows = "nixpkgs";
+    #     home-manager.follows = "home-manager";
+    #   };
+    # };
 
     # mango = {
     #   url = "github:DreamMaoMao/mango";
@@ -78,7 +82,7 @@
   outputs =
     inputs@{ nixpkgs
     , home-manager
-    , nur
+      # , nur
     , noctalia
     , # hyprland,
       Hyprspace
@@ -102,7 +106,7 @@
             ./hosts/${hostname}/configuration.nix
             ./modules/overlays
 
-            nur.modules.nixos.default
+            # nur.modules.nixos.default
 
             home-manager.nixosModules.home-manager
             {
@@ -115,7 +119,7 @@
                 imports = [
                   # inputs.mango.hmModules.mango
                   agenix.homeManagerModules.default
-                  inputs.zen-browser.homeModules.beta
+                  # inputs.zen-browser.homeModules.beta
                   ./modules/home
                 ];
               };

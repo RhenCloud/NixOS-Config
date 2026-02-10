@@ -53,7 +53,6 @@
     perl
     themechanger
     google-chrome
-    networkmanager_dmenu
     eza
     nixfmt
     nil
@@ -61,9 +60,32 @@
     telegram-desktop
     qq
     wechat
-    microsoft-edge
+    # microsoft-edge
     wemeet
+    qbittorrent
+    blender
+    aliyunpan
+    # (vivaldi.override {
+    #   proprietaryCodecs = true;
+    #   enableWidevine = true;
+    # })
   ];
+
+  programs.chromium =
+    {
+      enable = true;
+      package = pkgs.brave;
+      extensions = [
+        "bgnkhhnnamicmpeenaelnjfhikgbkllg" # AdGuard
+        "ndcooeababalnlpkfedmmbbbgkljhpjf" # 脚本猫
+        "lildghglkgcoanblbmenbefhnhifghjj" # BewlyBewly! Ave Mujica
+        "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
+        "jlgkpaicikihijadgifklkbpdajbkhjo" # crxMouse
+      ];
+      # commandLineArgs = [
+      #   "--disable-features=WebRtcAllowInputVolumeAdjustment"
+      # ];
+    };
 
   programs.vscode = {
     enable = true;

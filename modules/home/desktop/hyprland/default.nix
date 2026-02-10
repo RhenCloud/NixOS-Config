@@ -40,6 +40,7 @@ in
     shared-mime-info
     xdg-utils
     grim
+    hyprswitch
     pyprland
     (pkgs.writeShellScriptBin "cloud-pyprland" ''
       # 把插件的 site-packages 加进 PYTHONPATH
