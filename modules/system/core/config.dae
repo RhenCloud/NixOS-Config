@@ -1,0 +1,35 @@
+global {
+  # 绑定需要代理的网卡
+  wan_interface: auto
+
+  # 日志级别，可根据调试需求调整
+  # log_level: info
+
+  # 自动调整内核参数使透明代理顺利运行
+  # auto_config_kernel_parameter: true
+}
+
+# 定义代理节点（这里指定 Clash）
+node {
+  clash_local: "socks5://127.0.0.1:7897" # Clash 的 SOCKS5 端口
+}
+
+group {
+  default_proxy {
+    policy: fixed(0)  # 默认使用第一个节点
+  }
+}
+
+routing {
+  # 让 dae 进程自身不走 clash
+  pname(dae) -> must_direct
+  pname(mihomo) -> must_direct
+  pname(ssh) -> must_direct
+
+  # 保留局域网和私有 IP 直连
+  dip(geoip:private) -> direct
+  domain(geosite:cn) -> direct
+
+  # 最后默认流量走代理
+  fallback: proxy
+}

@@ -7,6 +7,7 @@
     ./musicfox
     ./tofi
     ./mango
-    # ./zen
+    ./niri
+    # ./stylix
   ];
 }

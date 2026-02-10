@@ -1,0 +1,38 @@
+window-rule {
+    // This regular expression is intentionally made as specific as possible,
+    // since this is the default config, and we want no false positives.
+    // You can get away with just app-id="wezterm" if you want.
+    default-column-width {}
+
+    // prefer-no-csd
+    // 圆角
+    geometry-corner-radius 20
+    // 剪掉圆角外的窗口内容
+    clip-to-geometry true
+    // 透明度
+    opacity 0.95
+    // 禁止边框画到窗口后面
+    draw-border-with-background false
+
+    // Clips window contents to the rounded corner boundaries.
+    // clip-to-geometry true
+
+}
+
+window-rule {
+    match app-id="musicofx"
+    open-floating true
+    default-column-width { fixed 1200; }
+    default-window-height { fixed 700; }
+    // default-floating-position x=32 y=32 relative-to="bottom"
+}
+
+window-rule {
+    match app-id="io.github.waylyrics.Waylyrics"
+    open-floating true
+    focus-ring {
+        off
+        width 2
+    }
+    default-floating-position x=32 y=32 relative-to="bottom"
+}

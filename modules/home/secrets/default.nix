@@ -14,6 +14,10 @@
         file = ./people_name.dict.yaml.age;
         path = "/home/${config.home.username}/.local/share/fcitx5/rime/people_name.dict.yaml";
       };
+      mihomoConfig = {
+        file = ./mihomoConfig.yaml.age;
+        path = "/home/${config.home.username}/.config/mihomo/config.yaml";
+      };
     };
   };
 }

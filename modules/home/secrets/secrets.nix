@@ -4,4 +4,5 @@ in
 {
   "musicfoxCookie.age".publicKeys = [ pubKey ];
   "people_name.dict.yaml.age".publicKeys = [ pubKey ];
+  "mihomoConfig.yaml.age".publicKeys = [ pubKey ];
 }

@@ -2,7 +2,7 @@
 {
   # services.desktopManager.plasma6.enable = true;
   services.xserver.desktopManager.runXdgAutostartIfNone = true;
-  services.displayManager.sessionPackages = [ pkgs.hyprland pkgs.mangowc ];
+  services.displayManager.sessionPackages = [ pkgs.hyprland pkgs.mangowc pkgs.niri ];
   services.displayManager.autoLogin = {
     enable = true;
     user = username;

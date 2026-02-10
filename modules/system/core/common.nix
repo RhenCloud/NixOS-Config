@@ -51,7 +51,8 @@
 
   services.mihomo = {
     enable = true;
-    configFile = "/home/${username}/config.yaml";
+    # configFile = "/home/${username}/config.yaml";
+    configFile = "/home/${username}/.config/mihomo/config.yaml";
     tunMode = true;
   };
 
@@ -109,6 +110,7 @@
     users.${username} = {
       home = "/home/${username}";
       shell = pkgs.bash;
+      hashedPassword = "$y$j9T$9g/eMEwVjfWXhiR8M3UzN/$baNRWXMywZY8fsLIvC/1uPQxDJNksgpDRKyosat01Y9";
       isNormalUser = true; # 改为 isNormalUser，不是 isSystemUser
       group = username;
       extraGroups = [
@@ -144,8 +146,8 @@
     udisks
     neovim
     mpd
-    clash-nyanpasu
-    clash-verge-rev
+    # clash-nyanpasu
+    # clash-verge-rev
     nixpkgs-fmt
   ];
 }

@@ -40,7 +40,7 @@ in
     shared-mime-info
     xdg-utils
     grim
-    hyprswitch
+    # hyprswitch
     pyprland
     (pkgs.writeShellScriptBin "cloud-pyprland" ''
       # 把插件的 site-packages 加进 PYTHONPATH
@@ -76,8 +76,6 @@ in
     systemd.enable = true;
     plugins = [
       pkgs.hyprlandPlugins.hypr-dynamic-cursors
-      inputs.Hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace
-      # pkgs.hyprlandPlugins.hyprspace
     ];
   };
 }

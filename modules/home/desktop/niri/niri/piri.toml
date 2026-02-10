@@ -1,0 +1,30 @@
+# Piri Configuration File
+# Copy this file to ~/.config/niri/piri.toml
+
+[niri]
+# Optional: Path to niri socket
+# If not specified, will use $XDG_RUNTIME_DIR/niri or /tmp/niri
+# socket_path = "/tmp/niri"
+
+# Plugin control: enable/disable plugins
+# If not specified, plugins are disabled by default
+[piri.plugins]
+scratchpads = true
+empty = true
+window_rule = true
+autofill = true
+singleton = true
+window_order = true
+swallow = true
+workspace_rule = true
+
+[piri.scratchpad]
+default_size = "40% 60%"
+default_margin = 50
+
+[scratchpads.musicfox]
+direction = "fromTop"
+command = "kitty --class musicfox musicfox"
+app_id = "float.musicfox"
+size = "60% 40%"
+margin = 150

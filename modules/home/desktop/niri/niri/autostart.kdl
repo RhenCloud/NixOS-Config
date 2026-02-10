@@ -1,0 +1,7 @@
+spawn-at-startup "fcitx5" "-d"
+spawn-at-startup "noctalia-shell"
+spawn-at-startup "clipse" "--listen"
+spawn-at-startup "clash-verge"
+spawn-at-startup "waypaper" "--restore"
+// spawn-at-startup "bash" "-c" "piri daemon > /dev/null 2>&1 &"
+spawn-at-startup "splayer"

@@ -45,14 +45,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # zen-browser = {
-    #   url = "https://gh-proxy.com/github.com/0xc000022070/zen-browser-flake/archive/main.tar.gz";
-    #   inputs = {
-    #     # IMPORTANT: To ensure compatibility with the latest Firefox version, use nixpkgs-unstable.
-    #     nixpkgs.follows = "nixpkgs";
-    #     home-manager.follows = "home-manager";
-    #   };
-    # };
+    # piri.url = "github:RhenCloud/piri";
+
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # mango = {
     #   url = "github:DreamMaoMao/mango";
@@ -68,13 +66,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    Hyprspace = {
-      url = "github:KZDKM/Hyprspace";
-
-      # Hyprspace uses latest Hyprland. We declare this to keep them in sync.
-      inputs.hyprland.follows = "hyprland";
-    };
-
     agenix.url = "github:ryantm/agenix";
 
   };
@@ -84,8 +75,7 @@
     , home-manager
       # , nur
     , noctalia
-    , # hyprland,
-      Hyprspace
+    , stylix
     , agenix
     , ...
     }:
@@ -117,9 +107,8 @@
 
               home-manager.users.${username} = {
                 imports = [
-                  # inputs.mango.hmModules.mango
+                  stylix.homeModules.stylix
                   agenix.homeManagerModules.default
-                  # inputs.zen-browser.homeModules.beta
                   ./modules/home
                 ];
               };

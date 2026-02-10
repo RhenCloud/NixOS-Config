@@ -65,6 +65,7 @@
     qbittorrent
     blender
     aliyunpan
+    splayer
     # (vivaldi.override {
     #   proprietaryCodecs = true;
     #   enableWidevine = true;
@@ -102,7 +103,7 @@
     settings = {
       init.defaultBranch = "main";
       user = {
-        name = "Rhen";
+        name = "RhenCloud";
         email = "i@rhen.cloud";
       };
     };
