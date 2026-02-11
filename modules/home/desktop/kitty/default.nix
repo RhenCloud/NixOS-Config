@@ -5,9 +5,15 @@
 }:
 
 {
+
+  # imports = [
+  #   ./dracula.nix
+  # ];
+
+  xdg.configFile."kitty/Dracula.conf".source = ./Dracula.conf;
+
   programs.kitty = {
     enable = true;
-
     font = {
       name = "Maple Mono NF CN";
       size = 11.0;

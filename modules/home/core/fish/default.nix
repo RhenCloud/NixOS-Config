@@ -46,6 +46,14 @@
         name = "tide";
         src = pkgs.fishPlugins.tide.src;
       }
+      {
+        name = "fish-you-should-use";
+        src = pkgs.fishPlugins.fish-you-should-use.src;
+      }
+      {
+        name = "dracula";
+        src = "https://github.com/dracula/fish";
+      }
     ];
   };
 
