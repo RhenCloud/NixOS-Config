@@ -20,7 +20,15 @@ binds {
 
     Mod+Space { toggle-window-floating; }
 
-    Mod+V { spawn "bash" "-c" "pkill" "-x" "clipse" "||" "kitty" "--class" "clipse" "-e" "clipse"; }
+    Mod+E { spawn "dolphin"; }
+
+    Mod+B { spawn "brave"; }
+
+    Mod+C { spawn "code"; }
+
+    Mod+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
+
+    Mod+X { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.

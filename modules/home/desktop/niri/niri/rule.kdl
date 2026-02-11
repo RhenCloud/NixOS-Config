@@ -36,3 +36,13 @@ window-rule {
     }
     default-floating-position x=32 y=32 relative-to="bottom"
 }
+
+layer-rule {
+    match namespace="^noctalia-overview*"
+    place-within-backdrop true
+}
+
+layer-rule {
+match namespace="^swww-daemon$"
+    place-within-backdrop true
+}

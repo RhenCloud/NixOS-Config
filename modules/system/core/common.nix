@@ -51,8 +51,8 @@
 
   services.mihomo = {
     enable = true;
-    # configFile = "/home/${username}/config.yaml";
-    configFile = "/home/${username}/.config/mihomo/config.yaml";
+    configFile = "/home/${username}/config.yaml";
+    # configFile = "/home/${username}/.config/mihomo/config.yaml";
     tunMode = true;
   };
 
