@@ -26,21 +26,7 @@ in
   home.sessionVariables.XDG_MENU_PREFIX = "plasma-";
 
   home.packages = with pkgs; [
-    swww
-    waypaper
-    waylyrics
     hyprcursor
-    # pavucontrol
-    hyprpolkitagent
-    wl-clipboard
-    clipse
-    kdePackages.dolphin
-    kdePackages.dolphin-plugins
-    kdePackages.kservice
-    shared-mime-info
-    xdg-utils
-    grim
-    # hyprswitch
     pyprland
     (pkgs.writeShellScriptBin "cloud-pyprland" ''
       # 把插件的 site-packages 加进 PYTHONPATH
@@ -50,25 +36,6 @@ in
     # pythonEnv
     # cloudPyprland
   ];
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
-  };
-
-  services = {
-    flameshot = {
-      enable = true;
-      package = pkgs.flameshot.override { enableWlrSupport = true; };
-      settings = {
-        General = {
-          useGrimAdapter = true;
-          showDesktopNotification = false;
-          showStartupLaunchMessage = false;
-        };
-      };
-    };
-  };
 
   wayland.windowManager.hyprland = {
     enable = true;

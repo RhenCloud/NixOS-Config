@@ -1,6 +1,6 @@
 { ... }:
 {
-  # imports = [
-  #   ./theme.nix
-  # ];
+  imports = [
+    ./steam.nix
+  ];
 }

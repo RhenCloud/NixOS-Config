@@ -1,6 +1,7 @@
 { inputs, ... }:
 {
   imports = [
+    ./base
     ./fcitx5
     ./hyprland
     ./kitty

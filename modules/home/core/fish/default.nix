@@ -9,6 +9,8 @@
     "fish/init.fish" = {
       source = ./init.fish;
     };
+    "fish/themes/Dracula.theme".source = ./Dracula.theme;
+    "starship.toml".source = ./starship.toml;
   };
 
   # programs.startship = {
@@ -51,10 +53,48 @@
         src = pkgs.fishPlugins.fish-you-should-use.src;
       }
       {
+        name = "sudope";
+        src = pkgs.fishPlugins.plugin-sudope.src;
+      }
+      {
         name = "dracula";
-        src = "https://github.com/dracula/fish";
+        src = pkgs.fetchFromGitHub {
+          owner = "dracula";
+          repo = "fish";
+          rev = "master";
+          sha256 = "sha256-Hyq4EfSmWmxwCYhp3O8agr7VWFAflcUe8BUKh50fNfY=";
+        };
       }
     ];
+  };
+
+  programs.starship = {
+    enable = true;
+    enableFishIntegration = true;
+    # settings = {
+    #   add_newline = false;
+    #   format = "$username$directory$git_branch\n$character";
+    #   right_format = "$cmd_duration $hostname";
+    #   username = {
+    #     show_always = true;
+    #   };
+    #   directory = {
+    #     truncate_to_repo = false;
+    #   };
+    #   cmd_duration = {
+    #     min_time = 0;
+    #     format = "took [$duration]($style)";
+    #   };
+    #   hostname = {
+    #     format = "on [$hostname]($style)";
+    #   };
+    # };
+  };
+
+  programs.eza = {
+    enable = true;
+    enableFishIntegration = true;
+    icons = "always";
   };
 
   programs.fzf = {
