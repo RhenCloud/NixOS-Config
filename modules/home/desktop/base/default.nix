@@ -13,6 +13,9 @@
     shared-mime-info
     xdg-utils
     grim
+
+    krita
+    gwenview
   ];
 
   xdg.portal = {
