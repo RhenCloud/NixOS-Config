@@ -15,7 +15,7 @@
     grim
 
     krita
-    gwenview
+    kdePackages.gwenview
   ];
 
   xdg.portal = {
