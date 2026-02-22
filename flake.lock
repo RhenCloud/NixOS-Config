@@ -321,8 +321,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1770654520,
-        "narHash": "sha256-mg5WZMIPGsFu9MxSrUcuJUPMbfMsF77el5yb/7rc10k=",
+        "lastModified": 1770779995,
+        "narHash": "sha256-Evbc+u49wYQ5uyEi/HHxVFEt3g/w4MZxkMXMe7McjRM=",
         "type": "tarball",
         "url": "https://gh-proxy.com/github.com/nix-community/home-manager/archive/master.tar.gz"
       },
@@ -406,8 +406,8 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1770641595,
-        "narHash": "sha256-eeu1HrA9dW1DHxPuIZcZ8giUi1BcrvjGkVV1Bx3vEzk=",
+        "lastModified": 1770804358,
+        "narHash": "sha256-mxr0A029bcVmkNX+v1WxT09VprGMC3K9TzL3rGA4zSQ=",
         "type": "tarball",
         "url": "https://gh-proxy.com/github.com/hyprwm/Hyprland/archive/master.tar.gz"
       },
@@ -702,8 +702,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1770729506,
-        "narHash": "sha256-Gt/Jue8UWDLUGl/RiHTC4k6UZohtvuEZqLS/eXiKiq4=",
+        "lastModified": 1770814895,
+        "narHash": "sha256-LlGtdMFW/2suVSdaNWgs2EhOvWcV6f8ZD9/WRgMW86E=",
         "type": "tarball",
         "url": "https://gh-proxy.com/github.com/noctalia-dev/noctalia-shell/archive/master.tar.gz"
       },
