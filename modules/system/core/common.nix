@@ -53,12 +53,47 @@
 
   services.mihomo = {
     enable = true;
-    configFile = "/home/${username}/config.yaml";
-    # configFile = "/home/${username}/.config/mihomo/config.yaml";
+    configFile = "/etc/mihomo/config.yaml";
     tunMode = true;
+    webui = pkgs.metacubexd;
+  };
+
+  systemd.services.mihomo.serviceConfig.ExecStart = lib.mkForce ''
+    ${pkgs.mihomo}/bin/mihomo -d /var/lib/mihomo -f /etc/mihomo/config.yaml
+  '';
+  systemd.services.mihomo.serviceConfig.User = lib.mkForce "root";
+  systemd.services.mihomo.serviceConfig.Group = lib.mkForce "root";
+  systemd.services.mihomo.serviceConfig.StateDirectory = lib.mkForce "mihomo";
+
+  # systemd.user.services.mihomo-user = {
+  #   enable = true;
+  #   after = [ "network.target" ];
+  #   wantedBy = [ "default.target" ];
+  #   description = "Mihomo User Service";
+  #   serviceConfig = {
+  #     Type = "simple";
+  #     ExecStart = ''${pkgs.mihomo}/bin/mihomo -d /home/${username}/.mihomo -f /home/${username}/config.yaml'';
+  #   };
+  # };
+
+  services.dae = {
+    enable = false;
+    configFile = ./config.dae;
+    assets = with pkgs; [
+      v2ray-geoip
+      v2ray-domain-list-community
+    ];
+    openFirewall = {
+      enable = true;
+      port = 1536;
+    };
   };
 
   services.openssh.enable = true;
+  services.pcscd.enable = true;
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="0030", MODE="0660", TAG+="uaccess"
+  '';
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -140,6 +175,8 @@
     ];
   };
 
+  programs.nix-ld.enable = true;
+
   environment.systemPackages = with pkgs; [
     git
     vim
@@ -148,8 +185,16 @@
     udisks
     neovim
     mpd
+    daed
+    gparted
     # clash-nyanpasu
     # clash-verge-rev
     nixpkgs-fmt
+    clashtui
+    sparkle
+    mihomo
+    kdePackages.kleopatra
+    pcsc-tools
+    opensc
   ];
 }

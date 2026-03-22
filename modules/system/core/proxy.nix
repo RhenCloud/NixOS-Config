@@ -1,7 +1,8 @@
 { pkgs, ... }:
 {
   # environment.systemPackages = with pkgs; [
-  #   dae
+  # dae
+  # v2rayn
   # ];
   # services.dae = {
   #   enable = true;
@@ -13,5 +14,23 @@
     # package = pkgs.clash-nyanpasu;
     # autoStart = true;
   };
+  # services.v2raya = {
+  #   enable = true;
+  # };
+
+  # services.v2ray = {
+  #   enable = true;
+  #   package = pkgs.xray;
+  #   config = {
+  #     inbounds = [
+  #       {
+  #         port = 1080;
+  #         protocol = "socks";
+  #         tag = "socks";
+  #       }
+  #     ];
+  #   };
+  # };
+
 }
 

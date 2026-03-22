@@ -100,6 +100,15 @@
   # git 相关配置
   programs.git = {
     enable = true;
+    signing = {
+      signByDefault = true;
+      format = "openpgp";
+    };
+    extraConfig = {
+      gpg.program = "${pkgs.gnupg}/bin/gpg";
+      commit.gpgsign = true;
+      tag.gpgSign = true;
+    };
     settings = {
       init.defaultBranch = "main";
       user = {
@@ -108,6 +117,21 @@
       };
     };
   };
+
+  programs.gpg.enable = true;
+
+  services.gpg-agent = {
+    enable = true;
+    enableScDaemon = true;
+    enableSshSupport = true;
+    pinentry.package = pkgs.pinentry-qt;
+    defaultCacheTtl = 1800;
+    maxCacheTtl = 7200;
+  };
+
+  home.file.".gnupg/scdaemon.conf".text = ''
+    disable-ccid
+  '';
 
   programs.obs-studio = {
     enable = true;
@@ -128,6 +152,13 @@
       obs-vkcapture
     ];
   };
+
+  home.file.".wakatime.cfg".text = ''
+    [settings]
+    api_url = https://hackatime.hackclub.com/api/hackatime/v1
+    api_key = REDACTED-0d4ad3f0
+    heartbeat_rate_limit_seconds = 30
+  '';
 
   # home.activation.copyDesktopFiles = lib.hm.dag.entryAfter [ "installPackages" ] ''
   #   if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
