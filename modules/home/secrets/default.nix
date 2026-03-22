@@ -1,7 +1,7 @@
 { pkgs, inputs, config, ... }:
 {
   home.packages = with pkgs; [
-    inputs.agenix.packages.${pkgs.system}.default
+    inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
   age = {
     # secretsDir = "/home/${config.home.username}/.agenix";

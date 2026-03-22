@@ -4,7 +4,7 @@
 }:
 
 let
-  cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.system}.default;
+  cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.stdenv.hostPlatform.system}.default;
   # pythonEnv = pkgs.python312.withPackages (ps: with ps; [
   #   cloudPyprland
   # ]);
@@ -41,6 +41,9 @@ in
     enable = true;
     package = pkgs.hyprland;
     systemd.enable = true;
+    extraConfig = ''
+      source = ~/.config/hypr/hyprland.conf
+    '';
     plugins = [
       pkgs.hyprlandPlugins.hypr-dynamic-cursors
     ];

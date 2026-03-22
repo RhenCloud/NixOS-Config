@@ -66,6 +66,8 @@
     blender
     aliyunpan
     splayer
+    sequoia-chameleon-gnupg
+    gnupg
     # (vivaldi.override {
     #   proprietaryCodecs = true;
     #   enableWidevine = true;
@@ -104,16 +106,15 @@
       signByDefault = true;
       format = "openpgp";
     };
-    extraConfig = {
+    settings = {
       gpg.program = "${pkgs.gnupg}/bin/gpg";
       commit.gpgsign = true;
       tag.gpgSign = true;
-    };
-    settings = {
       init.defaultBranch = "main";
       user = {
         name = "RhenCloud";
         email = "i@rhen.cloud";
+        signingKey = "REDACTED-59acd1c2";
       };
     };
   };
@@ -131,6 +132,7 @@
 
   home.file.".gnupg/scdaemon.conf".text = ''
     disable-ccid
+    pcsc-shared
   '';
 
   programs.obs-studio = {

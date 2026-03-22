@@ -70,7 +70,7 @@
   #   after = [ "network.target" ];
   #   wantedBy = [ "default.target" ];
   #   description = "Mihomo User Service";
-  #   serviceConfig = {
+  #   serviceConfig = {pcscd
   #     Type = "simple";
   #     ExecStart = ''${pkgs.mihomo}/bin/mihomo -d /home/${username}/.mihomo -f /home/${username}/config.yaml'';
   #   };
@@ -91,8 +91,9 @@
 
   services.openssh.enable = true;
   services.pcscd.enable = true;
+  services.pcscd.plugins = [ pkgs.ccid ];
   services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="0030", MODE="0660", TAG+="uaccess"
+    ACTION=="add", SUBSYSTEMS=="usb", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="0030", GROUP="plugdev", MODE="0660"
   '';
 
   # Enable CUPS to print documents.
@@ -196,5 +197,6 @@
     kdePackages.kleopatra
     pcsc-tools
     opensc
+    usbutils
   ];
 }

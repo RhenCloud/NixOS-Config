@@ -105,12 +105,13 @@
 
             home-manager.nixosModules.home-manager
             {
-              home-manager.useGlobalPkgs = true;
+              home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
 
               home-manager.backupFileExtension = "backup";
 
               home-manager.users.${username} = {
+                nixpkgs.config.allowUnfree = true;
                 imports = [
                   stylix.homeModules.stylix
                   agenix.homeManagerModules.default
