@@ -9,7 +9,7 @@
   #   configFile = ./config.dae;
   # };
   programs.clash-verge = {
-    enable = true;
+    enable = false;
     tunMode = true;
     # package = pkgs.clash-nyanpasu;
     # autoStart = true;

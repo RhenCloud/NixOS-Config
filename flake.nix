@@ -6,8 +6,8 @@
       "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
-      "https://mirror.sjtu.edu.cn/nix-channels/store"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
+      "https://mirror.sjtu.edu.cn/nix-channels/store"
       "https://cache.nixos.org"
     ];
     trusted-substituters = [
@@ -66,6 +66,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sops-nix.url = "github:Mic92/sops-nix";
+
     agenix.url = "github:ryantm/agenix";
 
     zen-browser = {
@@ -81,6 +83,7 @@
       # , nur
     , noctalia
     , stylix
+    , sops-nix
     , agenix
     , ...
     }:
@@ -101,6 +104,8 @@
             ./hosts/${hostname}/configuration.nix
             ./modules/overlays
 
+            # agenix.nixosModules.default
+
             # nur.modules.nixos.default
 
             home-manager.nixosModules.home-manager
@@ -115,11 +120,12 @@
                 imports = [
                   stylix.homeModules.stylix
                   agenix.homeManagerModules.default
+                  sops-nix.homeManagerModules.sops
                   ./modules/home
                 ];
               };
 
-              home-manager.extraSpecialArgs = { inherit inputs username stateVersion agenix; };
+              home-manager.extraSpecialArgs = { inherit inputs username stateVersion; };
             }
           ];
         };

@@ -21,10 +21,12 @@
     QT_AUTO_SCREEN_SCALE_FACTOR = "1";
   };
   environment.variables = {
-    GTK_IM_MODULE = "fcitx";
-    QT_IM_MODULE = "fcitx";
-    XMODIFIERS = "@im=fcitx";
-    INPUT_METHOD = "fcitx";
-    GLFW_IM_MODULE = "fcitx";
+    EDITOR = "code";
+    MOZ_ENABLE_WAYLAND = "1";
+    # GTK_IM_MODULE = "fcitx";
+    # QT_IM_MODULE = "fcitx";
+    # XMODIFIERS = "@im=fcitx";
+    # INPUT_METHOD = "fcitx";
+    # GLFW_IM_MODULE = "fcitx";
   };
 }

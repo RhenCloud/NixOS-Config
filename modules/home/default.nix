@@ -68,6 +68,15 @@
     splayer
     sequoia-chameleon-gnupg
     gnupg
+    (writeShellScriptBin "gpg-card-ssh-pubkey" ''
+      set -euo pipefail
+      if [ "$#" -ne 1 ]; then
+        echo "Usage: gpg-card-ssh-pubkey <OPENPGP_FINGERPRINT>" >&2
+        exit 1
+      fi
+
+      gpg --export-ssh-key "$1"
+    '')
     # (vivaldi.override {
     #   proprietaryCodecs = true;
     #   enableWidevine = true;
@@ -128,6 +137,14 @@
     pinentry.package = pkgs.pinentry-qt;
     defaultCacheTtl = 1800;
     maxCacheTtl = 7200;
+  };
+
+  programs.ssh = {
+    enable = true;
+    extraConfig = ''
+      Host *
+        IdentityAgent ~/.gnupg/S.gpg-agent.ssh
+    '';
   };
 
   home.file.".gnupg/scdaemon.conf".text = ''
