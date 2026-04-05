@@ -4,7 +4,7 @@
   ...
 }:
 let
-  cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.system}.default;
+  cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   nixpkgs.overlays = [

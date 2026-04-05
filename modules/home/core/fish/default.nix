@@ -4,6 +4,8 @@
 }:
 
 {
+  imports = [ ./zellij.nix ];
+
   home.packages = with pkgs; [
     nix-output-monitor
   ];
@@ -103,19 +105,6 @@
     #     format = "on [$hostname]($style)";
     #   };
     # };
-  };
-
-  programs.zellij = {
-    enable = true;
-    enableFishIntegration = false;
-
-    settings = {
-      # Use a stable symlink instead of /nix/store path to avoid stale shell path in long-lived sessions.
-      default_shell = "/run/current-system/sw/bin/fish";
-      pane_frames = false;
-      session_name = "main-session";
-      show_startup_tips = false;
-    };
   };
 
   programs.eza = {

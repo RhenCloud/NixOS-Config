@@ -5,7 +5,7 @@
 }:
 let
   stablePkgs = import inputs.nixpkgs-stable {
-    inherit (pkgs) system;
+    inherit (pkgs.stdenv.hostPlatform) system;
     config.allowUnfree = true;
   };
 in

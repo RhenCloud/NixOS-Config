@@ -47,7 +47,6 @@
 
   imports = [
     ./user
-    ./secrets
     ./core
     ./desktop
     ./service
