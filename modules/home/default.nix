@@ -117,6 +117,7 @@
     };
     settings = {
       gpg.program = "${pkgs.gnupg}/bin/gpg";
+      credential.helper = "store";
       commit.gpgsign = true;
       tag.gpgSign = true;
       init.defaultBranch = "main";

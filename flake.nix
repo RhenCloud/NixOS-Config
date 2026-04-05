@@ -50,7 +50,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # piri.url = "github:RhenCloud/piri";
+    piri.url = "github:RhenCloud/piri";
 
     stylix = {
       url = "github:nix-community/stylix";
@@ -99,6 +99,7 @@
       # , nur
       stylix,
       niri,
+      piri,
       # sops-nix,
       # agenix,
       ...
@@ -112,40 +113,14 @@
       nixosConfigurations = {
         ${hostname} = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs username stateVersion; };
-          modules = [
-            {
-              nixpkgs.hostPlatform = "x86_64-linux";
-              nix.settings.trusted-users = [ username ];
-            }
-            ./hosts/${hostname}/configuration.nix
-            ./modules/overlays
-
-            # agenix.nixosModules.default
-
-            # nur.modules.nixos.default
-
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = false;
-              home-manager.useUserPackages = true;
-
-              home-manager.backupFileExtension = "backup";
-
-              home-manager.users.${username} = {
-                nixpkgs.config.allowUnfree = true;
-                imports = [
-                  niri.homeModules.niri
-                  stylix.homeModules.stylix
-                  inputs.noctalia.homeModules.default
-                  # agenix.homeManagerModules.default
-                  # sops-nix.homeManagerModules.sops
-                  ./modules/home
-                ];
-              };
-
-              home-manager.extraSpecialArgs = { inherit inputs username stateVersion; };
-            }
-          ];
+          modules = import ./modules/system {
+            inherit
+              inputs
+              username
+              hostname
+              stateVersion
+              ;
+          };
         };
       };
     };

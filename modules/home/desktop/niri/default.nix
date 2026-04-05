@@ -11,4 +11,9 @@
       source = ./niri;
     };
   };
+
+  programs.piri = {
+    enable = true;
+    enableFishIntegration = true;
+  };
 }
