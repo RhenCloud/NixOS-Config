@@ -72,6 +72,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    niri_tweaks = {
+      url = "github:heyoeyo/niri_tweaks";
+      flake = false;
+    };
+
     hyprland = {
       url = "https://gh-proxy.com/github.com/hyprwm/Hyprland/archive/master.tar.gz";
     };

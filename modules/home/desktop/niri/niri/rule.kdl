@@ -28,6 +28,13 @@ window-rule {
 }
 
 window-rule {
+    match app-id="clipse"
+    open-floating true
+    default-column-width { fixed 1100; }
+    default-window-height { fixed 600; }
+}
+
+window-rule {
     match app-id="io.github.waylyrics.Waylyrics"
     open-floating true
     focus-ring {
@@ -54,3 +61,5 @@ layer-rule {
 match namespace="^awww-daemon$"
     place-within-backdrop true
 }
+
+workspace "scratch"

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   home.packages = with pkgs; [
     niri
@@ -9,6 +9,9 @@
   xdg.configFile = {
     "niri" = {
       source = ./niri;
+    };
+    "niri_tweaks" = {
+      source = inputs.niri_tweaks;
     };
   };
 
