@@ -1,7 +1,7 @@
 { ... }:
 {
   nixpkgs.overlays = [
-    (self: super: {
+    (_self: super: {
       ccid = super.ccid.overrideAttrs (old: {
         postInstall = (old.postInstall or "") + ''
           plist="$out/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist"

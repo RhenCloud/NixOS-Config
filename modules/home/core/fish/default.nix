@@ -1,12 +1,15 @@
-{ config
-, pkgs
-, lib
-, ...
+{
+  pkgs,
+  ...
 }:
 
 {
+  home.packages = with pkgs; [
+    nix-output-monitor
+  ];
+
   xdg.configFile = {
-    "fish/init.fish" = {
+    "fish/conf.d/99-user-init.fish" = {
       source = ./init.fish;
     };
     "fish/themes/Dracula.theme".source = ./Dracula.theme;
@@ -21,12 +24,14 @@
   programs.fish = {
     enable = true;
     shellAliases = {
+      nix = "nom";
       ff = "fastfetch";
       vim = "nvim";
-      nrebuild = "sudo nixos-rebuild switch";
+      nrebuild = "sudo nixos-rebuild switch --log-format internal-json |& nom --json";
       nclean = "sudo nix-collect-garbage";
       ncleanall = "sudo nix-collect-garbage -d";
-      nupgrade = "sudo nix-channel --update && sudo nixos-rebuild switch --upgrade";
+      nupgrade = "sudo nix flake update && sudo nixos-rebuild switch --upgrade --log-format internal-json |& nom --json";
+      tree = "tree --gitignore -I '.git'";
     };
     # loginShellInit = "export LANG=zh_CN.UTF-8 ; export LC_ALL=zh_CN.UTF-8";
     shellInit = "set -g fish_greeting ''";
@@ -44,9 +49,18 @@
         name = "autopair";
         src = pkgs.fishPlugins.autopair.src;
       }
+      # {
+      #   name = "tide";
+      #   src = pkgs.fishPlugins.tide.src;
+      # }
       {
         name = "tide";
-        src = pkgs.fishPlugins.tide.src;
+        src = pkgs.fetchFromGitHub {
+          owner = "IlanCosman";
+          repo = "tide";
+          rev = "main";
+          sha256 = "sha256-dzYEYC1bYP0rWpmz0fmBFwskxWYuKBMTssMELXXz5H0=";
+        };
       }
       {
         name = "fish-you-should-use";
@@ -70,7 +84,7 @@
 
   programs.starship = {
     enable = true;
-    enableFishIntegration = true;
+    enableFishIntegration = false;
     # settings = {
     #   add_newline = false;
     #   format = "$username$directory$git_branch\n$character";
@@ -91,6 +105,19 @@
     # };
   };
 
+  programs.zellij = {
+    enable = true;
+    enableFishIntegration = false;
+
+    settings = {
+      # Use a stable symlink instead of /nix/store path to avoid stale shell path in long-lived sessions.
+      default_shell = "/run/current-system/sw/bin/fish";
+      pane_frames = false;
+      session_name = "main-session";
+      show_startup_tips = false;
+    };
+  };
+
   programs.eza = {
     enable = true;
     enableFishIntegration = true;
@@ -103,6 +130,12 @@
   };
 
   programs.direnv = {
+    enable = true;
+    enableFishIntegration = true;
+    nix-direnv.enable = true;
+  };
+
+  programs.nix-index = {
     enable = true;
     enableFishIntegration = true;
   };

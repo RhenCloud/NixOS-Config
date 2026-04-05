@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   # i18n.inputMethod = {
@@ -20,7 +20,6 @@
   #     ];
   #   };
   # };
-
 
 
   # 将本地的 rime 配置链接到 ~/.local/share/fcitx5/rime

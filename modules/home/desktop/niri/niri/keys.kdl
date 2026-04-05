@@ -22,13 +22,16 @@ binds {
 
     Mod+E { spawn "dolphin"; }
 
-    Mod+B { spawn "brave"; }
+    Mod+B { spawn "zen"; }
 
     Mod+C { spawn "code"; }
 
-    Mod+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
+    // Mod+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
+    Mod+V { spawn "nwg-clipman" "-n" "-w"; }
 
     Mod+X { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    Mod+Ctrl+F { spawn "noctalia-shell" "ipc" "call" "plugin:file-search" "toggle"; }
+    Mod+Ctrl+C { spawn "noctalia-shell" "ipc" "call" "plugin:vscode-provider" "toggle"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
@@ -40,6 +43,9 @@ binds {
     XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
     XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
     XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
 
     Mod+Q { close-window; }
 
@@ -223,9 +229,10 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Print { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print { screenshot-window; }
+    Print { spawn "sh -c 'grim -g \"$(slurp)\" - | satty -f -'"; }
+    // Print { screenshot; }
+    // Ctrl+Print { screenshot-screen; }
+    // Alt+Print { screenshot-window; }
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+E { quit; }

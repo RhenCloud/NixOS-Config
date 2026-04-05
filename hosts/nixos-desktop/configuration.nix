@@ -1,4 +1,4 @@
-{ lib, pkgs, stateVersion, ... }:
+{ stateVersion, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -6,6 +6,8 @@
     ../../modules/system/desktop
     ../../modules/system/service
   ];
+
+  networking.hostName = "nixos-desktop";
 
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.gdm.enableGnomeKeyring = true;

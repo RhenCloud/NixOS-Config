@@ -1,23 +1,33 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   home.packages = with pkgs; [
     swww
     waypaper
     linux-wallpaperengine
     waylyrics
     hyprpolkitagent
-    wl-clipboard
     clipse
     kdePackages.dolphin
     kdePackages.dolphin-plugins
     kdePackages.kservice
     shared-mime-info
     xdg-utils
+
+    slurp
     grim
+    satty
+
+    playerctl
+
+    wl-clipboard
+    cliphist
+    copyq
+    nwg-clipman
 
     krita
     kdePackages.gwenview
 
-    microsoft-edge
+    # microsoft-edge
   ];
 
   systemd.user.services.hyprpolkitagent = {

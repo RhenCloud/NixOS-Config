@@ -2,5 +2,15 @@
   "chat.tools.terminal.autoApprove": {
     "nix": true,
     "env": true
+  },
+  "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix",
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nil",
+  "nix.serverSettings": {
+    "nil": {
+      "formatting": {
+        "command": ["nixfmt"]
+      }
+    }
   }
 }

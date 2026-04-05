@@ -1,7 +1,8 @@
-{ inputs
-, pkgs
-, lib
-, ...
+{
+  inputs,
+  pkgs,
+  lib,
+  ...
 }:
 let
   extension = shortId: guid: {
@@ -32,52 +33,74 @@ let
 in
 {
   environment.systemPackages = [
-    (pkgs.wrapFirefox
-      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.zen-browser-unwrapped
-      {
-        extraPrefs = lib.concatLines (
-          lib.mapAttrsToList
-            (
-              name: value: ''lockPref(${lib.strings.toJSON name}, ${lib.strings.toJSON value});''
-            )
-            prefs
-        );
+    (pkgs.symlinkJoin {
+      name = "zen-browser";
+      paths = [
+        (pkgs.wrapFirefox
+          inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.zen-browser-unwrapped
+          {
+            extraPrefs = lib.concatLines (
+              lib.mapAttrsToList
+                (name: value: "lockPref(${lib.strings.toJSON name}, ${lib.strings.toJSON value});")
+                (
+                  prefs
+                  // {
+                    "widget.wayland.text-input-v3.enabled" = true;
+                  }
+                )
+            );
 
-        extraPolicies = {
-          DisableTelemetry = true;
-          ExtensionSettings = builtins.listToAttrs extensions;
+            extraPolicies = {
+              DisableTelemetry = true;
+              ExtensionSettings = builtins.listToAttrs extensions;
 
-          SearchEngines = {
-            Default = "ddg";
-            Add = [
-              {
-                Name = "nixpkgs packages";
-                URLTemplate = "https://search.nixos.org/packages?query={searchTerms}";
-                IconURL = "https://wiki.nixos.org/favicon.ico";
-                Alias = "@np";
-              }
-              {
-                Name = "NixOS options";
-                URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
-                IconURL = "https://wiki.nixos.org/favicon.ico";
-                Alias = "@no";
-              }
-              {
-                Name = "NixOS Wiki";
-                URLTemplate = "https://wiki.nixos.org/w/index.php?search={searchTerms}";
-                IconURL = "https://wiki.nixos.org/favicon.ico";
-                Alias = "@nw";
-              }
-              {
-                Name = "Homemanager Options";
-                URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
-                IconURL = "https://wiki.nixos.org/favicon.ico";
-                Alias = "@ho";
-              }
-            ];
-          };
-        };
-      }
-    )
+              SearchEngines = {
+                Default = "ddg";
+                Add = [
+                  {
+                    Name = "nixpkgs packages";
+                    URLTemplate = "https://search.nixos.org/packages?query={searchTerms}";
+                    IconURL = "https://wiki.nixos.org/favicon.ico";
+                    Alias = "@np";
+                  }
+                  {
+                    Name = "NixOS options";
+                    URLTemplate = "https://search.nixos.org/options?query={searchTerms}";
+                    IconURL = "https://wiki.nixos.org/favicon.ico";
+                    Alias = "@no";
+                  }
+                  {
+                    Name = "NixOS Wiki";
+                    URLTemplate = "https://wiki.nixos.org/w/index.php?search={searchTerms}";
+                    IconURL = "https://wiki.nixos.org/favicon.ico";
+                    Alias = "@nw";
+                  }
+                  {
+                    Name = "Homemanager Options";
+                    URLTemplate = "https://home-manager-options.extranix.com/?release=master&query={searchTerms}";
+                    IconURL = "https://wiki.nixos.org/favicon.ico";
+                    Alias = "@ho";
+                  }
+                ];
+              };
+            };
+          }
+        )
+      ];
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        for bin in "$out"/bin/*; do
+          if [ -x "$bin" ]; then
+            wrapProgram "$bin" \
+              --set MOZ_ENABLE_WAYLAND 1 \
+              --set XMODIFIERS @im=fcitx \
+              --unset GTK_IM_MODULE \
+              --unset QT_IM_MODULE \
+              --unset SDL_IM_MODULE \
+              --unset GLFW_IM_MODULE
+          fi
+        done
+      '';
+    })
   ];
 }

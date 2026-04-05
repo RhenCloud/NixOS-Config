@@ -1,10 +1,8 @@
-{ config
-, lib
-, pkgs
-, inputs
-, username
-, stateVersion
-, ...
+{
+  pkgs,
+  username,
+  stateVersion,
+  ...
 }:
 
 {
@@ -12,6 +10,19 @@
   home.username = username;
   # home.homeDirectory = lib.mkForce "/home/${username}";
   home.homeDirectory = "/home/${username}";
+
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true;
+    desktop = "$HOME/Desktop";
+    documents = "$HOME/Documents";
+    download = "$HOME/Downloads";
+    music = "$HOME/Music";
+    pictures = "$HOME/Pictures";
+    publicShare = "$HOME/Public";
+    templates = "$HOME/Templates";
+    videos = "$HOME/Videos";
+  };
 
   # 直接将当前文件夹的配置文件，链接到 Home 目录下的指定位置
   # home.file.".config/i3/wallpaper.jpg".source = ./wallpaper.jpg;
@@ -55,12 +66,7 @@
     google-chrome
     eza
     nixfmt
-    nil
     keymapper
-    telegram-desktop
-    qq
-    wechat
-    # microsoft-edge
     wemeet
     qbittorrent
     blender
@@ -83,29 +89,24 @@
     # })
   ];
 
-  programs.chromium =
-    {
-      enable = true;
-      package = pkgs.brave;
-      extensions = [
-        "bgnkhhnnamicmpeenaelnjfhikgbkllg" # AdGuard
-        "ndcooeababalnlpkfedmmbbbgkljhpjf" # 脚本猫
-        "lildghglkgcoanblbmenbefhnhifghjj" # BewlyBewly! Ave Mujica
-        "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
-        "jlgkpaicikihijadgifklkbpdajbkhjo" # crxMouse
-      ];
-      # commandLineArgs = [
-      #   "--disable-features=WebRtcAllowInputVolumeAdjustment"
-      # ];
-    };
+  programs.chromium = {
+    enable = true;
+    package = pkgs.brave;
+    extensions = [
+      "bgnkhhnnamicmpeenaelnjfhikgbkllg" # AdGuard
+      "ndcooeababalnlpkfedmmbbbgkljhpjf" # 脚本猫
+      "lildghglkgcoanblbmenbefhnhifghjj" # BewlyBewly! Ave Mujica
+      "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
+      "jlgkpaicikihijadgifklkbpdajbkhjo" # crxMouse
+    ];
+    # commandLineArgs = [
+    #   "--disable-features=WebRtcAllowInputVolumeAdjustment"
+    # ];
+  };
 
   programs.vscode = {
     enable = true;
     # package = pkgs.vscode.fhs;
-  };
-
-  programs.direnv = {
-    enable = true;
   };
 
   # git 相关配置
@@ -141,10 +142,10 @@
 
   programs.ssh = {
     enable = true;
-    extraConfig = ''
-      Host *
-        IdentityAgent ~/.gnupg/S.gpg-agent.ssh
-    '';
+    enableDefaultConfig = false;
+    matchBlocks."*" = {
+      identityAgent = "~/.gnupg/S.gpg-agent.ssh";
+    };
   };
 
   home.file.".gnupg/scdaemon.conf".text = ''
@@ -166,7 +167,7 @@
       wlrobs
       obs-backgroundremoval
       obs-pipewire-audio-capture
-      obs-vaapi #optional AMD hardware acceleration
+      obs-vaapi # optional AMD hardware acceleration
       obs-gstreamer
       obs-vkcapture
     ];

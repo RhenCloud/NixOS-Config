@@ -37,12 +37,25 @@ window-rule {
     default-floating-position x=32 y=32 relative-to="bottom"
 }
 
+window-rule {
+    match app-id="nwg-clipman"
+    open-floating true
+    default-column-width { fixed 1200; }
+    default-window-height { fixed 700; }
+    default-floating-position x=32 y=32 relative-to="bottom
+}
+
+// window-rule {
+//     match title="^flameshot$"
+//     open-floating true
+// }
+
 layer-rule {
     match namespace="^noctalia-overview*"
     place-within-backdrop true
 }
 
 layer-rule {
-match namespace="^swww-daemon$"
+match namespace="^awww-daemon$"
     place-within-backdrop true
 }

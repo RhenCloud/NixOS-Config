@@ -1,1 +1,24 @@
+# Nix 构建产物
 result/
+
+# 敏感信息文件（明文）
+*.age.decrypted
+*.age.bak
+secrets.yaml
+
+# 编辑器/IDE配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 临时文件
+*.tmp
+*.bak
+*.log
+
+# 备份文件
+*_backup*
+*~

@@ -24,7 +24,23 @@
 
     consoleLogLevel = 3;
     initrd.verbose = false;
-    kernelPackages = pkgs.linuxKernel.packages.linux_zen;
+    kernelPackages = pkgs.linuxPackages_zen;
+    # kernelPackages = pkgs.linuxPackages;
+    # kernelPackages = pkgs.linuxPackages_6_19;
+
+    # Ensure NVIDIA modules are available early so nvidia-smi and Wayland can initialize cleanly.
+    # initrd.kernelModules = [
+    #   "nvidia"
+    #   "nvidia_modeset"
+    #   "nvidia_uvm"
+    #   "nvidia_drm"
+    # ];
+    # kernelModules = [
+    #   "nvidia"
+    #   "nvidia_modeset"
+    #   "nvidia_uvm"
+    #   "nvidia_drm"
+    # ];
     kernelParams = [
       "quiet"
       "splash"

@@ -1,4 +1,8 @@
-{ config, pkgs, inputs, lib, ... }:
+{
+  pkgs,
+  inputs,
+  ...
+}:
 let
   cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.system}.default;
 in
@@ -10,11 +14,9 @@ in
     #   };
     # }
     # )
-    (self: super: {
+    (_self: super: {
       pyprland = super.pyprland.overridePythonAttrs (old: {
-        propagatedBuildInputs =
-          (old.propagatedBuildInputs or [ ])
-          ++ [ cloudPyprland ];
+        propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ cloudPyprland ];
       });
     })
   ];

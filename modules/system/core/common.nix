@@ -1,9 +1,9 @@
-{ pkgs
-, lib
-, username
-, ...
+{
+  pkgs,
+  lib,
+  username,
+  ...
 }:
-
 {
   nix.settings.experimental-features = [
     "nix-command"
@@ -158,6 +158,7 @@
         "networkmanager"
         "video"
         "audio"
+        "input"
       ];
     };
     groups.${username} = { };
@@ -169,9 +170,18 @@
     extraRules = [
       {
         commands = [
-          { command = "${pkgs.systemd}/bin/systemctl suspend"; options = [ "NOPASSWD" ]; }
-          { command = "${pkgs.systemd}/bin/reboot"; options = [ "NOPASSWD" ]; }
-          { command = "${pkgs.systemd}/bin/poweroff"; options = [ "NOPASSWD" ]; }
+          {
+            command = "${pkgs.systemd}/bin/systemctl suspend";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.systemd}/bin/reboot";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.systemd}/bin/poweroff";
+            options = [ "NOPASSWD" ];
+          }
         ];
         groups = [ "wheel" ];
       }
@@ -182,6 +192,8 @@
 
   environment.systemPackages = with pkgs; [
     git
+    gnupg
+    sops
     vim
     curl
     wget
@@ -190,15 +202,49 @@
     mpd
     daed
     gparted
-    # clash-nyanpasu
-    # clash-verge-rev
     nixpkgs-fmt
-    clashtui
-    sparkle
     mihomo
     kdePackages.kleopatra
     pcsc-tools
     opensc
     usbutils
+    tree
+    nixd
+    unzip
+    ffmpeg
+    fd
+    nix-du
+    nix-direnv
+    deadnix
+    nil
+
+    # create a fhs environment by command `fhs`, so we can run non-nixos packages in nixos!
+    (
+      let
+        base = pkgs.appimageTools.defaultFhsEnvArgs;
+      in
+      pkgs.buildFHSEnv (
+        base
+        // {
+          name = "fhs";
+          targetPkgs =
+            pkgs:
+            # pkgs.buildFHSEnv 只提供一个最小的 FHS 环境，缺少很多常用软件所必须的基础包
+            # 所以直接使用它很可能会报错
+            #
+            # pkgs.appimageTools 提供了大多数程序常用的基础包，所以我们可以直接用它来补充
+            (base.targetPkgs pkgs)
+            ++ (with pkgs; [
+              pkg-config
+              ncurses
+              libepoxy
+              # 如果你的 FHS 程序还有其他依赖，把它们添加在这里
+            ]);
+          profile = "export FHS=1";
+          runScript = "bash";
+          extraOutputsToInstall = [ "dev" ];
+        }
+      )
+    )
   ];
 }

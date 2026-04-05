@@ -1,6 +1,7 @@
 { ... }:
 {
   imports = [
+    ./fastfetch
     ./fish
     ./ghostty
   ];

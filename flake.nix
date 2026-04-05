@@ -3,36 +3,41 @@
 
   nixConfig = {
     substituters = [
-      "https://rhencloud.cachix.org"
+      # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
-      "https://nix-community.cachix.org"
+      # "https://nix-community.cachix.org"
+      "https://noctalia.cachix.org"
+      "https://niri.cachix.org"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
       "https://mirror.sjtu.edu.cn/nix-channels/store"
       "https://cache.nixos.org"
     ];
     trusted-substituters = [
-      "https://rhencloud.cachix.org"
+      # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
-      "https://nix-community.cachix.org"
+      # "https://nix-community.cachix.org"
       "https://mirror.sjtu.edu.cn"
       "https://mirrors.ustc.edu.cn"
     ];
     trusted-public-keys = [
-      "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
+      # "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      # "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
   };
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
+
     # home-manager, used for managing user configuration
     home-manager = {
       url = "https://gh-proxy.com/github.com/nix-community/home-manager/archive/master.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
 
     # nur = {
     #   url = "github:nix-community/NUR";
@@ -52,10 +57,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    siiway-cli = {
+      url = "https://gh-proxy.com/github.com/siiway/siiway-cli/archive/main.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # mango = {
     #   url = "github:DreamMaoMao/mango";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
+
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     hyprland = {
       url = "https://gh-proxy.com/github.com/hyprwm/Hyprland/archive/master.tar.gz";
@@ -68,7 +83,7 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
 
-    agenix.url = "github:ryantm/agenix";
+    # agenix.url = "github:ryantm/agenix";
 
     zen-browser = {
       url = "github:youwen5/zen-browser-flake";
@@ -78,14 +93,15 @@
   };
 
   outputs =
-    inputs@{ nixpkgs
-    , home-manager
+    inputs@{
+      nixpkgs,
+      home-manager,
       # , nur
-    , noctalia
-    , stylix
-    , sops-nix
-    , agenix
-    , ...
+      stylix,
+      niri,
+      # sops-nix,
+      # agenix,
+      ...
     }:
     let
       username = "rhencloud";
@@ -118,9 +134,11 @@
               home-manager.users.${username} = {
                 nixpkgs.config.allowUnfree = true;
                 imports = [
+                  niri.homeModules.niri
                   stylix.homeModules.stylix
-                  agenix.homeManagerModules.default
-                  sops-nix.homeManagerModules.sops
+                  inputs.noctalia.homeModules.default
+                  # agenix.homeManagerModules.default
+                  # sops-nix.homeManagerModules.sops
                   ./modules/home
                 ];
               };

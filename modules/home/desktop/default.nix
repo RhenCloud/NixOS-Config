@@ -1,7 +1,8 @@
-{ inputs, ... }:
+{ ... }:
 {
   imports = [
     ./base
+    ./chat
     ./fcitx5
     ./hyprland
     ./kitty
@@ -9,6 +10,7 @@
     ./tofi
     ./mango
     ./niri
+    ./misc
     # ./stylix
   ];
 }

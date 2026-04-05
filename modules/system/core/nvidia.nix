@@ -3,6 +3,7 @@
   # Enable OpenGL
   hardware.graphics = {
     enable = true;
+    enable32Bit = true;
   };
 
   # Load nvidia driver for Xorg and Wayland
@@ -36,13 +37,17 @@
     # accessible via `nvidia-settings`.
     nvidiaSettings = true;
 
-    # Optionally, you may need to select the appropriate driver version for your specific GPU.
+    # Use stable driver branch to reduce regressions on recent kernels.
     # package = config.boot.kernelPackages.nvidiaPackages.production;
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_580;
   };
 
+  # Required for GDM/Wayland sessions on NVIDIA.
   boot.kernelParams = [
     "nvidia_drm.fbdev=1"
     "nvidia_drm.modeset=1"
   ];
 
+  # Avoid nouveau racing with proprietary NVIDIA modules.
+  boot.blacklistedKernelModules = [ "nouveau" ];
 }

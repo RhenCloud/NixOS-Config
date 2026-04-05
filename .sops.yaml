@@ -1,8 +1,0 @@
-keys:
-  - &rhencloud_pgp REDACTED-59acd1c2
-
-creation_rules:
-  - path_regex: modules/home/secrets/[^/]+\.yaml$
-    key_groups:
-      - pgp:
-          - *rhencloud_pgp
