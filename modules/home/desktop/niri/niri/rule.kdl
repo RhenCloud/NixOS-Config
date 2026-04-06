@@ -52,7 +52,7 @@ window-rule {
     default-floating-position x=32 y=32 relative-to="bottom"
 }
 
-lalyer-rule {
+layer-rule {
     match namespace="^noctalia-*"
     background-effect {
         xray false

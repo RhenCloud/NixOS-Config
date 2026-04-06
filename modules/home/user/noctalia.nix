@@ -36,6 +36,9 @@
         usb-drive-manager = {
           enabled = true;
         };
+        mpris-lyric = {
+          enable = true;
+        };
       };
       version = 2;
     };

@@ -59,5 +59,7 @@ in
     ayugram-desktop
 
     zoom-us
+
+    thunderbird
   ];
 }
