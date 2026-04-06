@@ -1,7 +1,16 @@
 { pkgs, inputs, ... }:
 {
+  # imports = [
+  #   inputs.niri.homeModules.config
+  # ];
+
+  nixpkgs.overlays = [ inputs.niri.overlays.niri ];
+  programs.niri = {
+    enable = true;
+    package = pkgs.niri-unstable;
+  };
+
   home.packages = with pkgs; [
-    niri
     xwayland-satellite
     nirius
     # inputs.piri.packages.${pkgs.system}.default

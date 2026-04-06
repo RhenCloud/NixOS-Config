@@ -69,6 +69,7 @@
 
     niri = {
       url = "github:sodiboo/niri-flake";
+      inputs.niri-unstable.url = "github:niri-wm/niri/wip/branch";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

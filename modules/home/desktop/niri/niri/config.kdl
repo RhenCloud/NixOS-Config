@@ -33,6 +33,10 @@ layout {
 
     background-color "transparent"
 
+    // background-effect {
+	// blur
+    // }
+
     // When to center a column when changing focus, options are:
     // - "never", default behavior, focusing an off-screen column will keep at the left
     //   or right edge of the screen.
