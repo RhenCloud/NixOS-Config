@@ -1,7 +1,8 @@
-{ ... }: {
+{ username, ... }:
+{
   services.mpd = {
     enable = true;
-    musicDirectory = "~/Music";
+    musicDirectory = "/home/${username}/Music";
     extraConfig = ''
       audio_output {
         type "pipewire"
@@ -13,7 +14,7 @@
 
     # Optional:
     network.listenAddress = "any"; # if you want to allow non-localhost connections
-    network.startWhenNeeded = false; # systemd feature: only start MPD service upon connection to its socket
+    network.startWhenNeeded = true; # systemd feature: only start MPD service upon connection to its socket
   };
 
   # systemd.services.mpd.environment = {

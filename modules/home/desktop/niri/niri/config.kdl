@@ -178,6 +178,10 @@ hotkey-overlay {
     skip-at-startup
 }
 
+clipboard {
+    disable-primary
+}
+
 debug {
     honor-xdg-activation-with-invalid-serial
 }

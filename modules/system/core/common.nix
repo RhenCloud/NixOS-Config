@@ -135,6 +135,7 @@
   programs.bash.enable = true;
   programs.fish.enable = true;
   programs.zsh.enable = true;
+  programs.dconf.enable = true;
 
   programs.bash = {
     interactiveShellInit = ''
@@ -205,6 +206,7 @@
     nixpkgs-fmt
     mihomo
     kdePackages.kleopatra
+    gsettings-desktop-schemas
     pcsc-tools
     opensc
     usbutils
@@ -217,6 +219,7 @@
     nix-direnv
     deadnix
     nil
+    jq
 
     # create a fhs environment by command `fhs`, so we can run non-nixos packages in nixos!
     (

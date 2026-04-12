@@ -183,7 +183,7 @@ network = "tcp"
 # network 为 "unix" 时，填写 socket 文件路径
 addr = "127.0.0.1:6600"
 # 是否在需要时自动启动 mpd 服务
-autoStart = true
+autoStart = false
 
 # `mpv` 引擎专属配置，需要安装 mpv
 [player.mpv]

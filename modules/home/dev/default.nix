@@ -6,6 +6,7 @@
 {
   imports = [
     ./c.nix
+    # ./emacs.nix
     ./golang.nix
     ./java.nix
     ./node.nix
@@ -14,5 +15,6 @@
   ];
   home.packages = [
     inputs."siiway-cli".packages.${pkgs.stdenv.hostPlatform.system}.default
+    pkgs.act
   ];
 }

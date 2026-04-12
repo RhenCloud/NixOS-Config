@@ -33,7 +33,10 @@ binds {
     Mod+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
     // Mod+V { spawn "nwg-clipman" "-n" "-w"; }
 
+    Mod+W { toggle-column-tabbed-display; }
+
     Mod+X { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    Mod+Shift+B { spawn "noctalia-shell" "ipc" "call" "bar" "toggle"; }
     Mod+Ctrl+F { spawn "noctalia-shell" "ipc" "call" "plugin:file-search" "toggle"; }
     Mod+Ctrl+C { spawn "noctalia-shell" "ipc" "call" "plugin:vscode-provider" "toggle"; }
 
@@ -233,10 +236,11 @@ binds {
     // Mod+Space       { switch-layout "next"; }
     // Mod+Shift+Space { switch-layout "prev"; }
 
-    Print { spawn "sh" "-c" "grim -g \"$(slurp)\" - | satty -f -"; }
-    // Print { screenshot; }
-    // Ctrl+Print { screenshot-screen; }
-    // Alt+Print { screenshot-window; }
+    // Print { spawn "sh" "-c" "grim -g \"$(slurp)\" - | satty -f -"; }
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
+    Mod+Shift+S {spawn-sh "wl-paste | satty -f -";}
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
     Mod+Shift+E { quit; }
