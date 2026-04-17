@@ -49,17 +49,17 @@ app_id = "zen"
 input_mode = "english"
 
 [[fcitx5]]
-app_id = "^kitty$"
+app_id = "kitty"
 input_mode = "english"
 
 [[fcitx5]]
-app_id = "^code$"
+app_id = "code"
 input_mode = "english"
 
 [[fcitx5]]
-app_id = "^QQ$"
+app_id = "QQ"
 input_mode = "chinese"
 
 [[fcitx5]]
-app_id = "^wechat$"
+app_id = "wechat"
 input_mode = "chinese"

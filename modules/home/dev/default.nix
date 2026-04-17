@@ -13,8 +13,10 @@
     ./python.nix
     ./rust.nix
   ];
-  home.packages = [
+  home.packages = with pkgs; [
     inputs."siiway-cli".packages.${pkgs.stdenv.hostPlatform.system}.default
-    pkgs.act
+    act
+    lychee
+    lazygit
   ];
 }

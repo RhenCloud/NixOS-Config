@@ -45,8 +45,8 @@
     };
 
     noctalia = {
-      # url = "github:noctalia-dev/noctalia-shell";
-      url = "https://gh-proxy.com/github.com/noctalia-dev/noctalia-shell/archive/master.tar.gz";
+      url = "github:noctalia-dev/noctalia-shell";
+      # url = "https://gh-proxy.com/github.com/noctalia-dev/noctalia-shell/archive/master.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -69,7 +69,7 @@
 
     niri = {
       url = "github:sodiboo/niri-flake";
-      inputs.niri-unstable.url = "github:niri-wm/niri/wip/branch";
+      # inputs.niri-unstable.url = "github:niri-wm/niri/wip/branch";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
