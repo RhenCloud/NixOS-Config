@@ -6,6 +6,9 @@ fish_config theme choose Dracula
 export ALIYUNPAN_CONFIG_DIR=$HOME/.config/aliyunpan
 export ALIYUNPAN_DOWNLOAD_DIR=$HOME/Downloads/aliyunpan
 
+export _ZO_EXCLUDE_DIRS="/tmp:/var:/proc:/sys"
+export _ZO_EXCLUDE_DIRS="/tmp:/var:/node_modules:/.git:/__pycache__"
+
 # Auto-start zellij for interactive terminals, except in VS Code integrated terminal.
 if status is-interactive
     and not set -q ZELLIJ
@@ -36,4 +39,18 @@ if status is-interactive
     end
 
     zellij attach -c $zellij_session
+end
+
+function spf
+    set -l spf_last_dir_path "$HOME/.local/share/superfile/lastdir"
+
+    command spf $argv
+
+    if test -f "$spf_last_dir_path"
+        set -l spf_last_dir (string trim (cat "$spf_last_dir_path"))
+        if test -n "$spf_last_dir"; and test -d "$spf_last_dir"
+            cd "$spf_last_dir"
+        end
+        rm -f "$spf_last_dir_path"
+    end
 end

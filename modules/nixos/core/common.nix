@@ -1,9 +1,12 @@
 {
   pkgs,
   lib,
-  username,
+  config,
   ...
 }:
+let
+  username = config.rhencloud.primaryUser;
+in
 {
   nix.settings.experimental-features = [
     "nix-command"
@@ -19,6 +22,7 @@
   nixpkgs.config.allowUnfree = true;
 
   nix.settings = {
+    accept-flake-config = true;
 
     # substituters = lib.mkForce [
     #   "https://hyprland.cachix.org"
@@ -220,6 +224,7 @@
     deadnix
     nil
     jq
+    bat
 
     # create a fhs environment by command `fhs`, so we can run non-nixos packages in nixos!
     (

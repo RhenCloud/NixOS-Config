@@ -1,8 +1,3 @@
 { ... }:
 {
-  imports = [
-    ./fastfetch
-    ./fish
-    ./ghostty
-  ];
 }

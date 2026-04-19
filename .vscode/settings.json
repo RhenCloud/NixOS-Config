@@ -12,5 +12,6 @@
         "command": ["nixfmt"]
       }
     }
-  }
+  },
+  "Codegeex.RepoIndex": true
 }

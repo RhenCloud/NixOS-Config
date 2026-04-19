@@ -1,4 +1,7 @@
-{ pkgs, username, ... }:
+{ pkgs, config, ... }:
+let
+  username = config.rhencloud.primaryUser;
+in
 {
   virtualisation.docker = {
     enable = true;

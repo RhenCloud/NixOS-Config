@@ -35,12 +35,18 @@
 
     # home-manager, used for managing user configuration
     home-manager = {
-      url = "https://gh-proxy.com/github.com/nix-community/home-manager/archive/master.tar.gz";
+      # url = "https://gh-proxy.com/github.com/nix-community/home-manager/archive/master.tar.gz";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nur = {
       url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    snowfall-lib = {
+      url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -99,33 +105,63 @@
   };
 
   outputs =
-    inputs@{
-      nixpkgs,
-      home-manager,
-      # , nur
-      stylix,
-      niri,
-      piri,
-      # sops-nix,
-      # agenix,
-      ...
-    }:
+    inputs:
     let
-      username = "rhencloud";
-      hostname = "nixos-desktop";
-      stateVersion = "26.05";
+      baseFlake = inputs.snowfall-lib.mkFlake {
+        inherit inputs;
+        src = ./.;
+
+        snowfall = {
+          namespace = "rhencloud";
+          meta = {
+            name = "nixos";
+            title = "RhenCloud NixOS";
+          };
+        };
+
+        "channels-config" = {
+          allowUnfree = true;
+        };
+
+        homes.modules = [
+          inputs.niri.homeModules.niri
+          inputs.noctalia.homeModules.default
+          inputs.piri.homeManagerModules.default
+          {
+            nixpkgs.config.allowUnfree = true;
+          }
+        ];
+
+        systems.modules.nixos = [
+          (
+            { lib, config, ... }:
+            {
+              rhencloud.primaryUser = "rhencloud";
+              home-manager.useGlobalPkgs = false;
+              home-manager.useUserPackages = true;
+              home-manager.backupFileExtension = "backup";
+              nix.settings.trusted-users = [ config.rhencloud.primaryUser ];
+              system.stateVersion = lib.mkDefault "26.05";
+            }
+          )
+        ];
+
+        systems.hosts.nixos-desktop = { };
+      };
+
+      pkgsFor =
+        system:
+        import inputs.nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
     in
-    {
-      nixosConfigurations = {
-        ${hostname} = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs username stateVersion; };
-          modules = import ./modules/system {
-            inherit
-              inputs
-              username
-              hostname
-              stateVersion
-              ;
+    baseFlake
+    // {
+      devShells = (baseFlake.devShells or { }) // {
+        x86_64-linux = ((baseFlake.devShells or { }).x86_64-linux or { }) // {
+          python = import ./shells/python.nix {
+            pkgs = pkgsFor "x86_64-linux";
           };
         };
       };

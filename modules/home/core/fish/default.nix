@@ -6,6 +6,10 @@
 {
   imports = [ ./zellij.nix ];
 
+  home.sessionVariables = {
+    NIX_BUILD_SHELL = "${pkgs.fish}/bin/fish";
+  };
+
   home.packages = with pkgs; [
     nix-output-monitor
   ];
@@ -39,10 +43,10 @@
     shellInit = "set -g fish_greeting ''";
     # shellInitLast = "tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time='24-hour format' --rainbow_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='Two lines, character' --prompt_connection=Dotted --powerline_right_prompt_frame=No --prompt_connection_andor_frame_color=Light --prompt_spacing=Sparse --icons='Many icons' --transient=Yes";
     plugins = [
-      {
-        name = "z";
-        src = pkgs.fishPlugins.z.src;
-      }
+      # {
+      #   name = "z";
+      #   src = pkgs.fishPlugins.z.src;
+      # }
       {
         name = "fzf";
         src = pkgs.fishPlugins.fzf.src;
@@ -105,6 +109,42 @@
     #     format = "on [$hostname]($style)";
     #   };
     # };
+  };
+
+  programs.superfile = {
+    enable = true;
+    settings = {
+      theme = "Dracula";
+      editor = "code";
+      dir_editor = "";
+      auto_check_update = false;
+      cd_on_quit = false;
+      default_open_file_preview = true;
+      show_image_preview = true;
+      show_panel_footer_info = true;
+      default_directory = ".";
+      file_size_use_si = true;
+      default_sort_type = 0;
+      sort_order_reversed = false;
+      case_sensitive_sort = false;
+      shell_close_on_success = false;
+      page_scroll_size = 0;
+      ignore_missing_fields = true;
+      code_previewer = "bat";
+      nerdfont = true;
+      transparent_background = true;
+      metadata = true;
+      zoxide_support = true;
+      openwith = {
+        "png" = "gwenview";
+        "jpg" = "gwenview";
+      };
+    };
+  };
+
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
   };
 
   programs.eza = {

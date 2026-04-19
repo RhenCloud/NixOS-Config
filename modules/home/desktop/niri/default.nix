@@ -4,16 +4,15 @@
   #   inputs.niri.homeModules.config
   # ];
 
-  nixpkgs.overlays = [ inputs.niri.overlays.niri ];
   programs.niri = {
     enable = true;
-    package = pkgs.niri-unstable;
+    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
   };
 
-  home.packages = with pkgs; [
-    xwayland-satellite
-    nirius
-    # inputs.piri.packages.${pkgs.system}.default
+  home.packages = [
+    inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable
+    pkgs.nirius
+    # inputs.piri.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
   xdg.configFile = {
     "niri" = {
@@ -27,5 +26,6 @@
   programs.piri = {
     enable = true;
     enableFishIntegration = true;
+    package = inputs.piri.packages.${pkgs.stdenv.hostPlatform.system}.default;
   };
 }

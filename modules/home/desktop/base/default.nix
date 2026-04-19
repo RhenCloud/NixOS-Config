@@ -27,6 +27,7 @@
     krita
     kdePackages.gwenview
 
+    hyfetch
     # microsoft-edge
   ];
 

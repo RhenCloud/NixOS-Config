@@ -1,1 +1,4 @@
-{ pkgs, ... }: { home.packages = with pkgs; [ nodejs_23 ]; }
+{ pkgs, ... }:
+{
+  home.packages = with pkgs; [ nodejs ];
+}

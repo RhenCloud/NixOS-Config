@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
 
   home.packages = with pkgs; [
@@ -28,7 +28,7 @@
 
   qt = {
     enable = true;
-    platformTheme.name = "gtk3";
+    platformTheme.name = lib.mkDefault "gtk3";
     style = {
       package = pkgs.dracula-qt5-theme;
       name = "Dracula";

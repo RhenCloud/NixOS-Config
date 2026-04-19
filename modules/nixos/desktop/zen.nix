@@ -37,7 +37,12 @@ in
       name = "zen-browser";
       paths = [
         (pkgs.wrapFirefox
-          inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.zen-browser-unwrapped
+          (inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.zen-browser-unwrapped.overrideAttrs
+            (_: {
+              # Ensure wrapFirefox injects ffmpeg runtime libs for H.264/AAC playback.
+              ffmpegSupport = true;
+            })
+          )
           {
             extraPrefs = lib.concatLines (
               lib.mapAttrsToList

@@ -1,5 +1,6 @@
 # Nix 构建产物
 result/
+result*/
 
 # 敏感信息文件（明文）
 *.age.decrypted
