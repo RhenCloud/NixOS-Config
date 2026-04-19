@@ -4,6 +4,7 @@
     chameleon-cli
     libreoffice
     wpsoffice-cn
+    twitch
     # nur.repos.rhencloud.
   ];
 }

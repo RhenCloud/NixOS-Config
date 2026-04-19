@@ -5,5 +5,6 @@
     ./docker.nix
     ./displayManagers.nix
     ./sound.nix
+    ./qemu.nix
   ];
 }
