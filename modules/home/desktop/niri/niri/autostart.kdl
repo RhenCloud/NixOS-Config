@@ -1,6 +1,8 @@
 spawn-at-startup "fcitx5" "-d"
 spawn-at-startup "noctalia-shell"
 spawn-at-startup "clipse" "--listen"
+spawn-at-startup "sh" "-c" "pkill -f 'wl-paste.*--watch' || true"
+spawn-at-startup "wl-paste" "--primary" "--watch" "wl-copy"
 // spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
 // spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 // spawn-at-startup "wl-paste" "--watch" "cliphist" "store" "&" "disown"

@@ -49,10 +49,6 @@
 
       gpg --export-ssh-key "$1"
     '')
-    # (vivaldi.override {
-    #   proprietaryCodecs = true;
-    #   enableWidevine = true;
-    # })
   ];
 
   programs.chromium = {

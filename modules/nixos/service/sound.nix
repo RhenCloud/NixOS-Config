@@ -17,7 +17,9 @@
         "monitor.bluez.properties" = {
           "bluez5.enable-sbc-xq" = true;
           "bluez5.enable-msbc" = true;
-          "bluez5.enable-hw-volume" = true;
+          # Keep volume scaling on the host side to avoid low-volume dead zones
+          # on some Bluetooth devices (e.g. near 20-30% becoming effectively mute).
+          "bluez5.enable-hw-volume" = false;
           "bluez5.codecs" = [
             "aac"
             "ldac"
@@ -31,6 +33,24 @@
             "hfp_ag"
           ];
         };
+      };
+    };
+    wireplumber.extraConfig.usbAlsaSoftMixer = {
+      "20-usb-alsa-soft-mixer" = {
+        "monitor.alsa.rules" = [
+          {
+            matches = [
+              {
+                "device.bus" = "usb";
+              }
+            ];
+            actions = {
+              update-props = {
+                "api.alsa.soft-mixer" = true;
+              };
+            };
+          }
+        ];
       };
     };
   };

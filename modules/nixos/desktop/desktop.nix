@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   programs.hyprland = {
     enable = true;
     package = pkgs.hyprland;
@@ -18,9 +19,6 @@
     hyprpolkitagent
     flameshot
     swaynotificationcenter
-    wl-clipboard
-    clipse
-    kdePackages.dolphin
     hyprswitch
   ];
 }

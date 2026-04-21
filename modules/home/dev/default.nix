@@ -9,6 +9,7 @@
     # ./emacs.nix
     ./golang.nix
     ./java.nix
+    # ./nixvim
     ./node.nix
     ./python.nix
     ./rust.nix

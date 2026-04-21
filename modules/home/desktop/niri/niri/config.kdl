@@ -179,7 +179,8 @@ hotkey-overlay {
 }
 
 clipboard {
-    disable-primary
+    // Keep primary selection enabled so apps that only publish to primary
+    // can still be bridged into the regular clipboard history.
 }
 
 debug {
