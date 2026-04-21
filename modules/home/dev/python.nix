@@ -4,7 +4,6 @@
     python315
     prek
     ruff
-    olm
     # python311
   ];
 

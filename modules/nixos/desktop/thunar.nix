@@ -5,7 +5,7 @@
     ffmpegthumbnailer
   ];
 
-  programs.thunar.plugins = with pkgs.xfce; [
+  programs.thunar.plugins = with pkgs; [
     thunar-volman
     thunar-vcs-plugin
     thunar-archive-plugin
