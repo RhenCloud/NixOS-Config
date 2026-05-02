@@ -4,6 +4,9 @@
     chameleon-cli
     libreoffice
     wpsoffice-cn
+    easytier
+    audacity
+    kdePackages.kwave
     # twitch
     # nur.repos.rhencloud.
   ];

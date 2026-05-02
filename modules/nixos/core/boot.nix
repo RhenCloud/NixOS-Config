@@ -24,8 +24,9 @@
 
     consoleLogLevel = 3;
     initrd.verbose = false;
-    kernelPackages = pkgs.linuxPackages_zen;
-    # kernelPackages = pkgs.linuxPackages;
+    # kernelPackages = pkgs.linuxKernel.kernels.linux_latest;
+    # kernelPackages = pkgs.linuxPackages_zen;
+    kernelPackages = pkgs.linuxPackages_latest;
     # kernelPackages = pkgs.linuxPackages_6_19;
 
     # Ensure NVIDIA modules are available early so nvidia-smi and Wayland can initialize cleanly.

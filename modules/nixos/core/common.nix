@@ -24,18 +24,18 @@ in
   nix.settings = {
     accept-flake-config = true;
 
-    # substituters = lib.mkForce [
-    #   "https://hyprland.cachix.org"
-    #   "https://mirror.sjtu.edu.cn/nix-channels/store"
-    #   "https://mirrors.ustc.edu.cn/nix-channels/store"
-    #   "https://cache.nixos.org"
-    #   "https://nix-community.cachix.org"
+    # substituters = [
+    # "https://hyprland.cachix.org"
+    # "https://mirror.sjtu.edu.cn/nix-channels/store"
+    # "https://mirrors.ustc.edu.cn/nix-channels/store"
+    # "https://cache.nixos.org"
+    # "https://nix-community.cachix.org"
     # ];
     # trusted-substituters = [
     #   "https://hyprland.cachix.org"
-    #   "https://mirror.sjtu.edu.cn"
-    #   "https://nix-community.cachix.org"
-    #   "https://mirrors.ustc.edu.cn"
+    # "https://mirror.sjtu.edu.cn"
+    # "https://mirrors.ustc.edu.cn"
+    # "https://nix-community.cachix.org"
     # ];
     # trusted-public-keys = [
     #   "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
@@ -164,6 +164,7 @@ in
         "video"
         "audio"
         "input"
+        "kvm"
       ];
     };
     groups.${username} = { };
@@ -196,6 +197,7 @@ in
   programs.nix-ld.enable = true;
 
   environment.systemPackages = with pkgs; [
+    android-tools
     git
     gnupg
     sops
@@ -225,6 +227,8 @@ in
     nil
     jq
     bat
+    ntfs3g
+    file
 
     # create a fhs environment by command `fhs`, so we can run non-nixos packages in nixos!
     (

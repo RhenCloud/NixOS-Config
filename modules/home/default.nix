@@ -37,8 +37,9 @@
     blender
     aliyunpan
     splayer
-    sequoia-chameleon-gnupg
-    gnupg
+    # If you prefer Sequoia, add it here; keeping system `gnupg` avoids conflicts
+    # Use sequoia-chameleon-gnupg (provides a gpg-compatible wrapper)
+    # and avoid also installing `gnupg` to prevent conflicting `/bin/gpg` files.
     asciinema
     (writeShellScriptBin "gpg-card-ssh-pubkey" ''
       set -euo pipefail

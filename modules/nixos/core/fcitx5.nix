@@ -9,6 +9,7 @@
         qt6Packages.fcitx5-configtool
         qt6Packages.fcitx5-chinese-addons
         fcitx5-gtk
+        librime
         librime-octagram
         librime-lua
         (fcitx5-rime.override {

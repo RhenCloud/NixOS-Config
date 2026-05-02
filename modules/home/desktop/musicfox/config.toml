@@ -150,7 +150,7 @@ limit = 0
 [player]
 # 播放引擎，可选: "beep", "mpd", "mpv", "osx", "win_media", "auto"（根据系统自动选择）
 # Mac 默认 "osx", Windows 默认 "win_media", 其他系统默认 "beep"
-engine = "beep"
+engine = "mpv"
 # 允许的最大连续失败重试次数
 maxPlayErrCount = 3
 # 期望的歌曲音质
@@ -167,7 +167,7 @@ mouseVolumeStep = 1
 [player.beep]
 # MP3解码器，可选: "go-mp3", "minimp3"
 # "minimp3" CPU占用更低，但稳定性可能稍逊于 "go-mp3"
-mp3Decoder = "go-mp3"
+mp3Decoder = "minimp3"
 
 # `mpd` 引擎专属配置，需要安装mpd
 [player.mpd]

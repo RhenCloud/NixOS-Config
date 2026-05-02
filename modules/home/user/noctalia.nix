@@ -1,4 +1,5 @@
 {
+  pkgs,
   ...
 }:
 {
@@ -48,8 +49,8 @@
     # };
   };
 
-  # home.packages = with pkgs; [
-  # evtest
-  #   noctalia-shell
-  # ];
+  home.packages = with pkgs; [
+    evtest
+    # noctalia-shell
+  ];
 }

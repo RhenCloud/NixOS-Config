@@ -64,6 +64,11 @@ window-rule {
     block-out-from "screencast"
 }
 
+window-rule {
+    match app-id="thunar" title="重命名 .*"
+    open-floating true
+}
+
 layer-rule {
     match namespace="^noctalia-*"
     background-effect {

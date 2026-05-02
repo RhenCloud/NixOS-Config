@@ -25,13 +25,14 @@ binds {
     Mod+Space { toggle-window-floating; }
 
     Mod+E { spawn "thunar"; }
+    Mod+Shift+E { spawn "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
 
     Mod+B { spawn "zen"; }
 
     Mod+C { spawn "code"; }
 
-    Mod+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
-    // Mod+V { spawn "nwg-clipman" "-n" "-w"; }
+    Mod+Shift+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
+    Mod+V { spawn "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
 
     Mod+W { toggle-column-tabbed-display; }
 
@@ -243,7 +244,7 @@ binds {
     Mod+Shift+S {spawn-sh "wl-paste | satty -f -";}
 
     // The quit action will show a confirmation dialog to avoid accidental exits.
-    Mod+Shift+E { quit; }
+    Mod+Delete { quit; }
     Ctrl+Alt+Delete { quit; }
 
     // Powers off the monitors. To turn them back on, do any input like

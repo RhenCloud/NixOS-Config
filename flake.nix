@@ -2,15 +2,23 @@
   description = "NixOS configuration";
 
   nixConfig = {
+    # extra-substituters = [
+    #   "https://mirrors.ustc.edu.cn/nix-channels/store"
+    #   "https://mirror.sjtu.edu.cn/nix-channels/store"
+    # ];
+    # extra-trusted-substituters = [
+    #   "https://mirror.sjtu.edu.cn"
+    #   "https://mirrors.ustc.edu.cn"
+    # ];
     substituters = [
       # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       # "https://nix-community.cachix.org"
+      "https://cache.nixos.org"
       "https://noctalia.cachix.org"
       "https://niri.cachix.org"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
       "https://mirror.sjtu.edu.cn/nix-channels/store"
-      "https://cache.nixos.org"
     ];
     trusted-substituters = [
       # "https://rhencloud.cachix.org"

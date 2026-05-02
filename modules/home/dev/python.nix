@@ -11,5 +11,8 @@
 
   programs.uv = {
     enable = true;
+    settings = {
+      index = [ { url = "https://mirror.sjtu.edu.cn/pypi/web/simple/"; } ];
+    };
   };
 }

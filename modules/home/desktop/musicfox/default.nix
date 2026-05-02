@@ -15,6 +15,6 @@
   home.packages = with pkgs; [
     go-musicfox
     waylyrics
-    mpv
+    mpv-unwrapped
   ];
 }

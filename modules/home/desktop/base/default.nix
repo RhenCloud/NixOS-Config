@@ -3,7 +3,7 @@
   home.packages = with pkgs; [
     awww
     waypaper
-    linux-wallpaperengine
+    # linux-wallpaperengine
     waylyrics
     hyprpolkitagent
     clipse
@@ -63,46 +63,47 @@
     extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
   };
 
-  xdg.mimeApps = {
-    enable = true;
-    defaultApplications = {
-      "text/html" = [
-        "zen.desktop"
-        "zen-browser.desktop"
-      ];
-      "application/xhtml+xml" = [
-        "zen.desktop"
-        "zen-browser.desktop"
-      ];
-      "x-scheme-handler/http" = [
-        "zen.desktop"
-        "zen-browser.desktop"
-      ];
-      "x-scheme-handler/https" = [
-        "zen.desktop"
-        "zen-browser.desktop"
-      ];
-      "x-scheme-handler/about" = [
-        "zen.desktop"
-        "zen-browser.desktop"
-      ];
-      "x-scheme-handler/unknown" = [
-        "zen.desktop"
-        "zen-browser.desktop"
-      ];
+  # xdg.mimeApps = {
+  #   enable = true;
+  #   defaultApplications = {
+  #     "text/html" = [
+  #       "zen.desktop"
+  #       "zen-browser.desktop"
+  #     ];
+  #     "application/xhtml+xml" = [
+  #       "zen.desktop"
+  #       "zen-browser.desktop"
+  #     ];
+  #     "x-scheme-handler/http" = [
+  #       "zen.desktop"
+  #       "zen-browser.desktop"
+  #     ];
+  #     "x-scheme-handler/https" = [
+  #       "zen.desktop"
+  #       "zen-browser.desktop"
+  #     ];
+  #     "x-scheme-handler/about" = [
+  #       "zen.desktop"
+  #       "zen-browser.desktop"
+  #     ];
+  #     "x-scheme-handler/unknown" = [
+  #       "zen.desktop"
+  #       "zen-browser.desktop"
+  #     ];
 
-      "x-scheme-handler/terminal" = [ "kitty.desktop" ];
-      "application/x-terminal-emulator" = [ "kitty.desktop" ];
+  #     "x-scheme-handler/terminal" = [ "kitty.desktop" ];
+  #     "application/x-terminal-emulator" = [ "kitty.desktop" ];
 
-      "inode/directory" = [ "thunar.desktop" ];
-      "application/x-gnome-saved-search" = [ "thunar.desktop" ];
-      "x-scheme-handler/file" = [ "thunar.desktop" ];
-    };
-  };
+  #     "inode/directory" = [ "thunar.desktop" ];
+  #     "application/x-gnome-saved-search" = [ "thunar.desktop" ];
+  #     "x-scheme-handler/file" = [ "thunar.desktop" ];
+  #   };
+  # };
 
   home.sessionVariables = {
     BROWSER = "zen";
     TERMINAL = "kitty";
+    EDITOR = "code";
   };
 
   services = {

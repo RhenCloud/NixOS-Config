@@ -8,6 +8,6 @@
     ./fonts.nix
     ./nvidia.nix
     ./fcitx5.nix
-    ./proxy.nix
+    # ./proxy.nix
   ];
 }

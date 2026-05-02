@@ -6,6 +6,7 @@
 {
   imports = [
     ./c.nix
+    ./android.nix
     # ./emacs.nix
     ./golang.nix
     ./java.nix
@@ -19,5 +20,7 @@
     act
     lychee
     lazygit
+    cloudflared
+    ghidra-bin
   ];
 }
