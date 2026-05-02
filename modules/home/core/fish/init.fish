@@ -9,6 +9,13 @@ export ALIYUNPAN_DOWNLOAD_DIR=$HOME/Downloads/aliyunpan
 export _ZO_EXCLUDE_DIRS="/tmp:/var:/proc:/sys"
 export _ZO_EXCLUDE_DIRS="/tmp:/var:/node_modules:/.git:/__pycache__"
 
+set --universal pure_enable_nixdevshell true
+set --universal pure_symbol_virtualenv_prefix 🐍
+set --universal pure_show_exit_status true
+set --universal pure_show_subsecond_command_duration true
+set --universal fish_transient_prompt true
+set -g async_prompt_functions _pure_prompt_git
+
 # Auto-start zellij for interactive terminals, except in VS Code integrated terminal.
 if status is-interactive
     and not set -q ZELLIJ

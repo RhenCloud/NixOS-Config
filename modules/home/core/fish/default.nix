@@ -42,6 +42,29 @@
     # loginShellInit = "export LANG=zh_CN.UTF-8 ; export LC_ALL=zh_CN.UTF-8";
     shellInit = "set -g fish_greeting ''";
     # shellInitLast = "tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time='24-hour format' --rainbow_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='Two lines, character' --prompt_connection=Dotted --powerline_right_prompt_frame=No --prompt_connection_andor_frame_color=Light --prompt_spacing=Sparse --icons='Many icons' --transient=Yes";
+    # functions = {
+    # magic-enter-cmd = {
+    #   body = ''
+    #     # Default magic command.
+    #     set --local my_magic_command 'ls'
+
+    #     # Git dir magic command.
+    #     if command git rev-parse --is-inside-work-tree &>/dev/null
+    #       set my_magic_command "git status"
+    #     end
+
+    #     if command ls pyproject.toml &>/dev/null && command uv &>/dev/null
+    #       set my_magic_command "uv sync"
+    #     end
+
+    #     if command ls flake.nix &>/dev/null
+    #       set my_magic_command "nix flake update"
+    #     end
+
+    #     eval $my_magic_command
+    #   '';
+    # };
+    # };
     plugins = [
       # {
       #   name = "z";
@@ -55,18 +78,26 @@
         name = "autopair";
         src = pkgs.fishPlugins.autopair.src;
       }
+      {
+        name = "async-prompt";
+        src = pkgs.fishPlugins.async-prompt.src;
+      }
       # {
       #   name = "tide";
       #   src = pkgs.fishPlugins.tide.src;
       # }
+      # {
+      #   name = "tide";
+      #   src = pkgs.fetchFromGitHub {
+      #     owner = "IlanCosman";
+      #     repo = "tide";
+      #     rev = "main";
+      #     sha256 = "sha256-dzYEYC1bYP0rWpmz0fmBFwskxWYuKBMTssMELXXz5H0=";
+      #   };
+      # }
       {
-        name = "tide";
-        src = pkgs.fetchFromGitHub {
-          owner = "IlanCosman";
-          repo = "tide";
-          rev = "main";
-          sha256 = "sha256-dzYEYC1bYP0rWpmz0fmBFwskxWYuKBMTssMELXXz5H0=";
-        };
+        name = "pure";
+        src = pkgs.fishPlugins.pure.src;
       }
       {
         name = "fish-you-should-use";
@@ -77,12 +108,25 @@
         src = pkgs.fishPlugins.plugin-sudope.src;
       }
       {
+        name = "sponge";
+        src = pkgs.fishPlugins.sponge.src;
+      }
+      {
         name = "dracula";
         src = pkgs.fetchFromGitHub {
           owner = "dracula";
           repo = "fish";
           rev = "master";
           sha256 = "sha256-Hyq4EfSmWmxwCYhp3O8agr7VWFAflcUe8BUKh50fNfY=";
+        };
+      }
+      {
+        name = "magic-enter";
+        src = pkgs.fetchFromGitHub {
+          owner = "mattmc3";
+          repo = "magic-enter.fish";
+          rev = "main";
+          sha256 = "sha256-zDrc2d2VTeTiukRLeezlbj06ICr0AJId/iJx11xPKyo=";
         };
       }
     ];
