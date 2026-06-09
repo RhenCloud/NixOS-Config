@@ -12,7 +12,8 @@
   programs.uv = {
     enable = true;
     settings = {
-      index = [ { url = "https://mirror.sjtu.edu.cn/pypi/web/simple/"; } ];
+      system-certs = true;
+      index = [ { url = "https://pypi.org/simpl"; } ];
     };
   };
 }

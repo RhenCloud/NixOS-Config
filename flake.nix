@@ -38,7 +38,7 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable-small";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
 
     # home-manager, used for managing user configuration
@@ -76,6 +76,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    aagl.url = "github:ezKEa/aagl-gtk-on-nix";
+
     # mango = {
     #   url = "github:DreamMaoMao/mango";
     #   inputs.nixpkgs.follows = "nixpkgs";
@@ -92,8 +94,13 @@
       flake = false;
     };
 
+    liteloaderqqnt = {
+      url = "github:LiteLoaderQQNT/LiteLoaderQQNT/1.4.1";
+      flake = false;
+    };
+
     hyprland = {
-      url = "https://gh-proxy.com/github.com/hyprwm/Hyprland/archive/master.tar.gz";
+      url = "github:hyprwm/Hyprland";
     };
 
     cloud-pyprland = {
@@ -129,6 +136,9 @@
 
         "channels-config" = {
           allowUnfree = true;
+          permittedInsecurePackages = [
+            "electron-39.8.10"
+          ];
         };
 
         homes.modules = [
@@ -137,18 +147,25 @@
           inputs.piri.homeManagerModules.default
           {
             nixpkgs.config.allowUnfree = true;
+            nixpkgs.config.permittedInsecurePackages = [
+              "electron-39.8.10"
+            ];
           }
         ];
 
         systems.modules.nixos = [
           (
-            { lib, config, ... }:
+            {
+              lib,
+              config,
+              ...
+            }:
             {
               rhencloud.primaryUser = "rhencloud";
+              # nixos-config = "/home/${config.rhencloud.primaryUser}/nixos";
               home-manager.useGlobalPkgs = false;
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "backup";
-              nix.settings.trusted-users = [ config.rhencloud.primaryUser ];
               system.stateVersion = lib.mkDefault "26.05";
             }
           )
@@ -171,6 +188,16 @@
           python = import ./shells/python.nix {
             pkgs = pkgsFor "x86_64-linux";
           };
+        };
+      };
+
+      packages = (baseFlake.packages or { }) // {
+        x86_64-linux = ((baseFlake.packages or { }).x86_64-linux or { }) // {
+          lwe =
+            let
+              pkgs = pkgsFor "x86_64-linux";
+            in
+            pkgs.callPackage ./packages/lwe/default.nix { };
         };
       };
     };

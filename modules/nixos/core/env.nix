@@ -1,4 +1,5 @@
-{ ... }: {
+{ ... }:
+{
   environment.sessionVariables = {
     LANG = "zh_CN.UTF-8";
 
@@ -6,7 +7,8 @@
     http_proxy = "http://127.0.0.1:7890";
     all_proxy = "http://127.0.0.1:7890";
 
-    QT_QPA_PLATFORMTHEME = "qt5ct";
+    QT_QPA_PLATFORMTHEME = "gtk3";
+    QT_STYLE_OVERRIDE = "kvantum";
 
     NIXOS_OZONE_WL = "1";
     XDG_CURRENT_DESKTOP = "Hyprland";

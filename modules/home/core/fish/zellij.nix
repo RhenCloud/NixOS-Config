@@ -19,6 +19,10 @@
       show_release_notes = false;
       show_startup_tips = false;
       theme = "dracula";
+      # keybindings = {
+      #   close_tab = "ctrl+w";
+      #   new_tab = "ctrl+n";
+      # };
     };
   };
 }

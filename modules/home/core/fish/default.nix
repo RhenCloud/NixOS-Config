@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   ...
 }:
@@ -19,7 +20,7 @@
       source = ./init.fish;
     };
     "fish/themes/Dracula.theme".source = ./Dracula.theme;
-    "starship.toml".source = ./starship.toml;
+    "starship.toml".source = config.lib.file.mkOutOfStoreSymlink ./starship.toml;
   };
 
   # programs.startship = {
@@ -44,6 +45,7 @@
     # shellInitLast = "tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time='24-hour format' --rainbow_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='Two lines, character' --prompt_connection=Dotted --powerline_right_prompt_frame=No --prompt_connection_andor_frame_color=Light --prompt_spacing=Sparse --icons='Many icons' --transient=Yes";
     # functions = {
     # magic-enter-cmd = {
+
     #   body = ''
     #     # Default magic command.
     #     set --local my_magic_command 'ls'
@@ -82,10 +84,10 @@
         name = "async-prompt";
         src = pkgs.fishPlugins.async-prompt.src;
       }
-      # {
-      #   name = "tide";
-      #   src = pkgs.fishPlugins.tide.src;
-      # }
+      {
+        name = "tide";
+        src = pkgs.fishPlugins.tide.src;
+      }
       # {
       #   name = "tide";
       #   src = pkgs.fetchFromGitHub {
@@ -95,10 +97,10 @@
       #     sha256 = "sha256-dzYEYC1bYP0rWpmz0fmBFwskxWYuKBMTssMELXXz5H0=";
       #   };
       # }
-      {
-        name = "pure";
-        src = pkgs.fishPlugins.pure.src;
-      }
+      # {
+      #   name = "pure";
+      #   src = pkgs.fishPlugins.pure.src;
+      # }
       {
         name = "fish-you-should-use";
         src = pkgs.fishPlugins.fish-you-should-use.src;
@@ -133,8 +135,8 @@
   };
 
   programs.starship = {
-    enable = true;
-    enableFishIntegration = false;
+    enable = false;
+    enableFishIntegration = true;
     # settings = {
     #   add_newline = false;
     #   format = "$username$directory$git_branch\n$character";

@@ -1,4 +1,12 @@
 { lib, pkgs, ... }:
+
+let
+  accent = "pink";
+  variant = "mocha";
+
+  kvantumThemePackage = pkgs.catppuccin-kvantum.override { inherit variant accent; };
+  themeName = "catppuccin-${variant}-${accent}";
+in
 {
 
   home.packages = with pkgs; [
@@ -8,7 +16,7 @@
     # catppuccin-gtk
     # catppuccin-kvantum
     dracula-theme
-    dracula-qt5-theme
+    catppuccin-kvantum
     papirus-icon-theme
 
     # libsForQt5.qtstyleplugins
@@ -28,11 +36,10 @@
 
   qt = {
     enable = true;
-    platformTheme.name = lib.mkDefault "gtk3";
+    platformTheme.name = "gtk3";
     style = {
-      package = pkgs.dracula-qt5-theme;
-      name = "Dracula";
-      # name = "kvantum";
+      package = pkgs.libsForQt5.qtstyleplugin-kvantum;
+      name = "kvantum";
     };
   };
 
@@ -55,12 +62,17 @@
   home.sessionVariables = {
     XDG_CURRENT_DESKTOP = "Hyprland";
     GTK_USE_PORTAL = "1";
+    QT_QPA_PLATFORMTHEME = lib.mkForce "gtk3";
+    QT_STYLE_OVERRIDE = "kvantum";
+    GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/glib-2.0/schemas";
   };
 
   xdg.configFile = {
-    "kvantum/kvantum.kvconfig".text = ''
+    "Kvantum/kvantum.kvconfig".text = ''
       [General]
-      theme=Dracula
+      theme=${themeName}
     '';
+
+    "Kvantum/${themeName}".source = "${kvantumThemePackage}/share/Kvantum/${themeName}";
   };
 }

@@ -19,7 +19,12 @@ in
     options = lib.mkDefault "--delete-older-than 7d";
   };
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+      "electron-39.8.10"
+    ];
+  };
 
   nix.settings = {
     accept-flake-config = true;
@@ -63,11 +68,13 @@ in
   };
 
   systemd.services.mihomo.serviceConfig.ExecStart = lib.mkForce ''
-    ${pkgs.mihomo}/bin/mihomo -d /var/lib/mihomo -f /etc/mihomo/config.yaml
+    ${pkgs.mihomo}/bin/mihomo -d /var/lib/mihomo -f ${config.services.mihomo.configFile}
   '';
-  systemd.services.mihomo.serviceConfig.User = lib.mkForce "root";
-  systemd.services.mihomo.serviceConfig.Group = lib.mkForce "root";
+  systemd.services.mihomo.serviceConfig.User = lib.mkForce "rhencloud";
+  systemd.services.mihomo.serviceConfig.Group = lib.mkForce "rhencloud";
+  systemd.services.mihomo.serviceConfig.DynamicUser = lib.mkForce false;
   systemd.services.mihomo.serviceConfig.StateDirectory = lib.mkForce "mihomo";
+  systemd.services.mihomo.serviceConfig.StateDirectoryMode = lib.mkForce "0755";
 
   # systemd.user.services.mihomo-user = {
   #   enable = true;
@@ -132,6 +139,7 @@ in
 
   environment.pathsToLink = [
     "/share/applications"
+    "/share/glib-2.0/schemas"
     "/share/xdg-desktop-portal"
     "/share/zsh"
   ];
@@ -229,6 +237,8 @@ in
     bat
     ntfs3g
     file
+    geo
+    cacert
 
     # create a fhs environment by command `fhs`, so we can run non-nixos packages in nixos!
     (

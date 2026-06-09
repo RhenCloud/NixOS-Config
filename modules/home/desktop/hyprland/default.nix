@@ -1,6 +1,7 @@
-{ pkgs
-, inputs
-, ...
+{
+  pkgs,
+  inputs,
+  ...
 }:
 
 let
@@ -44,8 +45,8 @@ in
     extraConfig = ''
       source = ~/.config/hypr/hyprland.conf
     '';
-    plugins = [
-      pkgs.hyprlandPlugins.hypr-dynamic-cursors
-    ];
+    # plugins = [
+    #   pkgs.hyprlandPlugins.hypr-dynamic-cursors
+    # ];
   };
 }

@@ -10,7 +10,8 @@
       source-han-sans
       source-han-serif
       sarasa-gothic
-      maple-mono.NF-CN
+      maple-mono.NF-CN-unhinted
+      maple-mono.truetype
     ];
 
     # 设置 fontconfig 防止出现乱码

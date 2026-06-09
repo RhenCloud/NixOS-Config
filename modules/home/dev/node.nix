@@ -1,9 +1,10 @@
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
-    nodejs_25
+    nodejs_latest
     nodenv
     pnpm
+    wrangler
   ];
   programs.bun = {
     enable = true;

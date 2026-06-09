@@ -1,5 +1,6 @@
 {
   pkgs,
+  inputs,
   ...
 }:
 
@@ -32,11 +33,13 @@
     eza
     nixfmt
     keymapper
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.lwe
     wemeet
     qbittorrent
     blender
     aliyunpan
     splayer
+    ripgrep
     # If you prefer Sequoia, add it here; keeping system `gnupg` avoids conflicts
     # Use sequoia-chameleon-gnupg (provides a gpg-compatible wrapper)
     # and avoid also installing `gnupg` to prevent conflicting `/bin/gpg` files.
@@ -99,7 +102,7 @@
     enable = true;
     enableScDaemon = true;
     enableSshSupport = true;
-    pinentry.package = pkgs.pinentry-qt;
+    pinentry.package = pkgs.pinentry-gtk2;
     defaultCacheTtl = 1800;
     maxCacheTtl = 7200;
   };
@@ -107,7 +110,7 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks."*" = {
+    settings."*" = {
       identityAgent = "~/.gnupg/S.gpg-agent.ssh";
     };
   };

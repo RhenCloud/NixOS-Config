@@ -24,7 +24,7 @@ binds {
 
     Mod+Space { toggle-window-floating; }
 
-    Mod+E { spawn "thunar"; }
+    Mod+E { spawn "dolphin"; }
     Mod+Shift+E { spawn "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
 
     Mod+B { spawn "zen"; }
@@ -250,4 +250,8 @@ binds {
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
+
+    Mod+MouseBack { spawn "playerctl" "next"; }
+    Mod+MouseForward { spawn "playerctl" "previous"; }
+    Mod+P { spawn "playerctl" "play-pause"; }
 }

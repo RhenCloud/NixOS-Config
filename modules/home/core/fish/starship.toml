@@ -3,13 +3,12 @@
 format = """
 [](purple)\
 $os\
-$username\
 [](bg:cyan fg:purple)\
 $directory\
 [](bg:pink fg:cyan)\
 $git_branch\
 $git_status\
-[](fg:pink bg:comment)\
+[](fg:pink bg:green)\
 $c\
 $rust\
 $golang\
@@ -19,19 +18,15 @@ $java\
 $kotlin\
 $haskell\
 $python\
+[](fg:green bg:comment)\
+$conda\
 [](fg:comment bg:comment)\
 $time\
 [ ](fg:comment)\
 $cmd_duration\
 $line_break\
-\n$character"""
-
-# right_format = """
-# [](purple)\
-# $cmd_duration
-# [](purple)\
-# $line_break\
-# """
+\n\
+$character"""
 
 palette = 'dracula'
 
@@ -165,10 +160,10 @@ vimcmd_visual_symbol = '[❮](bold fg:yellow)'
 [cmd_duration]
 show_milliseconds = true
 format = " in $duration "
-style = "fg:purple bg:purple"
+style = "bg:purple"
 disabled = false
-show_notifications = false
-min_time_to_notify = 0
+show_notifications = true
+min_time_to_notify = 45000
 
 [palettes.dracula]
 
