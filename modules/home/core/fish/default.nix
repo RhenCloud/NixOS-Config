@@ -5,7 +5,10 @@
 }:
 
 {
-  imports = [ ./zellij.nix ];
+  imports = [
+    ./herdr.nix
+    # ./zellij.nix  # 暂未启用，由 herdr 替代
+  ];
 
   home.sessionVariables = {
     NIX_BUILD_SHELL = "${pkgs.fish}/bin/fish";
@@ -35,10 +38,12 @@
       ff = "fastfetch";
       vim = "nvim";
       nrebuild = "sudo nixos-rebuild switch --log-format internal-json |& nom --json";
+      hrebuild = "home-manager switch --flake .#rhencloud@nixos-desktop";
       nclean = "sudo nix-collect-garbage";
       ncleanall = "sudo nix-collect-garbage -d";
       nupgrade = "sudo nix flake update && sudo nixos-rebuild switch --upgrade --log-format internal-json |& nom --json";
       tree = "tree --gitignore -I '.git'";
+      oc = "opencode";
     };
     # loginShellInit = "export LANG=zh_CN.UTF-8 ; export LC_ALL=zh_CN.UTF-8";
     shellInit = "set -g fish_greeting ''";

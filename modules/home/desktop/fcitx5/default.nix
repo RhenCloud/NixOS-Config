@@ -22,10 +22,15 @@
   # };
 
 
-  # 将本地的 rime 配置链接到 ~/.local/share/fcitx5/rime
-  # fcitx5-rime 会优先读取此目录下的用户配置
-  home.file.".local/share/fcitx5" = {
-    source = ./fcitx5;
-    recursive = true; # 递归整个文件夹，这样 rime 可以在目录下创建 build 等文件夹
+  # 仅管理 fcitx5 主题配置，不接管整个目录以免干扰 rime
+  home.file.".local/share/fcitx5/themes" = {
+    source = ./fcitx5/themes;
+    recursive = true;
+  };
+
+  # 星空键道6 输入方案
+  programs.rime-keytao = {
+    enable = true;
+    rimeDataDir = ".local/share/fcitx5/rime";
   };
 }

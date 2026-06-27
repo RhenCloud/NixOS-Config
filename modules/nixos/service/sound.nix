@@ -55,9 +55,23 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    bluez
-    bluez-tools
-    wireplumber
-  ];
+  systemd.user.services.system-audio-virtual-mic = {
+    enable = true;
+    description = "虚拟麦克风 — 捕获系统音频供 Discord 直播使用";
+    after = [ "pipewire-pulse.service" ];
+    wantedBy = [ "default.target" ];
+    script = ''
+      ${pkgs.pulseaudio}/bin/pactl load-module module-null-sink \
+        sink_name=system_audio \
+        sink_properties="device.description=SystemAudio"
+      ${pkgs.pulseaudio}/bin/pactl load-module module-loopback \
+        source=@DEFAULT_SINK@.monitor \
+        sink=system_audio \
+        latency_msec=1
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+  };
 }

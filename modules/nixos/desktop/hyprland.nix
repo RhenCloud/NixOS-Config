@@ -3,22 +3,16 @@
   programs.hyprland = {
     enable = true;
     package = pkgs.hyprland;
-    portalPackages = pkgs.xdg-desktop-portal-hyprland;
-    xwayland = true;
+    portalPackage = pkgs.xdg-desktop-portal-hyprland;
+    xwayland.enable = true;
   };
   environment.systemPackages = with pkgs; [
-    swww
+    awww
     swayosd
-    waypaper
-    waylyrics
     hyprlock
-    hyprcursor
-    pyprland
     blueman
     pavucontrol
-    hyprpolkitagent
-    flameshot
     swaynotificationcenter
-    hyprswitch
+    # hyprswitch
   ];
 }

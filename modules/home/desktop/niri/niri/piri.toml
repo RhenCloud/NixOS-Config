@@ -10,7 +10,7 @@
 # If not specified, plugins are disabled by default
 [piri.plugins]
 scratchpads = true
-empty = true
+empty = false
 window_rule = true
 autofill = true
 singleton = true
@@ -30,6 +30,12 @@ command = "kitty --class musicfox musicfox"
 app_id = "float.musicfox"
 size = "60% 40%"
 margin = 150
+
+[empty.1]
+command = "vesktop ; zen ; linuxqq"
+
+[empty.2]
+command = "kitty"
 
 # Sleepy plugin: push focused app/window info to Sleepy server
 # Requires sleepy server endpoint and device metadata
@@ -62,4 +68,8 @@ input_mode = "chinese"
 
 [[fcitx5]]
 app_id = "wechat"
+input_mode = "chinese"
+
+[[fcitx5]]
+app_id = "vesktop"
 input_mode = "chinese"

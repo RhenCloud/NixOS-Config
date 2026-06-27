@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, lib, inputs, ... }:
 let
   qqPackage = pkgs.qq;
   liteLoaderQQNT = inputs.liteloaderqqnt;
@@ -19,6 +19,7 @@ let
     name = "qq";
     runtimeInputs = [
       pkgs.coreutils
+      pkgs.xclip
     ];
     text = ''
       set -euo pipefail
@@ -75,7 +76,8 @@ in
           --set QT_IM_MODULE fcitx \
           --set XMODIFIERS @im=fcitx \
           --set SDL_IM_MODULE fcitx \
-          --set GLFW_IM_MODULE fcitx
+          --set GLFW_IM_MODULE fcitx \
+          --prefix PATH : ${lib.makeBinPath [ xclip ]}
       '';
     })
     (symlinkJoin {

@@ -7,7 +7,6 @@ in
   services.xserver.desktopManager.runXdgAutostartIfNone = true;
   services.displayManager.sessionPackages = [
     pkgs.hyprland
-    pkgs.mangowc
     pkgs.niri
   ];
   services.displayManager.autoLogin = {

@@ -65,6 +65,11 @@ window-rule {
 }
 
 window-rule {
+    match app-id="vesktop"
+    block-out-from "screencast"
+}
+
+window-rule {
     match app-id="thunar" title="重命名 .*"
     open-floating true
 }

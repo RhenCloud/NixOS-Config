@@ -7,6 +7,7 @@
 
       services.gnome.gnome-keyring.enable = true;
       security.pam.services.gdm.enableGnomeKeyring = true;
+      security.pam.services.gdm-autologin.enableGnomeKeyring = true;
 
       nixpkgs.hostPlatform = "x86_64-linux";
     }

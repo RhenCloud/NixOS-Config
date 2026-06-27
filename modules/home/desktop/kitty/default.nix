@@ -16,7 +16,7 @@
     font = {
       name = "Maple Mono NF CN";
       size = 11.0;
-      package = pkgs.maple-mono.NF-CN;
+      # package = pkgs.maple-mono.NF-CN;
     };
     shellIntegration.enableBashIntegration = true;
     enableGitIntegration = true;

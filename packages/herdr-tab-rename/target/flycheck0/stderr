@@ -1,0 +1,209 @@
+    Updating crates.io index
+    Blocking waiting for file lock on package cache
+     Locking 11 packages to latest compatible versions
+    Blocking waiting for file lock on package cache
+   3.482051320s  INFO prepare_target{force=false package_id=herdr-tab-rename v0.1.0 (/home/rhencloud/nixos/packages/herdr-tab-rename) target="herdr-tab-rename"}: cargo::core::compiler::fingerprint: fingerprint error for herdr-tab-rename v0.1.0 (/home/rhencloud/nixos/packages/herdr-tab-rename)/Check { test: false }/TargetInner { name: "herdr-tab-rename", doc: true, ..: with_path("/home/rhencloud/nixos/packages/herdr-tab-rename/src/main.rs", Edition2021) }
+   3.482089232s  INFO prepare_target{force=false package_id=herdr-tab-rename v0.1.0 (/home/rhencloud/nixos/packages/herdr-tab-rename) target="herdr-tab-rename"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/rhencloud/nixos/packages/herdr-tab-rename/target/debug/.fingerprint/herdr-tab-rename-c8f7d70b68a3a836/bin-herdr-tab-rename`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::cli::main
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: main
+  17: __libc_start_call_main
+  18: __libc_start_main_alias_2
+  19: _start
+   3.494304084s  INFO prepare_target{force=false package_id=serde_json v1.0.150 target="serde_json"}: cargo::core::compiler::fingerprint: fingerprint error for serde_json v1.0.150/Check { test: false }/TargetInner { ..: lib_target("serde_json", ["lib"], "/home/rhencloud/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.150/src/lib.rs", Edition2021) }
+   3.494328252s  INFO prepare_target{force=false package_id=serde_json v1.0.150 target="serde_json"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/rhencloud/nixos/packages/herdr-tab-rename/target/debug/.fingerprint/serde_json-779eea7c50a5e8e3/lib-serde_json`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::cli::main
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: main
+  18: __libc_start_call_main
+  19: __libc_start_main_alias_2
+  20: _start
+   3.494727118s  INFO prepare_target{force=false package_id=itoa v1.0.18 target="itoa"}: cargo::core::compiler::fingerprint: fingerprint error for itoa v1.0.18/Check { test: false }/TargetInner { ..: lib_target("itoa", ["lib"], "/home/rhencloud/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18/src/lib.rs", Edition2021) }
+   3.494743477s  INFO prepare_target{force=false package_id=itoa v1.0.18 target="itoa"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/rhencloud/nixos/packages/herdr-tab-rename/target/debug/.fingerprint/itoa-2c657038d9414b3a/lib-itoa`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: main
+  19: __libc_start_call_main
+  20: __libc_start_main_alias_2
+  21: _start
+   3.495007933s  INFO prepare_target{force=false package_id=memchr v2.8.2 target="memchr"}: cargo::core::compiler::fingerprint: fingerprint error for memchr v2.8.2/Check { test: false }/TargetInner { benched: false, ..: lib_target("memchr", ["lib"], "/home/rhencloud/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.2/src/lib.rs", Edition2021) }
+   3.495023488s  INFO prepare_target{force=false package_id=memchr v2.8.2 target="memchr"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/rhencloud/nixos/packages/herdr-tab-rename/target/debug/.fingerprint/memchr-45da209a7a5382dd/lib-memchr`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: main
+  19: __libc_start_call_main
+  20: __libc_start_main_alias_2
+  21: _start
+   3.495279334s  INFO prepare_target{force=false package_id=serde_core v1.0.228 target="serde_core"}: cargo::core::compiler::fingerprint: fingerprint error for serde_core v1.0.228/Check { test: false }/TargetInner { ..: lib_target("serde_core", ["lib"], "/home/rhencloud/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/src/lib.rs", Edition2021) }
+   3.495294345s  INFO prepare_target{force=false package_id=serde_core v1.0.228 target="serde_core"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/rhencloud/nixos/packages/herdr-tab-rename/target/debug/.fingerprint/serde_core-562b7f935b494095/lib-serde_core`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: main
+  19: __libc_start_call_main
+  20: __libc_start_main_alias_2
+  21: _start
+   3.495966385s  INFO prepare_target{force=false package_id=zmij v1.0.21 target="zmij"}: cargo::core::compiler::fingerprint: fingerprint error for zmij v1.0.21/Check { test: false }/TargetInner { ..: lib_target("zmij", ["lib"], "/home/rhencloud/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.21/src/lib.rs", Edition2021) }
+   3.495982597s  INFO prepare_target{force=false package_id=zmij v1.0.21 target="zmij"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/rhencloud/nixos/packages/herdr-tab-rename/target/debug/.fingerprint/zmij-4a72e7ba718c160e/lib-zmij`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::cli::main
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: main
+  19: __libc_start_call_main
+  20: __libc_start_main_alias_2
+  21: _start
+   3.496483684s  INFO prepare_target{force=false package_id=herdr-tab-rename v0.1.0 (/home/rhencloud/nixos/packages/herdr-tab-rename) target="herdr-tab-rename"}: cargo::core::compiler::fingerprint: fingerprint error for herdr-tab-rename v0.1.0 (/home/rhencloud/nixos/packages/herdr-tab-rename)/Check { test: true }/TargetInner { name: "herdr-tab-rename", doc: true, ..: with_path("/home/rhencloud/nixos/packages/herdr-tab-rename/src/main.rs", Edition2021) }
+   3.496500578s  INFO prepare_target{force=false package_id=herdr-tab-rename v0.1.0 (/home/rhencloud/nixos/packages/herdr-tab-rename) target="herdr-tab-rename"}: cargo::core::compiler::fingerprint:     err: failed to read `/home/rhencloud/nixos/packages/herdr-tab-rename/target/debug/.fingerprint/herdr-tab-rename-31b3ce71bbfb40d0/test-bin-herdr-tab-rename`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::io::error::Error as anyhow::context::ext::StdError>::ext_context::<alloc::string::String>
+   1: cargo_util::paths::read
+   2: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   3: cargo::core::compiler::fingerprint::prepare_target
+   4: cargo::core::compiler::compile
+   5: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   6: cargo::ops::cargo_compile::compile_ws
+   7: cargo::ops::cargo_compile::compile_with_exec
+   8: cargo::ops::cargo_compile::compile
+   9: cargo::commands::check::exec
+  10: <cargo::cli::Exec>::exec
+  11: cargo::cli::main
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: main
+  17: __libc_start_call_main
+  18: __libc_start_main_alias_2
+  19: _start
+    Checking memchr v2.8.2
+    Checking itoa v1.0.18
+    Checking serde_core v1.0.228
+    Checking zmij v1.0.21
+    Checking serde_json v1.0.150
+    Checking herdr-tab-rename v0.1.0 (/home/rhencloud/nixos/packages/herdr-tab-rename)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.93s

@@ -17,6 +17,7 @@
       "https://cache.nixos.org"
       "https://noctalia.cachix.org"
       "https://niri.cachix.org"
+      "https://vicinae.cachix.org"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
       "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
@@ -32,6 +33,7 @@
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
+      "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       # "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
@@ -59,7 +61,7 @@
     };
 
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+      url = "github:noctalia-dev/noctalia-shell/v4.7.7";
       # url = "https://gh-proxy.com/github.com/noctalia-dev/noctalia-shell/archive/master.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -117,6 +119,26 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    herdr = {
+      url = "github:ogulcancelik/herdr/v0.7.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    vicinae = {
+      url = "github:vicinaehq/vicinae";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    rime-keytao = {
+      url = "github:xkinput/KeyTao";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -145,6 +167,9 @@
           inputs.niri.homeModules.niri
           inputs.noctalia.homeModules.default
           inputs.piri.homeManagerModules.default
+          inputs.nvf.homeManagerModules.default
+          inputs.rime-keytao.homeManagerModules.default
+          inputs.vicinae.homeManagerModules.default
           {
             nixpkgs.config.allowUnfree = true;
             nixpkgs.config.permittedInsecurePackages = [
@@ -198,6 +223,11 @@
               pkgs = pkgsFor "x86_64-linux";
             in
             pkgs.callPackage ./packages/lwe/default.nix { };
+          herdr-tab-rename =
+            let
+              pkgs = pkgsFor "x86_64-linux";
+            in
+            pkgs.callPackage ./packages/herdr-tab-rename/default.nix { };
         };
       };
     };

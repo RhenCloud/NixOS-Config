@@ -1,13 +1,12 @@
 { pkgs, ... }:
-
 let
   accent = "pink";
   variant = "mocha";
 
-  kvantumThemePackage =
-    pkgs.catppuccin-kvantum.override { inherit variant accent; };
+  kvantumThemePackage = pkgs.catppuccin-kvantum.override { inherit variant accent; };
   themeName = "catppuccin-${variant}-${accent}";
-in {
+in
+{
   qt = {
     enable = true;
     platformTheme.name = "qtct";
@@ -19,7 +18,6 @@ in {
       theme=${themeName}
     '';
 
-    "Kvantum/${themeName}".source =
-      "${kvantumThemePackage}/share/Kvantum/${themeName}";
+    "Kvantum/${themeName}".source = "${kvantumThemePackage}/share/Kvantum/${themeName}";
   };
 }
