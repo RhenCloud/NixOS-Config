@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   i18n.inputMethod = {
     enable = true;
@@ -13,9 +13,7 @@
         librime-octagram
         librime-lua
         (fcitx5-rime.override {
-          rimeDataPkgs = [
-            rime-data
-          ];
+          rimeDataPkgs = with pkgs; [ rime-data ];
         })
       ];
     };
