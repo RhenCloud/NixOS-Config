@@ -22,28 +22,32 @@ in
     };
 
     extraDictFiles = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.submodule {
-        options.path = lib.mkOption {
-          type = lib.types.path;
-        };
-      });
+      type = lib.types.attrsOf (
+        lib.types.submodule {
+          options.path = lib.mkOption {
+            type = lib.types.path;
+          };
+        }
+      );
       default = { };
       description = "Extra custom dictionary files to install";
     };
 
     extraLuaFiles = lib.mkOption {
-      type = lib.types.listOf (lib.types.submodule (
-        { config, name, ... }: {
-          options.name = lib.mkOption {
-            type = lib.types.str;
-            description = "Name (filename) for the Lua file";
-          };
-          options.source = lib.mkOption {
-            type = lib.types.path;
-            description = "Path to the Lua file content directory";
-          };
-        }
-      ));
+      type = lib.types.listOf (
+        lib.types.submodule (
+          { config, name, ... }: {
+            options.name = lib.mkOption {
+              type = lib.types.str;
+              description = "Name (filename) for the Lua file";
+            };
+            options.source = lib.mkOption {
+              type = lib.types.path;
+              description = "Path to the Lua file content directory";
+            };
+          }
+        )
+      );
       default = [ ];
       description = "Extra Lua filter scripts to install";
     };
@@ -61,11 +65,13 @@ in
     };
 
     extraYamlFiles = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.submodule {
-        options.path = lib.mkOption {
-          type = lib.types.path;
-        };
-      });
+      type = lib.types.attrsOf (
+        lib.types.submodule {
+          options.path = lib.mkOption {
+            type = lib.types.path;
+          };
+        }
+      );
       default = { };
       description = "Extra YAML files to install";
     };
@@ -102,25 +108,25 @@ in
     };
 
     # classicui.conf 放到 ~/.config/fcitx5/conf/classicui.conf
-    xdg.configFile."fcitx5/conf/classicui.conf".text = ''
-      VerticalCandidateList=False
-      WheelForPaging=True
-      Font="Maple Mono NF CN 11"
-      MenuFont="Maple Mono NF CN 10"
-      TrayFont="Maple Mono NF CN 10"
-      TrayOutlineColor=#000000
-      TrayTextColor=#ffffff
-      PreferTextIcon=True
-      ShowLayoutNameInIcon=True
-      UseInputMethodLanguageToDisplayText=True
-      Theme=Dracula
-      DarkTheme=Dracula
-      UseDarkTheme=True
-      UseAccentColor=True
-      PerScreenDPI=False
-      ForceWaylandDPI=0
-      EnableFractionalScale=True
-    '';
+    # xdg.configFile."fcitx5/conf/classicui.conf".text = ''
+    #   VerticalCandidateList=False
+    #   WheelForPaging=True
+    #   Font="Maple Mono NF CN 11"
+    #   MenuFont="Maple Mono NF CN 10"
+    #   TrayFont="Maple Mono NF CN 10"
+    #   TrayOutlineColor=#000000
+    #   TrayTextColor=#ffffff
+    #   PreferTextIcon=True
+    #   ShowLayoutNameInIcon=True
+    #   UseInputMethodLanguageToDisplayText=True
+    #   Theme=Dracula
+    #   DarkTheme=Dracula
+    #   UseDarkTheme=True
+    #   UseAccentColor=True
+    #   PerScreenDPI=False
+    #   ForceWaylandDPI=0
+    #   EnableFractionalScale=True
+    # '';
 
     # Lua 脚本（放到 rime/lua/ 下，供 rime.lua 的 require 加载）
     xdg.dataFile."fcitx5/rime/lua/reduce_emoji_filter.lua" = {
@@ -133,75 +139,75 @@ in
     };
 
     home.activation.installRimeLateConfig = ''
-      rime_dir=$HOME/.local/share/fcitx5/rime
-      mkdir -p "$rime_dir"
+            rime_dir=$HOME/.local/share/fcitx5/rime
+            mkdir -p "$rime_dir"
 
-      # 覆盖自定义 YAML（rime-keytao 同步的版本无自定义修改）
-      cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
-      cp -f ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
+            # 覆盖自定义 YAML（rime-keytao 同步的版本无自定义修改）
+            cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
+            cp -f ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
 
-      # 清理旧版 xmjd6 残留文件
-      for f in xmjd6 liangfen pinyin_simp; do
-        rm -f "$rime_dir/$f"*.*
-      done
-      rm -rf "$rime_dir/lua/xmjd6"* "$rime_dir/opencc/xmjd6" 2>/dev/null || true
+            # 清理旧版 xmjd6 残留文件
+            for f in xmjd6 liangfen pinyin_simp; do
+              rm -f "$rime_dir/$f"*.*
+            done
+            rm -rf "$rime_dir/lua/xmjd6"* "$rime_dir/opencc/xmjd6" 2>/dev/null || true
 
-      # 追加 require 到 rime.lua
-      if [ -f "$rime_dir/rime.lua" ]; then
-        # 旧版存根清理（如果存在）
-        if grep -q "Stub for reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
-          sed -i '/-- Stub for reduce_emoji_filter/,/reduce_emoji_processor = reduce_emoji_filter/d' "$rime_dir/rime.lua"
-        fi
-        if ! grep -q "select_character" "$rime_dir/rime.lua" 2>/dev/null; then
-          cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+            # 追加 require 到 rime.lua
+            if [ -f "$rime_dir/rime.lua" ]; then
+              # 旧版存根清理（如果存在）
+              if grep -q "Stub for reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
+                sed -i '/-- Stub for reduce_emoji_filter/,/reduce_emoji_processor = reduce_emoji_filter/d' "$rime_dir/rime.lua"
+              fi
+              if ! grep -q "select_character" "$rime_dir/rime.lua" 2>/dev/null; then
+                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
 
-          -- reduce_emoji_filter: 降低 emoji 在候选项的位置
-          reduce_emoji_filter = require("reduce_emoji_filter")
-          reduce_emoji_translator = reduce_emoji_filter
-          reduce_emoji_processor = reduce_emoji_filter
+                -- reduce_emoji_filter: 降低 emoji 在候选项的位置
+                reduce_emoji_filter = require("reduce_emoji_filter")
+                reduce_emoji_translator = reduce_emoji_filter
+                reduce_emoji_processor = reduce_emoji_filter
 
-          -- select_character: 首/末字选择
-          select_character = require("select_character")
-LUAEOF
-        fi
-      fi
+                -- select_character: 首/末字选择
+                select_character = require("select_character")
+      LUAEOF
+              fi
+            fi
 
-      ${lib.optionalString (cfg.extraUserPhrases != "") ''
-        cat > "$rime_dir/custom_phrase.txt" << EOF
-        ${cfg.extraUserPhrases}
-        EOF
-      ''}
+            ${lib.optionalString (cfg.extraUserPhrases != "") ''
+              cat > "$rime_dir/custom_phrase.txt" << EOF
+              ${cfg.extraUserPhrases}
+              EOF
+            ''}
 
-      ${lib.optionalString (cfg.extraDictFiles != { }) ''
-        for file in ${
-          lib.escapeShellArgs (map (n: cfg.extraDictFiles.${n}.path) (lib.attrNames cfg.extraDictFiles))
-        }; do
-          dest="$rime_dir/custom"
-          dest="$dest/$(basename "$file")"
-          cp -R "$file" "$dest"
-        done
-      ''}
+            ${lib.optionalString (cfg.extraDictFiles != { }) ''
+              for file in ${
+                lib.escapeShellArgs (map (n: cfg.extraDictFiles.${n}.path) (lib.attrNames cfg.extraDictFiles))
+              }; do
+                dest="$rime_dir/custom"
+                dest="$dest/$(basename "$file")"
+                cp -R "$file" "$dest"
+              done
+            ''}
 
-      ${lib.optionalString (cfg.extraYamlFiles != { }) ''
-        for file in ${
-          lib.escapeShellArgs (map (n: cfg.extraYamlFiles.${n}.path) (lib.attrNames cfg.extraYamlFiles))
-        }; do
-          dest="$rime_dir/custom"
-          mkdir -p "$dest"
-          dest="$dest/$(basename "$file")"
-          cp -R "$file" "$dest"
-        done
-      ''}
+            ${lib.optionalString (cfg.extraYamlFiles != { }) ''
+              for file in ${
+                lib.escapeShellArgs (map (n: cfg.extraYamlFiles.${n}.path) (lib.attrNames cfg.extraYamlFiles))
+              }; do
+                dest="$rime_dir/custom"
+                mkdir -p "$dest"
+                dest="$dest/$(basename "$file")"
+                cp -R "$file" "$dest"
+              done
+            ''}
 
-      ${lib.optionalString (cfg.extraLuaFiles != [ ]) ''
-        for filter in ${lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)}; do
-          src="$filter"
-          dest="$rime_dir/custom"
-          cp -R "$src" "$dest"
-        done
-      ''}
+            ${lib.optionalString (cfg.extraLuaFiles != [ ]) ''
+              for filter in ${lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)}; do
+                src="$filter"
+                dest="$rime_dir/custom"
+                cp -R "$src" "$dest"
+              done
+            ''}
 
-      echo "Rime custom config installed"
+            echo "Rime custom config installed"
     '';
   };
 }
