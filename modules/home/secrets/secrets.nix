@@ -1,5 +1,5 @@
 let
-  user = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ";
+  ageKey = "REDACTED-ea9890be";
 in {
-  "rime-custom-phrases.age".publicKeys = [ user ];
+  "rime-custom-phrases.age".publicKeys = [ ageKey ];
 }

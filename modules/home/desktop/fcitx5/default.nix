@@ -94,6 +94,11 @@ in
       path = "${config.home.homeDirectory}/.local/share/fcitx5/rime/custom_phrase.txt";
     };
 
+    # 使用 age 原生密钥，不依赖 SSH agent（避免 GPG agent 兼容问题）
+    age.identityPaths = [
+      "${config.home.homeDirectory}/.config/age/agenix-key.txt"
+    ];
+
     home.packages = [ inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
     # 主题文件放到 ~/.local/share/fcitx5/themes/（fcitx5-configtool 能识别的路径）
