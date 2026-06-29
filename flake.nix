@@ -112,7 +112,7 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
 
-    # agenix.url = "github:ryantm/agenix";
+    agenix.url = "github:ryantm/agenix";
 
     zen-browser = {
       url = "github:youwen5/zen-browser-flake";
@@ -164,6 +164,7 @@
         };
 
         homes.modules = [
+          inputs.agenix.homeManagerModules.default
           inputs.niri.homeModules.niri
           inputs.noctalia.homeModules.default
           inputs.piri.homeManagerModules.default

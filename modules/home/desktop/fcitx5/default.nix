@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -9,8 +10,6 @@ let
 in
 {
   options.rhencloud.fcitx5 = {
-    enable = lib.mkEnableOption "fcitx5 and rime custom config";
-
     extraRimeConfig = lib.mkOption {
       type = lib.types.attrs;
       default = { };
@@ -20,36 +19,38 @@ in
     extraKeyTaoConfig = lib.mkOption {
       type = lib.types.attrs;
       default = { };
-      description = "Additional keyt ao configuration values";
+      description = "Additional keytao configuration values";
     };
 
     extraDictFiles = lib.mkOption {
-      type = lib.types.listOf lib.types.attrsOf lib.types.path;
-      default = [ ];
+      type = lib.types.attrsOf (lib.types.submodule {
+        options.path = lib.mkOption {
+          type = lib.types.path;
+        };
+      });
+      default = { };
       description = "Extra custom dictionary files to install";
     };
 
     extraLuaFiles = lib.mkOption {
-      type = lib.types.listOf lib.types.submodule (
-        lib.types.submodule (
-          { config, name, ... }: {
-            options.name = lib.mkOption {
-              type = lib.types.str;
-              description = "Name (filename) for the Lua file";
-            };
-            options.source = lib.mkOption {
-              type = lib.types.path;
-              description = "Path to the Lua file content directory";
-            };
-          }
-        )
-      );
+      type = lib.types.listOf (lib.types.submodule (
+        { config, name, ... }: {
+          options.name = lib.mkOption {
+            type = lib.types.str;
+            description = "Name (filename) for the Lua file";
+          };
+          options.source = lib.mkOption {
+            type = lib.types.path;
+            description = "Path to the Lua file content directory";
+          };
+        }
+      ));
       default = [ ];
       description = "Extra Lua filter scripts to install";
     };
 
     extraAssortedFiles = lib.mkOption {
-      type = lib.types.listOf lib.types.attrsOf lib.types.path;
+      type = lib.types.listOf (lib.types.attrsOf lib.types.path);
       default = [ ];
       description = "Extra Rime config (YAML) files to install";
     };
@@ -57,12 +58,16 @@ in
     extraUserPhrases = lib.mkOption {
       type = lib.types.lines;
       default = "";
-      description = "Extra user phrases (word code)";
+      description = "Extra user phrases (word code)（敏感内容建议用 agenix 加密：age.secrets.rime-custom-phrases）";
     };
 
     extraYamlFiles = lib.mkOption {
-      type = lib.types.listOf lib.types.attrsOf lib.types.path;
-      default = [ ];
+      type = lib.types.attrsOf (lib.types.submodule {
+        options.path = lib.mkOption {
+          type = lib.types.path;
+        };
+      });
+      default = { };
       description = "Extra YAML files to install";
     };
 
@@ -79,74 +84,85 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    xdg.configFile."fcitx5/rime".source = "${config.home.homeDirectory}/.local/share/fcitx5/rime";
-    # 链接主题配置
-    xdg.configFile."fcitx5/themes/dracula".source = ./fcitx5/themes/dracula;
-    xdg.configFile."fcitx5/themes/default-dark".source = ./themes/default-dark;
-    xdg.configFile."fcitx5/themes/default-light".source = ./themes/default-light;
+  config = {
+    # 使用 rime-keytao 自身提供的 HM 模块来安装
+    programs.rime-keytao.enable = true;
+
+    # agenix 加密的自定义短语 → 直接解密到 rime 目录
+    age.secrets.rime-custom-phrases = {
+      file = ../../secrets/rime-custom-phrases.age;
+      path = "${config.home.homeDirectory}/.local/share/fcitx5/rime/custom_phrase.txt";
+    };
+
+    home.packages = [ inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+
+    # 主题文件放到 ~/.local/share/fcitx5/themes/（fcitx5-configtool 能识别的路径）
+    xdg.dataFile."fcitx5/themes/dracula" = {
+      source = ./fcitx5/themes/dracula;
+      recursive = true;
+    };
+    xdg.dataFile."fcitx5/themes/default-dark" = {
+      source = ./themes/default-dark;
+      recursive = true;
+    };
+    xdg.dataFile."fcitx5/themes/default-light" = {
+      source = ./themes/default-light;
+      recursive = true;
+    };
+
+    # classicui.conf 放到 ~/.config/fcitx5/conf/classicui.conf
     xdg.configFile."fcitx5/conf/classicui.conf".text = ''
-      # 垂直候选列表
-      Vertical Candidate List=False
-      # 使用鼠标滚轮翻页
+      VerticalCandidateList=False
       WheelForPaging=True
-      # 字体
       Font="Maple Mono NF CN 11"
-      # 菜单字体
       MenuFont="Maple Mono NF CN 10"
-      # 托盘字体
       TrayFont="Maple Mono NF CN 10"
-      # 托盘标签轮廓颜色
       TrayOutlineColor=#000000
-      # 托盘标签文本颜色
       TrayTextColor=#ffffff
-      # 优先使用文字图标
       PreferTextIcon=True
-      # 在图标中显示布局名称
       ShowLayoutNameInIcon=True
-      # 使用输入法的语言来显示文字
       UseInputMethodLanguageToDisplayText=True
-      # 主题
       Theme=default-dark
-      # 深色主题
       DarkTheme=default-dark
-      # 跟随系统浅色/深色设置
       UseDarkTheme=False
-      # 当被主题和桌面支持时使用系统的重点色
       UseAccentColor=True
-      # 在 X11 上针对不同屏幕使用单独的 DPI
       PerScreenDPI=False
-      # 固定 Wayland 的字体 DPI
       ForceWaylandDPI=0
-      # 在 Wayland 下启用分数缩放
       EnableFractionalScale=True
     '';
 
-    home.packages = with pkgs; [ rime-keytao ] ++ cfg.extraUserDictPackages;
-
-    home.activation.installRimeKeytao = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      # Install keytao via rime addon activation
-      ${pkgs.rime-keytao}/bin/reinstall.sh
+    # 自定义 rime 配置（创建 reduce_emoji_filter 存根文件，同步后由 rime.lua 自动加载）
+    xdg.dataFile."fcitx5/rime/reduce_emoji_filter.lua".text = ''
+      -- Stub for reduce_emoji_filter (required by some schemas)
+      local function filter(data)
+        return data
+      end
+      return filter
     '';
 
-    home.activation.installRimeCustomConfig = lib.hm.dag.entryAfter [ "installRimeKeytao" ] ''
+    home.activation.installRimeCustomConfig = ''
       rime_dir=$HOME/.local/share/fcitx5/rime
-
       mkdir -p "$rime_dir"
 
-      # Copy keytao schemas from rime-keytao package
-      ${pkgs.rime-keytao}/bin/reinstall.sh
+      # 清理旧版 xmjd6 残留文件
+      for f in xmjd6 liangfen pinyin_simp; do
+        rm -f "$rime_dir/$f"*.*
+      done
+      rm -rf "$rime_dir/lua/xmjd6"* "$rime_dir/opencc/xmjd6" 2>/dev/null || true
 
-      # Install custom user phrases
-      ${pkgs.writeText "custom_phrase.txt.txt" cfg.extraCustomPhrases}
-      ${lib.optionalString (cfg.extraUserPhrases != "") ''
-        cat > "$rime_dir/custom_phrase.txt.txt" << EOF
-                    ${cfg.extraUserPhrases}
-                    EOF
-      ''}
+      # 追加 reduce_emoji_filter 到 rime.lua（仅在 rime-keytao 同步后生效）
+      if [ -f "$rime_dir/rime.lua" ] && ! grep -q "reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
+        cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+      -- Stub for reduce_emoji_filter
+      reduce_emoji_filter = function(input) return input end
+      reduce_emoji_translator = reduce_emoji_filter
+      reduce_emoji_processor = reduce_emoji_filter
+      LUAEOF
+      fi
 
-      # Install extra custom dictionaries
-      ${lib.optionalString (cfg.extraDictFiles != [ ]) ''
+      # agenix 加密的 custom_phrase.txt 由 age.secrets.rime-custom-phrases 自动放置
+
+      ${lib.optionalString (cfg.extraDictFiles != { }) ''
         for file in ${
           lib.escapeShellArgs (map (n: cfg.extraDictFiles.${n}.path) (lib.attrNames cfg.extraDictFiles))
         }; do
@@ -156,8 +172,7 @@ in
         done
       ''}
 
-      # Install extra YAML config files
-      ${lib.optionalString (cfg.extraYamlFiles != [ ]) ''
+      ${lib.optionalString (cfg.extraYamlFiles != { }) ''
         for file in ${
           lib.escapeShellArgs (map (n: cfg.extraYamlFiles.${n}.path) (lib.attrNames cfg.extraYamlFiles))
         }; do
@@ -168,7 +183,6 @@ in
         done
       ''}
 
-      # Install Lua filter scripts
       ${lib.optionalString (cfg.extraLuaFiles != [ ]) ''
         for filter in ${lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)}; do
           src="$filter"
