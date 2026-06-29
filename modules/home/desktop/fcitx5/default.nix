@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let
@@ -58,7 +57,7 @@ in
     extraUserPhrases = lib.mkOption {
       type = lib.types.lines;
       default = "";
-      description = "Extra user phrases (word code)（敏感内容建议用 agenix 加密：age.secrets.rime-custom-phrases）";
+      description = "Extra user phrases (word code)";
     };
 
     extraYamlFiles = lib.mkOption {
@@ -87,19 +86,6 @@ in
   config = {
     # 使用 rime-keytao 自身提供的 HM 模块来安装
     programs.rime-keytao.enable = true;
-
-    # agenix 加密的自定义短语 → 直接解密到 rime 目录
-    age.secrets.rime-custom-phrases = {
-      file = ../../secrets/rime-custom-phrases.age;
-      path = "${config.home.homeDirectory}/.local/share/fcitx5/rime/custom_phrase.txt";
-    };
-
-    # 使用 age 原生密钥，不依赖 SSH agent（避免 GPG agent 兼容问题）
-    age.identityPaths = [
-      "${config.home.homeDirectory}/.config/age/agenix-key.txt"
-    ];
-
-    home.packages = [ inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
     # 主题文件放到 ~/.local/share/fcitx5/themes/（fcitx5-configtool 能识别的路径）
     xdg.dataFile."fcitx5/themes/dracula" = {
@@ -145,9 +131,12 @@ in
       return filter
     '';
 
-    home.activation.installRimeCustomConfig = ''
+    home.activation.installRimeLateConfig = ''
       rime_dir=$HOME/.local/share/fcitx5/rime
       mkdir -p "$rime_dir"
+
+      # 覆盖 default.custom.yaml（rime-keytao 同步后生效）
+      cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
 
       # 清理旧版 xmjd6 残留文件
       for f in xmjd6 liangfen pinyin_simp; do
@@ -165,7 +154,11 @@ in
       LUAEOF
       fi
 
-      # agenix 加密的 custom_phrase.txt 由 age.secrets.rime-custom-phrases 自动放置
+      ${lib.optionalString (cfg.extraUserPhrases != "") ''
+        cat > "$rime_dir/custom_phrase.txt" << EOF
+        ${cfg.extraUserPhrases}
+        EOF
+      ''}
 
       ${lib.optionalString (cfg.extraDictFiles != { }) ''
         for file in ${
