@@ -113,9 +113,9 @@ in
       PreferTextIcon=True
       ShowLayoutNameInIcon=True
       UseInputMethodLanguageToDisplayText=True
-      Theme=default-dark
-      DarkTheme=default-dark
-      UseDarkTheme=False
+      Theme=Dracula
+      DarkTheme=Dracula
+      UseDarkTheme=True
       UseAccentColor=True
       PerScreenDPI=False
       ForceWaylandDPI=0
