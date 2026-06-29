@@ -122,24 +122,15 @@ in
       EnableFractionalScale=True
     '';
 
-    # rime_3/rime_4 额外配置的 Lua 脚本
-    xdg.dataFile."fcitx5/rime_3/lua/reduce_emoji_filter.lua" = {
-      source = ./rime_3/lua/reduce_emoji_filter.lua;
+    # Lua 脚本（放到 rime/lua/ 下，供 rime.lua 的 require 加载）
+    xdg.dataFile."fcitx5/rime/lua/reduce_emoji_filter.lua" = {
+      source = ./rime/lua/reduce_emoji_filter.lua;
       force = true;
     };
-    xdg.dataFile."fcitx5/rime_4/lua/select_character.lua" = {
-      source = ./rime_4/lua/select_character.lua;
+    xdg.dataFile."fcitx5/rime/lua/select_character.lua" = {
+      source = ./rime/lua/select_character.lua;
       force = true;
     };
-
-    # 自定义 rime 配置（创建 reduce_emoji_filter 存根文件，同步后由 rime.lua 自动加载）
-    xdg.dataFile."fcitx5/rime/reduce_emoji_filter.lua".text = ''
-      -- Stub for reduce_emoji_filter (required by some schemas)
-      local function filter(data)
-        return data
-      end
-      return filter
-    '';
 
     home.activation.installRimeLateConfig = ''
       rime_dir=$HOME/.local/share/fcitx5/rime
@@ -154,14 +145,24 @@ in
       done
       rm -rf "$rime_dir/lua/xmjd6"* "$rime_dir/opencc/xmjd6" 2>/dev/null || true
 
-      # 追加 reduce_emoji_filter 到 rime.lua（仅在 rime-keytao 同步后生效）
-      if [ -f "$rime_dir/rime.lua" ] && ! grep -q "reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
-        cat >> "$rime_dir/rime.lua" << 'LUAEOF'
-      -- Stub for reduce_emoji_filter
-      reduce_emoji_filter = function(input) return input end
-      reduce_emoji_translator = reduce_emoji_filter
-      reduce_emoji_processor = reduce_emoji_filter
-      LUAEOF
+      # 追加 require 到 rime.lua
+      if [ -f "$rime_dir/rime.lua" ]; then
+        # 旧版存根清理（如果存在）
+        if grep -q "Stub for reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
+          sed -i '/-- Stub for reduce_emoji_filter/,/reduce_emoji_processor = reduce_emoji_filter/d' "$rime_dir/rime.lua"
+        fi
+        if ! grep -q "select_character" "$rime_dir/rime.lua" 2>/dev/null; then
+          cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+
+          -- reduce_emoji_filter: 降低 emoji 在候选项的位置
+          reduce_emoji_filter = require("reduce_emoji_filter")
+          reduce_emoji_translator = reduce_emoji_filter
+          reduce_emoji_processor = reduce_emoji_filter
+
+          -- select_character: 首/末字选择
+          select_character = require("select_character")
+LUAEOF
+        fi
       fi
 
       ${lib.optionalString (cfg.extraUserPhrases != "") ''
