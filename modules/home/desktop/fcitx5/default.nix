@@ -122,6 +122,10 @@ in
       EnableFractionalScale=True
     '';
 
+    # rime_3/rime_4 额外配置的 Lua 脚本
+    xdg.dataFile."fcitx5/rime_3/lua/reduce_emoji_filter.lua".source = ./rime_3/lua/reduce_emoji_filter.lua;
+    xdg.dataFile."fcitx5/rime_4/lua/select_character.lua".source = ./rime_4/lua/select_character.lua;
+
     # 自定义 rime 配置（创建 reduce_emoji_filter 存根文件，同步后由 rime.lua 自动加载）
     xdg.dataFile."fcitx5/rime/reduce_emoji_filter.lua".text = ''
       -- Stub for reduce_emoji_filter (required by some schemas)
