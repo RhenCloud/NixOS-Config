@@ -108,25 +108,42 @@ in
     };
 
     # classicui.conf 放到 ~/.config/fcitx5/conf/classicui.conf
-    # xdg.configFile."fcitx5/conf/classicui.conf".text = ''
-    #   VerticalCandidateList=False
-    #   WheelForPaging=True
-    #   Font="Maple Mono NF CN 11"
-    #   MenuFont="Maple Mono NF CN 10"
-    #   TrayFont="Maple Mono NF CN 10"
-    #   TrayOutlineColor=#000000
-    #   TrayTextColor=#ffffff
-    #   PreferTextIcon=True
-    #   ShowLayoutNameInIcon=True
-    #   UseInputMethodLanguageToDisplayText=True
-    #   Theme=Dracula
-    #   DarkTheme=Dracula
-    #   UseDarkTheme=True
-    #   UseAccentColor=True
-    #   PerScreenDPI=False
-    #   ForceWaylandDPI=0
-    #   EnableFractionalScale=True
-    # '';
+    xdg.configFile."fcitx5/conf/classicui.conf".text = ''
+      # 垂直候选列表
+      Vertical Candidate List=False
+      # 使用鼠标滚轮翻页
+      WheelForPaging=True
+      # 字体
+      Font="Maple Mono NF CN 11"
+      # 菜单字体
+      MenuFont="Maple Mono NF CN 10"
+      # 托盘字体
+      TrayFont="Maple Mono NF CN 10"
+      # 托盘标签轮廓颜色
+      TrayOutlineColor=#000000
+      # 托盘标签文本颜色
+      TrayTextColor=#ffffff
+      # 优先使用文字图标
+      PreferTextIcon=True
+      # 在图标中显示布局名称
+      ShowLayoutNameInIcon=True
+      # 使用输入法的语言来显示文字
+      UseInputMethodLanguageToDisplayText=True
+      # 主题
+      Theme=default-dark
+      # 深色主题
+      DarkTheme=default-dark
+      # 跟随系统浅色/深色设置
+      UseDarkTheme=False
+      # 当被主题和桌面支持时使用系统的重点色
+      UseAccentColor=True
+      # 在 X11 上针对不同屏幕使用单独的 DPI
+      PerScreenDPI=False
+      # 固定 Wayland 的字体 DPI
+      ForceWaylandDPI=0
+      # 在 Wayland 下启用分数缩放
+      EnableFractionalScale=True
+    '';
 
     # Lua 脚本（放到 rime/lua/ 下，供 rime.lua 的 require 加载）
     xdg.dataFile."fcitx5/rime/lua/reduce_emoji_filter.lua" = {
