@@ -31,8 +31,9 @@ jobs:
         run: |
           mkdir -p output/rime/lua
 
-          # 1. 键道基础文件
+          # 1. 键道基础文件（nix store 为只读，先设可写以便覆盖）
           cp -r "${{ env.rimedir }}/share/rime-data/"* output/rime/
+          chmod -R +w output/rime/
 
           # 2. 自定义 Lua 脚本
           cp modules/home/desktop/fcitx5/rime/lua/*.lua output/rime/lua/
