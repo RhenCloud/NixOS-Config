@@ -136,8 +136,9 @@ in
       rime_dir=$HOME/.local/share/fcitx5/rime
       mkdir -p "$rime_dir"
 
-      # 覆盖 default.custom.yaml（rime-keytao 同步后生效）
+      # 覆盖 default.custom.yaml & 添加 keytao.custom.yaml（rime-keytao 同步后生效）
       cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
+      cp -f ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
 
       # 清理旧版 xmjd6 残留文件
       for f in xmjd6 liangfen pinyin_simp; do
