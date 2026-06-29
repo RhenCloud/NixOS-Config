@@ -71,4 +71,4 @@ local function select_character(key, env)
    return 2 -- kNoop
 end
 
-return select_character
+return { func = select_character }

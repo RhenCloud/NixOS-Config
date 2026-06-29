@@ -136,12 +136,9 @@ in
       rime_dir=$HOME/.local/share/fcitx5/rime
       mkdir -p "$rime_dir"
 
-      # 覆盖自定义文件（rime-keytao 同步会覆盖 rime/，此处重新覆盖）
+      # 覆盖自定义 YAML（rime-keytao 同步的版本无自定义修改）
       cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
       cp -f ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
-      mkdir -p "$rime_dir/lua"
-      cp -f ${./rime/lua/reduce_emoji_filter.lua} "$rime_dir/lua/reduce_emoji_filter.lua"
-      cp -f ${./rime/lua/select_character.lua} "$rime_dir/lua/select_character.lua"
 
       # 清理旧版 xmjd6 残留文件
       for f in xmjd6 liangfen pinyin_simp; do
