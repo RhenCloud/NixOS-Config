@@ -7,9 +7,7 @@
 }:
 let
   cfg = config.rhencloud.fcitx5;
-  ice2keytao = pkgs.callPackage ../../../../packages/ice2keytao/default.nix {
-    rimeKeytao = inputs.rime-keytao.packages.${pkgs.system}.default;
-  };
+  rimeKeytaoPkg = inputs.rime-keytao.packages.${pkgs.system}.default;
 in
 {
   options.rhencloud.fcitx5 = {
@@ -203,7 +201,11 @@ in
             ''}
 
             # 部署 ice2keytao（从 rime-ice 转换的词库）
-            cp -f "${ice2keytao}/share/rime-data/ice2keytao.dict.yaml" "$rime_dir/ice2keytao.dict.yaml"
+            python3 ${./../../../../scripts/convert-rime-ice-to-keytao.py} \
+              "${pkgs.rime-ice}/share/rime-data/cn_dicts" \
+              "${rimeKeytaoPkg}/share/rime-data/keytao.phrase.dict.yaml" \
+              "${rimeKeytaoPkg}/share/rime-data/keytao.single.dict.yaml" \
+              "$rime_dir/ice2keytao.dict.yaml"
             if [ -f "$rime_dir/keytao.extended.dict.yaml" ]; then
               if ! grep -q "ice2keytao" "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
                 sed -i '/^\.\.\.$/a\  - ice2keytao' "$rime_dir/keytao.extended.dict.yaml"
