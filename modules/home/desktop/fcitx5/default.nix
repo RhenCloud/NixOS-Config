@@ -194,12 +194,7 @@ in
             ${lib.optionalString (cfg.keytaoUserDict != "") ''
               if [ -f "$rime_dir/keytao.user.dict.yaml" ]; then
                 sed -i '/^# >>> Nix managed$/,/^# <<< Nix managed$/d' "$rime_dir/keytao.user.dict.yaml"
-                cat >> "$rime_dir/keytao.user.dict.yaml" << EOF
-
-# >>> Nix managed
-${cfg.keytaoUserDict}
-# <<< Nix managed
-EOF
+                { echo "# >>> Nix managed"; echo '${cfg.keytaoUserDict}' | awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; echo "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
               fi
             ''}
 
