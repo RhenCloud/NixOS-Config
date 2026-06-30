@@ -239,7 +239,9 @@ packages = (baseFlake.packages or { }) // {
             let
               pkgs = pkgsFor "x86_64-linux";
             in
-            pkgs.callPackage ./packages/ice2keytao/default.nix { };
+            pkgs.callPackage ./packages/ice2keytao/default.nix {
+              rime-keytao = inputs.rime-keytao.packages.x86_64-linux.default;
+            };
         };
       };
     };
