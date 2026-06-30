@@ -8,7 +8,7 @@
 let
   cfg = config.rhencloud.fcitx5;
   ice2keytao = pkgs.callPackage ../../../../packages/ice2keytao/default.nix {
-    rime-keytao = inputs.rime-keytao.packages.${pkgs.system}.default;
+    rimeKeytao = inputs.rime-keytao.packages.${pkgs.system}.default;
   };
 in
 {

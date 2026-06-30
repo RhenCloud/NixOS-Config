@@ -1,16 +1,16 @@
-{ lib, stdenvNoCC, pkgs, python3, rime-keytao }:
+{ lib, stdenvNoCC, pkgs, python3, rimeKeytao }:
 
 stdenvNoCC.mkDerivation {
   pname = "ice2keytao";
   version = "1.0";
   src = ./../../scripts;
-  buildInputs = [ python3 pkgs.rime-ice rime-keytao ];
+  buildInputs = [ python3 pkgs.rime-ice rimeKeytao ];
   buildPhase = ''
     mkdir -p "$out/share/rime-data"
     python3 "$src/convert-rime-ice-to-keytao.py" \
       "${pkgs.rime-ice}/share/rime-data/cn_dicts" \
-      "${rime-keytao}/share/rime-data/keytao.phrase.dict.yaml" \
-      "${rime-keytao}/share/rime-data/keytao.single.dict.yaml" \
+      "${rimeKeytao}/share/rime-data/keytao.phrase.dict.yaml" \
+      "${rimeKeytao}/share/rime-data/keytao.single.dict.yaml" \
       "$out/share/rime-data/ice2keytao.dict.yaml"
   '';
   installPhase = ''
