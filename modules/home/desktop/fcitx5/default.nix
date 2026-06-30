@@ -145,19 +145,13 @@ in
       EnableFractionalScale=True
     '';
 
-    # Lua 脚本（放到 rime/lua/ 下，供 rime.lua 的 require 加载）
-    xdg.dataFile."fcitx5/rime/lua/reduce_emoji_filter.lua" = {
-      source = ./rime/lua/reduce_emoji_filter.lua;
-      force = true;
-    };
-    xdg.dataFile."fcitx5/rime/lua/select_character.lua" = {
-      source = ./rime/lua/select_character.lua;
-      force = true;
-    };
-
     home.activation.installRimeLateConfig = ''
             rime_dir=$HOME/.local/share/fcitx5/rime
-            mkdir -p "$rime_dir"
+            mkdir -p "$rime_dir/lua"
+
+            # 覆盖 Lua 脚本（rime-keytao rsync 会删除 xdg.dataFile 的链接，所以在此部署）
+            cp -f ${./rime/lua/reduce_emoji_filter.lua} "$rime_dir/lua/reduce_emoji_filter.lua"
+            cp -f ${./rime/lua/select_character.lua} "$rime_dir/lua/select_character.lua"
 
             # 覆盖自定义 YAML（rime-keytao 同步的版本无自定义修改）
             cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
