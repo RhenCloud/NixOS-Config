@@ -194,7 +194,7 @@ in
             ${lib.optionalString (cfg.keytaoUserDict != "") ''
               if [ -f "$rime_dir/keytao.user.dict.yaml" ]; then
                 sed -i '/^# >>> Nix managed$/,/^# <<< Nix managed$/d' "$rime_dir/keytao.user.dict.yaml"
-                { echo "# >>> Nix managed"; echo '${cfg.keytaoUserDict}' | awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; echo "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
+                { printf '%s\n' "# >>> Nix managed"; printf '%s\n' '${cfg.keytaoUserDict}' | awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; printf '%s\n' "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
               fi
             ''}
 
