@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.rhencloud.fcitx5;
+  ice2keytao = pkgs.callPackage ../../../../packages/ice2keytao/default.nix { };
 in
 {
   options.rhencloud.fcitx5 = {
@@ -197,6 +198,14 @@ in
                 { printf '%s\n' "# >>> Nix managed"; printf '%s\n' '${cfg.keytaoUserDict}' | awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; printf '%s\n' "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
               fi
             ''}
+
+            # 部署 ice2keytao（从 rime-ice 转换的词库）
+            cp -f "${ice2keytao}/share/rime-data/ice2keytao.dict.yaml" "$rime_dir/ice2keytao.dict.yaml"
+            if [ -f "$rime_dir/keytao.extended.dict.yaml" ]; then
+              if ! grep -q "ice2keytao" "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
+                sed -i '/^\.\.\.$/a\  - ice2keytao' "$rime_dir/keytao.extended.dict.yaml"
+              fi
+            fi
 
             ${lib.optionalString (cfg.extraDictFiles != { }) ''
               for file in ${

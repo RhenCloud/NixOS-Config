@@ -204,6 +204,11 @@
         import inputs.nixpkgs {
           inherit system;
           config.allowUnfree = true;
+          overlays = [
+            (final: prev: {
+              rime-keytao = inputs.rime-keytao.packages.${system}.default;
+            })
+          ];
         };
     in
     baseFlake
@@ -230,6 +235,11 @@ packages = (baseFlake.packages or { }) // {
               pkgs = pkgsFor "x86_64-linux";
             in
             pkgs.callPackage ./packages/herdr-tab-rename/default.nix { };
+          ice2keytao =
+            let
+              pkgs = pkgsFor "x86_64-linux";
+            in
+            pkgs.callPackage ./packages/ice2keytao/default.nix { };
         };
       };
     };
