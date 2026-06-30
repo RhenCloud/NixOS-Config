@@ -87,6 +87,12 @@ in
       default = "";
       description = "Additional custom phrases";
     };
+
+    keytaoUserDict = lib.mkOption {
+      type = lib.types.lines;
+      default = "";
+      description = "键道用户词典追加条目（词组<Tab>编码）";
+    };
   };
 
   config = {
@@ -108,50 +114,46 @@ in
     };
 
     # classicui.conf 放到 ~/.config/fcitx5/conf/classicui.conf
-    xdg.configFile."fcitx5/conf/classicui.conf".text = ''
-      # 垂直候选列表
-      Vertical Candidate List=False
-      # 使用鼠标滚轮翻页
-      WheelForPaging=True
-      # 字体
-      Font="Maple Mono NF CN 11"
-      # 菜单字体
-      MenuFont="Maple Mono NF CN 10"
-      # 托盘字体
-      TrayFont="Maple Mono NF CN 10"
-      # 托盘标签轮廓颜色
-      TrayOutlineColor=#000000
-      # 托盘标签文本颜色
-      TrayTextColor=#ffffff
-      # 优先使用文字图标
-      PreferTextIcon=True
-      # 在图标中显示布局名称
-      ShowLayoutNameInIcon=True
-      # 使用输入法的语言来显示文字
-      UseInputMethodLanguageToDisplayText=True
-      # 主题
-      Theme=default-dark
-      # 深色主题
-      DarkTheme=default-dark
-      # 跟随系统浅色/深色设置
-      UseDarkTheme=False
-      # 当被主题和桌面支持时使用系统的重点色
-      UseAccentColor=True
-      # 在 X11 上针对不同屏幕使用单独的 DPI
-      PerScreenDPI=False
-      # 固定 Wayland 的字体 DPI
-      ForceWaylandDPI=0
-      # 在 Wayland 下启用分数缩放
-      EnableFractionalScale=True
-    '';
+    # xdg.configFile."fcitx5/conf/classicui.conf".text = ''
+    #   # 垂直候选列表
+    #   Vertical Candidate List=False
+    #   # 使用鼠标滚轮翻页
+    #   WheelForPaging=True
+    #   # 字体
+    #   Font="Maple Mono NF CN 11"
+    #   # 菜单字体
+    #   MenuFont="Maple Mono NF CN 10"
+    #   # 托盘字体
+    #   TrayFont="Maple Mono NF CN 10"
+    #   # 托盘标签轮廓颜色
+    #   TrayOutlineColor=#000000
+    #   # 托盘标签文本颜色
+    #   TrayTextColor=#ffffff
+    #   # 优先使用文字图标
+    #   PreferTextIcon=True
+    #   # 在图标中显示布局名称
+    #   ShowLayoutNameInIcon=True
+    #   # 使用输入法的语言来显示文字
+    #   UseInputMethodLanguageToDisplayText=True
+    #   # 主题
+    #   Theme=default-dark
+    #   # 深色主题
+    #   DarkTheme=default-dark
+    #   # 跟随系统浅色/深色设置
+    #   UseDarkTheme=False
+    #   # 当被主题和桌面支持时使用系统的重点色
+    #   UseAccentColor=True
+    #   # 在 X11 上针对不同屏幕使用单独的 DPI
+    #   PerScreenDPI=False
+    #   # 固定 Wayland 的字体 DPI
+    #   ForceWaylandDPI=0
+    #   # 在 Wayland 下启用分数缩放
+    #   EnableFractionalScale=True
+    # '';
 
     home.activation.installRimeLateConfig = ''
             rime_dir=$HOME/.local/share/fcitx5/rime
             mkdir -p "$rime_dir/lua"
-
-            # 覆盖 Lua 脚本（rime-keytao rsync 会删除 xdg.dataFile 的链接，所以在此部署）
-            cp -f ${./rime/lua/reduce_emoji_filter.lua} "$rime_dir/lua/reduce_emoji_filter.lua"
-            cp -f ${./rime/lua/select_character.lua} "$rime_dir/lua/select_character.lua"
 
             # 覆盖自定义 YAML（rime-keytao 同步的版本无自定义修改）
             cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
@@ -187,6 +189,18 @@ in
               cat > "$rime_dir/custom_phrase.txt" << EOF
               ${cfg.extraUserPhrases}
               EOF
+            ''}
+
+            ${lib.optionalString (cfg.keytaoUserDict != "") ''
+              if [ -f "$rime_dir/keytao.user.dict.yaml" ]; then
+                sed -i '/^# >>> Nix managed$/,/^# <<< Nix managed$/d' "$rime_dir/keytao.user.dict.yaml"
+                cat >> "$rime_dir/keytao.user.dict.yaml" << EOF
+
+# >>> Nix managed
+${cfg.keytaoUserDict}
+# <<< Nix managed
+EOF
+              fi
             ''}
 
             ${lib.optionalString (cfg.extraDictFiles != { }) ''
