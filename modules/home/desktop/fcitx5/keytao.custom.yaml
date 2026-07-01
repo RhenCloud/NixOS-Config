@@ -1,8 +1,18 @@
 patch:
-  #   "engine/processors/+":
-  #     - lua_processor@select_character
-  #   "engine/filters/+":
-  #     - lua_filter@reduce_emoji_filter
+  "key/key_binder/bindings/+":
+    - { when: has_menu, accept: "F3", toggle: emoji_cn }
+
+      # 翻页 , .
+    - { when: has_menu, accept: comma, send: Page_Up }
+    - { when: has_menu, accept: period, send: Page_Down }
+  # "key/key_binder/+":
+  #   select_first_character: "bracketleft" # 左中括号 [
+  #   select_last_character: "bracketright" # 右中括号 ]
+
+  "engine/filters/+":
+    - lua_filter@*reduce_emoji_filter
+  # "engine/processors/+":
+  #   - lua_processor@*select_character
   punctuator:
     full_shape:
       " ": { commit: "　" }

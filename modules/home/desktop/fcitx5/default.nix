@@ -176,13 +176,11 @@ in
               if ! grep -q "select_character" "$rime_dir/rime.lua" 2>/dev/null; then
                 cat >> "$rime_dir/rime.lua" << 'LUAEOF'
 
-                -- reduce_emoji_filter: 降低 emoji 在候选项的位置
-                reduce_emoji_filter = require("reduce_emoji_filter")
-                reduce_emoji_translator = reduce_emoji_filter
-                reduce_emoji_processor = reduce_emoji_filter
+      -- reduce_emoji_filter: 降低 emoji 在候选项的位置
+      reduce_emoji_filter = require("reduce_emoji_filter")
 
-                -- select_character: 首/末字选择
-                select_character = require("select_character")
+      -- select_character: 首/末字选择
+      select_character = require("select_character")
       LUAEOF
               fi
             fi
