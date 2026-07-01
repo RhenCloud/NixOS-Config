@@ -12,31 +12,19 @@ end
 
 function M.func(input, env)
   local size = M.size
-  if size < 3 then
-    for cand in input:iter() do yield(cand) end
-    return
-  end
 
-  local emoji = {}
-  local i = 0
-  local last_text = ""
+  local moved = {}
+  local n = 0
   for cand in input:iter() do
-    i = i + 1
-    if i <= size then
-      if isEmoji(cand) then
-        cand = ShadowCandidate(cand, cand.type, cand.text, last_text)
-        table.insert(emoji, cand)
-      else
-        last_text = cand.text
-        yield(cand)
-      end
+    n = n + 1
+    if n <= size and isEmoji(cand) then
+      moved[#moved + 1] = cand
     else
-      table.insert(emoji, cand)
+      yield(cand)
     end
   end
-
-  for _, cand in ipairs(emoji) do
-    yield(cand)
+  for i = 1, #moved do
+    yield(moved[i])
   end
 end
 

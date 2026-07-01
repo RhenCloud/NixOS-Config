@@ -161,6 +161,10 @@ in
             cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
             cp -f ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
 
+            # 覆盖 Lua 脚本（rime-keytao rsync 会删除 xdg.dataFile 的链接，所以在此部署）
+            cp -f ${./rime/lua/reduce_emoji_filter.lua} "$rime_dir/lua/reduce_emoji_filter.lua"
+            cp -f ${./rime/lua/select_character.lua} "$rime_dir/lua/select_character.lua"
+
             # 清理旧版 xmjd6 残留文件
             for f in xmjd6 liangfen pinyin_simp; do
               rm -f "$rime_dir/$f"*.*
