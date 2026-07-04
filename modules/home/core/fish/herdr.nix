@@ -78,6 +78,11 @@ let
         end
       end
       command ssh $argv
+      set -l ssh_exit $status
+      if set -q HERDR_ENV
+        herdr-tab-rename on-pwd
+      end
+      return $ssh_exit
     end
 
     function opencode --wraps="opencode"

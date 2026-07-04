@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.rhencloud.fcitx5;
-  rimeKeytaoPkg = inputs.rime-keytao.packages.${pkgs.system}.default;
+  rimeKeytaoPkg = inputs.rime-keytao.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   options.rhencloud.fcitx5 = {
@@ -198,12 +198,12 @@ in
             ${lib.optionalString (cfg.keytaoUserDict != "") ''
               if [ -f "$rime_dir/keytao.user.dict.yaml" ]; then
                 sed -i '/^# >>> Nix managed$/,/^# <<< Nix managed$/d' "$rime_dir/keytao.user.dict.yaml"
-                { printf '%s\n' "# >>> Nix managed"; printf '%s\n' '${cfg.keytaoUserDict}' | awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; printf '%s\n' "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
+                { printf '%s\n' "# >>> Nix managed"; printf '%s\n' '${cfg.keytaoUserDict}' | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; printf '%s\n' "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
               fi
             ''}
 
             # 部署 ice2keytao（从 rime-ice 转换的词库）
-            python3 ${./../../../../scripts/convert-rime-ice-to-keytao.py} \
+            ${pkgs.python3}/bin/python3 ${./../../../../scripts/convert-rime-ice-to-keytao.py} \
               "${pkgs.rime-ice}/share/rime-data/cn_dicts" \
               "${rimeKeytaoPkg}/share/rime-data/keytao.phrase.dict.yaml" \
               "${rimeKeytaoPkg}/share/rime-data/keytao.single.dict.yaml" \

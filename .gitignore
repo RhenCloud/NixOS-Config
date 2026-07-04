@@ -1,6 +1,7 @@
 # Nix 构建产物
 result/
 result*/
+result
 
 # 敏感信息文件（明文）
 *.age.decrypted
@@ -23,3 +24,6 @@ secrets.yaml
 # 备份文件
 *_backup*
 *~
+
+packages/**/node_modules
+packages/**/target

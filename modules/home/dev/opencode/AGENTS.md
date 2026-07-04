@@ -28,7 +28,7 @@
 
 ## 全局开发环境
 
-- **系统**: NixOS（nixos-unstable-small 频道）
+- **系统**: NixOS（nixos-unstable 频道）
 - **包管理**: Nix Flakes + Snowfall Lib
 - **运行时**: Bun 1.3.x、Node.js、Deno、Rust、Go、Python、Java、Kotlin
 - **编辑器**: VS Code、Neovim（通过 nvf 配置）
@@ -59,7 +59,7 @@
 
 ## Nix 约定
 
-- **频道**: nixos-unstable-small（非 nixos-unstable）
+- **频道**: nixos-unstable
 - **stateVersion**: 26.05
 - **允许不自由软件**: `allowUnfree = true`
 - **不自由包白名单**: `electron-39.8.10`（QQ 相关包所需）

@@ -50,7 +50,7 @@ nix develop .#python
 - **Snowfall Lib namespace**: `rhencloud`. The flake uses `snowfall-lib.mkFlake` — this means module paths map to `rhencloud.*` options (e.g., `rhencloud.primaryUser` in `flake.nix:164`).
 - **Single host**: `nixos-desktop` (x86_64-linux). The hostname and host platform are set in `systems/x86_64-linux/nixos-desktop/default.nix`.
 - **Primary user**: `rhencloud`, set via `rhencloud.primaryUser` in `flake.nix:164`.
-- **Channel**: `nixos-unstable-small` (not `nixos-unstable`). This is a faster-moving, smaller binary cache.
+- **Channel**: `nixos-unstable`. This is a faster-moving, smaller binary cache.
 - **stateVersion**: `26.05` (set in both `flake.nix:169` and `homes/.../default.nix:3`).
 - **Window managers**: Both Hyprland and Niri are configured. Hyprland input is fetched via `gh-proxy.com` mirror.
 - **Secrets**: Managed with agenix. Encrypted files live in `modules/home/secrets/*.age`. Rules in `secrets.nix`, mount paths in `modules/home/secrets/default.nix`. SSH key (`~/.ssh/id_ed25519`) is the default decryption identity.

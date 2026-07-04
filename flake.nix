@@ -40,7 +40,7 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable-small";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
 
     # home-manager, used for managing user configuration
@@ -160,6 +160,8 @@
           allowUnfree = true;
           permittedInsecurePackages = [
             "electron-39.8.10"
+            "pnpm-9.15.9"
+            "pnpm-10.29.2"
           ];
         };
 
@@ -174,6 +176,8 @@
             nixpkgs.config.allowUnfree = true;
             nixpkgs.config.permittedInsecurePackages = [
               "electron-39.8.10"
+              "pnpm-9.15.9"
+              "pnpm-10.29.2"
             ];
           }
         ];
@@ -217,11 +221,11 @@
         };
       };
 
-packages = (baseFlake.packages or { }) // {
-          x86_64-linux = ((baseFlake.packages or { }).x86_64-linux or { }) // {
-            rime-keytao = inputs.rime-keytao.packages.x86_64-linux.default;
-            rimeKeytao = inputs.rime-keytao.packages.x86_64-linux.default;
-            lwe =
+      packages = (baseFlake.packages or { }) // {
+        x86_64-linux = ((baseFlake.packages or { }).x86_64-linux or { }) // {
+          rime-keytao = inputs.rime-keytao.packages.x86_64-linux.default;
+          rimeKeytao = inputs.rime-keytao.packages.x86_64-linux.default;
+          lwe =
             let
               pkgs = pkgsFor "x86_64-linux";
             in

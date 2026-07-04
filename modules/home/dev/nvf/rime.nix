@@ -56,13 +56,14 @@ let
       runHook postBuild
     '';
 
-    installPhase = ''
-      runHook preInstall
+    postInstall = ''
       mkdir -p "$out/lua"
       cp -r lua/* "$out/lua/"
-      find build -name "*.so" -exec cp {} "$out/lua/" \;
+      for pkg in packages/*/lua; do
+        [ -d "$pkg" ] && cp -r --no-preserve=mode "$pkg"/* "$out/lua/"
+      done
+      find build -name "*.so" -exec cp -t "$out/lua/" {} \;
       patchelf --set-rpath "${pkgs.librime}/lib:${pkgs.luajit}/lib" "$out/lua/"*.so 2>/dev/null || true
-      runHook postInstall
     '';
 
     doCheck = false;
