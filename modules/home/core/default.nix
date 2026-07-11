@@ -3,7 +3,6 @@
   imports = [
     ./browser.nix
     ./git.nix
-    ./obs.nix
     ./packages.nix
     ./xdg.nix
   ];

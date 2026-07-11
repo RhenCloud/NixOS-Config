@@ -35,7 +35,7 @@ in
 
   services.dae = {
     enable = false;
-    configFile = ./config.dae;
+    configFile = "/etc/dae/config.dae";
     assets = with pkgs; [
       v2ray-geoip
       v2ray-domain-list-community
@@ -44,6 +44,11 @@ in
       enable = true;
       port = 1536;
     };
+  };
+
+  environment.etc = {
+    "dae/config.dae".source = ./dae/config.dae;
+    "dae/nodes.dae".source = ./dae/nodes.dae;
   };
 
   services.openssh.enable = true;
@@ -62,4 +67,12 @@ in
     implementation = "dbus";
   };
   security.polkit.enable = true;
+
+  security.wrappers.pkexec = {
+    source = "${lib.getBin pkgs.polkit}/bin/pkexec";
+    enable = lib.mkForce true;
+    owner = "root";
+    group = "root";
+    setuid = true;
+  };
 }

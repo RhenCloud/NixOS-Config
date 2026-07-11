@@ -3,7 +3,7 @@
   imports = [
     ./bluetooth.nix
     ./docker.nix
-    ./displayManagers.nix
+    ./display-managers.nix
     ./easytier.nix
     ./sound.nix
     ./qemu.nix

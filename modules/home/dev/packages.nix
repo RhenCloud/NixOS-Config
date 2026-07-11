@@ -17,8 +17,10 @@
     cc-switch
     deno
     claude-code
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zed-globalization
     openssl
     ripgrep
+    tokei
   ];
 
   # programs.opencode = {

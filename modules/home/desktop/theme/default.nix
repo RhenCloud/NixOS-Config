@@ -6,20 +6,13 @@ let
 
   kvantumThemePackage = pkgs.catppuccin-kvantum.override { inherit variant accent; };
   themeName = "catppuccin-${variant}-${accent}";
-in
-{
+in {
 
   home.packages = with pkgs; [
-    # catppuccin-cursors
-    # catppuccin-fcitx5
-    # catppuccin-qt5ct
-    # catppuccin-gtk
-    # catppuccin-kvantum
     dracula-theme
     catppuccin-kvantum
     papirus-icon-theme
 
-    # libsForQt5.qtstyleplugins
     libsForQt5.qtstyleplugin-kvantum
     libsForQt5.qt5ct
     kdePackages.qt6ct

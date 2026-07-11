@@ -3,6 +3,8 @@ set -g fish_greeting ''
 
 fish_config theme choose Dracula
 
+# lorri hook fish | source
+
 export ALIYUNPAN_CONFIG_DIR=$HOME/.config/aliyunpan
 export ALIYUNPAN_DOWNLOAD_DIR=$HOME/Downloads/aliyunpan
 

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   kleopatra-wrapped = pkgs.symlinkJoin {
     name = "kleopatra-wrapped";
@@ -11,6 +11,14 @@ let
         --set QT_NO_GLIB "1"
     '';
   };
+
+  # gparted-wrapped = pkgs.writeShellScriptBin "gparted" ''
+  #   exec pkexec env \
+  #     DISPLAY="$DISPLAY" \
+  #     XAUTHORITY="$XAUTHORITY" \
+  #     WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+  #     ${pkgs.gparted}/bin/gparted "$@"
+  # '';
 in
 {
   programs.nix-ld.enable = true;
@@ -27,7 +35,8 @@ in
     neovim
     mpd
     daed
-    gparted
+    # gparted-wrapped
+    gparted-full
     nixpkgs-fmt
     mihomo
     kleopatra-wrapped

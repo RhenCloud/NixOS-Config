@@ -27,3 +27,5 @@ secrets.yaml
 
 packages/**/node_modules
 packages/**/target
+
+.omo/

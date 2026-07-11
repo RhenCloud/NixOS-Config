@@ -1,0 +1,94 @@
+global {
+  wan_interface: auto
+  lan_interface: auto
+  log_level: info
+  allow_insecure: true
+  auto_config_kernel_parameter: true
+  dial_mode: domain
+  sniffing_timeout: 100ms
+  tls_implementation: utls
+  utls_imitate: chrome_auto
+  tproxy_port: 12345
+}
+
+include {
+  /etc/dae/nodes.dae
+}
+
+dns {
+  ipversion_prefer: 4
+  upstream {
+    alidns: 'udp://dns.alidns.com:53'
+    googledns: 'tcp+udp://dns.google:53'
+  }
+  routing {
+    request {
+      qname(geosite:category-ads-all) -> reject
+      qname(geosite:cn) -> alidns
+      fallback: googledns
+    }
+    response {
+      upstream(googledns) -> accept
+      ip(geoip:private) && !qname(geosite:cn) -> googledns
+      fallback: accept
+    }
+  }
+}
+
+group {
+  proxy {
+    policy: min_moving_avg
+  }
+}
+
+routing {
+  pname(NetworkManager, systemd-resolved, dnsmasq) -> must_direct
+  l4proto(udp) && dport(443) -> block
+
+  dport(53) -> direct
+  dport(853) -> proxy
+  domain(geosite:oracle) -> direct
+  domain(suffix: rhen.cloud) -> direct
+  domain(suffix: invite.linuxdo.org) -> direct
+  pname(cloudflared) -> direct
+  domain(suffix: minecraft.net) -> direct
+  domain(suffix: minecraftservices.com) -> direct
+  domain(suffix: minecraftskins.com) -> direct
+  domain(suffix: mojang.com) -> direct
+  domain(suffix: hypixel.net) -> direct
+  domain(suffix: shearbyte.dev) -> direct
+  pname(minecraft-launcher) -> direct
+  pname(prismlauncher) -> direct
+  pname(hmcl) -> direct
+  pname(java) -> direct
+  domain(geosite:category-ads-all) -> block
+  domain(geosite:bilibili) -> direct
+  pname(bili) -> direct
+  domain(geosite:github) -> proxy
+  domain(geosite:discord) -> proxy
+  domain(geosite:steam) -> direct
+  domain(geosite:onedrive) -> direct
+  domain(geosite:microsoft@cn) -> direct
+  domain(geosite:xai) -> proxy
+  domain(geosite:openai) -> proxy
+  domain(geosite:category-ai-!cn) -> proxy
+  domain(geosite:category-ai-chat-!cn) -> proxy
+  domain(geosite:google) -> proxy
+  domain(geosite:youtube) -> proxy
+  domain(geosite:telegram) -> proxy
+  domain(geosite:twitter) -> proxy
+  domain(geosite:pixiv) -> proxy
+  domain(geosite:vercel) -> proxy
+  domain(geosite:cloudflare) -> proxy
+  domain(geosite:geolocation-!cn) -> proxy
+  domain(suffix: transcircle.org) -> proxy
+  domain(suffix: bing.com) -> proxy
+  domain(keyword: microsoft) -> direct
+  domain(keyword: mtalk.google) -> proxy
+  dip(geoip:private) -> direct
+  dip(geoip:cn) -> direct
+  domain(geosite:cn) -> direct
+  domain(geosite:private) -> direct
+
+  fallback: proxy
+}

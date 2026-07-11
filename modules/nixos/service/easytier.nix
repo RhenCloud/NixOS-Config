@@ -1,6 +1,26 @@
-{ ... }:
+{ config, ... }:
+let
+  etUser = "easytier";
+in
 {
-  systemd.tmpfiles.rules = [ "d /etc/easytier 0700 root root -" ];
+  users.users.${etUser} = {
+    isSystemUser = true;
+    uid = 991;
+    group = etUser;
+    description = "EasyTier daemon user";
+  };
+  users.groups.${etUser} = { };
+
+  systemd.tmpfiles.rules = [ "d /etc/easytier 0750 ${etUser} ${etUser} -" ];
+
+  systemd.services."easytier-default" = {
+    serviceConfig = {
+      User = etUser;
+      Group = etUser;
+      AmbientCapabilities = [ "CAP_NET_ADMIN" ];
+      CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
+    };
+  };
 
   services.easytier = {
     enable = true;
@@ -48,7 +68,7 @@
           disable_p2p = false;
           p2p_only = false;
           relay_all_peer_rpc = true;
-          disable_tcp_hole_punching = false;
+          disable_tcp_hole_pumping = false;
           disable_udp_hole_punching = false;
           multi_thread_count = 3;
           relay_network_whitelist = "siiway-server-network-cn";

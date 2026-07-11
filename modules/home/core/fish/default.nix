@@ -34,7 +34,8 @@
   programs.fish = {
     enable = true;
     shellAliases = {
-      nix = "nom";
+      # nix = "nom";
+      tokei = "tokei --sort code";
       ff = "fastfetch";
       vim = "nvim";
       nrebuild = "sudo nixos-rebuild switch --log-format internal-json |& nom --json";
@@ -213,6 +214,10 @@
     enable = true;
     enableFishIntegration = true;
     nix-direnv.enable = true;
+  };
+
+  services.lorri = {
+    enable = false;
   };
 
   programs.nix-index = {

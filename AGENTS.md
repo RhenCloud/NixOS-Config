@@ -9,7 +9,7 @@ flake.nix                      # Entry point: inputs, Snowfall config, devShells
 systems/x86_64-linux/nixos-desktop/   # Single host entry (default.nix + hardware-configuration.nix)
 homes/x86_64-linux/rhencloud@nixos-desktop/  # Home Manager entry for rhencloud
 modules/nixos/{core,desktop,service}/  # System-level modules (auto-loaded by Snowfall)
-modules/home/{core,desktop,dev,service,user}/  # Home Manager modules (auto-loaded)
+modules/home/{core,desktop,dev,service}/  # Home Manager modules (auto-loaded)
 modules/home/secrets/          # agenix-encrypted secrets (*.age files)
 overlays/                      # Custom package overlays
 shells/                        # Extra devShells (python.nix)
@@ -59,7 +59,6 @@ nix develop .#python
 
 ## Gotchas
 
-- `modules/home/config/` exists but is **not** a Snowfall module directory — it contains raw config files (fastfetch, kitty) that are referenced directly, not auto-imported.
 - Some modules are commented out in their parent `default.nix` (e.g., `./proxy.nix` in both `modules/nixos/core/` and `modules/nixos/desktop/`). Check parent `default.nix` before assuming a module is active.
 - `flake.nix` uses `flake.nix` inline module for `systems.modules.nixos` (lines 156-172) — the `home-manager.backupFileExtension = "backup"` setting means HM will back up conflicting files with `.backup` suffix.
 - The `nixConfig.substituters` in `flake.nix` configures Chinese mirrors (USTC, SJTU) alongside upstream caches. Cachix caches for hyprland, noctalia, and niri are active.

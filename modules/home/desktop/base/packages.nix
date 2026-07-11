@@ -39,5 +39,9 @@
     # gvfs
     kdePackages.ark
     rar
+
+    localsend
+
+    splayer
   ];
 }
