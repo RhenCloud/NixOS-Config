@@ -50,11 +50,12 @@ set -g async_prompt_functions _pure_prompt_git
 #     zellij attach -c $zellij_session
 # end
 
-# Auto-start herdr for interactive terminals, except in VS Code integrated terminal.
+# Auto-start herdr for interactive terminals, except in VS Code or Zed integrated terminal.
 if status is-interactive
     and not set -q HERDR_ENV
     and not set -q VSCODE_INJECTION
     and test "$TERM_PROGRAM" != vscode
+    and test "$TERM_PROGRAM" != zed
     and command -sq herdr
     herdr
 end

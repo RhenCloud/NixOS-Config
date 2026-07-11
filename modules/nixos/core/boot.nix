@@ -15,6 +15,10 @@
         gfxmodeEfi = "1920x1080";
       };
 
+      systemd-boot = {
+        enable = false;
+      };
+
       efi = {
         canTouchEfiVariables = true;
         efiSysMountPoint = "/boot/efi";

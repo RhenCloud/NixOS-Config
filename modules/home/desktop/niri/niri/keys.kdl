@@ -29,7 +29,7 @@ binds {
 
     Mod+B { spawn "zen"; }
 
-    Mod+C { spawn "code"; }
+    Mod+C { spawn "zed"; }
 
     Mod+Shift+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
     Mod+V { spawn "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
@@ -39,7 +39,8 @@ binds {
     Mod+X { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
     Mod+Shift+B { spawn "noctalia-shell" "ipc" "call" "bar" "toggle"; }
     Mod+Ctrl+F { spawn "noctalia-shell" "ipc" "call" "plugin:file-search" "toggle"; }
-    Mod+Ctrl+C { spawn "noctalia-shell" "ipc" "call" "plugin:vscode-provider" "toggle"; }
+    // Mod+Ctrl+C { spawn "noctalia-shell" "ipc" "call" "plugin:vscode-provider" "toggle"; }
+    Mod+Ctrl+C { spawn "noctalia-shell" "ipc" "call" "plugin:zed-provider" "toggle"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.

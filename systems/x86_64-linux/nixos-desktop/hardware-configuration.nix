@@ -33,6 +33,17 @@
     fsType = "ext4";
   };
 
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/4daf6a92-7e38-4198-a4ae-6c763dea81ef";
+    fsType = "btrfs";
+    options= [
+      "defaults"
+      "compress=zstd"
+      "noatime"
+      "subvol=@home"
+    ];
+  };
+
   fileSystems."/Data1" = {
     device = "/dev/disk/by-uuid/6478644576DDF756";
     fsType = "ntfs3";

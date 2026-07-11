@@ -15,13 +15,13 @@ in
         enable = true;
         setupOpts = {
           mapping = lib.mkForce {
-            "<C-n>" = "cmp.mapping.select_next_item()";
-            "<C-p>" = "cmp.mapping.select_prev_item()";
-            "<C-b>" = "cmp.mapping.scroll_docs(-4)";
-            "<C-f>" = "cmp.mapping.scroll_docs(4)";
-            "<C-e>" = "cmp.mapping.abort()";
-            "<CR>" = "cmp.mapping.confirm({ select = true })";
-            "<Tab>" = "cmp.mapping.confirm({ select = true })";
+            "<C-n>" = mkLuaInline "cmp.mapping.select_next_item()";
+            "<C-p>" = mkLuaInline "cmp.mapping.select_prev_item()";
+            "<C-b>" = mkLuaInline "cmp.mapping.scroll_docs(-4)";
+            "<C-f>" = mkLuaInline "cmp.mapping.scroll_docs(4)";
+            "<C-e>" = mkLuaInline "cmp.mapping.abort()";
+            "<CR>" = mkLuaInline "cmp.mapping.confirm({ select = true })";
+            "<Tab>" = mkLuaInline "cmp.mapping.confirm({ select = true })";
           };
           sources = lib.mkForce [
             { name = "nvim_lsp"; }

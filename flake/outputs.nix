@@ -96,6 +96,11 @@ baseFlake
           pkgs = pkgsFor "x86_64-linux";
         in
         pkgs.callPackage ../packages/zed-globalization/default.nix { };
+      aicommits =
+        let
+          pkgs = pkgsFor "x86_64-linux";
+        in
+        pkgs.callPackage ../packages/aicommits/default.nix { };
     };
   };
 }

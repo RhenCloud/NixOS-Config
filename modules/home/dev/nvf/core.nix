@@ -78,7 +78,7 @@ in
 
   home.packages = with pkgs; [
     nil
-    nixfmt
+    nixfmt-rfc-style
     shellcheck
   ];
 }

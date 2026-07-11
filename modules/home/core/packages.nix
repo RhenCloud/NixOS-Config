@@ -11,7 +11,7 @@
     themechanger
     google-chrome
     eza
-    nixfmt
+    nixfmt-rfc-style
     keymapper
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.lwe
     wemeet

@@ -66,7 +66,7 @@ allowed-tools:
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [ ];
         };
-        formatter = pkgs.nixfmt;
+        formatter = pkgs.nixfmt-rfc-style;
       });
 }
 ```
@@ -91,6 +91,7 @@ devShells.default = pkgs.mkShell {
 ```
 
 **Python + 常用工具**：
+
 ```nix
 buildInputs = with pkgs; [
   (python312.withPackages (ps: with ps; [
@@ -119,6 +120,7 @@ devShells.default = pkgs.mkShell {
 ```
 
 **Rust + mold 加速链接**：
+
 ```nix
 buildInputs = with pkgs; [
   rustc cargo clippy rustfmt rust-analyzer
@@ -235,7 +237,7 @@ devShells.default = pkgs.mkShell {
             sqlite
             just
             watchexec
-            nixfmt
+            nixfmt-rfc-style
             shellcheck
           ];
 
@@ -353,12 +355,15 @@ devShells.default = pkgs.mkShell {
 ## 8. 常用工具清单
 
 ### 通用 CLI 工具
+
 `just` (命令执行器), `watchexec` (文件监听), `fd` (查找), `ripgrep` (搜索), `jq` (JSON), `yq` (YAML),
 
 ### 格式化与检查
+
 `nixfmt` (Nix), `ruff` (Python), `clippy` + `rustfmt` (Rust), `gofumpt` (Go), `biome` (JS/TS/CSS), `prettier` (JS/JSON/MD), `alejandra` (Nix 备选), `shellcheck` (Shell)
 
 ### 语言服务器
+
 `nil` / `nixd` (Nix), `pyright` (Python), `rust-analyzer` (Rust), `gopls` (Go), `typescript-language-server` (TS/JS), `bun` (自带 TS LSP), `deno` (自带 LSP), `kotlin-language-server` (Kotlin)
 
 ---

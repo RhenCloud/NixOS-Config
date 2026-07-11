@@ -63,7 +63,10 @@ let
         [ -d "$pkg" ] && cp -r --no-preserve=mode "$pkg"/* "$out/lua/"
       done
       find build -name "*.so" -exec cp -t "$out/lua/" {} \;
-      patchelf --set-rpath "${pkgs.librime}/lib:${pkgs.luajit}/lib" "$out/lua/"*.so 2>/dev/null || true
+      for f in "$out/lua/"*.so; do
+  [ -f "$f" ] && patchelf --set-rpath "${pkgs.librime}/lib:${pkgs.luajit}/lib:${pkgs.stdenv.cc.cc.lib}/lib" "$f"
+done
+      rm -f "$out/lua/vim/version.lua"
     '';
 
     doCheck = false;
@@ -79,13 +82,14 @@ in
   programs.nvf.settings.vim.extraPlugins.rime-nvim = {
     package = rime-nvim;
     setup = ''
-      local Rime = require('rime.nvim.rime').Rime
-      local rime = Rime()
-
-      rime:create_autocmds()
-      vim.keymap.set('i', '<C-^>', rime:toggle_cb())
-      vim.keymap.set('i', '<C-@>', rime:enable_cb())
-      vim.keymap.set('i', '<C-_>', rime:disable_cb())
+      local ok, Rime = pcall(require, 'rime.nvim.rime')
+      if ok then
+        local rime = Rime()
+        rime:create_autocmds()
+        vim.keymap.set('i', '<C-^>', rime:toggle_cb())
+        vim.keymap.set('i', '<C-@>', rime:enable_cb())
+        vim.keymap.set('i', '<C-_>', rime:disable_cb())
+      end
     '';
   };
 }
