@@ -13,7 +13,7 @@ on:
         default: 初始提交（从私有仓库清理后发布）
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   clean-and-publish:
