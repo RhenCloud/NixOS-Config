@@ -26,7 +26,7 @@ jobs:
 
       - name: Build Home Manager activation package
         run: |
-          nix build '.#homeConfigurations.x86_64-linux.rhencloud@nixos-desktop.activationPackage'
+          nix build '.#homeConfigurations."rhencloud@nixos-desktop".activationPackage'
 
       - name: Archive generation
         run: |
