@@ -27,13 +27,10 @@ jobs:
         run: python3 scripts/clean-for-public.py
 
       - name: 创建初始提交并推送到公开仓库
+        env:
+          GH_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
         run: |
-          TOKEN="${{ secrets.PUBLIC_REPO_TOKEN }}"
-          echo "Token 长度: ${#TOKEN}"
-          if [ -z "$TOKEN" ]; then
-            echo "::error::PUBLIC_REPO_TOKEN 未设置或为空"
-            exit 1
-          fi
+          [ -z "$GH_TOKEN" ] && { echo "::error::PUBLIC_REPO_TOKEN 未设置"; exit 1; }
 
           git config user.name "RhenCloud"
           git config user.email "i@rhen.cloud"
@@ -42,6 +39,6 @@ jobs:
           git add -A
           git commit -m "${{ github.event.inputs.commit_message }}"
 
-          git remote add public \
-            "https://RhenCloud:${TOKEN}@github.com/${{ github.event.inputs.public_repo }}.git"
+          gh auth setup-git
+          git remote add public "https://github.com/${{ github.event.inputs.public_repo }}.git"
           git push -f public public-clean:main
