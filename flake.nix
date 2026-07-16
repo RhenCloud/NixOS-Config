@@ -49,7 +49,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
-    nixpkgs.follows = "nixpkgs";
+    # nixpkgs.follows = "nixpkgs";
 
     # home-manager, used for managing user configuration
     home-manager.url = "github:nix-community/home-manager";
