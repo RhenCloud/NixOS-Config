@@ -1,0 +1,44 @@
+name: 清理并发布到公开仓库
+
+on:
+  workflow_dispatch:
+    inputs:
+      public_repo:
+        description: 目标公开仓库（owner/repo）
+        required: true
+        default: RhenCloud/NixOS-Config-Public
+      commit_message:
+        description: 公开仓库的提交信息
+        required: true
+        default: 初始提交（从私有仓库清理后发布）
+
+permissions:
+  contents: read
+
+jobs:
+  clean-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 清理敏感信息
+        run: bash scripts/clean-for-public.sh
+
+      - name: 创建初始提交并推送到公开仓库
+        env:
+          TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
+        run: |
+          git config user.name "RhenCloud"
+          git config user.email "i@rhen.cloud"
+
+          # 创建 orphan 分支（抛弃敏感历史）
+          git checkout --orphan public-clean
+          git add -A
+          git commit -m "${{ github.event.inputs.commit_message }}"
+
+          # 推送到公开仓库
+          git remote add public \
+            https://RhenCloud:${TOKEN}@github.com/${{ github.event.inputs.public_repo }}.git
+          git push -f public public-clean:main
