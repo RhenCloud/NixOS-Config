@@ -43,16 +43,16 @@ jobs:
           cp modules/home/desktop/fcitx5/keytao.custom.yaml output/rime/
 
           # 4. 追加 require 到 rime.lua
-          cat >> output/rime/rime.lua << 'LUAEOF'
+          # cat >> output/rime/rime.lua << 'LUAEOF'
 
-          -- reduce_emoji_filter: 降低 emoji 在候选项的位置
-          reduce_emoji_filter = require("reduce_emoji_filter")
-          reduce_emoji_translator = reduce_emoji_filter
-          reduce_emoji_processor = reduce_emoji_filter
+          # -- reduce_emoji_filter: 降低 emoji 在候选项的位置
+          # reduce_emoji_filter = require("reduce_emoji_filter")
+          # reduce_emoji_translator = reduce_emoji_filter
+          # reduce_emoji_processor = reduce_emoji_filter
 
-          -- select_character: 首/末字选择
-          select_character = require("select_character")
-          LUAEOF
+          # -- select_character: 首/末字选择
+          # select_character = require("select_character")
+          # LUAEOF
 
           # 5. 创建空的 custom_phrase.txt（用户自行编辑）
           touch output/rime/custom_phrase.txt

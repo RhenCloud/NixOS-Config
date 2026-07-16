@@ -49,54 +49,29 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.follows = "nixpkgs";
 
     # home-manager, used for managing user configuration
-    home-manager = {
-      # url = "https://gh-proxy.com/github.com/nix-community/home-manager/archive/master.tar.gz";
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    home-manager.url = "github:nix-community/home-manager";
 
-    nur = {
-      url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nur.url = "github:nix-community/NUR";
 
-    snowfall-lib = {
-      url = "github:snowfallorg/lib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    snowfall-lib.url = "github:snowfallorg/lib";
 
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell/v4.7.7";
-      # url = "https://gh-proxy.com/github.com/noctalia-dev/noctalia-shell/archive/master.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    noctalia.url = "github:noctalia-dev/noctalia-shell/v4.7.7";
 
     piri.url = "github:RhenCloud/piri";
 
-    stylix = {
-      url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    stylix.url = "github:nix-community/stylix";
 
-    siiway-cli = {
-      url = "https://gh-proxy.com/github.com/siiway/siiway-cli/archive/main.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    siiway-cli.url = "https://gh-proxy.com/github.com/siiway/siiway-cli/archive/main.tar.gz";
 
     aagl.url = "github:ezKEa/aagl-gtk-on-nix";
 
     # mango = {
     #   url = "github:DreamMaoMao/mango";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
 
-    niri = {
-      url = "github:sodiboo/niri-flake";
-      # inputs.niri-unstable.url = "github:niri-wm/niri/wip/branch";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    niri.url = "github:sodiboo/niri-flake";
 
     niri_tweaks = {
       url = "github:heyoeyo/niri_tweaks";
@@ -108,65 +83,36 @@
       flake = false;
     };
 
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-    };
+    hyprland.url = "github:hyprwm/Hyprland";
 
-    cloud-pyprland = {
-      url = "github:RhenCloud/cloud-pyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    cloud-pyprland.url = "github:RhenCloud/cloud-pyprland";
 
     sops-nix.url = "github:Mic92/sops-nix";
 
     # agenix.url = "github:ryntm/agenix";
 
-    zen-browser = {
-      url = "github:youwen5/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    zen-browser.url = "github:youwen5/zen-browser-flake";
 
-    nvf = {
-      url = "github:notashelf/nvf";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nvf.url = "github:notashelf/nvf";
 
-    herdr = {
-      url = "github:ogulcancelik/herdr/v0.7.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    herdr.url = "github:ogulcancelik/herdr/v0.7.0";
 
-    vicinae = {
-      url = "github:vicinaehq/vicinae";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    vicinae.url = "github:vicinaehq/vicinae";
 
-    rime-keytao = {
-      url = "github:xkinput/KeyTao";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    rime-keytao.url = "github:xkinput/KeyTao";
 
-    siiway-oc-plugin.url = "git+ssh://git@github.com/SiiWay/VoidSwitch";
+    siiway-oc-plugin.url = "@github:SiiWay/VoidSwitch";
 
-    opencode-worktree = {
-      url = "github:kdcokenny/opencode-worktree";
-      flake = false;
-    };
+    opencode-worktree.url = "github:kdcokenny/opencode-worktree";
 
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nix-index-database.url = "github:nix-community/nix-index-database";
 
-    yazi = {
-      url = "github:sxyazi/yazi";
-    };
+    yazi.url = "github:sxyazi/yazi";
 
     yazi-flavors = {
       url = "github:yazi-rs/flavors";
       flake = false;
     };
   };
-
   outputs = inputs: import ./flake/outputs.nix inputs;
 }
