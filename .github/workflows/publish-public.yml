@@ -27,18 +27,21 @@ jobs:
         run: python3 scripts/clean-for-public.py
 
       - name: 创建初始提交并推送到公开仓库
-        env:
-          TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
         run: |
+          TOKEN="${{ secrets.PUBLIC_REPO_TOKEN }}"
+          echo "Token 长度: ${#TOKEN}"
+          if [ -z "$TOKEN" ]; then
+            echo "::error::PUBLIC_REPO_TOKEN 未设置或为空"
+            exit 1
+          fi
+
           git config user.name "RhenCloud"
           git config user.email "i@rhen.cloud"
 
-          # 创建 orphan 分支（抛弃敏感历史）
           git checkout --orphan public-clean
           git add -A
           git commit -m "${{ github.event.inputs.commit_message }}"
 
-          # 推送到公开仓库
           git remote add public \
-            https://RhenCloud:${TOKEN}@github.com/${{ github.event.inputs.public_repo }}.git
+            "https://RhenCloud:${TOKEN}@github.com/${{ github.event.inputs.public_repo }}.git"
           git push -f public public-clean:main
