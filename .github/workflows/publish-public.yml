@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
 
       - name: 清理敏感信息
-        run: bash scripts/clean-for-public.sh
+        run: python3 scripts/clean-for-public.py
 
       - name: 创建初始提交并推送到公开仓库
         env:
