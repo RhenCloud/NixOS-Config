@@ -2,8 +2,10 @@
 {
   services.clipse = {
     enable = true;
-    historySize = 10000;
-    imageDisplay.type = "kitty";
+    settings = {
+      maxHistory = 10000;
+      imageDisplay.type = "kitty";
+    };
     theme = {
       "useCustom" = true;
       "TitleFore" = "#F8F8F2";

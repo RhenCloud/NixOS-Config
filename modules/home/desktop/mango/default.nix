@@ -10,7 +10,6 @@
   #   enable = true;
   # };
   home.packages = with pkgs; [
-    mangowc
+    mango
   ];
 }
-

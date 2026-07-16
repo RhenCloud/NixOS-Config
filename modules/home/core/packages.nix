@@ -6,12 +6,11 @@
 {
   home.packages = with pkgs; [
     fzf
-    sptk
     perl
     themechanger
     google-chrome
     eza
-    nixfmt-rfc-style
+    pkgs.nixfmt
     keymapper
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.lwe
     wemeet
@@ -20,6 +19,7 @@
     aliyunpan
     # splayer
     ripgrep
+    # comma 通过 programs.nix-index-database.comma.enable 自动安装 comma-with-db
     # 如需使用 Sequoia，可在此添加；保留系统 gnupg 可避免冲突
     # sequoia-chameleon-gnupg 提供 gpg 兼容包装器，避免同时安装 gnupg。
     asciinema

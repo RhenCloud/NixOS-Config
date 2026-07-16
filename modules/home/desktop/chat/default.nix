@@ -57,7 +57,18 @@ in
   };
 
   home.packages = with pkgs; [
-    vesktop
+    (symlinkJoin {
+      name = "vesktop-wayland";
+      paths = [ vesktop ];
+      nativeBuildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/vesktop \
+          --set NIXOS_OZONE_WL 1 \
+          --set ELECTRON_OZONE_PLATFORM_HINT wayland \
+          --add-flags "--enable-features=WebRTCPipeWireCapturer,UseOzonePlatform,WaylandWindowDecorations" \
+          --add-flags "--ozone-platform=wayland"
+      '';
+    })
     # (discord.override {
     #   # withOpenASAR = true; # can do this here too
     #   withVencord = true;

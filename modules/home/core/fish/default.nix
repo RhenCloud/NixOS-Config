@@ -49,30 +49,17 @@
     # loginShellInit = "export LANG=zh_CN.UTF-8 ; export LC_ALL=zh_CN.UTF-8";
     shellInit = "set -g fish_greeting ''";
     # shellInitLast = "tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time='24-hour format' --rainbow_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='Two lines, character' --prompt_connection=Dotted --powerline_right_prompt_frame=No --prompt_connection_andor_frame_color=Light --prompt_spacing=Sparse --icons='Many icons' --transient=Yes";
-    # functions = {
-    # magic-enter-cmd = {
-
-    #   body = ''
-    #     # Default magic command.
-    #     set --local my_magic_command 'ls'
-
-    #     # Git dir magic command.
-    #     if command git rev-parse --is-inside-work-tree &>/dev/null
-    #       set my_magic_command "git status"
-    #     end
-
-    #     if command ls pyproject.toml &>/dev/null && command uv &>/dev/null
-    #       set my_magic_command "uv sync"
-    #     end
-
-    #     if command ls flake.nix &>/dev/null
-    #       set my_magic_command "nix flake update"
-    #     end
-
-    #     eval $my_magic_command
-    #   '';
-    # };
-    # };
+    functions = {
+      nrun = {
+        body = ''
+          if test (count $argv) -eq 0
+              echo "Usage: nrun <package>"
+              return 1
+          end
+          nix run nixpkgs#$argv[1]
+        '';
+      };
+    };
     plugins = [
       # {
       #   name = "z";
@@ -223,6 +210,9 @@
   programs.nix-index = {
     enable = true;
     enableFishIntegration = true;
+    symlinkToCacheHome = true;
   };
+
+  programs.nix-index-database.comma.enable = true;
 
 }

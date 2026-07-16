@@ -66,7 +66,7 @@ allowed-tools:
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [ ];
         };
-        formatter = pkgs.nixfmt-rfc-style;
+        formatter = pkgs.pkgs.nixfmt;
       });
 }
 ```
@@ -237,7 +237,7 @@ devShells.default = pkgs.mkShell {
             sqlite
             just
             watchexec
-            nixfmt-rfc-style
+            pkgs.nixfmt
             shellcheck
           ];
 

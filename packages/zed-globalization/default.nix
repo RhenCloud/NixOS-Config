@@ -24,7 +24,7 @@
 }:
 
 let
-  version = "1.10.1";
+  version = "1.10.2";
 
   runtimeLibs = lib.makeLibraryPath [
     alsa-lib
@@ -53,7 +53,7 @@ stdenv.mkDerivation {
 
   src = fetchurl {
     url = "https://github.com/x6nux/zed-globalization/releases/download/v${version}/zedg-zh-cn-linux-x86_64-v${version}.tar.gz";
-    hash = "sha256-5UOvPi2XmaXAIbFOYyzGEfnaQLyxj2lxFq/h9gL95/c=";
+    hash = "sha256-y4sli0I6h+tEO9up3sbnfCRs3+15tkVm6UwtM1Ap39o=";
   };
 
   nativeBuildInputs = [ patchelf ];

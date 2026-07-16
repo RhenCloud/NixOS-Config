@@ -10,6 +10,7 @@
   pnpm,
   fetchPnpmDeps,
   pnpmConfigHook,
+  wrapGAppsHook3,
   libappindicator,
   mpv,
   openssl,
@@ -34,8 +35,8 @@ rustPlatform.buildRustPackage {
   pnpmDeps = fetchPnpmDeps {
     pname = "lwe-pnpm-deps";
     inherit version src;
-    fetcherVersion = 3;
-    hash = "sha256-QtQfyUDTu7Z/aPmaLwaNOySRWcL3HYZ/h2y582jL2J4=";
+    fetcherVersion = 4;
+    hash = "sha256-osqrB+L17ODasekHA04aZR1F4da7O6EdqB1I6haJIF0=";
   };
 
   cargoHash = "sha256-LoCy/IWBqOswhmVT7x5nkmzeSzJU04s2rLSx33LF09Q=";
@@ -60,6 +61,7 @@ rustPlatform.buildRustPackage {
     pkg-config
     pnpmConfigHook
     pnpm
+    wrapGAppsHook3
   ];
 
   buildInputs = [

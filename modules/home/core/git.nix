@@ -35,8 +35,14 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    settings."*" = {
-      identityAgent = "~/.gnupg/S.gpg-agent.ssh";
+    settings = {
+      "*" = {
+        identityAgent = "~/.gnupg/S.gpg-agent.ssh";
+      };
+      "tc-discourse" = {
+        hostname = "154.44.13.130";
+        user = "rhencloud";
+      };
     };
   };
 

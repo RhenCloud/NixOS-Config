@@ -28,6 +28,7 @@ let
       inputs.nvf.homeManagerModules.default
       inputs.rime-keytao.homeManagerModules.default
       inputs.vicinae.homeManagerModules.default
+      inputs.nix-index-database.homeModules.nix-index
       {
         nixpkgs.config.allowUnfree = true;
         nixpkgs.config.permittedInsecurePackages = [

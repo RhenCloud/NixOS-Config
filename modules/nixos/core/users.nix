@@ -28,7 +28,10 @@ in
 
   security.sudo = {
     enable = true;
-    wheelNeedsPassword = false; # wheel 组无需密码
+    wheelNeedsPassword = false;
+    extraConfig = ''
+      Defaults env_keep += "SSH_AUTH_SOCK"
+    '';
     extraRules = [
       {
         commands = [

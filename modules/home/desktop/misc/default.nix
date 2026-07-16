@@ -7,6 +7,7 @@
     easytier
     audacity
     kdePackages.kwave
+    heroic
     # twitch
     # nur.repos.rhencloud.
   ];

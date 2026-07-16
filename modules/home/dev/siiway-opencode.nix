@@ -49,7 +49,7 @@ let
     };
     plugin = [
       # "oh-my-openagent@latest"
-      "${inputs.siiway-oc-plugin.packages.${pkgs.system}.opencode-voidswitch}"
+      "${inputs.siiway-oc-plugin.packages.${pkgs.stdenv.hostPlatform.system}.opencode-voidswitch}"
       "opencode-chrome-devtools"
       "@tarquinen/opencode-dcp@latest"
       "@nick-vi/opencode-type-inject"
@@ -116,6 +116,7 @@ let
           "gpt-5.5" = { };
           "claude-sonnet-4-5" = { };
           "grok-4.3-beta" = { };
+          "doghubx-gpt-5.5" = { };
         };
       };
     };

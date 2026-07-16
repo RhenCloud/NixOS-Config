@@ -10,10 +10,16 @@
     #   "https://mirror.sjtu.edu.cn"
     #   "https://mirrors.ustc.edu.cn"
     # ];
+    extra-substituters = [
+      "https://yazi.cachix.org"
+    ];
+    extra-trusted-substituters = [
+      "https://yazi.cachix.org"
+    ];
     substituters = [
       # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
-      # "https://nix-community.cachix.org"
+      "https://nix-community.cachix.org"
       "https://cache.nixos.org"
       "https://noctalia.cachix.org"
       "https://niri.cachix.org"
@@ -24,7 +30,7 @@
     trusted-substituters = [
       # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
-      # "https://nix-community.cachix.org"
+      "https://nix-community.cachix.org"
       "https://mirror.sjtu.edu.cn"
       "https://mirrors.ustc.edu.cn"
     ];
@@ -35,7 +41,8 @@
       "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
       "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      # "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "yazi.cachix.org-1:Dcdz63NZ5HpCDB+C1i3W6S3Gx2JBHaVNYh5MmiEXZo4="
     ];
   };
 
@@ -139,10 +146,24 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    siiway-oc-plugin.url = "git+ssh://git@github.com/siiway/VoidSwitch";
+    siiway-oc-plugin.url = "git+ssh://git@github.com/SiiWay/VoidSwitch";
 
     opencode-worktree = {
       url = "github:kdcokenny/opencode-worktree";
+      flake = false;
+    };
+
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    yazi = {
+      url = "github:sxyazi/yazi";
+    };
+
+    yazi-flavors = {
+      url = "github:yazi-rs/flavors";
       flake = false;
     };
   };
