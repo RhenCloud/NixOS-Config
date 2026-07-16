@@ -1,0 +1,40 @@
+name: Build Home Manager Configuration
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "modules/home/**"
+      - "homes/**"
+      - "modules/nixos/**"
+      - "systems/**"
+      - "flake.nix"
+      - "flake.lock"
+      - ".github/workflows/build-home-manager.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+
+      - name: Build Home Manager activation package
+        run: |
+          nix build '.#homeConfigurations.x86_64-linux.rhencloud@nixos-desktop.activationPackage'
+
+      - name: Archive generation
+        run: |
+          # copy 到 output/ 避免 result/ 符号链接问题
+          mkdir -p output/home-manager-generation
+          cp -rL result/* output/home-manager-generation/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: home-manager-generation
+          path: output/home-manager-generation/
