@@ -101,7 +101,7 @@
 
     rime-keytao.url = "github:xkinput/KeyTao";
 
-    siiway-oc-plugin.url = "@github:SiiWay/VoidSwitch";
+    siiway-oc-plugin.url = "github:SiiWay/VoidSwitch";
 
     opencode-worktree.url = "github:kdcokenny/opencode-worktree";
 
