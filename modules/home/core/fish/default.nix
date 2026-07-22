@@ -6,12 +6,12 @@
 
 {
   imports = [
-    ./herdr.nix
-    # ./zellij.nix  # 暂未启用，由 herdr 替代
+    # ./zellij.nix
   ];
 
   home.sessionVariables = {
     NIX_BUILD_SHELL = "${pkgs.fish}/bin/fish";
+    SHELL = "${pkgs.fish}/bin/fish";
   };
 
   home.packages = with pkgs; [
@@ -39,7 +39,7 @@
       ff = "fastfetch";
       vim = "nvim";
       nrebuild = "sudo nixos-rebuild switch --log-format internal-json |& nom --json";
-      hrebuild = "home-manager switch --flake .#rhencloud@nixos-desktop";
+      hrebuild = "home-manager switch --flake .#${config.snowfallorg.user.name}@nixos-desktop";
       nclean = "sudo nix-collect-garbage";
       ncleanall = "sudo nix-collect-garbage -d";
       nupgrade = "sudo nix flake update && sudo nixos-rebuild switch --upgrade --log-format internal-json |& nom --json";

@@ -1,0 +1,21 @@
+name = "TransSearch"
+description = "TransHelper Trans-Search"
+group = "TransHelper"
+working_dir = "~/Project/TransHelper/Trans-Search/"
+
+[[tabs]]
+name = "opencode"
+command = "opencode"
+
+[[tabs.panes]]
+label = "frontend"
+command = "cd ./frontend && bun run dev"
+
+[[tabs.panes]]
+label = "backend"
+command = "cd ./backend-cf && bun run dev"
+split = "right"
+
+[[tabs]]
+name = "yazi"
+command = "y"

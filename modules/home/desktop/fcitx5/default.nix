@@ -38,7 +38,7 @@ in
     extraLuaFiles = lib.mkOption {
       type = lib.types.listOf (
         lib.types.submodule (
-          { config, name, ... }: {
+          { ... }: {
             options.name = lib.mkOption {
               type = lib.types.str;
               description = "Name (filename) for the Lua file";

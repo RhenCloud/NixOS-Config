@@ -1,4 +1,9 @@
-{ pkgs, lib, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 let
   qqPackage = pkgs.qq;
   liteLoaderQQNT = inputs.liteloaderqqnt;
@@ -110,5 +115,7 @@ in
     zoom-us
 
     thunderbird
+
+    slack
   ];
 }

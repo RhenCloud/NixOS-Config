@@ -37,15 +37,15 @@ let
         enabled = true;
         type = "local";
       };
-      agent-session-status = {
-        enabled = true;
-        type = "remote";
-        url = "http://127.0.0.1:55854/mcp";
-        headers = {
-          Authorization = "Bearer 81cd0b3f83bfacf53bb0c61dad0cc04d3d6bdca850b66de80d0a22def1c858b8";
-          X-Agent = "opencode";
-        };
-      };
+      # agent-session-status = {
+      #   enabled = true;
+      #   type = "remote";
+      #   url = "http://127.0.0.1:55854/mcp";
+      #   headers = {
+      #     Authorization = "Bearer 81cd0b3f83bfacf53bb0c61dad0cc04d3d6bdca850b66de80d0a22def1c858b8";
+      #     X-Agent = "opencode";
+      #   };
+      # };
     };
     plugin = [
       # "oh-my-openagent@latest"
@@ -55,15 +55,14 @@ let
       "@nick-vi/opencode-type-inject"
     ];
     provider = {
-      kimi = {
+      FriModel = {
         models = {
-          "glm-5.2".name = "";
-          "kimi-k2.7-code".name = "";
+          "gpt-5.4".name = "";
         };
         npm = "@ai-sdk/openai-compatible";
         options = {
-          apiKey = "sk-QbvDLExF4SMtp3uFvqOkJObcL6rg90DoqEgnxXof95PPJ2Ye";
-          baseURL = "https://api.0x7e.vip/v1";
+          apiKey = "REDACTED-8291f870";
+          baseURL = "https://api.frimodel.com/v1";
           setCacheKey = true;
         };
       };

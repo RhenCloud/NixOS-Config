@@ -1,0 +1,16 @@
+name = "nextbridge"
+description = "SiiWay NextBridge"
+group = "SiiWay"
+working_dir = "~/Project/SiiWay/NextBridge"
+
+[[tabs]]
+name = "opencode"
+command = "opencode"
+
+[[tabs]]
+name = "dev"
+command = "uv run main.py"
+
+[[tabs]]
+name = "yazi"
+command = "y"

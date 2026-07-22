@@ -14,8 +14,8 @@ rustPlatform.buildRustPackage {
   doCheck = false;
 
   postInstall = ''
-    mkdir -p $out/share/herdr-tab-rename
-    cp ${./herdr-plugin.toml} $out/share/herdr-tab-rename/herdr-plugin.toml
+    mkdir -p $out/share/rhencloud.tab-rename
+    cp ${./herdr-plugin.toml} $out/share/rhencloud.tab-rename/herdr-plugin.toml
   '';
 
   meta = {

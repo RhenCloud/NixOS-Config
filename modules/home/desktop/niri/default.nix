@@ -1,4 +1,12 @@
 { pkgs, inputs, ... }:
+let
+  mousePassthroughPatch = ../../../../patches/niri/mouse-passthrough.patch;
+  pinPatch = ../../../../patches/niri/pin.patch;
+
+  niri-patched = (inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable).overrideAttrs (old: {
+    patches = (old.patches or []) ++ [ mousePassthroughPatch pinPatch ];
+  });
+in
 {
   # imports = [
   #   inputs.niri.homeModules.config
@@ -6,7 +14,7 @@
 
   programs.niri = {
     enable = true;
-    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
+    package = niri-patched;
   };
 
   home.packages = [

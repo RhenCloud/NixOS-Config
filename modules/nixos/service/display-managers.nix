@@ -1,8 +1,4 @@
-{ pkgs, config, ... }:
-let
-  username = config.rhencloud.primaryUser;
-in
-{
+{ pkgs, primaryUser, ... }: {
   # services.desktopManager.plasma6.enable = true;
   services.xserver.desktopManager.runXdgAutostartIfNone = true;
   services.displayManager.sessionPackages = [
@@ -11,7 +7,7 @@ in
   ];
   services.displayManager.autoLogin = {
     enable = true;
-    user = username;
+    user = primaryUser;
   };
   services.displayManager = {
     gdm = {

@@ -1,5 +1,5 @@
 { ... }:
-final: prev: {
+_final: prev: {
   ccid = prev.ccid.overrideAttrs (old: {
     postInstall = (old.postInstall or "") + ''
       plist="$out/pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist"

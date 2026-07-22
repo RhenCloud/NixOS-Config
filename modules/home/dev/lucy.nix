@@ -1,0 +1,3 @@
+{
+  programs.lucy.enable = true;
+}

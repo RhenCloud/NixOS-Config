@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
+let
+  username = config.home.username;
+in
 {
   programs.prismlauncher = {
     enable = true;
@@ -11,7 +14,7 @@
 
     settings = {
       Language = "zh_CN";
-      InstanceDir = "/Data/Prism Launcher/instances/";
+      InstanceDir = "/home/${username}/Prism/instances/";
       ApplicationTheme = "dark";
     };
   };

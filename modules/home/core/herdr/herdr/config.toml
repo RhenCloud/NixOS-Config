@@ -1,0 +1,36 @@
+onboarding = false
+
+[theme]
+name = "dracula"
+
+[keys]
+previous_tab = "alt+h"
+next_tab = "alt+l"
+previous_workspace = "alt+k"
+next_workspace = "alt+j"
+previous_agent = "alt+i"
+next_agent = "alt+o"
+
+[[keys.command]]
+key = "prefix+p"
+type = "plugin_action"
+command = "cloudmanic.herdr-plus.projects"
+description = "herdr-plus: projects"
+
+[[keys.command]]
+key = "prefix+down"
+type = "plugin_action"
+command = "cloudmanic.herdr-plus.quick-actions"
+description = "herdr-plus: quick actions"
+
+[ui]
+show_agent_labels_on_pane_borders = true
+
+[terminal]
+default_shell = "/run/current-system/sw/bin/fish"
+shell_mode = "auto"
+
+[experimental]
+switch_ascii_input_source_in_prefix = true
+kitty_graphics = true
+pane_history = true

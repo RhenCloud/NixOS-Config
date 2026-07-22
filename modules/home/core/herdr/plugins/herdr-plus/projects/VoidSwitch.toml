@@ -1,0 +1,24 @@
+name = "voidswitch"
+description = "SiiWay VoidSwitch"
+group = "SiiWay"
+working_dir = "~/Project/SiiWay/VoidSwitch"
+
+[[tabs]]
+name = "opencode"
+command = "opencode"
+
+[[tabs]]
+name = "dev"
+
+[[tabs.panes]]
+label = "frontend"
+command = "cd ./frontend && bun run dev"
+
+[[tabs.panes]]
+label = "backend"
+command = "cd ./backend && uv run voidswitch --reload"
+split = "right"
+
+[[tabs]]
+name = "yazi"
+command = "y"

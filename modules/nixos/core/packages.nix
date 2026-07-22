@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 let
   kleopatra-wrapped = pkgs.symlinkJoin {
     name = "kleopatra-wrapped";

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   # git 相关配置
   programs.git = {
@@ -41,7 +41,7 @@
       };
       "tc-discourse" = {
         hostname = "154.44.13.130";
-        user = "rhencloud";
+        user = config.snowfallorg.user.name;
       };
     };
   };

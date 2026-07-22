@@ -16,7 +16,7 @@ binds {
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     // Mod+Return { spawn "kitty"; }
     Mod+Return { spawn "sh" "-c" "python3 \"$HOME/.config/niri_tweaks/niri_spawnjump.py\" kitty -w -p -s"; }
-    Mod+A { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Mod+A { spawn-sh "noctalia msg panel-toggle launcher"; }
     // Super+Alt+L { spawn "swaylock"; }
 
     Ctrl+Alt+W { spawn "sh" "-c" "python3 \"$HOME/.config/niri_tweaks/niri_spawnjump.py\" wechat -t scratch"; }
@@ -25,22 +25,27 @@ binds {
     Mod+Space { toggle-window-floating; }
 
     Mod+E { spawn "dolphin"; }
-    Mod+Shift+E { spawn "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
+    // noctalia v5 has no dedicated emoji-launcher IPC command yet; re-enable
+    // once/if it lands. (v4 used: noctalia-shell ipc call launcher emoji)
+    // Mod+Shift+E { spawn-sh "noctalia msg panel-toggle launcher"; }
 
     Mod+B { spawn "zen"; }
 
     Mod+C { spawn "zed"; }
 
     Mod+Shift+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
-    Mod+V { spawn "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
+    Mod+V { spawn-sh "noctalia msg panel-toggle clipboard"; }
 
     Mod+W { toggle-column-tabbed-display; }
 
-    Mod+X { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
-    Mod+Shift+B { spawn "noctalia-shell" "ipc" "call" "bar" "toggle"; }
-    Mod+Ctrl+F { spawn "noctalia-shell" "ipc" "call" "plugin:file-search" "toggle"; }
-    // Mod+Ctrl+C { spawn "noctalia-shell" "ipc" "call" "plugin:vscode-provider" "toggle"; }
-    Mod+Ctrl+C { spawn "noctalia-shell" "ipc" "call" "plugin:zed-provider" "toggle"; }
+    Mod+X { spawn-sh "noctalia msg panel-toggle session"; }
+    Mod+Shift+B { spawn-sh "noctalia msg bar-toggle"; }
+    // Plugin dispatch changed in noctalia v5 (see docs.noctalia.dev/v5/ipc/plugins/):
+    //   noctalia msg panel-toggle <author/plugin:entry>
+    // The v4 plugin ids below (plugin:file-search / plugin:zed-provider) do not
+    // exist in v5; re-enable with the correct v5 plugin ids once installed.
+    // Mod+Ctrl+F { spawn-sh "noctalia msg panel-toggle <author/plugin:entry>"; }
+    // Mod+Ctrl+C { spawn-sh "noctalia msg panel-toggle <author/plugin:entry>"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.

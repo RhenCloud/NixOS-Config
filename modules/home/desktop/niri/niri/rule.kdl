@@ -74,6 +74,23 @@ window-rule {
     open-floating true
 }
 
+window-rule {
+  match app-id="dev.zed.Zed"
+  open-maximized true
+}
+
+window-rule {
+    match app-id="io.github.waylyrics.Waylyrics"
+    mouse-passthrough true
+    pin true
+}
+
+// window-rule {
+//     match app-id="some-app"
+//     open-floating true
+//     pin true
+// }
+
 layer-rule {
     match namespace="^noctalia-*"
     background-effect {
@@ -82,7 +99,10 @@ layer-rule {
 }
 
 layer-rule {
-    match namespace="^noctalia-overview*"
+    // noctalia v5 renders the wallpaper on the `noctalia-wallpaper` /
+    // `noctalia-backdrop` layers (v4 used `noctalia-overview`). Keep placing it
+    // within niri's backdrop so it shows behind windows / in the overview.
+    match namespace="^noctalia-(wallpaper|backdrop)"
     place-within-backdrop true
 }
 

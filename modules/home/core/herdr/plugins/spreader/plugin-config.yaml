@@ -1,0 +1,12 @@
+workspaces:
+  - name: main
+    root: ~
+    tabs:
+      - label: musicfox
+        cwd: ~
+        panes:
+          - command: musicfox
+      - label: nixos
+        cwd: ~/nixos
+        panes:
+          - command: ""

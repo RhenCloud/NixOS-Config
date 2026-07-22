@@ -1,8 +1,4 @@
-{ pkgs, config, ... }:
-let
-  username = config.rhencloud.primaryUser;
-in
-{
+{ pkgs, primaryUser, ... }: {
   virtualisation.docker = {
     enable = true;
     package = pkgs.docker;
@@ -15,7 +11,7 @@ in
   };
 
   # Allow the primary user to run docker without sudo.
-  users.users.${username}.extraGroups = [ "docker" ];
+  users.users.${primaryUser}.extraGroups = [ "docker" ];
 
   environment.systemPackages = with pkgs; [
     docker-compose

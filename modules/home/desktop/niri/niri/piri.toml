@@ -73,3 +73,7 @@ input_mode = "chinese"
 [[fcitx5]]
 app_id = "vesktop"
 input_mode = "chinese"
+
+[[fcitx5]]
+app_id = "dev.zed.Zed"
+input_mode = "english"

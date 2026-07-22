@@ -1,0 +1,15 @@
+name = "main"
+description = "Main default layout"
+group = "RhenCloud"
+working_dir = "~/nixos"
+
+[[tabs]]
+name = "musicfox"
+command = "musicfox"
+
+[[tabs]]
+name = "opencode"
+command = "opencode"
+
+[[tabs]]
+name = "nixos"

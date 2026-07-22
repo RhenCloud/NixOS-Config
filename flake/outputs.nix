@@ -22,8 +22,10 @@ let
     };
 
     homes.modules = [
+      inputs.mangowm.hmModules.mango
       inputs.niri.homeModules.niri
-      inputs.noctalia.homeModules.default
+      inputs.lucy.homeManagerModules.default
+      inputs.noctalia-v4.homeModules.default
       inputs.piri.homeManagerModules.default
       inputs.nvf.homeManagerModules.default
       inputs.rime-keytao.homeManagerModules.default
@@ -40,15 +42,13 @@ let
     ];
 
     systems.modules.nixos = [
+      inputs.mangowm.nixosModules.mango
       (
         {
           lib,
-          config,
           ...
         }:
         {
-          rhencloud.primaryUser = "rhencloud";
-          # nixos-config = "/home/${config.rhencloud.primaryUser}/nixos";
           home-manager.useGlobalPkgs = false;
           home-manager.useUserPackages = true;
           home-manager.backupFileExtension = "backup";
@@ -92,6 +92,21 @@ baseFlake
           pkgs = pkgsFor "x86_64-linux";
         in
         pkgs.callPackage ../packages/herdr-tab-rename/default.nix { };
+      herdr-spreader =
+        let
+          pkgs = pkgsFor "x86_64-linux";
+        in
+        pkgs.callPackage ../packages/herdr-spreader/default.nix { };
+      herdr-window-title-sync =
+        let
+          pkgs = pkgsFor "x86_64-linux";
+        in
+        pkgs.callPackage ../packages/herdr-window-title-sync/default.nix { };
+      herdr-plus =
+        let
+          pkgs = pkgsFor "x86_64-linux";
+        in
+        pkgs.callPackage ../packages/herdr-plus/default.nix { };
       zed-globalization =
         let
           pkgs = pkgsFor "x86_64-linux";

@@ -12,7 +12,6 @@
     ./packages.nix
     ./services.nix
     ./shells.nix
-    ./users.nix
     ./xdg.nix
     # ./proxy.nix
   ];

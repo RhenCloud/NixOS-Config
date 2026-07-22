@@ -41,7 +41,10 @@
     rar
 
     localsend
+    moonlight-qt
 
     splayer
+
+    mission-center
   ];
 }

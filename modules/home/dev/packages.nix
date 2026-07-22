@@ -23,6 +23,7 @@
     tokei
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.aicommits
     gitui
+    codegraph
   ];
 
   # programs.opencode = {

@@ -2,12 +2,9 @@
   pkgs,
   lib,
   config,
+  primaryUser,
   ...
-}:
-let
-  username = config.rhencloud.primaryUser;
-in
-{
+}: {
   zramSwap.enable = true;
 
   networking = {
@@ -26,8 +23,8 @@ in
     ExecStart = lib.mkForce ''
       ${pkgs.mihomo}/bin/mihomo -d /var/lib/mihomo -f ${config.services.mihomo.configFile}
     '';
-    User = lib.mkForce username;
-    Group = lib.mkForce username;
+    User = lib.mkForce primaryUser;
+    Group = lib.mkForce primaryUser;
     DynamicUser = lib.mkForce false;
     StateDirectory = lib.mkForce "mihomo";
     StateDirectoryMode = lib.mkForce "0755";
