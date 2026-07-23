@@ -4,10 +4,22 @@ on:
   schedule:
     # 每天 UTC 02:00 (北京时间 10:00)
     - cron: '0 2 * * *'
+    # 每周日 UTC 04:00 执行 GC (北京时间 12:00)
+    - cron: '0 4 * * 0'
   workflow_dispatch:
     inputs:
       force_upload:
         description: '强制重新上传所有包'
+        required: false
+        default: 'false'
+        type: boolean
+      retention_days:
+        description: '保留天数（默认 30 天）'
+        required: false
+        default: '30'
+        type: string
+      gc_only:
+        description: '仅执行 GC（不构建）'
         required: false
         default: 'false'
         type: boolean
@@ -16,16 +28,102 @@ env:
   S3_BUCKET: hi168-h5hv6zw90zf-sslnc1b0-s
   S3_ENDPOINT: https://s3.hi168.com
   S3_PREFIX: nix-cache
+  RETENTION_DAYS: ${{ inputs.retention_days || '30' }}
 
 jobs:
+  gc-cache:
+    name: GC Old Packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      - name: Install rclone
+        run: |
+          curl -s https://rclone.org/install.sh | sudo bash
+
+      - name: Configure rclone
+        run: |
+          mkdir -p ~/.config/rclone
+          cat > ~/.config/rclone/rclone.conf <<EOF
+          [s3]
+          type = s3
+          provider = Other
+          access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          endpoint = ${{ env.S3_ENDPOINT }}
+          region = auto
+          EOF
+
+      - name: Delete old packages
+        run: |
+          REMOTE="s3:${{ env.S3_BUCKET }}/${{ env.S3_PREFIX }}"
+          RETENTION_DAYS=${{ env.RETENTION_DAYS }}
+          DELETED=0
+          KEPT=0
+          
+          echo "清理 ${RETENTION_DAYS} 天前的包..."
+          
+          # 获取所有 .tar.xz 文件
+          rclone ls "${REMOTE}/" --include "*.tar.xz" | while read -r size path; do
+            # 获取文件修改时间
+            mod_time=$(rclone lsf "${REMOTE}/${path}" --format "t" 2>/dev/null | head -1)
+            
+            if [[ -z "$mod_time" ]]; then
+              continue
+            fi
+            
+            # 计算文件年龄（天）
+            file_epoch=$(date -d "$mod_time" +%s 2>/dev/null || echo 0)
+            now_epoch=$(date +%s)
+            age_days=$(( (now_epoch - file_epoch) / 86400 ))
+            
+            if [[ "$age_days" -gt "$RETENTION_DAYS" ]]; then
+              echo "删除 ($age_days 天): $path"
+              rclone delete "${REMOTE}/${path}" 2>/dev/null
+              ((DELETED++))
+            else
+              ((KEPT++))
+            fi
+          done
+          
+          echo "GC 完成: 删除=$DELETED, 保留=$KEPT"
+          
+          # 更新 index.json 中的 GC 信息
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          rclone cat "${REMOTE}/index.json" 2>/dev/null | jq \
+            --arg ts "$TIMESTAMP" \
+            --argjson deleted "$DELETED" \
+            --argjson kept "$KEPT" \
+            --arg days "$RETENTION_DAYS" \
+            '. + {gc: {timestamp: $ts, retention_days: ($days | tonumber), deleted: $deleted, kept: $kept}}' \
+            > /tmp/index-gc.json 2>/dev/null || {
+              cat > /tmp/index-gc.json <<EOF
+          {
+            "gc": {
+              "timestamp": "$TIMESTAMP",
+              "retention_days": $RETENTION_DAYS,
+              "deleted": $DELETED,
+              "kept": $KEPT
+            }
+          }
+          EOF
+            }
+          
+          rclone copy /tmp/index-gc.json "${REMOTE}/index.json"
+
   build-and-cache:
     name: Build & Cache Packages
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    if: ${{ inputs.gc_only != 'true' }}
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Decrypt secrets (transcrypt)
+        run: |
+          echo "${{ secrets.TRANSCRYPT_PASSWORD }}" | sudo -S transcrypt -c aes-256-cbc -p "${{ secrets.TRANSCRYPT_PASSWORD }}" -y
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30

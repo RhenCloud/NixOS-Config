@@ -6,11 +6,12 @@
 
 | Secret 名称 | 说明 | 示例值 |
 |-------------|------|--------|
-| `S3_BUCKET` | S3 存储桶名称 | `rhencloud-nix-cache` |
-| `S3_ENDPOINT` | S3 端点 URL（可选） | `https://xxx.r2.cloudflarestorage.com` |
+| `S3_BUCKET` | S3 存储桶名称 | `hi168-h5hv6zw90zf-sslnc1b0-s` |
+| `S3_ENDPOINT` | S3 端点 URL | `https://s3.hi168.com` |
 | `S3_PREFIX` | S3 路径前缀（可选） | `nix-cache` |
-| `AWS_ACCESS_KEY_ID` | S3 访问密钥 ID | `AKIAIOSFODNN7EXAMPLE` |
-| `AWS_SECRET_ACCESS_KEY` | S3 访问密钥 | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
+| `AWS_ACCESS_KEY_ID` | S3 访问密钥 ID | `UA7PXLVPABCTYEO92K6A` |
+| `AWS_SECRET_ACCESS_KEY` | S3 访问密钥 | `cTs2DWCaJ6sTYZfiFImrXB3S536zNmdIfOZXs9Ly` |
+| `TRANSCRYPT_PASSWORD` | transcrypt 解密密码 | （用于解密 secrets/ 目录） |
 
 ## Cloudflare R2 配置示例
 
