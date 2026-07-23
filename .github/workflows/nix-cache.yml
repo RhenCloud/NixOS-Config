@@ -121,9 +121,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install transcrypt
+        run: |
+          curl -sL https://raw.githubusercontent.com/elasticdog/transcrypt/main/transcrypt -o /tmp/transcrypt
+          chmod +x /tmp/transcrypt
+          sudo mv /tmp/transcrypt /usr/local/bin/transcrypt
+          transcrypt --version
+
       - name: Decrypt secrets (transcrypt)
         run: |
-          echo "${{ secrets.TRANSCRYPT_PASSWORD }}" | sudo -S transcrypt -c aes-256-cbc -p "${{ secrets.TRANSCRYPT_PASSWORD }}" -y
+          transcrypt -c aes-256-cbc -p "${{ secrets.TRANSCRYPT_PASSWORD }}" -y
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30
