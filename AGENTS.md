@@ -10,7 +10,8 @@ systems/x86_64-linux/nixos-desktop/   # Single host entry (default.nix + hardwar
 homes/x86_64-linux/rhencloud@nixos-desktop/  # Home Manager entry for rhencloud
 modules/nixos/{core,desktop,service}/  # System-level modules (auto-loaded by Snowfall)
 modules/home/{core,desktop,dev,service}/  # Home Manager modules (auto-loaded)
-modules/home/secrets/          # agenix-encrypted secrets (*.age files)
+lib/                           # Snowfall Lib helpers (rhencloud.lib.*)
+secrets/                       # transcrypt-encrypted secrets
 overlays/                      # Custom package overlays
 shells/                        # Extra devShells (python.nix)
 ```
@@ -53,7 +54,8 @@ nix develop .#python
 - **Channel**: `nixos-unstable`. This is a faster-moving, smaller binary cache.
 - **stateVersion**: `26.05` (set in both `flake.nix:169` and `homes/.../default.nix:3`).
 - **Window managers**: Both Hyprland and Niri are configured. Hyprland input is fetched via `gh-proxy.com` mirror.
-- **Secrets**: Managed with agenix. Encrypted files live in `modules/home/secrets/*.age`. Rules in `secrets.nix`, mount paths in `modules/home/secrets/default.nix`. SSH key (`~/.ssh/id_ed25519`) is the default decryption identity.
+- **Secrets**: Managed with [transcrypt](https://github.com/elasticdog/transcrypt). Encrypted files live in `secrets/` at repo root. Uses `aes-256-cbc` cipher with transparent git clean/smudge filters.
+- **Path resolution**: `lib/secrets.nix` provides `rhencloud.lib.secrets.read`, a helper to read secrets from repo root without relative paths. Usage: `rhencloud.lib.secrets.read "opencode/github-token"`. Equivalent to TypeScript's `@/` imports via `inputs.self`.
 - **Theming**: Stylix is used for system-wide theming (Dracula theme). The config references tinted-theming base16 schemes.
 - **Custom devShells**: The `flake.nix` manually extends `baseFlake.devShells` to add a `python` shell (`shells/python.nix`) — this is outside Snowfall's auto-discovery.
 
@@ -80,10 +82,22 @@ nix develop .#python
 ## Secrets Workflow
 
 ```bash
-# Edit an existing secret
-cd modules/home/secrets && agenix -e <name>.age
+# Initialize a fresh clone
+transcrypt -c aes-256-cbc -p '<password>'
 
-# Add a new secret: 1) add rule in secrets.nix, 2) create .age file with agenix -e, 3) declare path in modules/home/secrets/default.nix, 4) reference via config.age.secrets.<name>.path
+# List encrypted files
+git ls-crypt
+
+# Add a new secret: 1) place file in secrets/, 2) add to git, 3) commit (auto-encrypted)
+echo 'my-secret' > secrets/my-key
+git add secrets/my-key
+git commit -m "add my-key secret"
+
+# Display current credentials
+transcrypt --display
+
+# Rekey (change password)
+transcrypt --rekey
 ```
 
 ## Style

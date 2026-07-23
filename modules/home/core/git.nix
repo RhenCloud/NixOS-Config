@@ -1,4 +1,11 @@
-{ pkgs, config, ... }:
+{ pkgs, config, inputs, lib, ... }:
+let
+  inherit (lib.strings) trim;
+  readSecret = path: trim (builtins.readFile "${inputs.self}/secrets/${path}");
+
+  sshTcDiscourse = readSecret "ssh/tc-discourse";
+  sshBeeHk1 = readSecret "ssh/bee-hk-1";
+in
 {
   # git 相关配置
   programs.git = {
@@ -35,13 +42,14 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
+    extraConfig = ''
+      ${sshTcDiscourse}
+
+      ${sshBeeHk1}
+    '';
     settings = {
       "*" = {
         identityAgent = "~/.gnupg/S.gpg-agent.ssh";
-      };
-      "tc-discourse" = {
-        hostname = "154.44.13.130";
-        user = config.snowfallorg.user.name;
       };
     };
   };

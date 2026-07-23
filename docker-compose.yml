@@ -1,0 +1,43 @@
+services:
+  x-to-img:
+    build:
+      context: ./x-to-img
+      dockerfile: Dockerfile
+    container_name: x-to-img
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - API_TOKEN=${X_TO_IMG_API_TOKEN:-}
+    restart: unless-stopped
+
+  shit-bot:
+    build:
+      context: ./Shit-Bot
+      dockerfile: Dockerfile
+    container_name: shit-bot
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - ./data:/app/data
+    environment:
+      - TZ=Asia/Shanghai
+      - DISCORD_TOKEN=${DISCORD_TOKEN:-}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN:-}
+      - HTTPS_PROXY=${HTTPS_PROXY:-}
+      - TWITTER_AUTH_TOKEN=${TWITTER_AUTH_TOKEN:-}
+      - TWITTER_CT0=${TWITTER_CT0:-}
+      - TWITTER_USERNAME=${TWITTER_USERNAME:-}
+      - TWITTER_PASSWORD=${TWITTER_PASSWORD:-}
+      - TWITTER_EMAIL=${TWITTER_EMAIL:-}
+      - TWITTER_TOTP_SECRET=${TWITTER_TOTP_SECRET:-}
+      - X_TO_IMAGE_API_URL=http://x-to-img:3000
+      - X_TO_IMAGE_API_TOKEN=${X_TO_IMG_API_TOKEN:-}
+      - X_TO_IMAGE_THEME=${X_TO_IMAGE_THEME:-dark}
+      - AI_API_URL=${AI_API_URL:-}
+      - AI_API_KEY=${AI_API_KEY:-}
+      - AI_WEB_SEARCH_API_KEY=${AI_WEB_SEARCH_API_KEY:-}
+    depends_on:
+      - x-to-img
+    restart: unless-stopped

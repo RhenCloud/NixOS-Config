@@ -4,7 +4,8 @@
   config,
   primaryUser,
   ...
-}: {
+}:
+{
   zramSwap.enable = true;
 
   networking = {
@@ -23,8 +24,8 @@
     ExecStart = lib.mkForce ''
       ${pkgs.mihomo}/bin/mihomo -d /var/lib/mihomo -f ${config.services.mihomo.configFile}
     '';
-    User = lib.mkForce primaryUser;
-    Group = lib.mkForce primaryUser;
+    User = "root";
+    Group = "root";
     DynamicUser = lib.mkForce false;
     StateDirectory = lib.mkForce "mihomo";
     StateDirectoryMode = lib.mkForce "0755";

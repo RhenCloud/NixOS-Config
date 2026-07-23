@@ -4,6 +4,7 @@
   services.displayManager.sessionPackages = [
     pkgs.hyprland
     pkgs.niri
+    pkgs.mango
   ];
   services.displayManager.autoLogin = {
     enable = true;

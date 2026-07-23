@@ -46,5 +46,6 @@
     splayer
 
     mission-center
+    wayfreeze
   ];
 }

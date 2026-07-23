@@ -43,6 +43,7 @@ let
 
     systems.modules.nixos = [
       inputs.mangowm.nixosModules.mango
+      inputs.selector4nix.nixosModules.selector4nix
       (
         {
           lib,

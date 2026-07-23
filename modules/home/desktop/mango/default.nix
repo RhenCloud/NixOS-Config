@@ -11,7 +11,7 @@
       # Window effect
       blur=0
       blur_layer=0
-      blur_optimized=1
+      blur_optimized=0
       blur_params_num_passes = 2
       blur_params_radius = 5
       blur_params_noise = 0.02
@@ -28,7 +28,7 @@
       shadows_position_y = 0
       shadowscolor= 0x000000ff
 
-      border_radius=6
+      border_radius=10
       no_radius_when_single=0
       focused_opacity=1.0
       unfocused_opacity=1.0
@@ -41,7 +41,7 @@
       animation_type_close=slide
       animation_fade_in=1
       animation_fade_out=1
-      tag_animation_direction=1
+      tag_animation_direction=0
       zoom_initial_ratio=0.3
       zoom_end_ratio=0.8
       fadein_begin_opacity=0.5
@@ -77,6 +77,7 @@
       # Overview Setting
       hotarea_size=10
       enable_hotarea=1
+      hotarea_corner=0
       ov_tab_mode=0
       overviewgappi=5
       overviewgappo=30
@@ -136,19 +137,21 @@
 
       # layout support:
       # tile,scroller,grid,deck,monocle,center_tile,vertical_tile,vertical_scroller
-      tagrule=id:1,layout_name:tile
-      tagrule=id:2,layout_name:tile
-      tagrule=id:3,layout_name:tile
-      tagrule=id:4,layout_name:tile
-      tagrule=id:5,layout_name:tile
-      tagrule=id:6,layout_name:tile
-      tagrule=id:7,layout_name:tile
-      tagrule=id:8,layout_name:tile
-      tagrule=id:9,layout_name:tile
+      tagrule=id:1,layout_name:scroller
+      tagrule=id:2,layout_name:scroller
+      tagrule=id:3,layout_name:scroller
+      tagrule=id:4,layout_name:scroller
+      tagrule=id:5,layout_name:scroller
+      tagrule=id:6,layout_name:scroller
+      tagrule=id:7,layout_name:scroller
+      tagrule=id:8,layout_name:scroller
+      tagrule=id:9,layout_name:scroller
 
       # layer rule
       layerrule=animation_type_open:zoom,layer_name:rofi
       layerrule=animation_type_close:zoom,layer_name:rofi
+
+      monitorrule=name:^HDMI-A-1$,width:1920,height:1080,refresh:75,x:0,y:0
     '';
 
     autostart_sh = ''

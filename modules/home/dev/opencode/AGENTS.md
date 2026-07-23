@@ -120,7 +120,7 @@
 - **先理解**现有代码约定（导入、框架选择、命名、类型），再编写新代码
 - **外部临时目录**使用 `/tmp/opencode`
 - **完成修改后**运行 lint/typecheck（如果可用）
-- **敏感信息**必须使用 agenix 加密（`modules/home/secrets/*.age`）
+- **敏感信息**通过 transcrypt 加密存储在仓库 `secrets/` 目录下
 
 ## 常见项目模式
 
@@ -140,10 +140,8 @@
 
 ### 管理密钥
 ```bash
-cd modules/home/secrets
-agenix -e <name>.age           # 编辑已有密钥
-# 添加密钥: 1) 在 secrets.nix 添加规则
-#          2) 用 agenix -e 创建 .age 文件
-#          3) 在 modules/home/secrets/default.nix 声明路径
-#          4) 通过 config.age.secrets.<name>.path 引用
+cd secrets
+echo '<value>' > opencode/<name>    # 创建新密钥文件
+git add opencode/<name>            # 自动加密（transcrypt clean filter）
+git commit -m "add <name> secret"
 ```

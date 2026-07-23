@@ -1,0 +1,162 @@
+name: NixOS Build & Cache
+
+on:
+  schedule:
+    # 每天 UTC 02:00 (北京时间 10:00)
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      force_upload:
+        description: '强制重新上传所有包'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  S3_BUCKET: hi168-h5hv6zw90zf-sslnc1b0-s
+  S3_ENDPOINT: https://s3.hi168.com
+  S3_PREFIX: nix-cache
+
+jobs:
+  build-and-cache:
+    name: Build & Cache Packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            max-jobs = auto
+            substituters = https://cache.nixos.org https://hyprland.cachix.org https://nix-community.cachix.org
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=
+
+      - name: Install rclone
+        run: |
+          curl -s https://rclone.org/install.sh | sudo bash
+          rclone version
+
+      - name: Configure rclone
+        run: |
+          mkdir -p ~/.config/rclone
+          cat > ~/.config/rclone/rclone.conf <<EOF
+          [s3]
+          type = s3
+          provider = Other
+          access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          endpoint = ${{ env.S3_ENDPOINT }}
+          region = auto
+          EOF
+
+      - name: Build system configuration
+        run: |
+          echo "Building nixos-desktop system configuration..."
+          nix build ".#nixosConfigurations.nixos-desktop.config.system.build.toplevel" \
+            --no-link \
+            --print-out-paths \
+            > /tmp/build-path.txt
+          
+          BUILD_PATH=$(cat /tmp/build-path.txt)
+          echo "BUILD_PATH=$BUILD_PATH" >> $GITHUB_ENV
+          echo "Build complete: $BUILD_PATH"
+
+      - name: List all packages
+        run: |
+          echo "Listing all packages..."
+          nix-store -q --requisites "$BUILD_PATH" > /tmp/requisites.txt
+          
+          TOTAL=$(wc -l < /tmp/requisites.txt)
+          echo "Total requisites: $TOTAL"
+          echo "TOTAL_COUNT=$TOTAL" >> $GITHUB_ENV
+
+      - name: Upload packages to S3
+        run: |
+          REMOTE="s3:${{ env.S3_BUCKET }}/${{ env.S3_PREFIX }}"
+          UPLOADED=0
+          SKIPPED=0
+          FAILED=0
+          
+          while IFS= read -r store_path; do
+            if [[ ! -d "$store_path" ]]; then
+              continue
+            fi
+            
+            store_name=$(basename "$store_path")
+            
+            # 检查是否已存在
+            if rclone ls "${REMOTE}/${store_name}.tar.xz" 2>/dev/null | grep -q .; then
+              ((SKIPPED++))
+              continue
+            fi
+            
+            # 打包并上传
+            tmp_tar="/tmp/nix-cache-${store_name}.tar.xz"
+            if tar -C "$(dirname "$store_path")" -cJf "$tmp_tar" "$store_name" 2>/dev/null; then
+              if rclone copy "$tmp_tar" "${REMOTE}/" 2>/dev/null; then
+                ((UPLOADED++))
+              else
+                echo "Failed to upload: $store_name"
+                ((FAILED++))
+              fi
+              rm -f "$tmp_tar"
+            else
+              echo "Failed to tar: $store_name"
+              ((FAILED++))
+            fi
+            
+            # 每 100 个包输出进度
+            TOTAL_READ=$((UPLOADED + SKIPPED + FAILED))
+            if (( TOTAL_READ % 100 == 0 )); then
+              echo "Progress: uploaded=$UPLOADED, skipped=$SKIPPED, failed=$FAILED"
+            fi
+          done < /tmp/requisites.txt
+          
+          echo "Upload complete: uploaded=$UPLOADED, skipped=$SKIPPED, failed=$FAILED"
+          echo "UPLOADED=$UPLOADED" >> $GITHUB_ENV
+          echo "SKIPPED=$SKIPPED" >> $GITHUB_ENV
+          echo "FAILED=$FAILED" >> $GITHUB_ENV
+
+      - name: Generate cache index
+        if: always()
+        run: |
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          
+          cat > /tmp/index.json <<EOF
+          {
+            "timestamp": "$TIMESTAMP",
+            "host": "nixos-desktop",
+            "github_run": "${{ github.run_id }}",
+            "github_sha": "${{ github.sha }}",
+            "stats": {
+              "total_requisites": ${{ env.TOTAL_COUNT || 0 }},
+              "uploaded": ${{ env.UPLOADED || 0 }},
+              "skipped": ${{ env.SKIPPED || 0 }},
+              "failed": ${{ env.FAILED || 0 }}
+            },
+            "s3": {
+              "bucket": "${{ env.S3_BUCKET }}",
+              "prefix": "${{ env.S3_PREFIX }}",
+              "endpoint": "${{ env.S3_ENDPOINT }}"
+            }
+          }
+          EOF
+          
+          rclone copy /tmp/index.json "s3:${{ env.S3_BUCKET }}/${{ env.S3_PREFIX }}/index.json"
+          echo "Cache index uploaded"
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            /tmp/requisites.txt
+            /tmp/index.json
+          retention-days: 7

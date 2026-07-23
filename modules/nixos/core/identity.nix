@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, inputs, config, ... }:
 let
   username = builtins.head (builtins.attrNames config.snowfallorg.users);
 in
@@ -7,7 +7,7 @@ in
     _module.args.primaryUser = username;
 
     users.users.${username} = {
-      hashedPassword = "$y$j9T$9g/eMEwVjfWXhiR8M3UzN/$baNRWXMywZY8fsLIvC/1uPQxDJNksgpDRKyosat01Y9";
+      hashedPassword = builtins.readFile "${inputs.self}/secrets/password-hash";
       shell = pkgs.bash;
       extraGroups = [
         "networkmanager"

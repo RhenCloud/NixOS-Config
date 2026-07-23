@@ -1,9 +1,19 @@
 {
   pkgs,
   inputs,
+  lib,
   ...
 }:
 let
+  inherit (lib.strings) trim;
+  readSecret = path: trim (builtins.readFile "${inputs.self}/secrets/${path}");
+
+  githubToken = readSecret "opencode/github-token";
+  frimodelApiKey = readSecret "opencode/frimodel-api-key";
+  localApiKey = readSecret "opencode/local-api-key";
+  sub2apiKey = readSecret "opencode/sub2api-key";
+  voidswitchApiKey = readSecret "opencode/voidswitch-api-key";
+
   opencodeConfig = {
     "$schema" = "https://opencode.ai/config.json";
     lsp = true;
@@ -23,7 +33,7 @@ let
       github = {
         enabled = true;
         headers = {
-          Authorization = "Bearer REDACTED-9ec4148f";
+          Authorization = "Bearer ${githubToken}";
         };
         oauth = false;
         type = "remote";
@@ -37,18 +47,8 @@ let
         enabled = true;
         type = "local";
       };
-      # agent-session-status = {
-      #   enabled = true;
-      #   type = "remote";
-      #   url = "http://127.0.0.1:55854/mcp";
-      #   headers = {
-      #     Authorization = "Bearer 81cd0b3f83bfacf53bb0c61dad0cc04d3d6bdca850b66de80d0a22def1c858b8";
-      #     X-Agent = "opencode";
-      #   };
-      # };
     };
     plugin = [
-      # "oh-my-openagent@latest"
       "${inputs.siiway-oc-plugin.packages.${pkgs.stdenv.hostPlatform.system}.opencode-voidswitch}"
       "opencode-chrome-devtools"
       "@tarquinen/opencode-dcp@latest"
@@ -61,7 +61,7 @@ let
         };
         npm = "@ai-sdk/openai-compatible";
         options = {
-          apiKey = "REDACTED-8291f870";
+          apiKey = "${frimodelApiKey}";
           baseURL = "https://api.frimodel.com/v1";
           setCacheKey = true;
         };
@@ -73,7 +73,7 @@ let
         };
         npm = "@ai-sdk/openai-compatible";
         options = {
-          apiKey = "REDACTED-b73a34f8";
+          apiKey = "${localApiKey}";
           baseURL = "http://127.0.0.1:8080/v1";
           setCacheKey = true;
         };
@@ -84,28 +84,17 @@ let
         };
         npm = "@ai-sdk/openai-compatible";
         options = {
-          apiKey = "REDACTED-bc0db852";
+          apiKey = "${sub2apiKey}";
           baseURL = "https://sub2api.wss.moe";
           setCacheKey = true;
         };
       };
-      # opencode = {
-      #   models = {
-      #     "deepseek-v4-pro".name = "";
-      #   };
-      #   npm = "@ai-sdk/openai-compatible";
-      #   options = {
-      #     apiKey = "REDACTED-5fcc9ef0";
-      #     baseURL = "https://token.android-doc.com/api/token/v1";
-      #     setCacheKey = true;
-      #   };
-      # };
       voidswitch = {
-        npm = "@ai-sdk/openai-compatible";
+        npm = "@ai-sdk/anthropic";
         name = "VoidSwitch";
         options = {
-          apiKey = "REDACTED-71bdd162";
-          baseURL = "https://voidswitch.siiway.org";
+          apiKey = "${voidswitchApiKey}";
+          baseURL = "https://voidswitch.siiway.org/v1";
         };
         models = {
           "claude-opus-4-8" = { };
