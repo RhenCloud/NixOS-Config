@@ -47,7 +47,7 @@ in
 {
   services.selector4nix = {
     enable = true;
-    configureSubstituter = "overwrite";
+    configureSubstituter = "prepend";
     settings = {
       server = {
         ip = "127.0.0.1";

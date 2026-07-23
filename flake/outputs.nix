@@ -83,11 +83,11 @@ baseFlake
     x86_64-linux = ((baseFlake.packages or { }).x86_64-linux or { }) // {
       rime-keytao = inputs.rime-keytao.packages.x86_64-linux.default;
       rimeKeytao = inputs.rime-keytao.packages.x86_64-linux.default;
-      lwe =
-        let
-          pkgs = pkgsFor "x86_64-linux";
-        in
-        pkgs.callPackage ../packages/lwe/default.nix { };
+      # lwe =
+      #   let
+      #     pkgs = pkgsFor "x86_64-linux";
+      #   in
+      #   pkgs.callPackage ../packages/lwe/default.nix { };
       herdr-tab-rename =
         let
           pkgs = pkgsFor "x86_64-linux";
