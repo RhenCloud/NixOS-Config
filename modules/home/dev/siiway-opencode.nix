@@ -13,6 +13,7 @@ let
   localApiKey = readSecret "opencode/local-api-key";
   sub2apiKey = readSecret "opencode/sub2api-key";
   voidswitchApiKey = readSecret "opencode/voidswitch-api-key";
+  zhiApiKey = readSecret "opencode/zhi-api-key";
 
   opencodeConfig = {
     "$schema" = "https://opencode.ai/config.json";
@@ -105,6 +106,17 @@ let
           "claude-sonnet-4-5" = { };
           "grok-4.3-beta" = { };
           "doghubx-gpt-5.5" = { };
+        };
+      };
+      zhi = {
+        models = {
+          "qwen3.7-max".name = "";
+        };
+        npm = "@ai-sdk/openai-compatible";
+        options = {
+          apiKey = "${zhiApiKey}";
+          baseURL = "https://zhi-api.com/v1";
+          setCacheKey = true;
         };
       };
     };

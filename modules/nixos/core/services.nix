@@ -46,7 +46,7 @@
 
   environment.etc = {
     "dae/config.dae".source = ./dae/config.dae;
-    "dae/nodes.dae".source = ./dae/nodes.dae;
+    # "dae/nodes.dae".source = ./dae/nodes.dae;
   };
 
   services.openssh.enable = true;
