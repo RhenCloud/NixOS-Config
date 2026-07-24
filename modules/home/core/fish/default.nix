@@ -39,11 +39,11 @@
         tokei = "tokei --sort code";
         ff = "fastfetch";
         vim = "nvim";
-        nrebuild = "sudo nixos-rebuild switch --log-format internal-json |& nom --json";
-        hrebuild = "home-manager switch --flake .#${config.my.user.name}@nixos-desktop";
-        nclean = "sudo nix-collect-garbage";
-        ncleanall = "sudo nix-collect-garbage -d";
-        nupgrade = "sudo nix flake update && sudo nixos-rebuild switch --upgrade --log-format internal-json |& nom --json";
+        # nrebuild = "sudo nixos-rebuild switch --log-format internal-json |& nom --json";
+        # hrebuild = "home-manager switch --flake .#${config.my.user.name}@nixos-desktop";
+        # nclean = "sudo nix-collect-garbage";
+        # ncleanall = "sudo nix-collect-garbage -d";
+        # nupgrade = "sudo nix flake update && sudo nixos-rebuild switch --upgrade --log-format internal-json |& nom --json";
         tree = "tree --gitignore -I '.git'";
         oc = "opencode";
       };

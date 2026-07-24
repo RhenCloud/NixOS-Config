@@ -1,11 +1,12 @@
 { pkgs, ... }: {
   home.packages = with pkgs; [
+    nh
     fzf
     perl
     themechanger
     google-chrome
     eza
-    pkgs.nixfmt
+    nixfmt
     keymapper
     wemeet
     qbittorrent

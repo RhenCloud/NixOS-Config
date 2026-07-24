@@ -38,6 +38,8 @@ in
       enable = true;
       enableDefaultConfig = false;
       extraConfig = ''
+        AddKeysToAgent yes
+
         ${sshTcDiscourse}
 
         ${sshBeeHk1}
@@ -55,8 +57,10 @@ in
     enableScDaemon = true;
     enableSshSupport = true;
     pinentry.package = pkgs.pinentry-gtk2;
-    defaultCacheTtl = 1800;
-    maxCacheTtl = 7200;
+    defaultCacheTtl = 86400;
+    maxCacheTtl = 604800;
+    defaultCacheTtlSsh = 86400;
+    maxCacheTtlSsh = 604800;
   };
 
   home.file.".gnupg/scdaemon.conf".text = ''

@@ -16,6 +16,7 @@ in {
         "audio"
         "input"
         "kvm"
+        "wheel"
       ];
     };
 

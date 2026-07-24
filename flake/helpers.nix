@@ -51,6 +51,10 @@ let
       nixpkgs.config.allowUnfree = config.my.allowUnfree;
       nixpkgs.config.permittedInsecurePackages = config.my.permittedInsecurePackages;
     })
+    ({ config, ... }: {
+      home.homeDirectory = "/home/${config.my.user.name}";
+      home.username = config.my.user.name;
+    })
   ];
 in
 {
