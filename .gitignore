@@ -21,6 +21,9 @@ secrets.yaml
 *.bak
 *.log
 
+# gitleaks 报告
+gitleaks-report*.json
+
 # 备份文件
 *_backup*
 *~

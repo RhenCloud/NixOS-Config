@@ -1,0 +1,15 @@
+# .gitleaks.toml
+# 排除 transcrypt 管理的加密文件目录
+# 这些文件在 git 中已加密，本地解密后是正常的
+title = "gitleaks config"
+
+[allowlist]
+paths = [
+  # transcrypt 管理的密钥目录（git 中已加密）
+  "^secrets/",
+  # gitleaks 自身报告（不含明文密钥）
+  "^gitleaks-report",
+  # GPG 公钥（设计上公开）
+  "modules/home/core/git.nix",
+  "modules/home/dev/opencode/AGENTS.md",
+]
