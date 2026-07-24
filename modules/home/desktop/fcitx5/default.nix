@@ -38,7 +38,7 @@ in
     extraLuaFiles = lib.mkOption {
       type = lib.types.listOf (
         lib.types.submodule (
-          { ... }: {
+          _: {
             options.name = lib.mkOption {
               type = lib.types.str;
               description = "Name (filename) for the Lua file";
@@ -102,17 +102,19 @@ in
     programs.rime-keytao.enable = true;
 
     # 主题文件放到 ~/.local/share/fcitx5/themes/（fcitx5-configtool 能识别的路径）
-    xdg.dataFile."fcitx5/themes/dracula" = {
-      source = ./fcitx5/themes/dracula;
-      recursive = true;
-    };
-    xdg.dataFile."fcitx5/themes/default-dark" = {
-      source = ./themes/default-dark;
-      recursive = true;
-    };
-    xdg.dataFile."fcitx5/themes/default-light" = {
-      source = ./themes/default-light;
-      recursive = true;
+    xdg.dataFile = {
+      "fcitx5/themes/dracula" = {
+        source = ./fcitx5/themes/dracula;
+        recursive = true;
+      };
+      "fcitx5/themes/default-dark" = {
+        source = ./themes/default-dark;
+        recursive = true;
+      };
+      "fcitx5/themes/default-light" = {
+        source = ./themes/default-light;
+        recursive = true;
+      };
     };
 
     # classicui.conf 放到 ~/.config/fcitx5/conf/classicui.conf

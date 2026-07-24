@@ -1,6 +1,4 @@
-{
-  ...
-}:
+_:
 {
   programs.nvf.settings.vim.keymaps = [
     # 文件树

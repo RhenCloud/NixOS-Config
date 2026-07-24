@@ -1,94 +1,98 @@
 { pkgs, ... }:
 {
-  services.pulseaudio.enable = false; # Use Pipewire, the modern sound subsystem
+  services = {
+    pulseaudio.enable = false; # Use Pipewire, the modern sound subsystem
+    # Disable USB autosuspend for all USB audio devices. Without this the kernel
+    # periodically suspends USB speakers (e.g. Edifier R20), causing the audio
+    # output to temporarily disappear / reconnect — particularly noticeable
+    # during Discord/Vesktop streams.
+    #
+    # Note: we match on ID_USB_INTERFACES (device-level env var) instead of
+    # bInterfaceClass (interface-level attr) because power/control only exists
+    # on the USB device, not on individual interfaces.
+    udev.extraRules = ''
+      ACTION=="add", SUBSYSTEM=="usb", ENV{ID_USB_INTERFACES}=="*:01*:*", ATTR{power/control}="on"
+    '';
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      # If you want to use JACK applications, uncomment this
+      # jack.enable = true;
+      wireplumber = {
+        enable = true;
+        extraConfig = {
+          bluetoothEnhancements = {
+            "10-bluez" = {
+              "monitor.bluez.properties" = {
+                "bluez5.enable-sbc-xq" = true;
+                "bluez5.enable-msbc" = true;
+                # Keep volume scaling on the host side to avoid low-volume dead zones
+                # on some Bluetooth devices (e.g. near 20-30% becoming effectively mute).
+                "bluez5.enable-hw-volume" = false;
+                "bluez5.codecs" = [
+                  "aac"
+                  "ldac"
+                  "aptx"
+                  "aptx_hd"
+                ];
+                "bluez5.roles" = [
+                  "hsp_hs"
+                  "hsp_ag"
+                  "hfp_hf"
+                  "hfp_ag"
+                ];
+              };
+            };
+          };
+          # Prevent ALSA sinks from being suspended on idle — without this,
+          # WirePlumber periodically suspends/resumes the audio device, which
+          # manifests as brief audio dropouts during Discord streams.
+          disableSuspend = {
+            "10-disable-suspend" = {
+              "monitor.alsa.rules" = [
+                {
+                  matches = [
+                    { "device.name" = "~alsa_output.*"; }
+                  ];
+                  actions = {
+                    update-props = {
+                      "session.suspend-timeout-seconds" = 0;
+                    };
+                  };
+                }
+              ];
+            };
+          };
+          usbAlsaSoftMixer = {
+            "20-usb-alsa-soft-mixer" = {
+              "monitor.alsa.rules" = [
+                {
+                  matches = [
+                    {
+                      "device.bus" = "usb";
+                    }
+                  ];
+                  actions = {
+                    update-props = {
+                      "api.alsa.soft-mixer" = true;
+                    };
+                  };
+                }
+              ];
+            };
+          };
+        };
+      };
+    };
+  };
 
   security.rtkit.enable = true; # Enable RealtimeKit for audio purposes
-
-  # Disable USB autosuspend for all USB audio devices. Without this the kernel
-  # periodically suspends USB speakers (e.g. Edifier R20), causing the audio
-  # output to temporarily disappear / reconnect — particularly noticeable
-  # during Discord/Vesktop streams.
-  #
-  # Note: we match on ID_USB_INTERFACES (device-level env var) instead of
-  # bInterfaceClass (interface-level attr) because power/control only exists
-  # on the USB device, not on individual interfaces.
-  services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="usb", ENV{ID_USB_INTERFACES}=="*:01*:*", ATTR{power/control}="on"
-  '';
 
   # pipewire-pulse 的默认 soft limit 仅有 1024，频繁 pactl load-module 容易 EMFILE。
   systemd.user.services.pipewire-pulse = {
     serviceConfig.LimitNOFILE = 65536;
-  };
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    # jack.enable = true;
-    wireplumber.enable = true;
-    wireplumber.extraConfig.bluetoothEnhancements = {
-      "10-bluez" = {
-        "monitor.bluez.properties" = {
-          "bluez5.enable-sbc-xq" = true;
-          "bluez5.enable-msbc" = true;
-          # Keep volume scaling on the host side to avoid low-volume dead zones
-          # on some Bluetooth devices (e.g. near 20-30% becoming effectively mute).
-          "bluez5.enable-hw-volume" = false;
-          "bluez5.codecs" = [
-            "aac"
-            "ldac"
-            "aptx"
-            "aptx_hd"
-          ];
-          "bluez5.roles" = [
-            "hsp_hs"
-            "hsp_ag"
-            "hfp_hf"
-            "hfp_ag"
-          ];
-        };
-      };
-    };
-    # Prevent ALSA sinks from being suspended on idle — without this,
-    # WirePlumber periodically suspends/resumes the audio device, which
-    # manifests as brief audio dropouts during Discord streams.
-    wireplumber.extraConfig.disableSuspend = {
-      "10-disable-suspend" = {
-        "monitor.alsa.rules" = [
-          {
-            matches = [
-              { "device.name" = "~alsa_output.*"; }
-            ];
-            actions = {
-              update-props = {
-                "session.suspend-timeout-seconds" = 0;
-              };
-            };
-          }
-        ];
-      };
-    };
-    wireplumber.extraConfig.usbAlsaSoftMixer = {
-      "20-usb-alsa-soft-mixer" = {
-        "monitor.alsa.rules" = [
-          {
-            matches = [
-              {
-                "device.bus" = "usb";
-              }
-            ];
-            actions = {
-              update-props = {
-                "api.alsa.soft-mixer" = true;
-              };
-            };
-          }
-        ];
-      };
-    };
   };
 
   # 虚拟麦克风 — 捕获系统音频供 Discord 使用

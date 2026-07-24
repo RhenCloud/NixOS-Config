@@ -1,8 +1,7 @@
 {
-  description = "NixOS configuration";
+  description = "RhenCloud NixOS";
 
   nixConfig = {
-    # ── 自建 S3 缓存 ─────────────────────────────────────
     extra-substituters = [
       "s3://hi168-h5hv6zw90zf-sslnc1b0-s/nix-cache?endpoint=https://s3.hi168.com&region=auto"
       "https://yazi.cachix.org"
@@ -38,14 +37,10 @@
     ];
   };
 
-  # ── 所有 flake 输入 ──────────────────────────────────────
-  #
-  # 规则：绝大多数子 flake 的 inputs.nixpkgs 都统一 follow 我们的
-  # nixpkgs-unstable，确保所有模块依赖同一套 nixpkgs 版本，避免求值
-  # 不一致。非 flake 输入（flake=false / tarball）没有 nixpkgs input，
-  # 拆到下方单独列出。
-
   inputs = {
+    # ── 框架 ────────────────────────────────────────────
+    flake-parts.url = "github:hercules-ci/flake-parts";
+
     # ── 频道 / 基础 ────────────────────────────────────
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
@@ -57,10 +52,6 @@
     };
     nur = {
       url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    snowfall-lib = {
-      url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia-v4 = {
@@ -163,5 +154,18 @@
     };
   };
 
-  outputs = inputs: import ./flake/outputs.nix inputs;
+  outputs =
+    inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" ];
+
+      imports = [
+        ./flake/pkgs.nix
+        ./flake/nixos.nix
+        ./flake/home-manager.nix
+        ./flake/packages.nix
+        ./flake/devshells.nix
+        ./flake/lib.nix
+      ];
+    };
 }

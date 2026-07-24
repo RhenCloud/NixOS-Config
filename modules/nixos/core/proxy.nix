@@ -1,4 +1,4 @@
-{ ... }:
+_:
 {
   # environment.systemPackages = with pkgs; [
   # dae

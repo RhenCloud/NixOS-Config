@@ -1,28 +1,38 @@
 # AGENTS.md
 
-NixOS system configuration for RhenCloud, managed as a Nix flake using **Snowfall Lib**.
+NixOS system configuration for RhenCloud, managed as a Nix flake using **flake-parts**.
 
 ## Repo Layout
 
 ```
-flake.nix                      # Entry point: inputs, Snowfall config, devShells override
+flake.nix                      # Entry point: inputs, flake-parts config, submodule imports
+flake/pkgs.nix                 # perSystem pkgs (allowUnfree + overlays)
+flake/nixos.nix                # NixOS configurations (auto-discovers hosts/)
+flake/home-manager.nix         # Home Manager configurations (auto-discovers homes/)
+flake/packages.nix             # Custom packages (herdr-tab-rename, aicommits, etc.)
+flake/devshells.nix            # devShells (default + python)
+flake/lib.nix                  # flake.lib exports (readSecret, etc.)
+flake/helpers.nix              # Internal helpers (module/overlay discovery)
 systems/x86_64-linux/nixos-desktop/   # Single host entry (default.nix + hardware-configuration.nix)
 homes/x86_64-linux/rhencloud@nixos-desktop/  # Home Manager entry for rhencloud
-modules/nixos/{core,desktop,service}/  # System-level modules (auto-loaded by Snowfall)
-modules/home/{core,desktop,dev,service}/  # Home Manager modules (auto-loaded)
-lib/                           # Snowfall Lib helpers (rhencloud.lib.*)
+modules/nixos/{core,desktop,service}/  # System-level modules (auto-collected by collectDefaultNix)
+modules/home/{core,desktop,dev,service}/  # Home Manager modules (auto-collected)
+lib/                           # Library helpers (rhencloud.lib.* — not auto-exposed, use via inputs)
 secrets/                       # transcrypt-encrypted secrets
-overlays/                      # Custom package overlays
-shells/                        # Extra devShells (python.nix)
+overlays/                      # Custom package overlays (niri, portal-gtk, mexkey3-ccid)
+patches/                       # Patches for niri
 ```
 
-Snowfall Lib auto-discovers modules by directory convention — no manual `imports` needed in `flake.nix` for modules under `modules/`. Adding a new directory with a `default.nix` is enough.
+Module discovery is handled by `collectDefaultNix` in `flake/helpers.nix` — recursively finds all `default.nix` under `modules/`. Adding a new directory with a `default.nix` is enough.
 
 ## Key Commands
 
 ```bash
-# Build and switch (apply) the system config
-sudo nixos-rebuild switch --flake .#nixos-desktop
+# Build and switch (apply) the system config (先查缓存，有则跳过构建)
+./scripts/rebuild.sh
+
+# Dry-run only: check cache status without building
+./scripts/rebuild.sh check
 
 # Build only (creates ./result symlink)
 nixos-rebuild build --flake .#nixos-desktop
@@ -48,34 +58,37 @@ nix develop .#python
 
 ## Architecture Notes
 
-- **Snowfall Lib namespace**: `rhencloud`. The flake uses `snowfall-lib.mkFlake` — this means module paths map to `rhencloud.*` options (e.g., `rhencloud.primaryUser` in `flake.nix:164`).
-- **Single host**: `nixos-desktop` (x86_64-linux). The hostname and host platform are set in `systems/x86_64-linux/nixos-desktop/default.nix`.
-- **Primary user**: `rhencloud`, set via `rhencloud.primaryUser` in `flake.nix:164`.
+- **Framework**: flake-parts replaces Snowfall Lib.
+- **Single host**: `nixos-desktop` (x86_64-linux). Hostname set in `systems/x86_64-linux/nixos-desktop/default.nix`.
+- **Primary user**: `rhencloud`, passed as `specialArgs`/`extraSpecialArgs` from `flake/config.nix`.
 - **Channel**: `nixos-unstable`. This is a faster-moving, smaller binary cache.
-- **stateVersion**: `26.05` (set in both `flake.nix:169` and `homes/.../default.nix:3`).
-- **Window managers**: Both Hyprland and Niri are configured. Hyprland input is fetched via `gh-proxy.com` mirror.
+- **stateVersion**: `26.05`.
+- **Window managers**: Both Hyprland and Niri are configured.
 - **Secrets**: Managed with [transcrypt](https://github.com/elasticdog/transcrypt). Encrypted files live in `secrets/` at repo root. Uses `aes-256-cbc` cipher with transparent git clean/smudge filters.
-- **Path resolution**: `lib/secrets.nix` provides `rhencloud.lib.secrets.read`, a helper to read secrets from repo root without relative paths. Usage: `rhencloud.lib.secrets.read "opencode/github-token"`. Equivalent to TypeScript's `@/` imports via `inputs.self`.
-- **Theming**: Stylix is used for system-wide theming (Dracula theme). The config references tinted-theming base16 schemes.
-- **Custom devShells**: The `flake.nix` manually extends `baseFlake.devShells` to add a `python` shell (`shells/python.nix`) — this is outside Snowfall's auto-discovery.
+- **Path resolution**: `lib/secrets.nix` provides `rhencloud.lib.secrets.read`, a helper to read secrets from repo root without relative paths. Usage: `rhencloud.lib.secrets.read "opencode/github-token"`. Equivalent to TypeScript's `@/` imports via `inputs.self`. Also available as `inputs.self.lib.readSecret`.
+- **Theming**: Stylix for system-wide theming (Dracula theme).
+- **Overlays**: Applied in both NixOS (config.nix) and home-manager (commonHomeModules). Includes niri patches, portal-gtk integration, and mexkey3-ccid support.
+- **Module auto-discovery**: `collectDefaultNix` in `config.nix` recursively walks `modules/` and collects all `default.nix` files. Snowfall-style `rhencloud.*` options are plain NixOS module options, not namespace magic.
+- **Host/home auto-discovery**: `flake/nixos.nix` and `flake/home-manager.nix` auto-scan `systems/<arch>/` and `homes/<arch>/` directories, no manual registration needed.
 
 ## Gotchas
 
 - Some modules are commented out in their parent `default.nix` (e.g., `./proxy.nix` in both `modules/nixos/core/` and `modules/nixos/desktop/`). Check parent `default.nix` before assuming a module is active.
-- `flake.nix` uses `flake.nix` inline module for `systems.modules.nixos` (lines 156-172) — the `home-manager.backupFileExtension = "backup"` setting means HM will back up conflicting files with `.backup` suffix.
+- `home-manager.backupFileExtension = "backup"` — HM will back up conflicting files with `.backup` suffix.
 - The `nixConfig.substituters` in `flake.nix` configures Chinese mirrors (USTC, SJTU) alongside upstream caches. Cachix caches for hyprland, noctalia, and niri are active.
 - `permittedInsecurePackages` includes `electron-39.8.10` — needed for QQ-related packages.
 - `hardware-configuration.nix` should **not** be manually edited; regenerate with `nixos-generate-config`.
+- `@` in path names (e.g., `rhencloud@nixos-desktop`) is valid Nix but may trigger false-positive LSP warnings.
 
 ## Common Modification Patterns
 
-**Adding a new Home Manager module**: Create `modules/home/<category>/<name>/default.nix`. Snowfall auto-imports it.
+**Adding a new Home Manager module**: Create `modules/home/<category>/<name>/default.nix`. `collectDefaultNix` auto-includes it.
 
-**Adding a new NixOS module**: Create `modules/nixos/<category>/<name>/default.nix`. Snowfall auto-imports it.
+**Adding a new NixOS module**: Create `modules/nixos/<category>/<name>/default.nix`. Same auto-inclusion.
 
-**Adding a new host**: 1) Create `systems/x86_64-linux/<hostname>/default.nix` + `hardware-configuration.nix`. 2) Register in `flake.nix` under `systems.hosts.<hostname>`. 3) Create matching `homes/x86_64-linux/<user>@<hostname>/default.nix`.
+**Adding a new host**: 1) Create `systems/x86_64-linux/<hostname>/default.nix` + `hardware-configuration.nix`. 2) Create matching `homes/x86_64-linux/<user>@<hostname>/default.nix`. Both are auto-discovered by `flake/nixos.nix` and `flake/home-manager.nix`.
 
-**Adding a new flake input**: Add to `inputs` in `flake.nix`. If it provides Home Manager or NixOS modules, add to `homes.modules` or `systems.modules.nixos` respectively.
+**Adding a new flake input**: Add to `inputs` in `flake.nix`. If it provides Home Manager or NixOS modules, add to the appropriate module list in `flake/config.nix`.
 
 **Updating a single flake input**: `nix flake update <input-name>` (e.g., `nix flake update home-manager`).
 

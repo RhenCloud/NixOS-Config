@@ -1,4 +1,4 @@
-{ ... }:
+_:
 _final: prev: {
   ccid = prev.ccid.overrideAttrs (old: {
     postInstall = (old.postInstall or "") + ''

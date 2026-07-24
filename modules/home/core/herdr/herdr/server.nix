@@ -1,6 +1,4 @@
-{
-  ...
-}:
+_:
 
 {
   xdg.configFile."fish/conf.d/91-herdr-server.fish".text = ''

@@ -1,4 +1,4 @@
-{ ... }:
+_:
 _final: prev: {
   xdg-desktop-portal-gtk = prev.xdg-desktop-portal-gtk.overrideAttrs (old: {
     postInstall = (old.postInstall or "") + ''

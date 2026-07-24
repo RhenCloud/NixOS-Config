@@ -3,7 +3,7 @@ let
   mousePassthroughPatch = ../../../../patches/niri/mouse-passthrough.patch;
   pinPatch = ../../../../patches/niri/pin.patch;
 
-  niri-patched = (inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable).overrideAttrs (old: {
+  niri-patched = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable.overrideAttrs (old: {
     patches = (old.patches or []) ++ [ mousePassthroughPatch pinPatch ];
   });
 

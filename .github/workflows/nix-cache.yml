@@ -2,40 +2,38 @@ name: NixOS Build & Cache
 
 on:
   schedule:
-    # 每天 UTC 02:00 (北京时间 10:00)
-    - cron: '0 2 * * *'
-    # 每周日 UTC 04:00 执行 GC (北京时间 12:00)
-    - cron: '0 4 * * 0'
+    - cron: "0 2 * * *"
+    - cron: "0 4 * * 0"
   workflow_dispatch:
     inputs:
       force_upload:
-        description: '强制重新上传所有包'
+        description: "强制重新上传所有包"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
       retention_days:
-        description: '保留天数（默认 30 天）'
+        description: "保留天数（默认 10 天）"
         required: false
-        default: '30'
+        default: "10"
         type: string
       gc_only:
-        description: '仅执行 GC（不构建）'
+        description: "仅执行 GC（不构建）"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
 
 env:
   S3_BUCKET: hi168-h5hv6zw90zf-sslnc1b0-s
   S3_ENDPOINT: https://s3.hi168.com
   S3_PREFIX: nix-cache
-  RETENTION_DAYS: ${{ inputs.retention_days || '30' }}
+  RETENTION_DAYS: ${{ inputs.retention_days || '10' }}
 
 jobs:
   gc-cache:
     name: GC Old Packages
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    
+
     steps:
       - name: Install rclone
         run: |
@@ -60,35 +58,31 @@ jobs:
           RETENTION_DAYS=${{ env.RETENTION_DAYS }}
           DELETED=0
           KEPT=0
-          
+
           echo "清理 ${RETENTION_DAYS} 天前的包..."
-          
-          # 获取所有 .tar.xz 文件
+
           rclone ls "${REMOTE}/" --include "*.tar.xz" | while read -r size path; do
-            # 获取文件修改时间
-            mod_time=$(rclone lsf "${REMOTE}/${path}" --format "t" 2>/dev/null | head -1)
-            
+            mod_time=$(rclone lsf "${REMOTE}/${path}" --format "t" | head -1)
+
             if [[ -z "$mod_time" ]]; then
               continue
             fi
-            
-            # 计算文件年龄（天）
+
             file_epoch=$(date -d "$mod_time" +%s 2>/dev/null || echo 0)
             now_epoch=$(date +%s)
             age_days=$(( (now_epoch - file_epoch) / 86400 ))
-            
+
             if [[ "$age_days" -gt "$RETENTION_DAYS" ]]; then
               echo "删除 ($age_days 天): $path"
-              rclone delete "${REMOTE}/${path}" 2>/dev/null
+              rclone delete "${REMOTE}/${path}"
               ((DELETED++))
             else
               ((KEPT++))
             fi
           done
-          
+
           echo "GC 完成: 删除=$DELETED, 保留=$KEPT"
-          
-          # 更新 index.json 中的 GC 信息
+
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           rclone cat "${REMOTE}/index.json" 2>/dev/null | jq \
             --arg ts "$TIMESTAMP" \
@@ -108,7 +102,7 @@ jobs:
           }
           EOF
             }
-          
+
           rclone copy /tmp/index-gc.json "${REMOTE}/index.json"
 
   build-and-cache:
@@ -116,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     if: ${{ inputs.gc_only != 'true' }}
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -160,51 +154,87 @@ jobs:
           region = auto
           EOF
 
+      - name: Check cache status (dry-run)
+        id: cache-check
+        run: |
+          echo "检查上游缓存状态..."
+
+          dry_run=$(nix build ".#nixosConfigurations.nixos-desktop.config.system.build.toplevel" \
+            --dry-run 2>&1 || true)
+
+          if echo "$dry_run" | grep -qE "^[0-9]+ will be built"; then
+            built=$(echo "$dry_run" | grep -oE "^[0-9]+" | head -1)
+            echo "→ $built 个包需要本地构建"
+            echo "CACHE_MISS=true" >> "$GITHUB_ENV"
+          else
+            echo "→ 全部已缓存，跳过构建"
+            echo "CACHE_MISS=false" >> "$GITHUB_ENV"
+          fi
+
       - name: Build system configuration
+        if: env.CACHE_MISS == 'true' || inputs.force_upload == 'true'
         run: |
           echo "Building nixos-desktop system configuration..."
           nix build ".#nixosConfigurations.nixos-desktop.config.system.build.toplevel" \
             --no-link \
             --print-out-paths \
             > /tmp/build-path.txt
-          
+
           BUILD_PATH=$(cat /tmp/build-path.txt)
-          echo "BUILD_PATH=$BUILD_PATH" >> $GITHUB_ENV
+          echo "BUILD_PATH=$BUILD_PATH" >> "$GITHUB_ENV"
           echo "Build complete: $BUILD_PATH"
 
       - name: List all packages
+        if: env.CACHE_MISS == 'true' || inputs.force_upload == 'true'
         run: |
+          BUILD_PATH="${BUILD_PATH:-${{ env.BUILD_PATH }}}"
+
+          if [[ -z "$BUILD_PATH" ]]; then
+            echo "ERROR: BUILD_PATH is empty, skipping"
+            exit 1
+          fi
+
           echo "Listing all packages..."
-          nix-store -q --requisites "$BUILD_PATH" > /tmp/requisites.txt
-          
+          nix-store -q --requisites "$BUILD_PATH" | tr -d '\r' > /tmp/requisites.txt
+
           TOTAL=$(wc -l < /tmp/requisites.txt)
           echo "Total requisites: $TOTAL"
-          echo "TOTAL_COUNT=$TOTAL" >> $GITHUB_ENV
+          echo "TOTAL_COUNT=$TOTAL" >> "$GITHUB_ENV"
 
       - name: Upload packages to S3
+        if: env.CACHE_MISS == 'true' || inputs.force_upload == 'true'
         run: |
           REMOTE="s3:${{ env.S3_BUCKET }}/${{ env.S3_PREFIX }}"
           UPLOADED=0
           SKIPPED=0
           FAILED=0
-          
+
+          if [[ ! -f /tmp/requisites.txt ]]; then
+            echo "ERROR: /tmp/requisites.txt not found"
+            exit 1
+          fi
+
           while IFS= read -r store_path; do
+            store_path=$(echo "$store_path" | tr -d '\r')
+
+            if [[ -z "$store_path" ]]; then
+              continue
+            fi
+
             if [[ ! -d "$store_path" ]]; then
               continue
             fi
-            
+
             store_name=$(basename "$store_path")
-            
-            # 检查是否已存在
-            if rclone ls "${REMOTE}/${store_name}.tar.xz" 2>/dev/null | grep -q .; then
+
+            if rclone lsf "${REMOTE}/${store_name}.tar.xz" &>/dev/null; then
               ((SKIPPED++))
               continue
             fi
-            
-            # 打包并上传
+
             tmp_tar="/tmp/nix-cache-${store_name}.tar.xz"
-            if tar -C "$(dirname "$store_path")" -cJf "$tmp_tar" "$store_name" 2>/dev/null; then
-              if rclone copy "$tmp_tar" "${REMOTE}/" 2>/dev/null; then
+            if tar -C "$(dirname "$store_path")" -cJf "$tmp_tar" "$store_name"; then
+              if rclone copy "$tmp_tar" "${REMOTE}/"; then
                 ((UPLOADED++))
               else
                 echo "Failed to upload: $store_name"
@@ -215,24 +245,27 @@ jobs:
               echo "Failed to tar: $store_name"
               ((FAILED++))
             fi
-            
-            # 每 100 个包输出进度
+
             TOTAL_READ=$((UPLOADED + SKIPPED + FAILED))
             if (( TOTAL_READ % 100 == 0 )); then
               echo "Progress: uploaded=$UPLOADED, skipped=$SKIPPED, failed=$FAILED"
             fi
           done < /tmp/requisites.txt
-          
+
           echo "Upload complete: uploaded=$UPLOADED, skipped=$SKIPPED, failed=$FAILED"
-          echo "UPLOADED=$UPLOADED" >> $GITHUB_ENV
-          echo "SKIPPED=$SKIPPED" >> $GITHUB_ENV
-          echo "FAILED=$FAILED" >> $GITHUB_ENV
+          echo "UPLOADED=$UPLOADED" >> "$GITHUB_ENV"
+          echo "SKIPPED=$SKIPPED" >> "$GITHUB_ENV"
+          echo "FAILED=$FAILED" >> "$GITHUB_ENV"
 
       - name: Generate cache index
         if: always()
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          
+          TOTAL_COUNT=${TOTAL_COUNT:-${{ env.TOTAL_COUNT || 0 }}}
+          UPLOADED=${UPLOADED:-${{ env.UPLOADED || 0 }}}
+          SKIPPED=${SKIPPED:-${{ env.SKIPPED || 0 }}}
+          FAILED=${FAILED:-${{ env.FAILED || 0 }}}
+
           cat > /tmp/index.json <<EOF
           {
             "timestamp": "$TIMESTAMP",
@@ -240,10 +273,10 @@ jobs:
             "github_run": "${{ github.run_id }}",
             "github_sha": "${{ github.sha }}",
             "stats": {
-              "total_requisites": ${{ env.TOTAL_COUNT || 0 }},
-              "uploaded": ${{ env.UPLOADED || 0 }},
-              "skipped": ${{ env.SKIPPED || 0 }},
-              "failed": ${{ env.FAILED || 0 }}
+              "total_requisites": $TOTAL_COUNT,
+              "uploaded": $UPLOADED,
+              "skipped": $SKIPPED,
+              "failed": $FAILED
             },
             "s3": {
               "bucket": "${{ env.S3_BUCKET }}",
@@ -252,7 +285,7 @@ jobs:
             }
           }
           EOF
-          
+
           rclone copy /tmp/index.json "s3:${{ env.S3_BUCKET }}/${{ env.S3_PREFIX }}/index.json"
           echo "Cache index uploaded"
 

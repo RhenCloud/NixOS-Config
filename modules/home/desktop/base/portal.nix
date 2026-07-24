@@ -1,4 +1,4 @@
-{ ... }:
+_:
 {
   # Portal 配置由 NixOS 系统级模块统一管理 (modules/nixos/core/xdg.nix)
   # 这里只保留 xdg.mimeApps 的备用配置

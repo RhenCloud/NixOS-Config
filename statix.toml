@@ -1,0 +1,8 @@
+# statix 配置 — 运行 `statix check .` 检查所有 .nix 文件
+# 可用 lint 列表见 `statix list`
+# 生成完整配置：`statix dump > statix.toml`
+disabled = [
+  # "empty_pattern",
+  # "useless_parens",
+  # "manual_inherit",
+]

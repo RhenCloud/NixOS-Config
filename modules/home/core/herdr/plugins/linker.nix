@@ -5,7 +5,7 @@
 }:
 
 let
-  cfg = config.rhencloud.herdrPlugins;
+  plugins = lib.attrValues config.rhencloud.herdrPlugins;
 in
 
 {
@@ -19,7 +19,7 @@ in
                 and not herdr plugin list 2>/dev/null | string match -q "${plugin.id}"
                 herdr plugin link "$plugin_dir" >/dev/null 2>&1
             end
-          '') cfg
+          '') plugins
         )}
     end
   '';

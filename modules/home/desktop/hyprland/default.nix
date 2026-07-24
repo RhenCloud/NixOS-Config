@@ -65,9 +65,11 @@ in
     '';
   };
 
-  home.sessionVariables.NIXOS_OZONE_WL = "1";
-  home.sessionVariables.WLR_NO_HARDWARE_CURSORS = "1";
-  home.sessionVariables.XDG_MENU_PREFIX = "plasma-";
+  home.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    WLR_NO_HARDWARE_CURSORS = "1";
+    XDG_MENU_PREFIX = "plasma-";
+  };
 
   home.packages = with pkgs; [
     hyprcursor

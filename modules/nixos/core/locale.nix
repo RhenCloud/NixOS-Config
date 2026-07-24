@@ -1,4 +1,4 @@
-{ ... }:
+_:
 {
   time.timeZone = "Asia/Shanghai";
   i18n.supportedLocales = [

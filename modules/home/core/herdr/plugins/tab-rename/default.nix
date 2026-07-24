@@ -1,8 +1,15 @@
 {
+  inputs,
+  pkgs,
   ...
 }:
 
 {
+  rhencloud.herdrPlugins.tab-rename = {
+    id = "rhencloud.tab-rename";
+    package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-tab-rename;
+  };
+
   xdg.configFile."fish/conf.d/94-herdr-tab-rename.fish".text = ''
     function __herdr_rename_tab_on_pwd --on-variable PWD
       set -q HERDR_ENV; or return

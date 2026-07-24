@@ -1,4 +1,4 @@
-{ ... }:
+_:
 let
   etUser = "easytier";
 in
@@ -11,23 +11,25 @@ in
   };
   users.groups.${etUser} = { };
 
-  systemd.tmpfiles.rules = [ "d /etc/easytier 0750 ${etUser} ${etUser} -" ];
-
-  systemd.services."easytier-default" = {
-    serviceConfig = {
-      User = etUser;
-      Group = etUser;
-      AmbientCapabilities = [ "CAP_NET_ADMIN" ];
-      CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
-    };
-  };
-
-  systemd.services."easytier-rhencloud-network" = {
-    serviceConfig = {
-      User = etUser;
-      Group = etUser;
-      AmbientCapabilities = [ "CAP_NET_ADMIN" ];
-      CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
+  systemd = {
+    tmpfiles.rules = [ "d /etc/easytier 0750 ${etUser} ${etUser} -" ];
+    services = {
+      "easytier-default" = {
+        serviceConfig = {
+          User = etUser;
+          Group = etUser;
+          AmbientCapabilities = [ "CAP_NET_ADMIN" ];
+          CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
+        };
+      };
+      "easytier-rhencloud-network" = {
+        serviceConfig = {
+          User = etUser;
+          Group = etUser;
+          AmbientCapabilities = [ "CAP_NET_ADMIN" ];
+          CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
+        };
+      };
     };
   };
 

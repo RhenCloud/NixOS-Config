@@ -4,11 +4,9 @@
     enable = true;
 
     # 启用可选的 Nvidia 硬件加速
-    package = (
-      pkgs.obs-studio.override {
+    package = pkgs.obs-studio.override {
         cudaSupport = true;
-      }
-    );
+      };
 
     plugins = with pkgs.obs-studio-plugins; [
       wlrobs

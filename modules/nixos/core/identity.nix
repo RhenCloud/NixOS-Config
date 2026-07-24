@@ -1,12 +1,13 @@
 { pkgs, inputs, config, ... }:
 let
-  username = builtins.head (builtins.attrNames config.snowfallorg.users);
-in
-{
+  user = config.my.user.name;
+in {
   config = {
-    _module.args.primaryUser = username;
+    _module.args.primaryUser = user;
 
-    users.users.${username} = {
+    users.users.${user} = {
+      isNormalUser = true;
+      group = user;
       hashedPassword = builtins.readFile "${inputs.self}/secrets/password-hash";
       shell = pkgs.bash;
       extraGroups = [
@@ -17,6 +18,8 @@ in
         "kvm"
       ];
     };
+
+    users.groups.${user} = { };
 
     security.sudo = {
       enable = true;

@@ -163,31 +163,33 @@ in
     };
 
     # ---- Outline (Aerial) ----
-    utility.outline.aerial-nvim = {
-      enable = true;
-      setupOpts.backends = [
-        "treesitter"
-        "lsp"
-      ];
-      mappings.toggle = "<leader>a";
-    };
-
-    # ---- Flash ----
-    utility.motion.flash-nvim = {
-      enable = true;
-      setupOpts.labels = "asdfghjklqwertyuiopzxcvbnm";
-      mappings = {
-        jump = "s";
-        treesitter = "S";
-        remote = "<leader>r";
+    utility = {
+      outline.aerial-nvim = {
+        enable = true;
+        setupOpts.backends = [
+          "treesitter"
+          "lsp"
+        ];
+        mappings.toggle = "<leader>a";
       };
+
+      # ---- Flash ----
+      motion.flash-nvim = {
+        enable = true;
+        setupOpts.labels = "asdfghjklqwertyuiopzxcvbnm";
+        mappings = {
+          jump = "s";
+          treesitter = "S";
+          remote = "<leader>r";
+        };
+      };
+
+      # ---- Undotree ----
+      undotree.enable = true;
     };
 
     # ---- Mini.surround ----
     mini.surround.enable = true;
-
-    # ---- Undotree ----
-    utility.undotree.enable = true;
 
     # ---- Fidget ----
     visuals.fidget-nvim = {

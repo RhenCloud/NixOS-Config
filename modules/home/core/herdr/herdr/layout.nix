@@ -1,6 +1,4 @@
-{
-  ...
-}:
+_:
 
 {
   xdg.configFile."fish/conf.d/93-herdr-layout.fish".text = ''
