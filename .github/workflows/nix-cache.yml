@@ -9,7 +9,7 @@ on:
       force_upload:
         description: "强制重新上传所有包"
         required: false
-        default: "false"
+        default: false
         type: boolean
       retention_days:
         description: "保留天数（默认 10 天）"
@@ -19,7 +19,7 @@ on:
       gc_only:
         description: "仅执行 GC（不构建）"
         required: false
-        default: "false"
+        default: false
         type: boolean
 
 env:
@@ -59,9 +59,17 @@ jobs:
           DELETED=0
           KEPT=0
 
-          echo "清理 ${RETENTION_DAYS} 天前的包..."
+          echo "测试 rclone 连接..."
+          if ! rclone lsd "${REMOTE}/" &>/dev/null; then
+            echo "rclone 连接失败，检查 S3 配置"
+            echo "   BUCKET: ${{ env.S3_BUCKET }}"
+            echo "   ENDPOINT: ${{ env.S3_ENDPOINT }}"
+            rclone lsd "${REMOTE}/" 2>&1 || true
+            exit 1
+          fi
+          echo "连接成功，开始清理..."
 
-          rclone ls "${REMOTE}/" --include "*.tar.xz" | while read -r size path; do
+          while read -r size path; do
             mod_time=$(rclone lsf "${REMOTE}/${path}" --format "t" | head -1)
 
             if [[ -z "$mod_time" ]]; then
@@ -79,7 +87,7 @@ jobs:
             else
               ((KEPT++))
             fi
-          done
+          done < <(rclone ls "${REMOTE}/" --include "*.tar.xz" 2>/dev/null || true)
 
           echo "GC 完成: 删除=$DELETED, 保留=$KEPT"
 
@@ -153,6 +161,16 @@ jobs:
           endpoint = ${{ env.S3_ENDPOINT }}
           region = auto
           EOF
+
+      - name: Update flake inputs
+        run: |
+          echo "更新 flake inputs 到最新..."
+          git config user.name "nix-cache-bot"
+          git config user.email "nix-cache-bot@rhen.cloud"
+          nix flake update --commit-lock-file 2>&1 || {
+            echo "flake update 失败，继续使用现有 lock 文件"
+          }
+          git log --oneline -3
 
       - name: Check cache status (dry-run)
         id: cache-check
