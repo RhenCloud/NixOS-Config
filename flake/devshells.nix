@@ -1,8 +1,9 @@
-{ ... }:
-{
+_: {
   perSystem = { pkgs, ... }: {
+    formatter = pkgs.nixfmt;
+
     devShells.default = pkgs.mkShell {
-      packages = with pkgs; [ nixfmt-rfc-style ];
+      packages = with pkgs; [ nixfmt statix ];
     };
 
     devShells.python = pkgs.mkShell {

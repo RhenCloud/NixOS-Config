@@ -35,11 +35,6 @@ let
 
   optionsModule = "${root}/modules/options.nix";
 
-  pkgsFor = import inputs.nixpkgs {
-    system = "x86_64-linux";
-    config.allowUnfree = true;
-  };
-
   commonHomeModules = [
     inputs.mangowm.hmModules.mango
     inputs.niri.homeModules.niri
@@ -61,5 +56,5 @@ in
 {
   inherit
     root overlays nixosModules homeModules
-    pkgsFor optionsModule commonHomeModules;
+    optionsModule commonHomeModules;
 }
