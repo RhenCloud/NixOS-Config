@@ -1,6 +1,11 @@
-{ pkgs, ... }:
-{
-  home.packages = with pkgs; [
+{ lib, pkgs, config, ... }:
+with lib;
+let
+  cfg = config.rhencloud.java;
+in {
+  options.rhencloud.java.enable = mkEnableOption "Java development tools";
+  config = mkIf cfg.enable {
+    home.packages = with pkgs; [
     zulu17
     maven
     gradle
@@ -29,5 +34,6 @@
     JAVA_HOME = "${pkgs.zulu17}";
     JAVA17_HOME = "${pkgs.zulu17}";
     JAVA21_HOME = "${pkgs.zulu21}";
+    };
   };
 }

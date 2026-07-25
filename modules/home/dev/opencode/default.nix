@@ -1,9 +1,16 @@
 {
+  lib,
   inputs,
+  config,
   ...
 }:
-{
-  xdg.configFile = {
+with lib;
+let
+  cfg = config.rhencloud.hmOpenAgent;
+in {
+  options.rhencloud.hmOpenAgent.enable = mkEnableOption "opencode agent config";
+  config = mkIf cfg.enable {
+    xdg.configFile = {
     "opencode/oh-my-openagent.jsonc".text = builtins.toJSON {
       agents = {
         atlas.model = "voidswitch/glm-4.7-flash-cf";
@@ -36,5 +43,6 @@
         "jsonc-parser" = "*";
       };
     };
+  };
   };
 }

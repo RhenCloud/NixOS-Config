@@ -3,11 +3,10 @@
   imports = [
     ./c.nix
     ./android.nix
-    # ./emacs.nix
+    ./emacs.nix
     ./golang.nix
     ./java.nix
     ./lucy.nix
-    # nvf (Snowfall 自动发现，无需显式 imports)
     ./node.nix
     ./python.nix
     ./rust.nix

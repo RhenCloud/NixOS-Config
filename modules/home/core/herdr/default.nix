@@ -5,13 +5,12 @@
   inputs,
   ...
 }:
-
+with lib;
 let
+  cfg = config.rhencloud.herdr;
   herdrPkg = inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default;
   plugins = lib.attrValues config.rhencloud.herdrPlugins;
-in
-
-{
+in {
   imports = [
     ./herdr
     ./plugins
@@ -22,19 +21,21 @@ in
       options = {
         id = lib.mkOption {
           type = lib.types.str;
-          description = "插件 ID（必须匹配 herdr-plugin.toml 中的 id）";
+          description = "Plugin ID (must match herdr-plugin.toml id)";
         };
         package = lib.mkOption {
           type = lib.types.package;
-          description = "提供 share/<id>/herdr-plugin.toml 和二进制文件的包";
+          description = "Package providing share/<id>/herdr-plugin.toml and binaries";
         };
       };
     });
     default = { };
-    description = "各插件模块自行注册到此处";
+    description = "Plugins register themselves here";
   };
 
-  config = {
+  options.rhencloud.herdr.enable = mkEnableOption "Herdr terminal multiplexer";
+
+  config = mkIf cfg.enable {
     home.packages = [ herdrPkg ] ++ (map (p: p.package) plugins);
 
     xdg.configFile = lib.listToAttrs (

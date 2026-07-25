@@ -1,10 +1,17 @@
 {
+  lib,
   pkgs,
   inputs,
+  config,
   ...
 }:
-{
-  home.packages = with pkgs; [
+with lib;
+let
+  cfg = config.rhencloud.hmDevPackages;
+in {
+  options.rhencloud.hmDevPackages.enable = mkEnableOption "development packages";
+  config = mkIf cfg.enable {
+    home.packages = with pkgs; [
     inputs."siiway-cli".packages.${pkgs.stdenv.hostPlatform.system}.default
     act
     lychee
@@ -31,4 +38,5 @@
   #     lsp = true;
   #   };
   # };
+  };
 }

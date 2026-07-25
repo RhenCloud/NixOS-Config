@@ -1,51 +1,57 @@
-{ pkgs, ... }:
-{
-  home.packages = with pkgs; [
-    awww
-    waypaper
-    # dms-shell
-    # linux-wallpaperengine
-    waylyrics
-    hyprpolkitagent
-    clipse
-    kdePackages.dolphin
-    kdePackages.dolphin-plugins
-    kdePackages.kservice
-    shared-mime-info
-    xdg-utils
+{ lib, pkgs, config, ... }:
+with lib;
+let
+  cfg = config.rhencloud.hmBasePackages;
+in {
+  options.rhencloud.hmBasePackages.enable = mkEnableOption "base desktop packages";
+  config = mkIf cfg.enable {
+    home.packages = with pkgs; [
+      awww
+      waypaper
+      # dms-shell
+      # linux-wallpaperengine
+      waylyrics
+      hyprpolkitagent
+      clipse
+      kdePackages.dolphin
+      kdePackages.dolphin-plugins
+      kdePackages.kservice
+      shared-mime-info
+      xdg-utils
 
-    slurp
-    grim
-    satty
-    shutter
+      slurp
+      grim
+      satty
+      shutter
 
-    playerctl
+      playerctl
 
-    wl-clipboard
-    cliphist
-    copyq
-    nwg-clipman
+      wl-clipboard
+      cliphist
+      copyq
+      nwg-clipman
 
-    krita
-    kdePackages.gwenview
+      krita
+      kdePackages.gwenview
 
-    hyfetch
+      hyfetch
 
-    # thunar
-    # thunar-volman
-    # thunar-vcs-plugin
-    # thunar-archive-plugin
-    # thunar-media-tags-plugin
-    # gvfs
-    kdePackages.ark
-    rar
+      # thunar
+      # thunar-volman
+      # thunar-vcs-plugin
+      # thunar-archive-plugin
+      # thunar-media-tags-plugin
+      # gvfs
+      kdePackages.ark
+      rar
 
-    localsend
-    moonlight-qt
+      localsend
+      moonlight-qt
 
-    splayer
+      splayer
 
-    mission-center
-    wayfreeze
-  ];
+      mission-center
+      wayfreeze
+    ];
+  };
 }

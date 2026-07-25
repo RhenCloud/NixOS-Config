@@ -2,6 +2,7 @@
   pkgs,
   inputs,
   lib,
+  config,
   ...
 }:
 let
@@ -122,8 +123,14 @@ let
     };
   };
 in
-{
-  xdg.configFile = {
+with lib;
+let
+  cfg = config.rhencloud.opencode;
+in {
+  options.rhencloud.opencode.enable = mkEnableOption "opencode AI assistant";
+  config = mkIf cfg.enable {
+    xdg.configFile = {
     "opencode/opencode.json".text = builtins.toJSON opencodeConfig;
+  };
   };
 }

@@ -1,6 +1,11 @@
-{ config, ... }:
-{
-  services.mpd = {
+{ lib, config, ... }:
+with lib;
+let
+  cfg = config.rhencloud.mpd;
+in {
+  options.rhencloud.mpd.enable = mkEnableOption "MPD music daemon";
+  config = mkIf cfg.enable {
+    services.mpd = {
     enable = true;
     musicDirectory = "${config.home.homeDirectory}/Music";
     extraConfig = ''
@@ -21,4 +26,5 @@
   #   # https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/609
   #   XDG_RUNTIME_DIR = "/run/user/${toString config.users.users.userRunningPipeWire.uid}"; # User-id must match above user. MPD will look inside this directory for the PipeWire socket.
   # };
+  };
 }

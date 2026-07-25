@@ -1,5 +1,11 @@
-{ lib, ... }: {
-  nix.settings = {
+{ lib, config, ... }:
+with lib;
+let
+  cfg = config.rhencloud.nix;
+in {
+  options.rhencloud.nix.enable = mkEnableOption "Nix daemon settings";
+  config = mkIf cfg.enable {
+    nix.settings = {
     experimental-features = [
       "nix-command"
       "flakes"
@@ -14,5 +20,6 @@
     automatic = lib.mkDefault true;
     dates = lib.mkDefault "weekly";
     options = lib.mkDefault "--delete-older-than 7d";
+  };
   };
 }

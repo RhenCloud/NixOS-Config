@@ -1,6 +1,11 @@
-{ pkgs, ... }:
-{
-  home.packages = with pkgs; [ mprisence ];
+{ lib, pkgs, config, ... }:
+with lib;
+let
+  cfg = config.rhencloud.mprisence;
+in {
+  options.rhencloud.mprisence.enable = mkEnableOption "MPRIS Discord Rich Presence";
+  config = mkIf cfg.enable {
+    home.packages = with pkgs; [ mprisence ];
 
   xdg.configFile."mprisence/config.toml".text = ''
     [template]
@@ -36,5 +41,6 @@
     Install = {
       WantedBy = [ "graphical-session.target" ];
     };
+  };
   };
 }

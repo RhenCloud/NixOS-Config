@@ -41,7 +41,7 @@ in
 
     stateVersion = mkOption {
       type = types.str;
-      default = "26.05";
+      default = "26.15";
     };
 
     editor = mkOption {
@@ -63,7 +63,11 @@ in
 
     permittedInsecurePackages = mkOption {
       type = types.listOf types.str;
-      default = [ "electron-39.8.10" "pnpm-9.15.9" "pnpm-10.29.2" ];
+      default = [
+        "electron-39.8.10"
+        "pnpm-9.15.9"
+        "pnpm-10.29.2"
+      ];
     };
 
     allowUnfree = mkOption {

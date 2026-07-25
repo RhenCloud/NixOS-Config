@@ -1,10 +1,13 @@
-_:
+{ config, lib, ... }:
+with lib;
+let cfg = config.rhencloud.fastfetch;
+in {
+  options.rhencloud.fastfetch.enable = mkEnableOption "fastfetch";
 
-{
-  home.file.".config/fastfetch/config.jsonc" = {
-    source = ./config.jsonc;
-    # recursive = true; # 递归整个文件夹
-    # executable = true; # 将其中所有文件添加「执行」权限
+  config = mkIf cfg.enable {
+    home.file.".config/fastfetch/config.jsonc" = {
+      source = ./config.jsonc;
+    };
+    programs.fastfetch.enable = true;
   };
-  programs.fastfetch.enable = true;
 }

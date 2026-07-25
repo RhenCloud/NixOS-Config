@@ -3,8 +3,10 @@
   lib,
   ...
 }:
-
+with lib;
 let
+  cfg = config.rhencloud.selector4nix;
+
   substituters = [
     {
       url = "https://cache.nixos.org/";
@@ -43,17 +45,20 @@ let
       priority = 45;
     }
   ];
-in
-{
-  services.selector4nix = {
-    enable = true;
-    configureSubstituter = "prepend";
-    settings = {
-      server = {
-        ip = "127.0.0.1";
-        port = 5496;
+in {
+  options.rhencloud.selector4nix.enable = mkEnableOption "selector4nix substituter";
+
+  config = mkIf cfg.enable {
+    services.selector4nix = {
+      enable = true;
+      configureSubstituter = "prepend";
+      settings = {
+        server = {
+          ip = "127.0.0.1";
+          port = 5496;
+        };
+        inherit substituters;
       };
-      inherit substituters;
     };
   };
 }

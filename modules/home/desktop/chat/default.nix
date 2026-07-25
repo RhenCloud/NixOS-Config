@@ -1,10 +1,14 @@
 {
-  pkgs,
+  config,
   lib,
+  pkgs,
   inputs,
   ...
 }:
+with lib;
 let
+  cfg = config.rhencloud.chat;
+
   qqPackage = pkgs.qq;
   liteLoaderQQNT = inputs.liteloaderqqnt;
 
@@ -46,76 +50,71 @@ let
       exec ${qqWithLiteLoaderPackage}/bin/qq --ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations "$@"
     '';
   };
-in
-{
-  xdg.desktopEntries.qq = {
-    name = "QQ";
-    comment = "Tencent QQ with LiteLoaderQQNT";
-    exec = "qq %U";
-    icon = "${qqWithLiteLoaderPackage}/share/icons/hicolor/512x512/apps/qq.png";
-    terminal = false;
-    categories = [
-      "Network"
-      "InstantMessaging"
-      "Chat"
+in {
+  options.rhencloud.chat.enable = mkEnableOption "chat apps (QQ, WeChat, Discord)";
+
+  config = mkIf cfg.enable {
+    xdg.desktopEntries.qq = {
+      name = "QQ";
+      comment = "Tencent QQ with LiteLoaderQQNT";
+      exec = "qq %U";
+      icon = "${qqWithLiteLoaderPackage}/share/icons/hicolor/512x512/apps/qq.png";
+      terminal = false;
+      categories = [
+        "Network"
+        "InstantMessaging"
+        "Chat"
+      ];
+    };
+
+    home.packages = with pkgs; [
+      (symlinkJoin {
+        name = "vesktop-wayland";
+        paths = [ vesktop ];
+        nativeBuildInputs = [ makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/vesktop \
+            --set NIXOS_OZONE_WL 1 \
+            --set ELECTRON_OZONE_PLATFORM_HINT wayland \
+            --add-flags "--enable-features=WebRTCPipeWireCapturer,UseOzonePlatform,WaylandWindowDecorations" \
+            --add-flags "--ozone-platform=wayland"
+        '';
+      })
+
+      (symlinkJoin {
+        name = "wechat-wayland";
+        paths = [ wechat ];
+        nativeBuildInputs = [ makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/wechat \
+            --set XDG_SESSION_TYPE wayland \
+            --set NIXOS_OZONE_WL 1 \
+            --set ELECTRON_OZONE_PLATFORM_HINT wayland \
+            --set GTK_IM_MODULE fcitx \
+            --set QT_IM_MODULE fcitx \
+            --set XMODIFIERS @im=fcitx \
+            --set SDL_IM_MODULE fcitx \
+            --set GLFW_IM_MODULE fcitx \
+            --prefix PATH : ${lib.makeBinPath [ xclip ]}
+        '';
+      })
+      (symlinkJoin {
+        name = "qq-wayland-liteloader";
+        paths = [ qqWithLiteLoader ];
+        nativeBuildInputs = [ makeWrapper ];
+        postBuild = ''
+          if [ -x "$out/bin/qq" ] && [ ! -e "$out/bin/linuxqq" ]; then
+            ln -s "$out/bin/qq" "$out/bin/linuxqq"
+          fi
+        '';
+      })
+
+      feishu
+      telegram-desktop
+      ayugram-desktop
+      zoom-us
+      thunderbird
+      slack
     ];
   };
-
-  home.packages = with pkgs; [
-    (symlinkJoin {
-      name = "vesktop-wayland";
-      paths = [ vesktop ];
-      nativeBuildInputs = [ makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/vesktop \
-          --set NIXOS_OZONE_WL 1 \
-          --set ELECTRON_OZONE_PLATFORM_HINT wayland \
-          --add-flags "--enable-features=WebRTCPipeWireCapturer,UseOzonePlatform,WaylandWindowDecorations" \
-          --add-flags "--ozone-platform=wayland"
-      '';
-    })
-    # (discord.override {
-    #   # withOpenASAR = true; # can do this here too
-    #   withVencord = true;
-    # })
-
-    (symlinkJoin {
-      name = "wechat-wayland";
-      paths = [ wechat ];
-      nativeBuildInputs = [ makeWrapper ];
-      postBuild = ''
-        wrapProgram $out/bin/wechat \
-          --set XDG_SESSION_TYPE wayland \
-          --set NIXOS_OZONE_WL 1 \
-          --set ELECTRON_OZONE_PLATFORM_HINT wayland \
-          --set GTK_IM_MODULE fcitx \
-          --set QT_IM_MODULE fcitx \
-          --set XMODIFIERS @im=fcitx \
-          --set SDL_IM_MODULE fcitx \
-          --set GLFW_IM_MODULE fcitx \
-          --prefix PATH : ${lib.makeBinPath [ xclip ]}
-      '';
-    })
-    (symlinkJoin {
-      name = "qq-wayland-liteloader";
-      paths = [ qqWithLiteLoader ];
-      nativeBuildInputs = [ makeWrapper ];
-      postBuild = ''
-        if [ -x "$out/bin/qq" ] && [ ! -e "$out/bin/linuxqq" ]; then
-          ln -s "$out/bin/qq" "$out/bin/linuxqq"
-        fi
-      '';
-    })
-
-    feishu
-
-    telegram-desktop
-    ayugram-desktop
-
-    zoom-us
-
-    thunderbird
-
-    slack
-  ];
 }

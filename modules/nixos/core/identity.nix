@@ -1,8 +1,12 @@
-{ pkgs, inputs, config, ... }:
+{ pkgs, inputs, config, lib, ... }:
+with lib;
 let
   user = config.my.user.name;
+  cfg = config.rhencloud.identity;
 in {
-  config = {
+  options.rhencloud.identity.enable = mkEnableOption "user identity configuration";
+
+  config = mkIf cfg.enable {
     _module.args.primaryUser = user;
 
     users.users.${user} = {

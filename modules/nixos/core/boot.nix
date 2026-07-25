@@ -1,6 +1,11 @@
-{ pkgs, ... }:
-{
-  boot.kernel.sysctl = {
+{ lib, pkgs, config, ... }:
+with lib;
+let
+  cfg = config.rhencloud.boot;
+in {
+  options.rhencloud.boot.enable = mkEnableOption "boot configuration";
+  config = mkIf cfg.enable {
+    boot.kernel.sysctl = {
     "fs.inotify.max_user_watches" = 1048576;
     "fs.inotify.max_user_instances" = 1024;
     "fs.inotify.max_queued_events" = 1048576;
@@ -58,5 +63,6 @@
       "udev.log_priority=3"
       "rd.systemd.show_status=auto"
     ];
+  };
   };
 }

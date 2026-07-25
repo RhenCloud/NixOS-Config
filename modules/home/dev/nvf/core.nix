@@ -1,16 +1,16 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }:
+with lib;
 let
   inherit (lib.generators) mkLuaInline;
-in
-{
-  programs.nvf = {
-    enable = true;
-
-    settings.vim = {
+  cfg = config.rhencloud.nvf;
+in {
+  config = mkIf cfg.enable {
+    programs.nvf.settings.vim = {
       viAlias = true;
       vimAlias = true;
 
@@ -74,11 +74,11 @@ in
         }
       ];
     };
-  };
 
-  home.packages = with pkgs; [
-    nil
-    pkgs.nixfmt
-    shellcheck
-  ];
+    home.packages = with pkgs; [
+      nil
+      pkgs.nixfmt
+      shellcheck
+    ];
+  };
 }

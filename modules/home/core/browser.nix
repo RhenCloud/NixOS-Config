@@ -1,22 +1,24 @@
-{ pkgs, ... }:
-{
-  programs.chromium = {
-    enable = true;
-    package = pkgs.brave;
-    extensions = [
-      "bgnkhhnnamicmpeenaelnjfhikgbkllg" # AdGuard
-      "ndcooeababalnlpkfedmmbbbgkljhpjf" # 脚本猫
-      "lildghglkgcoanblbmenbefhnhifghjj" # BewlyBewly! Ave Mujica
-      "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
-      "jlgkpaicikihijadgifklkbpdajbkhjo" # crxMouse
-    ];
-    # commandLineArgs = [
-    #   "--disable-features=WebRtcAllowInputVolumeAdjustment"
-    # ];
-  };
+{ config, lib, pkgs, ... }:
+with lib;
+let cfg = config.rhencloud.browser;
+in {
+  options.rhencloud.browser.enable = mkEnableOption "browser and editor";
 
-  programs.vscode = {
-    enable = true;
-    # package = pkgs.vscode.fhs;
+  config = mkIf cfg.enable {
+    programs.chromium = {
+      enable = true;
+      package = pkgs.brave;
+      extensions = [
+        "bgnkhhnnamicmpeenaelnjfhikgbkllg"
+        "ndcooeababalnlpkfedmmbbbgkljhpjf"
+        "lildghglkgcoanblbmenbefhnhifghjj"
+        "nngceckbapebfimnlniiiahkandclblb"
+        "jlgkpaicikihijadgifklkbpdajbkhjo"
+      ];
+    };
+
+    programs.vscode = {
+      enable = true;
+    };
   };
 }

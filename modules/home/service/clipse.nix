@@ -1,6 +1,11 @@
-_:
-{
-  services.clipse = {
+{ lib, config, ... }:
+with lib;
+let
+  cfg = config.rhencloud.clipse;
+in {
+  options.rhencloud.clipse.enable = mkEnableOption "Clipse clipboard manager";
+  config = mkIf cfg.enable {
+    services.clipse = {
     enable = true;
     settings = {
       maxHistory = 10000;
@@ -34,5 +39,6 @@ _:
       "PreviewedText" = "#F8F8F2";
       "PreviewBorder" = "#BD93F9";
     };
+  };
   };
 }

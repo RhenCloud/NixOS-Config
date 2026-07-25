@@ -1,6 +1,11 @@
-{ pkgs, ... }:
-{
-  # nixpkgs.config.packageOverrides = pkgs {
+{ lib, pkgs, config, ... }:
+with lib;
+let
+  cfg = config.rhencloud.emacs;
+in {
+  options.rhencloud.emacs.enable = mkEnableOption "Emacs editor";
+  config = mkIf cfg.enable {
+    # nixpkgs.config.packageOverrides = pkgs {
   #   myEmacs = pkgs.emacs.pkgs.withPackages (
   #     epkgs: with epkgs; [
   #       org
@@ -24,7 +29,8 @@
 
   services.emacs = {
     enable = true;
-    defaultEditor = true;
+    defaultEditor = false;
     # package = pkgs.myEmacs;
+  };
   };
 }
