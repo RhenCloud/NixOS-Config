@@ -60,7 +60,7 @@
 ## Nix 约定
 
 - **频道**: nixos-unstable
-- **stateVersion**: 26.05
+- **stateVersion**: 26.11
 - **允许不自由软件**: `allowUnfree = true`
 - **不自由包白名单**: `electron-39.8.10`（QQ 相关包所需）
 - **硬件配置**: `hardware-configuration.nix` **不要手动编辑**，通过 `nixos-generate-config` 生成

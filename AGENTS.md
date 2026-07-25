@@ -62,7 +62,7 @@ nix develop .#python
 - **Single host**: `nixos-desktop` (x86_64-linux). Hostname set in `systems/x86_64-linux/nixos-desktop/default.nix`.
 - **Primary user**: `rhencloud`, passed as `specialArgs`/`extraSpecialArgs` from `flake/config.nix`.
 - **Channel**: `nixos-unstable`. This is a faster-moving, smaller binary cache.
-- **stateVersion**: `26.05`.
+- **stateVersion**: `26.11`.
 - **Window managers**: Both Hyprland and Niri are configured.
 - **Secrets**: Managed with [transcrypt](https://github.com/elasticdog/transcrypt). Encrypted files live in `secrets/` at repo root. Uses `aes-256-cbc` cipher with transparent git clean/smudge filters.
 - **Path resolution**: `lib/secrets.nix` provides `rhencloud.lib.secrets.read`, a helper to read secrets from repo root without relative paths. Usage: `rhencloud.lib.secrets.read "opencode/github-token"`. Equivalent to TypeScript's `@/` imports via `inputs.self`. Also available as `inputs.self.lib.readSecret`.
