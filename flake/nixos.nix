@@ -23,6 +23,7 @@ in
                   inputs.mangowm.nixosModules.mango
                   inputs.selector4nix.nixosModules.selector4nix
                   inputs.home-manager.nixosModules.home-manager
+                  inputs.impermanence.nixosModules.impermanence
                   ({ config, ... }: {
                     home-manager = {
                       useGlobalPkgs = false;

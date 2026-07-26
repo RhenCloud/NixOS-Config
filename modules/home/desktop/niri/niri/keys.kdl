@@ -27,7 +27,7 @@ binds {
     Mod+E { spawn "dolphin"; }
     // noctalia v5 has no dedicated emoji-launcher IPC command yet; re-enable
     // once/if it lands. (v4 used: noctalia-shell ipc call launcher emoji)
-    // Mod+Shift+E { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+Shift+E { spawn-sh "noctalia msg panel-toggle launcher /emo"; }
 
     Mod+B { spawn "zen"; }
 

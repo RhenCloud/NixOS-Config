@@ -1,0 +1,493 @@
+# —————————
+# 基础设置
+mixed-port: 7890
+redir-port: 7891
+tproxy-port: 1536
+ignore-resolve-fail: true
+ipv6: false
+mode: rule
+allow-lan: true
+disable-keep-alive: false
+geodata-mode: true
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
+  geosite: https://gh-proxy.com/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat
+  mmdb: https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb
+experimental:
+  http-headers:
+    request:
+      - name: "User-Agent"
+        value: "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like
+          Gecko) Chrome/135.0.0.0 Mobile Safari/537.36"
+      - name: "Accept-Language"
+        value: "en-US,en;q=0.9"
+unified-delay: true
+tcp-concurrent: true
+log-level: silent
+find-process-mode: strict
+client-fingerprint: chrome
+external-controller: 0.0.0.0:9090 # 切勿修改端口会影响状态栏磁贴
+external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
+external-ui: "./Web/Zash/"
+secret: "" # 面板访问密码，如在公网访问建议设置
+
+tcp-concurrent-users: 64 # TCP并发连接数,根据服务器性能调整,建议值:16-128
+keep-alive-interval: 15 # 保活心跳间隔(秒),建议值:15-30
+inbound-tfo: true # 入站TCP Fast Open
+outbound-tfo: true # 出站TCP Fast Open
+connection-pool-size: 256 # 连接池大小,建议值:128-512
+idle-timeout: 60 # 空闲超时时间(秒)
+
+tls:
+  enable: true # 启用TLS支持
+  skip-cert-verify: false # 是否跳过证书验证
+  alpn:
+    # 应用层协议协商
+    - h2 # HTTP/2
+    - http/1.1 # HTTP/1.1
+  # min-version: "1.2" # 最低TLS版本
+  # max-version: "1.3" # 最高TLS版本
+  cipher-suites:
+    # 加密套件优先级
+    - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+    - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+
+tun:
+  enable: true
+  stack: mixed # 推荐使用 mixed 或 gvisor，性能优于 system
+  device: utun
+  mtu: 1500 # 恢复为标准值，避免部分网站无法访问 (MTU 9000 仅限纯内网环境)
+  auto-route: true # 自动接管系统流量
+  auto-detect-interface: true # 自动选择主出口网卡
+  strict-route: false # 开启后可防止流量绕过代理
+  endpoint-independent-nat: true # 开启独立于端点的 NAT (锥形 NAT)，对游戏/P2P 非常友好
+  exclude-uid:
+    - 991 # 排除 easytier 用户，避免其探测流量被 TUN 捕获
+  exclude-interface:
+    # 排除 EasyTier 虚拟网卡，避免回环拦截
+    - swnet-cn
+    - rhenet
+  dns-hijack:
+    # DNS 劫持配置
+    - "any:53" # 简化写法，劫持所有 53 端口流量
+    - "tcp://any:53"
+  inet4-route-exclude-address:
+    # 排除本地网段 (保留 192.168.x.x 等，确保局域网设备互访)
+    - 192.168.0.0/16
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 28.0.0.0/30 # mihomo 自身 TUN 网段
+    - 172.17.0.0/16 # Docker 默认网段
+    - 172.21.0.0/16 # Docker 默认网段
+    - 150.158.11.136/32
+
+sniffer:
+  enable: true
+  parse-pure-ip: true # 建议开启：处理纯 IP 流量时尝试还原域名
+  force-dns-mapping: true # 建议开启：配合 fake-ip 提高域名还原准确率
+  override-destination: false # 全局覆盖目标地址
+  sniff:
+    TLS:
+      # TLS 嗅探 (HTTPS)
+      ports: [443, 8443]
+    HTTP:
+      # HTTP 嗅探
+      ports: [80, 8080-8880]
+      override-destination: true # HTTP 强制覆盖
+    QUIC:
+      # QUIC 嗅探 (针对 YouTube/Google 优化)
+      ports: [443]
+  force-domain:
+    # 强制进行域名解析还原的域名
+    - "+" # 对所有能嗅探到的流量执行还原，确保规则匹配最准
+  skip-domain:
+    # 跳过嗅探的域名 (避免某些加密连接因嗅探握手失败)
+    - "Mijia Cloud"
+    - "geosite:apple-cn" # 推荐使用 geosite 写法
+    - "geosite:private"
+
+dns:
+  enable: true
+  # listen: 0.0.0.0:1053
+  ipv6: false
+  use-hosts: true
+  enhanced-mode: fake-ip
+  # fake-ip-range: 198.18.0.1/16
+  fake-ip-range: 28.0.0.1/8
+  # cache-algorithm: arc
+  prefer-h3: true # 大部分主流DoH已全面支持HTTP/3
+  fake-ip-filter:
+    - "+.lan"
+    - "+.local"
+    - "geosite:private"
+    # - "geosite:lan"
+    - "geosite:cn" # 如果你希望国内域名返回真实IP，取消此行注释
+    - "geosite:connectivity-check" # 连通性测试
+    - "+.stun.*"
+    - "lens.l.google.com" # 修复Google Lens冲突
+    - "+.rhen.cloud" # 代理节点域名，避免 fake-ip 拦截
+  default-nameserver:
+    - tls://223.5.5.5
+    - tls://223.6.6.6
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  nameserver-policy:
+    # 国内域名使用国内 DoH，不走代理
+    "geosite:cn,private":
+      - 223.5.5.5
+      - doh.pub
+    "geosite:gfw":
+      # 强制指定某些域名走特定代理节点的 DNS（可选）
+      - dns.google
+      - 1.1.1.1
+    # "geosite:ads":
+    #   # 广告...
+    #   - 127.0.0.1
+    # dns:
+    #   enable: true
+    #   cache-algorithm: arc
+    #   ipv6: true
+    #   prefer-h3: false
+    #   use-hosts: false
+    #   use-system-hosts: true
+    #   listen: 0.0.0.0:1053
+    #   enhanced-mode: fake-ip
+    #   fake-ip-range: 198.18.0.1/16
+    #   fake-ip-range6: 3fff::/20
+    #   fake-ip-filter:
+    #     - "rule-set:no-fakeip"
+    #     - "rule-set:chinadomains"
+    #     - "rule-set:CN_域"
+    #   respect-rules: true
+    #   default-nameserver:
+    #     # 基础DNS服务器，必须先有它才能使用域名类型的DNS配置，因此必须为IP，此处使用阿里云DNS
+    #     - "system"
+    #     - tls://223.5.5.5
+    #     - tls://223.6.6.6
+    #   nameserver:
+    #     # 在访问的国外网站没有匹配到任何域名规则，最终走了MATCH兜底规则时使用的DNS，为了确保不发生DNS泄漏和DNS污染，必须使用国外DNS
+    #     - https://1.1.1.1/dns-query
+    #     - https://8.8.8.8/dns-query
+    #   proxy-server-nameserver:
+    #     # 解析代理节点时使用的DNS，为了使下面的respect-rules生效必须设置，最好设置为国内DNS，否则在代理的第一步就可能因为连接不上国外DNS而解析不出代理节点的IP，最终倒在起点
+    #     - https://dns.alidns.com/dns-query
+    #     - https://doh.pub/dns-query
+    #   direct-nameserver:
+    #     # 规则匹配到直连时使用的DNS，既然是可以直连的，当然要用国内DNS
+    #     - https://dns.alidns.com/dns-query
+    #     - https://doh.pub/dns-query
+    #     # "rule-set:ecs-no-cn":
+    #     #   - "223.5.5.5#ecs=61.221.31.1/24&ecs-override=true"
+
+# 订阅地址相关
+A: &A
+  filter: "^(?!.*(套餐|重置|剩余|到期|订阅|群|账户|流量|有效期|时间|官网|失联|余额)).*$"
+
+All: &All
+  type: url-test
+
+# —————————
+
+# 节点记忆
+profile:
+  # ← 此函数位置请勿变动！此为模块更新时备份恢复订阅变量范围 ↑
+  store-selected: true
+  store-fake-ip: true
+# —————————
+
+proxies:
+  - { name: 🇨🇳 本地直连, type: direct, udp: true }
+  - { name: ⛔️ 拒绝连接, type: reject }
+  - { name: 🌐 DNS_Hijack, type: dns }
+
+proxy-providers:
+  manual:
+    type: file
+    path: "/etc/mihomo/proxies/manual.yaml"
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+
+proxy_groups: &proxy_groups
+  type: select
+  proxies:
+    - 总模式
+    - ⛔️ 拒绝连接
+    - SiiWay-HK
+    - SiiWay-JP
+    - SiiWay-US
+    - SiiWay-KR
+    - 香港节点
+    - 日本节点
+    - 美国节点
+    - 🇨🇳 本地直连
+  <<: *A
+CNproxy_groups: &CNproxy_groups
+  type: select
+  proxies:
+    - 🇨🇳 本地直连
+    - ⛔️ 拒绝连接
+    - 总模式
+    - 香港节点
+    - 日本节点
+    - 美国节点
+  <<: *A
+# —————————
+proxy-groups:
+  - name: 总模式
+    type: select
+    proxies:
+      - SiiWay-HK
+      - SiiWay-JP
+      - SiiWay-US
+      - SiiWay-KR
+      - 香港节点
+      - 日本节点
+      - 美国节点
+      - 🇨🇳 本地直连
+
+  - name: 订阅更新
+    type: select
+    proxies:
+      - 🇨🇳 本地直连
+      - 总模式
+
+  - name: Steam
+    <<: *CNproxy_groups
+
+  - name: Microsoft
+    <<: *CNproxy_groups
+
+  - name: Bing
+    <<: *proxy_groups
+
+  - name: Telegram
+    <<: *proxy_groups
+
+  - name: Discord
+    <<: *proxy_groups
+
+  - name: Twitch
+    <<: *proxy_groups
+
+  - name: YouTube
+    <<: *proxy_groups
+
+  - name: Google
+    <<: *proxy_groups
+
+  - name: GoogleFCM
+    <<: *proxy_groups
+
+  - name: AI
+    <<: *proxy_groups
+
+  - name: Grok
+    <<: *proxy_groups
+
+  - name: OpenAI
+    <<: *proxy_groups
+
+  - name: GitHub
+    <<: *proxy_groups
+
+  - name: Twitter(X)
+    <<: *proxy_groups
+
+  - name: Pixiv
+    <<: *proxy_groups
+
+  - name: TransCircle
+    <<: *proxy_groups
+
+  - name: DNS连接
+    <<: *proxy_groups
+
+  - name: 漏网之鱼
+    <<: *proxy_groups
+
+  - name: 广告拦截
+    type: select
+    proxies:
+      - ⛔️ 拒绝连接
+      - 🌐 DNS_Hijack
+      - REJECT-DROP
+      - PASS
+
+  - name: WebRTC
+    type: select
+    proxies:
+      - ⛔️ 拒绝连接
+      - 🌐 DNS_Hijack
+      - REJECT-DROP
+      - PASS
+
+  - name: 白名单出站
+    <<: *CNproxy_groups
+
+  - name: 香港节点
+    filter: "^(?=.*(港|HK|hk|Hong Kong|HongKong|hongkong)).*$"
+    <<: *All
+    proxies:
+      - hk-wap-1.rhen.cloud-tuic
+      # - mifeng-hk2-vless
+      # - mifeng-hk3-vless
+      - hk-wap-1.rhen.cloud-anytls
+      - anytls-vm-vgvrb
+
+  - name: 日本节点
+    filter: "^(?=.*(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|JP|Japan)).*$"
+    <<: *All
+    proxies:
+      - wyf9-acjpsb-reality
+      - killjsj-jp-reality
+
+  - name: 美国节点
+    filter: "^(?=.*(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United
+      States)).*$"
+    <<: *All
+    proxies:
+      - us-rn-1.rhen.cloud
+
+  - name: CNTEST
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 86400
+    proxies:
+      - 🇨🇳 本地直连
+
+  - name: SiiWay-HK
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 86400
+    filter: "^(?=.*(港|HK|hk|Hong Kong|HongKong|hongkong|🇭🇰)).*$"
+    proxies:
+      - hk-wap-1.rhen.cloud-anytls
+      - hk-wap-1.rhen.cloud-tuic
+      - hk-wap-1.rhen.cloud-anytls-forward
+      - vl-reality-hk-wap-1.rhen.cloud
+      - anytls-vm-vgvrb
+      - vm-vgvrb-anytls-fd
+      - tu5-vm-vgvrb
+      # - mifeng-hk2-vless
+      # - mifeng-hk3-vless
+
+  - name: SiiWay-JP
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 86400
+    filter: "^(?=.*(日本|东京|大阪|JP|Japan|🇯🇵)).*$"
+    proxies:
+      - wyf9-acjpsb-reality
+      - killjsj-jp-reality
+
+  - name: SiiWay-US
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 86400
+    filter: "^(?=.*(美|US|United States|America|Phoenix|San José|San Jose|🇺🇸)).*$"
+    proxies:
+      - us-rn-1.rhen.cloud
+      - anytls-racknerd-fd48c40
+      - anytls-racknerd-forward
+      - vl-reality-racknerd-fd48c40
+      - wyf9-zouter-us-vls
+
+  - name: SiiWay-KR
+    type: select
+    url: https://www.gstatic.com/generate_204
+    interval: 86400
+    filter: "^(?=.*(韩|KR|Korea|Seoul|Chuncheon|🇰🇷)).*$"
+    proxies:
+      - anytls-kr-azure-1.rhen.cloud
+      - tu5-kr-azure-1.rhen.cloud
+
+  # - name: SiiWay-SG
+  #   type: select
+  #   url: https://www.gstatic.com/generate_204
+  #   interval: 86400
+  #   filter: "^(?=.*(新加坡|坡|狮城|SG|Singapore|🇸🇬)).*$"
+
+  # - name: SiiWay-TW
+  #   type: select
+  #   url: https://www.gstatic.com/generate_204
+  #   interval: 86400
+  #   filter: "^(?=.*(台|TW|Taiwan|台湾|新北|彰化|🇹🇼)).*$"
+
+# —————————
+
+rules:
+  - DST-PORT,53,🌐 DNS_Hijack
+  - DST-PORT,853,DNS连接
+
+  - GEOSITE,oracle,DIRECT
+  - DOMAIN-SUFFIX,rhen.cloud,DIRECT
+  - DOMAIN-SUFFIX,invite.linuxdo.org,DIRECT
+  # - DOMAIN-SUFFIX,prism.siiway.org,总模式
+
+  - PROCESS-NAME,cloudflared,DIRECT
+
+  # Minecraft 游戏直连
+  - DOMAIN-SUFFIX,minecraft.net,DIRECT
+  - DOMAIN-SUFFIX,minecraftservices.com,DIRECT
+  - DOMAIN-SUFFIX,minecraftskins.com,DIRECT
+  - DOMAIN-SUFFIX,mojang.com,DIRECT
+  - DOMAIN-SUFFIX,hypixel.net,DIRECT
+  - DOMAIN-SUFFIX,shearbyte.dev,DIRECT
+
+  # Minecraft 进程直连（常见启动器）
+  # - PROCESS-NAME,minecraft-launcher,DIRECT
+  # - PROCESS-NAME,PrismLauncher,DIRECT
+  # - PROCESS-NAME,HMCL,DIRECT
+  - PROCESS-NAME,java,DIRECT
+
+  - PROCESS-NAME,easytier-core,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,sh.vomiku.com,DIRECT,no-resolve
+  - IP-CIDR,150.158.11.136/32,DIRECT,no-resolve
+
+  - PROCESS-NAME,com.qookkagames.z1.gw.hk,总模式 # 忘却前夜
+
+  - DOMAIN-SUFFIX,qookkagames.com,总模式
+
+  - GEOSITE,category-ads-all,广告拦截
+  - GEOSITE,bilibili,🇨🇳 本地直连
+  - PROCESS-PATH,tv.danmaku.bili,DIRECT
+  - GEOSITE,github,GitHub
+  - GEOSITE,discord,Discord
+  - GEOSITE,steam,Steam
+  - GEOSITE,onedrive,Microsoft
+  - GEOSITE,microsoft@cn,Microsoft
+  - GEOSITE,xai,Grok
+  - GEOSITE,openai,OpenAI
+  - GEOSITE,category-ai-!cn,AI
+  - GEOSITE,category-ai-chat-!cn,AI
+  - GEOSITE,google,Google
+  - GEOSITE,youtube,YouTube
+  - GEOSITE,telegram,Telegram
+  - GEOSITE,twitter,Twitter(X)
+  - GEOSITE,pixiv,Pixiv
+  - GEOSITE,vercel,总模式
+  - GEOSITE,cloudflare,总模式
+  - GEOSITE,geolocation-!cn,总模式
+  - GEOSITE,gfw,总模式
+
+  - DOMAIN-SUFFIX,transcircle.org,TransCircle
+
+  - DOMAIN-SUFFIX,bing.com,Bing
+  - DOMAIN-KEYWORD,microsoft,Microsoft
+  - DOMAIN-KEYWORD,mtalk.google,GoogleFCM
+
+  - GEOIP,LAN,DIRECT,no-resolve
+  - GEOIP,CN,DIRECT,no-resolve
+  - GEOSITE,cn,🇨🇳 本地直连
+  - GEOSITE,private,🇨🇳 本地直连
+
+  - MATCH,漏网之鱼
+
+# —————————

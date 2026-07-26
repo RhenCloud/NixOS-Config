@@ -11,6 +11,7 @@
     ./nix.nix
     ./packages.nix
     ./services.nix
+    ./mihomo
     ./shells.nix
     ./xdg.nix
     # ./proxy.nix

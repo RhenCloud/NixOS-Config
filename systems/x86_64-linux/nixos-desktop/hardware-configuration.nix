@@ -36,6 +36,7 @@
   fileSystems."/home" = {
     device = "/dev/disk/by-uuid/4daf6a92-7e38-4198-a4ae-6c763dea81ef";
     fsType = "btrfs";
+    neededForBoot = true;
     options= [
       "defaults"
       "compress=zstd"

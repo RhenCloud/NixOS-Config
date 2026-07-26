@@ -152,6 +152,9 @@
       url = "github:StarryReverie/selector4nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    impermanence = {
+      url = "github:nix-community/impermanence";
+    };
   };
 
   outputs =

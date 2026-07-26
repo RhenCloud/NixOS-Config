@@ -27,6 +27,7 @@
     services.enable = true;
     shells.enable = true;
     xdg.enable = true;
+    impermanence.enable = true;
 
     # desktop
     hyprland.enable = true;
