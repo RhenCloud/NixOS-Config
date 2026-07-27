@@ -53,65 +53,68 @@ jobs:
           EOF
 
       - name: Delete old packages
+        shell: python3
         run: |
-          REMOTE="s3:${{ env.S3_BUCKET }}/${{ env.S3_PREFIX }}"
-          RETENTION_DAYS=${{ env.RETENTION_DAYS }}
-          DELETED=0
-          KEPT=0
+          import subprocess, json, datetime, os, tempfile
 
-          echo "测试 rclone 连接..."
-          if ! rclone lsd "${REMOTE}/" &>/dev/null; then
-            echo "rclone 连接失败，检查 S3 配置"
-            echo "   BUCKET: ${{ env.S3_BUCKET }}"
-            echo "   ENDPOINT: ${{ env.S3_ENDPOINT }}"
-            rclone lsd "${REMOTE}/" 2>&1 || true
-            exit 1
-          fi
-          echo "连接成功，开始清理..."
+          remote = 's3://{}/{}'.format(os.environ['S3_BUCKET'], os.environ['S3_PREFIX'])
+          days = int(os.environ.get('RETENTION_DAYS', '10'))
 
-          while read -r size path; do
-            mod_time=$(rclone lsf "${REMOTE}/${path}" --format "t" | head -1)
+          result = subprocess.run(['rclone', 'lsd', '{}/'.format(remote)],
+              capture_output=True, text=True)
+          if result.returncode != 0:
+              print('rclone 连接失败:', result.stderr)
+              exit(1)
+          print('连接成功，开始清理...')
 
-            if [[ -z "$mod_time" ]]; then
-              continue
-            fi
+          result = subprocess.run(['rclone', 'lsjson', '{}/'.format(remote),
+              '--include', '*.tar.xz'], capture_output=True, text=True)
+          if result.returncode != 0 or not result.stdout.strip():
+              print('无文件需要清理')
+              exit(0)
 
-            file_epoch=$(date -d "$mod_time" +%s 2>/dev/null || echo 0)
-            now_epoch=$(date +%s)
-            age_days=$(( (now_epoch - file_epoch) / 86400 ))
+          files = json.loads(result.stdout) if result.stdout.strip() else []
+          now = datetime.datetime.now().timestamp()
+          deleted = kept = 0
 
-            if [[ "$age_days" -gt "$RETENTION_DAYS" ]]; then
-              echo "删除 ($age_days 天): $path"
-              rclone delete "${REMOTE}/${path}"
-              ((DELETED++))
-            else
-              ((KEPT++))
-            fi
-          done < <(rclone ls "${REMOTE}/" --include "*.tar.xz" 2>/dev/null || true)
+          for f in files:
+              mod_time = datetime.datetime.fromisoformat(
+                  f['ModTime'].replace('Z', '+00:00')).timestamp()
+              age = (now - mod_time) / 86400
 
-          echo "GC 完成: 删除=$DELETED, 保留=$KEPT"
+              if age > days:
+                  print('删除 ({} 天): {}'.format(int(age), f['Path']))
+                  subprocess.run(['rclone', 'delete', '{}/{}'.format(remote, f['Path'])],
+                      capture_output=True)
+                  deleted += 1
+              else:
+                  kept += 1
 
-          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          rclone cat "${REMOTE}/index.json" 2>/dev/null | jq \
-            --arg ts "$TIMESTAMP" \
-            --argjson deleted "$DELETED" \
-            --argjson kept "$KEPT" \
-            --arg days "$RETENTION_DAYS" \
-            '. + {gc: {timestamp: $ts, retention_days: ($days | tonumber), deleted: $deleted, kept: $kept}}' \
-            > /tmp/index-gc.json 2>/dev/null || {
-              cat > /tmp/index-gc.json <<EOF
-          {
-            "gc": {
-              "timestamp": "$TIMESTAMP",
-              "retention_days": $RETENTION_DAYS,
-              "deleted": $DELETED,
-              "kept": $KEPT
-            }
-          }
-          EOF
-            }
+          print('GC 完成: 删除={}, 保留={}'.format(deleted, kept))
 
-          rclone copy /tmp/index-gc.json "${REMOTE}/index.json"
+          ts = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+          index = {'gc': {
+              'timestamp': ts,
+              'retention_days': days,
+              'deleted': deleted,
+              'kept': kept,
+          }}
+
+          existing = subprocess.run(['rclone', 'cat', '{}/index.json'.format(remote)],
+              capture_output=True, text=True)
+          if existing.returncode == 0 and existing.stdout.strip():
+              try:
+                  ed = json.loads(existing.stdout)
+                  ed.update(index)
+                  index = ed
+              except json.JSONDecodeError:
+                  pass
+
+          with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+              json.dump(index, f, indent=2)
+              tmp = f.name
+          subprocess.run(['rclone', 'copy', tmp, '{}/index.json'.format(remote)])
+          os.unlink(tmp)
 
   build-and-cache:
     name: Build & Cache Packages

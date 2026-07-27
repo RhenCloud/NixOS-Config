@@ -1,7 +1,6 @@
-diff --git a/niri-config/src/window_rule.rs b/niri-config/src/window_rule.rs
-index b5714ab..8b2b71e 100644
---- a/niri-config/src/window_rule.rs
-+++ b/niri-config/src/window_rule.rs
+diff -ruN a/niri-config/src/window_rule.rs b/niri-config/src/window_rule.rs
+--- a/niri-config/src/window_rule.rs	2026-07-27 20:45:43.059830995 +0800
++++ b/niri-config/src/window_rule.rs	2026-07-27 20:46:09.205072145 +0800
 @@ -77,6 +77,8 @@
      pub tiled_state: Option<bool>,
      #[knuffel(child, unwrap(argument))]
@@ -11,34 +10,64 @@ index b5714ab..8b2b71e 100644
      #[knuffel(child, default)]
      pub background_effect: BackgroundEffectRule,
      #[knuffel(child, default)]
-diff --git a/src/window/mod.rs b/src/window/mod.rs
-index 07a3489..c06633a 100644
---- a/src/window/mod.rs
-+++ b/src/window/mod.rs
-@@ -123,6 +123,9 @@
-     /// Whether mouse events should pass through this window.
-     pub mouse_passthrough: Option<bool>,
- 
-+    /// Whether this window should be rendered on all workspaces (pinned).
-+    pub pin: Option<bool>,
-+
-     /// Background effect configuration.
-     pub background_effect: BackgroundEffect,
- 
-@@ -309,6 +312,9 @@
-                 if let Some(x) = rule.mouse_passthrough {
-                     resolved.mouse_passthrough = Some(x);
-                 }
-+                if let Some(x) = rule.pin {
-+                    resolved.pin = Some(x);
+diff -ruN a/src/layout/monitor.rs b/src/layout/monitor.rs
+--- a/src/layout/monitor.rs	2026-07-27 20:45:42.290822061 +0800
++++ b/src/layout/monitor.rs	2026-07-27 20:46:34.358197709 +0800
+@@ -13,6 +13,7 @@
+ use super::insert_hint_element::{InsertHintElement, InsertHintRenderElement};
+ use super::scrolling::{Column, ColumnWidth};
+ use super::tile::Tile;
++use super::floating::FloatingSpaceRenderElement;
+ use super::workspace::{
+     compute_working_area, OutputId, Workspace, WorkspaceAddWindowTarget, WorkspaceId,
+     WorkspaceRenderElement,
+@@ -1570,6 +1571,15 @@
+             // represent scaled windows properly.
+             Some((win, hit.to_activate()))
+         } else {
++            // Check pinned floating tiles from all workspaces first (always on top).
++            for other_ws in &self.workspaces {
++                if let Some((win, hit)) =
++                    other_ws.pinned_window_under(pos_within_output - geo.loc)
++                {
++                    return Some((win, hit.offset_win_pos(geo.loc)));
 +                }
++            }
++
+             let (win, hit) = ws.window_under(pos_within_output - geo.loc)?;
+             Some((win, hit.offset_win_pos(geo.loc)))
+         }
+@@ -1747,6 +1757,27 @@
  
-                 resolved
-                     .background_effect
-diff --git a/src/layout/workspace.rs b/src/layout/workspace.rs
-index c674202..1982db6 100644
---- a/src/layout/workspace.rs
-+++ b/src/layout/workspace.rs
+             ws.render_scrolling(ctx.r(), xray_pos, focus_ring, push!());
+         }
++
++        // Render pinned floating tiles from all workspaces on top of everything (always on top).
++        let active_geo = self.workspaces_with_render_geo()
++            .nth(self.active_workspace_idx)
++            .map(|(_, geo)| geo)
++            .unwrap_or_default();
++        let active_xray_pos = XrayPos::new(active_geo.loc, zoom);
++        for other_ws in &self.workspaces {
++            for (tile, tile_pos) in other_ws.pinned_tiles_with_render_positions() {
++                tile.render(ctx.r(), tile_pos, active_xray_pos, false, &mut |elem| {
++                    let elem = WorkspaceRenderElement::Floating(
++                        FloatingSpaceRenderElement::Tile(elem),
++                    );
++                    let elem = CropRenderElement::from_element(elem, scale, crop_bounds);
++                    if let Some(elem) = elem {
++                        let elem = MonitorInnerRenderElement::from(elem);
++                        push(scale_relocate(active_geo, elem));
++                    }
++                });
++            }
++        }
+     }
+ 
+     pub fn render_workspace_shadows<R: NiriRenderer>(
+diff -ruN a/src/layout/workspace.rs b/src/layout/workspace.rs
+--- a/src/layout/workspace.rs	2026-07-27 20:45:42.290822061 +0800
++++ b/src/layout/workspace.rs	2026-07-27 20:46:20.097138727 +0800
 @@ -1768,6 +1768,27 @@
          self.scrolling.window_under(pos)
      }
@@ -67,49 +96,26 @@ index c674202..1982db6 100644
      pub fn resize_edges_under(&self, pos: Point<f64, Logical>) -> Option<ResizeEdge> {
          self.tiles_with_render_positions()
              .find_map(|(tile, tile_pos, visible)| {
-diff --git a/src/layout/monitor.rs b/src/layout/monitor.rs
-index 2e0f12e..5dda77b 100644
---- a/src/layout/monitor.rs
-+++ b/src/layout/monitor.rs
-@@ -13,6 +13,7 @@
- use super::insert_hint_element::{InsertHintElement, InsertHintRenderElement};
- use super::scrolling::{Column, ColumnWidth};
- use super::tile::Tile;
-+use super::floating::FloatingSpaceRenderElement;
- use super::workspace::{
-     compute_working_area, OutputId, Workspace, WorkspaceAddWindowTarget, WorkspaceId,
-     WorkspaceRenderElement,
-@@ -1570,6 +1571,15 @@
-             // represent scaled windows properly.
-             Some((win, hit.to_activate()))
-         } else {
-+            // Check pinned floating tiles from all workspaces.
-+            for other_ws in &self.workspaces {
-+                if let Some((win, hit)) =
-+                    other_ws.pinned_window_under(pos_within_output - geo.loc)
-+                {
-+                    return Some((win, hit.offset_win_pos(geo.loc)));
-+                }
-+            }
-+
-             let (win, hit) = ws.window_under(pos_within_output - geo.loc)?;
-             Some((win, hit.offset_win_pos(geo.loc)))
-         }
-@@ -1746,6 +1756,18 @@
-             }
+diff -ruN a/src/window/mod.rs b/src/window/mod.rs
+--- a/src/window/mod.rs	2026-07-27 20:45:43.063615241 +0800
++++ b/src/window/mod.rs	2026-07-27 20:46:13.976103673 +0800
+@@ -123,6 +123,9 @@
+     /// Whether mouse events should pass through this window.
+     pub mouse_passthrough: Option<bool>,
  
-             ws.render_scrolling(ctx.r(), xray_pos, focus_ring, push!());
++    /// Whether this window should be rendered on all workspaces (pinned).
++    pub pin: Option<bool>,
 +
-+            // Render pinned floating tiles from all workspaces.
-+            for other_ws in &self.workspaces {
-+                for (tile, tile_pos) in other_ws.pinned_tiles_with_render_positions() {
-+                    tile.render(ctx.r(), tile_pos, xray_pos, false, &mut |elem| {
-+                        let elem = WorkspaceRenderElement::Floating(
-+                            FloatingSpaceRenderElement::Tile(elem),
-+                        );
-+                        (push!())(elem);
-+                    });
+     /// Background effect configuration.
+     pub background_effect: BackgroundEffect,
+ 
+@@ -309,6 +312,9 @@
+                 if let Some(x) = rule.mouse_passthrough {
+                     resolved.mouse_passthrough = Some(x);
+                 }
++                if let Some(x) = rule.pin {
++                    resolved.pin = Some(x);
 +                }
-+            }
-         }
-     }
+ 
+                 resolved
+                     .background_effect

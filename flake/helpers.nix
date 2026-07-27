@@ -5,7 +5,7 @@ let
   collectDefaultNix = dir:
     let
       entries = builtins.readDir dir;
-      dirs = lib.filterAttrs (name: type: type == "directory") entries;
+      dirs = lib.filterAttrs (_name: type: type == "directory") entries;
     in
       lib.flatten (
         lib.mapAttrsToList (name: _:
@@ -21,7 +21,7 @@ let
     let
       oDir = "${root}/overlays";
       entries = builtins.readDir oDir;
-      dirs = lib.filterAttrs (name: type: type == "directory") entries;
+      dirs = lib.filterAttrs (_name: type: type == "directory") entries;
       hasDefault = name: builtins.pathExists "${oDir}/${name}/default.nix";
       isDisabled = name: builtins.pathExists "${oDir}/${name}/disabled";
       active = lib.filterAttrs (name: _: hasDefault name && !isDisabled name) dirs;

@@ -29,15 +29,20 @@
   boot.supportedFilesystems = [ "ntfs" ];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/cf59327d-2942-da48-870d-dd8a2b60e450";
-    fsType = "ext4";
+    device = "/dev/disk/by-uuid/020b1a3b-b76c-4204-8fd3-bde73280d3b5";
+    fsType = "btrfs";
+    options = [
+      "defaults"
+      "compress=zstd"
+      "noatime"
+    ];
   };
 
   fileSystems."/home" = {
     device = "/dev/disk/by-uuid/4daf6a92-7e38-4198-a4ae-6c763dea81ef";
     fsType = "btrfs";
     neededForBoot = true;
-    options= [
+    options = [
       "defaults"
       "compress=zstd"
       "noatime"

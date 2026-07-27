@@ -200,19 +200,7 @@ profile:
   store-fake-ip: true
 # —————————
 
-proxies:
-  - { name: 🇨🇳 本地直连, type: direct, udp: true }
-  - { name: ⛔️ 拒绝连接, type: reject }
-  - { name: 🌐 DNS_Hijack, type: dns }
-
-proxy-providers:
-  manual:
-    type: file
-    path: "/etc/mihomo/proxies/manual.yaml"
-    health-check:
-      enable: true
-      url: https://www.gstatic.com/generate_204
-      interval: 300
+# __PROXIES_HERE__
 
 proxy_groups: &proxy_groups
   type: select
@@ -223,9 +211,9 @@ proxy_groups: &proxy_groups
     - SiiWay-JP
     - SiiWay-US
     - SiiWay-KR
-    - 香港节点
-    - 日本节点
-    - 美国节点
+    # - 香港节点
+    # - 日本节点
+    # - 美国节点
     - 🇨🇳 本地直连
   <<: *A
 CNproxy_groups: &CNproxy_groups
@@ -234,9 +222,9 @@ CNproxy_groups: &CNproxy_groups
     - 🇨🇳 本地直连
     - ⛔️ 拒绝连接
     - 总模式
-    - 香港节点
-    - 日本节点
-    - 美国节点
+    # - 香港节点
+    # - 日本节点
+    # - 美国节点
   <<: *A
 # —————————
 proxy-groups:
@@ -247,9 +235,9 @@ proxy-groups:
       - SiiWay-JP
       - SiiWay-US
       - SiiWay-KR
-      - 香港节点
-      - 日本节点
-      - 美国节点
+      # - 香港节点
+      # - 日本节点
+      # - 美国节点
       - 🇨🇳 本地直连
 
   - name: 订阅更新
@@ -348,12 +336,12 @@ proxy-groups:
       - wyf9-acjpsb-reality
       - killjsj-jp-reality
 
-  - name: 美国节点
-    filter: "^(?=.*(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United
-      States)).*$"
-    <<: *All
-    proxies:
-      - us-rn-1.rhen.cloud
+  # - name: 美国节点
+  #   filter: "^(?=.*(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|US|United
+  #     States)).*$"
+  #   <<: *All
+  # proxies:
+  # - us-rn-1.rhen.cloud
 
   - name: CNTEST
     type: select
@@ -382,7 +370,7 @@ proxy-groups:
     type: select
     url: https://www.gstatic.com/generate_204
     interval: 86400
-    filter: "^(?=.*(日本|东京|大阪|JP|Japan|🇯🇵)).*$"
+    filter: "^(?=.*(日本|东京|大阪|JP|Japan|🇵)).*$"
     proxies:
       - wyf9-acjpsb-reality
       - killjsj-jp-reality
@@ -403,7 +391,7 @@ proxy-groups:
     type: select
     url: https://www.gstatic.com/generate_204
     interval: 86400
-    filter: "^(?=.*(韩|KR|Korea|Seoul|Chuncheon|🇰🇷)).*$"
+    filter: "^(?=.*(韩|KR|Korea|Seoul|Chuncheon|🇰)).*$"
     proxies:
       - anytls-kr-azure-1.rhen.cloud
       - tu5-kr-azure-1.rhen.cloud

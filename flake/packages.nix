@@ -5,7 +5,7 @@ let
     let
       pDir = toString ../packages;
       entries = builtins.readDir pDir;
-      dirs = lib.filterAttrs (name: type: type == "directory") entries;
+      dirs = lib.filterAttrs (_name: type: type == "directory") entries;
       hasDefault = name: builtins.pathExists "${pDir}/${name}/default.nix";
       isDisabled = name: builtins.pathExists "${pDir}/${name}/disabled";
       pkgDirs = lib.filterAttrs (name: _: hasDefault name && !isDisabled name) dirs;
@@ -18,7 +18,7 @@ let
       );
 in
 {
-  perSystem = { system, pkgs, ... }: {
+  perSystem = { pkgs, ... }: {
     packages = (discoverPackages pkgs) // {
       rime-keytao = inputs.rime-keytao.packages.${pkgs.stdenv.hostPlatform.system}.default;
       rimeKeytao = inputs.rime-keytao.packages.${pkgs.stdenv.hostPlatform.system}.default;

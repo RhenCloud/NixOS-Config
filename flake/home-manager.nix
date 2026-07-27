@@ -6,11 +6,11 @@ in
 {
   flake.homeConfigurations =
     let
-      archs = lib.filterAttrs (n: t: t == "directory") (builtins.readDir homesDir);
+      archs = lib.filterAttrs (_n: t: t == "directory") (builtins.readDir homesDir);
     in
       lib.concatMapAttrs (arch: _:
         let
-          userDirs = lib.filterAttrs (n: t: t == "directory")
+          userDirs = lib.filterAttrs (_n: t: t == "directory")
             (builtins.readDir "${homesDir}/${arch}");
         in
           lib.mapAttrs' (userEntry: _:

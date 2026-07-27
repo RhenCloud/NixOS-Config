@@ -16,19 +16,7 @@ in {
       files = [
         "/etc/machine-id"
       ];
-      users.rhencloud = {
-        directories = [
-          "Desktop"
-          "Documents"
-          "Downloads"
-          "Music"
-          "Pictures"
-          "Videos"
-          ".config"
-          ".local/share"
-          ".ssh"
-        ];
-      };
+    # /home 是独立 btrfs 分区，自然持久化，无需额外配置
     };
 
     # 注意：当前根分区为 ext4，无法直接设置为只读

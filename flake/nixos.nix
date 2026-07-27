@@ -6,12 +6,12 @@ in
 {
   flake.nixosConfigurations =
     let
-      archs = lib.filterAttrs (n: t: t == "directory") (builtins.readDir systemsDir);
+      archs = lib.filterAttrs (_n: t: t == "directory") (builtins.readDir systemsDir);
     in
       lib.concatMapAttrs (arch: _:
         let
           hostsDir = "${systemsDir}/${arch}";
-          hostDirs = lib.filterAttrs (n: t: t == "directory") (builtins.readDir hostsDir);
+          hostDirs = lib.filterAttrs (_n: t: t == "directory") (builtins.readDir hostsDir);
         in
           lib.mapAttrs' (host: _:
             lib.nameValuePair host (
