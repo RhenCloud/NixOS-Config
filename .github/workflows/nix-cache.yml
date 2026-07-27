@@ -175,10 +175,10 @@ jobs:
           }
           git log --oneline -3
 
-      - name: Check cache status (dry-run)
+      - name: Check if build is needed
         id: cache-check
         run: |
-          echo "检查上游缓存状态..."
+          echo "检查是否需要构建..."
 
           dry_run=$(nix build ".#nixosConfigurations.nixos-desktop.config.system.build.toplevel" \
             --dry-run 2>&1 || true)
@@ -186,14 +186,34 @@ jobs:
           if echo "$dry_run" | grep -qE "^[0-9]+ will be built"; then
             built=$(echo "$dry_run" | grep -oE "^[0-9]+" | head -1)
             echo "→ $built 个包需要本地构建"
-            echo "CACHE_MISS=true" >> "$GITHUB_ENV"
+
+            echo "检查这些包是否已在 S3 缓存中..."
+            REMOTE="s3:${{ env.S3_BUCKET }}/${{ env.S3_PREFIX }}"
+
+            need_build=0
+            while IFS= read -r drv_path; do
+              store_name=$(basename "$drv_path" | sed 's/\.drv$//')
+              if ! rclone lsf "${REMOTE}/${store_name}.tar.xz" &>/dev/null; then
+                need_build=1
+                echo "  缺失: $store_name"
+                break
+              fi
+            done < <(echo "$dry_run" | grep -oE '/nix/store/[a-z0-9]+-[a-zA-Z0-9._+-]+\.drv' || true)
+
+            if [[ $need_build -eq 0 ]]; then
+              echo "→ 所有需要构建的包已在 S3 缓存中，跳过构建"
+              echo "NEED_BUILD=false" >> "$GITHUB_ENV"
+            else
+              echo "→ 有包需要构建并上传"
+              echo "NEED_BUILD=true" >> "$GITHUB_ENV"
+            fi
           else
             echo "→ 全部已缓存，跳过构建"
-            echo "CACHE_MISS=false" >> "$GITHUB_ENV"
+            echo "NEED_BUILD=false" >> "$GITHUB_ENV"
           fi
 
       - name: Build system configuration
-        if: env.CACHE_MISS == 'true' || inputs.force_upload == 'true'
+        if: env.NEED_BUILD == 'true' || inputs.force_upload == 'true'
         run: |
           echo "Building nixos-desktop system configuration..."
           nix build ".#nixosConfigurations.nixos-desktop.config.system.build.toplevel" \
@@ -206,7 +226,7 @@ jobs:
           echo "Build complete: $BUILD_PATH"
 
       - name: List all packages
-        if: env.CACHE_MISS == 'true' || inputs.force_upload == 'true'
+        if: env.NEED_BUILD == 'true' || inputs.force_upload == 'true'
         run: |
           BUILD_PATH="${BUILD_PATH:-${{ env.BUILD_PATH }}}"
 
@@ -223,7 +243,7 @@ jobs:
           echo "TOTAL_COUNT=$TOTAL" >> "$GITHUB_ENV"
 
       - name: Upload packages to S3
-        if: env.CACHE_MISS == 'true' || inputs.force_upload == 'true'
+        if: env.NEED_BUILD == 'true' || inputs.force_upload == 'true'
         run: |
           REMOTE="s3:${{ env.S3_BUCKET }}/${{ env.S3_PREFIX }}"
           UPLOADED=0
