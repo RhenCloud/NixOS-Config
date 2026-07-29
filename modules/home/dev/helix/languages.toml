@@ -1,0 +1,163 @@
+[language-server.clangd]
+command = "clangd"
+
+[language-server.gopls]
+command = "gopls"
+
+[language-server.rust-analyzer]
+command = "rust-analyzer"
+
+[language-server.jdtls]
+command = "jdt-language-server"
+
+[language-server.ruff]
+command = "ruff"
+args = ["server"]
+
+[language-server.typescript-language-server]
+command = "typescript-language-server"
+args = ["--stdio"]
+
+[language-server.lua-language-server]
+command = "lua-language-server"
+
+[language-server.nil]
+command = "nil"
+
+[language-server.bash-language-server]
+command = "bash-language-server"
+args = ["start"]
+
+[language-server.marksman]
+command = "marksman"
+
+[language-server.yaml-language-server]
+command = "yaml-language-server"
+args = ["--stdio"]
+
+[language-server.taplo]
+command = "taplo"
+
+[language-server.json-language-server]
+command = "vscode-json-languageserver"
+args = ["--stdio"]
+
+[language-server.css-language-server]
+command = "vscode-css-languageserver"
+args = ["--stdio"]
+
+[language-server.html-language-server]
+command = "vscode-html-languageserver"
+args = ["--stdio"]
+
+[language-server.typos-lsp]
+command = "typos-lsp"
+
+[[language]]
+name = "nix"
+auto-format = true
+formatter = { command = "nixfmt" }
+language-servers = ["nil"]
+
+[[language]]
+name = "c"
+auto-format = true
+language-servers = ["clangd"]
+
+[[language]]
+name = "cpp"
+auto-format = true
+language-servers = ["clangd"]
+
+[[language]]
+name = "rust"
+auto-format = true
+formatter = { command = "rustfmt" }
+language-servers = ["rust-analyzer"]
+
+[[language]]
+name = "python"
+auto-format = true
+formatter = { command = "ruff", args = ["format"] }
+language-servers = ["ruff"]
+
+[[language]]
+name = "go"
+auto-format = true
+formatter = { command = "gofmt" }
+language-servers = ["gopls"]
+
+[[language]]
+name = "java"
+auto-format = true
+language-servers = ["jdtls"]
+
+[[language]]
+name = "typescript"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["typescript-language-server"]
+
+[[language]]
+name = "javascript"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["typescript-language-server"]
+
+[[language]]
+name = "tsx"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["typescript-language-server"]
+
+[[language]]
+name = "jsx"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["typescript-language-server"]
+
+[[language]]
+name = "json"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["json-language-server"]
+
+[[language]]
+name = "yaml"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["yaml-language-server"]
+
+[[language]]
+name = "toml"
+auto-format = true
+language-servers = ["taplo"]
+
+[[language]]
+name = "lua"
+auto-format = true
+formatter = { command = "stylua" }
+language-servers = ["lua-language-server"]
+
+[[language]]
+name = "bash"
+auto-format = true
+language-servers = ["bash-language-server"]
+
+[[language]]
+name = "markdown"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["marksman"]
+
+[[language]]
+name = "css"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["css-language-server"]
+
+[[language]]
+name = "html"
+auto-format = true
+formatter = { command = "prettierd" }
+language-servers = ["html-language-server"]

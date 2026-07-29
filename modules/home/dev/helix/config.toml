@@ -1,0 +1,28 @@
+theme = "dracula"
+
+[editor]
+line-number = "relative"
+completion-trigger-len = 1
+auto-info = true
+true-color = true
+soft-wrap.enable = true
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.indent-guides]
+render = true
+
+[editor.lsp]
+display-messages = true
+auto-signature-help = true
+
+[editor.file-picker]
+hidden = false
+
+[editor.statusline]
+left = ["mode", "separator", "spinner", "version-control"]
+center = ["file-name"]
+right = ["diagnostics", "selections", "register", "position", "file-encoding"]

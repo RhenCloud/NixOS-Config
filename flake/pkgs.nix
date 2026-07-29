@@ -5,7 +5,7 @@ in
 {
   perSystem = { system, ... }: {
     _module.args.pkgs = import inputs.nixpkgs {
-      inherit system;
+      localSystem = { inherit system; };
       config.allowUnfree = true;
       inherit (h) overlays;
     };

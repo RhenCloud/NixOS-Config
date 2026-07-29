@@ -59,6 +59,7 @@
     opencode.enable = true;
     emacs.enable = false;
     nvf.enable = true;
+    helix.enable = true;
     hmOpenAgent.enable = true;
 
     # service

@@ -19,7 +19,7 @@ in
       };
       signingKey = mkOption {
         type = types.str;
-        default = "";
+        default = "A574A617378C4E0B";
       };
     };
 
@@ -46,7 +46,7 @@ in
 
     editor = mkOption {
       type = types.str;
-      default = "code";
+      default = "hx";
     };
 
     terminal = mkOption {

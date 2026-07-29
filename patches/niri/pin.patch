@@ -37,15 +37,14 @@ diff -ruN a/src/layout/monitor.rs b/src/layout/monitor.rs
              let (win, hit) = ws.window_under(pos_within_output - geo.loc)?;
              Some((win, hit.offset_win_pos(geo.loc)))
          }
-@@ -1747,6 +1757,27 @@
- 
+@@ -1747,6 +1757,26 @@
+
              ws.render_scrolling(ctx.r(), xray_pos, focus_ring, push!());
          }
 +
-+        // Render pinned floating tiles from all workspaces on top of everything (always on top).
-+        let active_geo = self.workspaces_with_render_geo()
++        // Render pinned floating tiles from all workspaces on top of everything.
++        let active_geo = self.workspaces_render_geo()
 +            .nth(self.active_workspace_idx)
-+            .map(|(_, geo)| geo)
 +            .unwrap_or_default();
 +        let active_xray_pos = XrayPos::new(active_geo.loc, zoom);
 +        for other_ws in &self.workspaces {
@@ -63,7 +62,7 @@ diff -ruN a/src/layout/monitor.rs b/src/layout/monitor.rs
 +            }
 +        }
      }
- 
+
      pub fn render_workspace_shadows<R: NiriRenderer>(
 diff -ruN a/src/layout/workspace.rs b/src/layout/workspace.rs
 --- a/src/layout/workspace.rs	2026-07-27 20:45:42.290822061 +0800
@@ -71,7 +70,7 @@ diff -ruN a/src/layout/workspace.rs b/src/layout/workspace.rs
 @@ -1768,6 +1768,27 @@
          self.scrolling.window_under(pos)
      }
- 
+
 +    /// Check pinned floating tiles in this workspace at the given position.
 +    pub(super) fn pinned_window_under(&self, pos: Point<f64, Logical>) -> Option<(&W, HitType)> {
 +        for (tile, tile_pos) in self.floating.tiles_with_render_positions() {
@@ -102,13 +101,13 @@ diff -ruN a/src/window/mod.rs b/src/window/mod.rs
 @@ -123,6 +123,9 @@
      /// Whether mouse events should pass through this window.
      pub mouse_passthrough: Option<bool>,
- 
+
 +    /// Whether this window should be rendered on all workspaces (pinned).
 +    pub pin: Option<bool>,
 +
      /// Background effect configuration.
      pub background_effect: BackgroundEffect,
- 
+
 @@ -309,6 +312,9 @@
                  if let Some(x) = rule.mouse_passthrough {
                      resolved.mouse_passthrough = Some(x);
@@ -116,6 +115,6 @@ diff -ruN a/src/window/mod.rs b/src/window/mod.rs
 +                if let Some(x) = rule.pin {
 +                    resolved.pin = Some(x);
 +                }
- 
+
                  resolved
                      .background_effect
