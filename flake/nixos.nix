@@ -33,7 +33,9 @@ in
                       users.${config.my.user.name} = {
                         imports =
                           [ "${h.root}/homes/${arch}/${config.my.user.name}@${config.my.host.name}" ]
-                          ++ h.homeModules ++ h.commonHomeModules;
+                          ++ h.homeModules
+                          ++ h.essentialHomeModules
+                          ++ lib.optionals config.my.isDesktop h.desktopHomeModulesFull;
                       };
                     };
                     system.stateVersion = lib.mkDefault config.my.stateVersion;

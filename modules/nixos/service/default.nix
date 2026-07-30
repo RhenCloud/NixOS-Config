@@ -7,6 +7,7 @@
     ./easytier.nix
     ./selector4nix.nix
     ./sound.nix
+    ./cloudflared.nix
     ./qemu.nix
   ];
 }

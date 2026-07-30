@@ -24,6 +24,7 @@ in {
     max-jobs = "auto";
     builders-use-substitutes = true;
     auto-optimise-store = true;
+    trusted-users = [ "@wheel" ];
   };
 
   nix.gc = {

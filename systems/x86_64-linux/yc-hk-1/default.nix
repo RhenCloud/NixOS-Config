@@ -1,0 +1,95 @@
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
+let
+  hostName = "yc-hk-1";
+in
+{
+  imports = [
+    inputs.disko.nixosModules.disko
+    ./disko-config.nix
+  ];
+
+  networking.hostName = hostName;
+  my.host.name = hostName;
+  nixpkgs.hostPlatform = "x86_64-linux";
+
+  rhencloud.server.install.enable = true;
+
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = false;
+  };
+
+  boot.initrd.kernelModules = [
+    "virtio_blk"
+    "virtio_pci"
+  ];
+
+  networking = {
+    useNetworkd = true;
+    firewall.enable = false;
+  };
+
+  systemd.network.wait-online.enable = false;
+
+  systemd.network.networks."50-ens17" = {
+    matchConfig.Name = "ens*";
+    address = [ "83.229.127.169/24" ];
+    gateway = [ "83.229.127.254" ];
+    dns = [
+      "172.16.36.100"
+      "172.16.36.101"
+    ];
+    networkConfig.DHCP = "no";
+  };
+
+  environment.systemPackages = with pkgs; [
+    python3
+    uv
+  ];
+
+  services.openssh = {
+    enable = true;
+    ports = [ config.rhencloud.server.ssh.port ];
+    settings = {
+      PermitRootLogin = "prohibit-password";
+      PasswordAuthentication = false;
+    };
+    hostKeys = [
+      {
+        path = "/etc/ssh/ssh_host_ed25519_key";
+        type = "ed25519";
+      }
+    ];
+  };
+
+  rhencloud = {
+    identity.enable = true;
+    locale.enable = true;
+    nix.enable = true;
+    packages.enable = true;
+    shells.enable = true;
+    cloudflared.enable = true;
+    docker.enable = true;
+    services.nextbridge.enable = true;
+    services.frp.enable = true;
+    services.easytier.enable = true;
+  };
+
+  users.users = {
+    rhencloud.openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ i@rhen.cloud"
+    ];
+    root = {
+      initialPassword = "nixos";
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ i@rhen.cloud"
+      ];
+    };
+  };
+}

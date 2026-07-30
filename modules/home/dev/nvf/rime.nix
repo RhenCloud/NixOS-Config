@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }:
 
@@ -78,7 +79,7 @@ done
     };
   };
 in
-{
+with lib; mkIf config.rhencloud.nvf.enable {
   programs.nvf.settings.vim.extraPlugins.rime-nvim = {
     package = rime-nvim;
     setup = ''

@@ -11,6 +11,7 @@ in
 {
   xdg.configFile."fish/conf.d/92-herdr-plugins.fish".text = ''
     if status is-interactive
+        and command -sq herdr
         and herdr status server >/dev/null 2>&1
         ${lib.concatStringsSep "\n" (
           map (plugin: ''

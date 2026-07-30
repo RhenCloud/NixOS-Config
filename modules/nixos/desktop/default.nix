@@ -10,6 +10,7 @@ in {
     ./games.nix
     ./steam.nix
     ./zen.nix
+    ./packages.nix
   ];
 
   options = {

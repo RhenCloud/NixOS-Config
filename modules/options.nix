@@ -74,5 +74,11 @@ in
       type = types.bool;
       default = true;
     };
+
+    isDesktop = mkOption {
+      type = types.bool;
+      default = false;
+      description = "是否为桌面系统（控制是否加载桌面端 home-manager 模块）";
+    };
   };
 }

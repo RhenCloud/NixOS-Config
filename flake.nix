@@ -155,6 +155,14 @@
     impermanence = {
       url = "github:nix-community/impermanence";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -169,6 +177,7 @@
         ./flake/packages.nix
         ./flake/devshells.nix
         ./flake/lib.nix
+        ./flake/deploy.nix
       ];
 
       # Live CD 配置

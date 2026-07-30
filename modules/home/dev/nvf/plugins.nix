@@ -1,12 +1,14 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }:
 let
   inherit (lib.generators) mkLuaInline;
+  cfg = config.rhencloud.nvf;
 in
-{
+with lib; mkIf cfg.enable {
   programs.nvf.settings.vim = {
     # ---- Completion (nvim-cmp) ----
     autocomplete = {

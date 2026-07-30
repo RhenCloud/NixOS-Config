@@ -25,7 +25,7 @@ in
               inputs.home-manager.lib.homeManagerConfiguration {
                 inherit pkgs;
                 modules = [ "${homesDir}/${arch}/${userEntry}" ]
-                  ++ h.homeModules ++ h.commonHomeModules;
+                  ++ h.homeModules ++ h.essentialHomeModules;
                 extraSpecialArgs = { inherit inputs; primaryUser = "rhencloud"; };
               }
             )

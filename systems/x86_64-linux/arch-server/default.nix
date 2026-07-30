@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     {
       networking.hostName = "arch-server";
+      my.host.name = "arch-server";
       nixpkgs.hostPlatform = "x86_64-linux";
     }
   ];

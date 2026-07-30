@@ -1,9 +1,9 @@
 {
   pkgs,
   lib,
+  config,
   ...
-}:
-{
+}: with lib; mkIf config.rhencloud.nvf.enable {
   programs.nvf.settings.vim = {
     # ---- Treesitter ----
     treesitter = {

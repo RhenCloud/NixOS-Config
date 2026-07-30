@@ -9,6 +9,8 @@
     }
   ];
 
+  my.isDesktop = true;
+
   rhencloud = {
     # core
     boot.enable = true;
@@ -26,6 +28,7 @@
     # impermanence.enable = true;
 
     # desktop
+    desktopPackages.enable = true;
     hyprland.enable = true;
     mangowm.enable = true;
     thunar.enable = true;
