@@ -1,11 +1,20 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 with lib;
 let
-  readSecret = path: builtins.readFile "${inputs.self}/secrets/${path}";
+  inherit (inputs.self.lib) readSecret;
   cfg = config.rhencloud.cloudflared;
   tunnelId = "eb4440a4-a4a8-4c22-8595-060df067653b";
-  credentialsFile = pkgs.writeText "cloudflared-credentials.json" (readSecret "cloudflared/yc-hk-1-credentials.json");
-in {
+  credentialsFile = pkgs.writeText "cloudflared-credentials.json" (
+    readSecret "cloudflared/yc-hk-1-credentials.json"
+  );
+in
+{
   options.rhencloud.cloudflared.enable = mkEnableOption "Cloudflare Tunnel";
 
   config = mkIf cfg.enable {

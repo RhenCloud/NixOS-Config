@@ -116,17 +116,22 @@ in
         source = ./themes/default-light;
         recursive = true;
       };
+      "fcitx5/rime/default.custom.yaml" = {
+        source = ./default.custom.yaml;
+      };
+      "fcitx5/rime/keytao.custom.yaml" = {
+        source = ./keytao.custom.yaml;
+      };
+      "fcitx5/rime/lua/reduce_emoji_filter.lua" = {
+        source = ./rime/lua/reduce_emoji_filter.lua;
+      };
+      "fcitx5/rime/lua/select_character.lua" = {
+        source = ./rime/lua/select_character.lua;
+      };
     };
 
     home.activation.installRimeLateConfig = ''
             rime_dir=$HOME/.local/share/fcitx5/rime
-            mkdir -p "$rime_dir/lua"
-
-            cp -f ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
-            cp -f ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
-
-            cp -f ${./rime/lua/reduce_emoji_filter.lua} "$rime_dir/lua/reduce_emoji_filter.lua"
-            cp -f ${./rime/lua/select_character.lua} "$rime_dir/lua/select_character.lua"
 
             for f in xmjd6 liangfen pinyin_simp; do
               rm -f "$rime_dir/$f"*.*

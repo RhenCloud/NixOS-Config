@@ -37,6 +37,8 @@ in
       usbutils
       vim
       wget
+      deploy-rs
+      just
     ];
   };
 }

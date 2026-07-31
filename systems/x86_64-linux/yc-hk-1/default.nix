@@ -79,12 +79,22 @@ in
     services.nextbridge.enable = true;
     services.frp.enable = true;
     services.easytier.enable = true;
+    services.vaultwarden.enable = true;
   };
 
   users.users = {
     rhencloud.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ i@rhen.cloud"
     ];
+    wyf9 = {
+      isNormalUser = true;
+      group = "wyf9";
+      shell = pkgs.bash;
+      extraGroups = [ "wheel" "docker" ];
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIma5iDdPnEdjYbj7epS/ogQaJmWAvWm8jnXgvU10x wyf9@wyf9Desktop"
+      ];
+    };
     root = {
       initialPassword = "nixos";
       openssh.authorizedKeys.keys = [
@@ -92,4 +102,6 @@ in
       ];
     };
   };
+
+  users.groups.wyf9 = { };
 }

@@ -19,7 +19,6 @@ in {
         source = ./init.fish;
       };
       "fish/themes/Dracula.theme".source = ./Dracula.theme;
-      "starship.toml".source = config.lib.file.mkOutOfStoreSymlink ./starship.toml;
     };
 
     programs = {
@@ -52,10 +51,6 @@ in {
           {
             name = "autopair";
             src = pkgs.fishPlugins.autopair.src;
-          }
-          {
-            name = "async-prompt";
-            src = pkgs.fishPlugins.async-prompt.src;
           }
           {
             name = "tide";
@@ -92,10 +87,6 @@ in {
             };
           }
         ];
-      };
-      starship = {
-        enable = false;
-        enableFishIntegration = true;
       };
       superfile = {
         enable = true;

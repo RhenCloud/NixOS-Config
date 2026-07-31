@@ -41,7 +41,7 @@ in
 
     stateVersion = mkOption {
       type = types.str;
-      default = "26.15";
+      default = "26.11";
     };
 
     editor = mkOption {

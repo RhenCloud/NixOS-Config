@@ -1,5 +1,4 @@
 set -g fish_greeting ''
-# tide configure --auto --style=Rainbow --prompt_colors='True color' --show_time='24-hour format' --rainbow_prompt_separators=Angled --powerline_prompt_heads=Sharp --powerline_prompt_tails=Flat --powerline_prompt_style='Two lines, character' --prompt_connection=Dotted --powerline_right_prompt_frame=No --prompt_connection_andor_frame_color=Light --prompt_spacing=Sparse --icons='Many icons' --transient=Yes
 
 fish_config theme choose Dracula
 
@@ -11,12 +10,7 @@ export ALIYUNPAN_DOWNLOAD_DIR=$HOME/Downloads/aliyunpan
 export _ZO_EXCLUDE_DIRS="/tmp:/var:/proc:/sys"
 export _ZO_EXCLUDE_DIRS="/tmp:/var:/node_modules:/.git:/__pycache__"
 
-set --universal pure_enable_nixdevshell true
-set --universal pure_symbol_virtualenv_prefix 🐍
-set --universal pure_show_exit_status true
-set --universal pure_show_subsecond_command_duration true
 set --universal fish_transient_prompt true
-set -g async_prompt_functions _pure_prompt_git
 
 # # Auto-start zellij for interactive terminals, except in VS Code integrated terminal.
 # if status is-interactive

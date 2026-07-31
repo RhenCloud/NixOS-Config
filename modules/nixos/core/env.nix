@@ -30,7 +30,6 @@ in {
 
     environment.variables = {
       EDITOR = "code";
-      MOZ_ENABLE_WAYLAND = "1";
     };
   };
 }

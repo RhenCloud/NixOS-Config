@@ -33,6 +33,7 @@ in
       gitui
       codegraph
       gh
+      tokei
     ];
 
     # programs.opencode = {

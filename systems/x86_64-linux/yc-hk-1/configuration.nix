@@ -60,6 +60,7 @@
 
   users.users.wyf9 = {
     isNormalUser = true;
+    group = "wyf9";
     extraGroups = [
       "wheel"
       "docker"
@@ -68,6 +69,8 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIma5iDdPnEdjYbj7epS/ogQaJmWAvWm8jnXgvU10x wyf9@wyf9Desktop"
     ];
   };
+
+  users.groups.wyf9 = { };
 
   security.sudo.wheelNeedsPassword = false;
 

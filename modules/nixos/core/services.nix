@@ -5,8 +5,10 @@
   ...
 }:
 with lib;
-let cfg = config.rhencloud.services;
-in {
+let
+  cfg = config.rhencloud.services;
+in
+{
   options.rhencloud.services.enable = mkEnableOption "system services";
 
   config = mkIf cfg.enable {
@@ -63,7 +65,7 @@ in {
       StateDirectoryMode = lib.mkForce "0755";
     };
 
-    environment.etc = {
+    environment.etc = mkIf config.services.dae.enable {
       "dae/config.dae".source = ./dae/config.dae;
     };
     security.polkit.enable = true;

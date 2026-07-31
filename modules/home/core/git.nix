@@ -9,12 +9,12 @@ with lib;
 let
   cfg = config.rhencloud.git;
 
-  inherit (lib.strings) trim;
-  readSecret = path: trim (builtins.readFile "${inputs.self}/secrets/${path}");
+  inherit (inputs.self.lib) readSecret;
 
   sshTcDiscourse = readSecret "ssh/tc-discourse";
   sshBeeHk1 = readSecret "ssh/bee-hk-1";
-in {
+in
+{
   options.rhencloud.git.enable = mkEnableOption "git, SSH, and GPG";
 
   config = mkIf cfg.enable {

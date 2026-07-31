@@ -21,7 +21,6 @@ in
   perSystem = { pkgs, ... }: {
     packages = (discoverPackages pkgs) // {
       rime-keytao = inputs.rime-keytao.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      rimeKeytao = inputs.rime-keytao.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
   };
 }

@@ -17,7 +17,7 @@ in
             lib.nameValuePair userEntry (
               let
                 pkgs = import inputs.nixpkgs {
-                  system = arch;
+                  localSystem = { system = arch; };
                   config.allowUnfree = true;
                   overlays = h.overlays;
                 };

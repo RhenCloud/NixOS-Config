@@ -13,6 +13,7 @@
         user = "root";
         path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos inputs.self.nixosConfigurations.yc-hk-1;
       };
+      magicRollback = false;
     };
 
     checks = builtins.mapAttrs (

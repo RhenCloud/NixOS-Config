@@ -2,6 +2,8 @@
 with lib;
 let cfg = config.rhencloud.mangowm;
 in {
+  disabledModules = [ "programs/wayland/mango.nix" ];
+
   options.rhencloud.mangowm.enable = mkEnableOption "Mango WM";
 
   config = mkIf cfg.enable {
