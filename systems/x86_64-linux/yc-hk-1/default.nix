@@ -68,6 +68,8 @@ in
     ];
   };
 
+  virtualisation.podman.dockerCompat = true;
+
   rhencloud = {
     identity.enable = true;
     locale.enable = true;
@@ -75,11 +77,13 @@ in
     packages.enable = true;
     shells.enable = true;
     cloudflared.enable = true;
-    docker.enable = true;
     services.nextbridge.enable = true;
     services.frp.enable = true;
     services.easytier.enable = true;
     services.vaultwarden.enable = true;
+    services.sleepy.enable = true;
+    services.mailer.enable = true;
+    services.wyf9s-bot.enable = true;
   };
 
   users.users = {
@@ -90,7 +94,7 @@ in
       isNormalUser = true;
       group = "wyf9";
       shell = pkgs.bash;
-      extraGroups = [ "wheel" "docker" ];
+      extraGroups = [ "wheel" ];
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIma5iDdPnEdjYbj7epS/ogQaJmWAvWm8jnXgvU10x wyf9@wyf9Desktop"
       ];

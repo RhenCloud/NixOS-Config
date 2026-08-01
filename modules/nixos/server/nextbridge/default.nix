@@ -9,7 +9,8 @@ with lib;
 let
   cfg = config.rhencloud.services.nextbridge;
   readSecret = path: builtins.readFile "${inputs.self}/secrets/${path}";
-  ghcrToken = readSecret "opencode/github-token";
+  ghcrToken = builtins.replaceStrings [ "\n" ] [ "" ] (readSecret "opencode/github-token");
+  ghcrPasswordFile = pkgs.writeText "nextbridge-ghcr-password" ghcrToken;
 in
 {
   options.rhencloud.services.nextbridge = {
@@ -18,7 +19,7 @@ in
     image = mkOption {
       type = types.str;
       default = "ghcr.io/siiway/nextbridge:unstable";
-      description = "NextBridge Docker 镜像标签";
+      description = "NextBridge OCI 镜像标签";
     };
 
     dataDir = mkOption {
@@ -51,43 +52,27 @@ in
       "d ${cfg.dataDir}/logs 0755 root root -"
     ];
 
-    systemd.services.docker-nextbridge-pull = {
-      description = "Pre-pull NextBridge Docker image";
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
+    virtualisation.oci-containers.containers.nextbridge = {
+      image = cfg.image;
+      autoStart = true;
+      pull = "always";
+
+      volumes = [
+        "${cfg.dataDir}:/app/data"
+        "${cfg.dataDir}/logs:/app/logs"
+      ];
+
+      environment = {
+        NEXTBRIDGE_DATA_DIR = "/app/data";
+        LOG_LEVEL = cfg.logLevel;
       };
-      script = ''
-        echo ${escapeShellArg ghcrToken} | docker login ghcr.io -u ${escapeShellArg cfg.ghcrUser} --password-stdin
-        docker pull ${cfg.image}
-      '';
-      wantedBy = [ "nextbridge.service" ];
-      before = [ "nextbridge.service" ];
-    };
 
-    systemd.services.nextbridge = {
-      description = "NextBridge 多平台聊天桥接";
-      after = [ "docker.service" "network.target" ];
-      wants = [ "docker.service" ];
-      wantedBy = [ "multi-user.target" ];
+      extraOptions = [ "--network=host" ];
 
-      serviceConfig = {
-        Type = "simple";
-        Restart = "always";
-        RestartSec = "10";
-        ExecStartPre = "-${pkgs.docker}/bin/docker rm -f nextbridge";
-        ExecStart = ''
-          ${pkgs.docker}/bin/docker run \
-            --rm \
-            --name nextbridge \
-            --network host \
-            -v ${cfg.dataDir}:/app/data \
-            -v ${cfg.dataDir}/logs:/app/logs \
-            -e NEXTBRIDGE_DATA_DIR=/app/data \
-            -e LOG_LEVEL=${cfg.logLevel} \
-            ${cfg.image}
-        '';
-        ExecStop = "${pkgs.docker}/bin/docker stop nextbridge";
+      login = {
+        username = cfg.ghcrUser;
+        passwordFile = "${ghcrPasswordFile}";
+        registry = "ghcr.io";
       };
     };
   };

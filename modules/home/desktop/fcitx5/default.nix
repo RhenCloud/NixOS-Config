@@ -118,9 +118,11 @@ in
       };
       "fcitx5/rime/default.custom.yaml" = {
         source = ./default.custom.yaml;
+        force = true;
       };
       "fcitx5/rime/keytao.custom.yaml" = {
         source = ./keytao.custom.yaml;
+        force = true;
       };
       "fcitx5/rime/lua/reduce_emoji_filter.lua" = {
         source = ./rime/lua/reduce_emoji_filter.lua;

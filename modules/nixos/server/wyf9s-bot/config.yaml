@@ -1,0 +1,87 @@
+# wyf9s-discord-bot 配置
+# token 不写在这里, 由 secrets/wyf9s-bot/token 经 tk.yaml 注入
+command_prefix: "//"
+
+log:
+  level: "INFO"
+  file: "logs/{time:YYYY-MM-DD}.log"
+  file_level: "INFO"
+  discord_level: "INFO"
+  rotation: "1 days"
+  retention: "7 days"
+
+# 审计日志 (无指令, 服务模块)
+audit:
+  enabled: true
+  global_channel: 1532887797541638347 # 全局日志频道 ID (null 禁用)
+  guilds: {} # 按服务器配置 { guild_id: 频道ID }
+
+# 工具/管理指令模块
+tools:
+  enabled: true
+  slash: true
+  prefix: false
+  clear_single_delete_max: 20
+  ratelimit:
+    enabled: true
+    window: 60
+    mod_multiplier: 3
+    random: 10
+    uuid: 10
+    "2file": 10
+
+# 频道锁定模块
+lock:
+  enabled: true
+  slash: true
+  prefix: false
+
+# 自动删除 todo bot 消息 (无指令, 基于事件)
+rmtodo:
+  enabled: false
+  todo_channels: []
+  author_id: 782105629572464652
+  remove_delay: 3
+
+# 自动删除消息 (无指令, 基于事件)
+rmmsg:
+  enabled: false
+  nicks: []
+
+# 语音频道控制模块
+voicechannel:
+  enabled: true
+  slash: true
+  prefix: false
+  allowed_users: []
+  allowed_guilds: {}
+  reconnect: true
+  reconnect_max_delay: 300
+
+# 反垃圾消息模块 (无指令, 基于事件)
+antispam:
+  enabled: false
+  spam_catcher: {} # 规则见 https://dc-bot.wyf9.top/modules/antispam
+
+# 管理员和权限配置
+# 填入你自己的 Discord 用户 ID / 用户名以获取全部命令权限
+admins:
+  users: ["1350456145990647808"]
+
+mods:
+  users: []
+  guilds: {}
+
+# 动态权限模块 (/perm add, /perm rm, /perm show)
+perm:
+  enabled: false
+
+# 公告推送模块 (/subscribe)
+announce:
+  source_channel: null # 公告频道 ID (News Channel), 填后启用
+
+# Bot Presence (global)
+presence:
+  enabled: true
+  activity: "Serving {servers} Servers with {members} Members"
+  status: online

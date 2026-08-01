@@ -1186,11 +1186,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784440659,
-        "narHash": "sha256-Q5kNLlWngt7TaIIZoxDKWMHjiSaNRVqr70FqWCRRfr4=",
+        "lastModified": 1785046085,
+        "narHash": "sha256-UiK+mmZJuLWQVhJ5b2wDzogIYWAesyRm6LA3h3Ulh3Y=",
         "owner": "nix-community",
         "repo": "nix-index-database",
-        "rev": "4f8d52a3598b0dc7db7a5e7b419e3edd9d1ecfdb",
+        "rev": "11665045df8b9938ef811a3bfdc65cffb02b4b70",
         "type": "github"
       },
       "original": {
@@ -1547,11 +1547,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1781625975,
-        "narHash": "sha256-iwq17YJpcvtfhmj28XW11NwFpuhoLbO+y02JeccjbgA=",
+        "lastModified": 1785581118,
+        "narHash": "sha256-wG7Z+K83sXiV0fBNa7pVKJIYNSROfN4vkGwfs/FxrNA=",
         "owner": "RhenCloud",
         "repo": "piri",
-        "rev": "32b0494ed88a1d9bebc42ec6bd2889e6228e6716",
+        "rev": "998c58fc895dc979a9ff9a57f6870ca8f3f9e14e",
         "type": "github"
       },
       "original": {
@@ -1633,6 +1633,7 @@
         "selector4nix": "selector4nix",
         "siiway-cli": "siiway-cli",
         "siiway-oc-plugin": "siiway-oc-plugin",
+        "sleepy": "sleepy",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
         "vicinae": "vicinae",
@@ -1778,6 +1779,23 @@
       "original": {
         "owner": "SiiWay",
         "repo": "VoidSwitch",
+        "type": "github"
+      }
+    },
+    "sleepy": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1760049279,
+        "narHash": "sha256-rmWzSBFsgSdgw182SIeVfBVmL2s1liTJXBSyVJ+t1zY=",
+        "owner": "sleepy-project",
+        "repo": "sleepy",
+        "rev": "6babc99fedc57d4183ea6d1cc8bf2fd8c30fd3d5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "sleepy-project",
+        "ref": "6babc99",
+        "repo": "sleepy",
         "type": "github"
       }
     },

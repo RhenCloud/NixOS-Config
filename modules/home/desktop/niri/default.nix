@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.hm-niri;
@@ -6,12 +12,18 @@ let
   mousePassthroughPatch = ../../../../patches/niri/mouse-passthrough.patch;
   pinPatch = ../../../../patches/niri/pin.patch;
 
-  niri-patched = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable.overrideAttrs (old: {
-    patches = (old.patches or []) ++ [ mousePassthroughPatch pinPatch ];
-  });
+  niri-patched =
+    inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable.overrideAttrs
+      (old: {
+        patches = (old.patches or [ ]) ++ [
+          mousePassthroughPatch
+          pinPatch
+        ];
+      });
 
   sleepyToken = lib.strings.trim (builtins.readFile "${inputs.self}/secrets/sleepy-token");
-in {
+in
+{
   options.rhencloud.hm-niri.enable = mkEnableOption "Niri (HM)";
 
   config = mkIf cfg.enable {
@@ -71,6 +83,11 @@ in {
         token = "${sleepyToken}"
         secret = ""
         prefer_app_id = false
+
+        media_process_name = "splayer|musicfox"
+        media_device_id = "nixos-desktop-media"
+        media_device_name = "NixOS-Desktop Media"
+        media_poll_interval = 5  # seconds, how often to poll playback status
 
         [[fcitx5]]
         app_id = "zen"

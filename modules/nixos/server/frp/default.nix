@@ -1,9 +1,16 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.services.frp;
-  readSecret = path: builtins.readFile "${inputs.self}/secrets/${path}";
-in {
+  readSecret = path: builtins.replaceStrings [ "\n" ] [ "" ] (builtins.readFile "${inputs.self}/secrets/${path}");
+in
+{
   options.rhencloud.services.frp = {
     enable = mkEnableOption "frp 服务端";
   };
