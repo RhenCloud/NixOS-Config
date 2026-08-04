@@ -1,12 +1,19 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.browser;
-in {
+let
+  cfg = config.rhencloud.browser;
+in
+{
   options.rhencloud.browser.enable = mkEnableOption "browser and editor";
 
   config = mkIf cfg.enable {
     programs.chromium = {
-      enable = true;
+      enable = false;
       package = pkgs.brave;
       extensions = [
         "bgnkhhnnamicmpeenaelnjfhikgbkllg"

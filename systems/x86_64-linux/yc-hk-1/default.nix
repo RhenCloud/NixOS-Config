@@ -84,6 +84,16 @@ in
     services.sleepy.enable = true;
     services.mailer.enable = true;
     services.wyf9s-bot.enable = true;
+    services.postgresql = {
+      enable = true;
+      databases = [
+        {
+          name = "nextbridge";
+          user = "nextbridge";
+          passwordSecret = "postgresql/nextbridge-password";
+        }
+      ];
+    };
   };
 
   users.users = {

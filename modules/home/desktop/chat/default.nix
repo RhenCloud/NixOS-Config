@@ -50,7 +50,8 @@ let
       exec ${qqWithLiteLoaderPackage}/bin/qq --ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations "$@"
     '';
   };
-in {
+in
+{
   options.rhencloud.chat.enable = mkEnableOption "chat apps (QQ, WeChat, Discord)";
 
   config = mkIf cfg.enable {
@@ -110,7 +111,7 @@ in {
       })
 
       feishu
-      telegram-desktop
+      # telegram-desktop
       ayugram-desktop
       zoom-us
       thunderbird

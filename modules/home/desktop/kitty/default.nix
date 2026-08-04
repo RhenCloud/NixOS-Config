@@ -9,15 +9,10 @@ in {
 
     programs.kitty = {
       enable = true;
-      font = {
-        name = "Maple Mono NF CN";
-        size = 11.0;
-      };
       shellIntegration.enableBashIntegration = true;
       enableGitIntegration = true;
       themeFile = "Dracula";
       settings = {
-        background_opacity = 0.75;
         cursor_shape = "beam";
         strip_trailing_spaces = "always";
         enable_audio_bell = "no";

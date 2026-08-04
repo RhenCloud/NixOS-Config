@@ -1,9 +1,7 @@
-{ lib, pkgs, config, inputs, ... }:
+{ lib, pkgs, config, ... }:
 with lib;
 let
   cfg = config.rhencloud.node;
-  inherit (lib.strings) trim;
-  npmToken = trim (builtins.readFile "${inputs.self}/secrets/home/npm-token");
 in {
   options.rhencloud.node.enable = mkEnableOption "Node.js development tools";
   config = mkIf cfg.enable {
@@ -17,6 +15,6 @@ in {
       enable = true;
     };
 
-    home.file.".npmrc".text = npmToken;
+    home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos/secrets/home/npm-token";
   };
 }

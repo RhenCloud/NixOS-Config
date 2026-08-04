@@ -36,6 +36,7 @@ in
                     primaryUser = config.my.user.name;
                   };
                   users.${config.my.user.name} = {
+                    nixpkgs.overlays = h.overlays;
                     imports = [
                       "${h.root}/homes/${arch}/${config.my.user.name}@${config.my.host.name}"
                     ]

@@ -2,6 +2,36 @@ set -g fish_greeting ''
 
 fish_config theme choose Dracula
 
+# Tide prompt in Dracula palette
+set --universal tide_character_color 50FA7B
+set --universal tide_character_color_failure FF5555
+set --universal tide_cmd_duration_bg_color 44475A
+set --universal tide_context_color_default F8F8F2
+set --universal tide_context_color_root FF5555
+set --universal tide_context_color_ssh FF79C6
+set --universal tide_git_bg_color 44475A
+set --universal tide_git_bg_color_unstable 44475A
+set --universal tide_git_bg_color_urgent 44475A
+set --universal tide_git_color_branch BD93F9
+set --universal tide_git_color_conflicted FF5555
+set --universal tide_git_color_dirty F1FA8C
+set --universal tide_git_color_operation 50FA7B
+set --universal tide_git_color_staged 50FA7B
+set --universal tide_git_color_stash 6272A4
+set --universal tide_git_color_untracked F1FA8C
+set --universal tide_git_color_upstream 8BE9FD
+set --universal tide_jobs_color FF79C6
+set --universal tide_private_mode_color F8F8F2
+set --universal tide_status_color 50FA7B
+set --universal tide_status_color_failure FF5555
+set --universal tide_time_color 6272A4
+set --universal tide_prompt_color_frame_and_connection 6272A4
+set --universal tide_prompt_color_separator_same_color 6272A4
+set --universal tide_pwd_bg_color 44475A
+set --universal tide_pwd_color_anchors 8BE9FD
+set --universal tide_pwd_color_dirs F8F8F2
+set --universal tide_pwd_color_truncated_dirs 6272A4
+
 # lorri hook fish | source
 
 export ALIYUNPAN_CONFIG_DIR=$HOME/.config/aliyunpan

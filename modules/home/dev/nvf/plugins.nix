@@ -64,7 +64,6 @@ with lib; mkIf cfg.enable {
     # ---- Statusline (Lualine) ----
     statusline.lualine = {
       enable = true;
-      theme = "dracula";
       componentSeparator = {
         left = "│";
         right = "│";

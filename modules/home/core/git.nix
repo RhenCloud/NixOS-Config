@@ -31,6 +31,7 @@ in
           commit.gpgsign = true;
           tag.gpgSign = true;
           init.defaultBranch = "main";
+          push.autoSetupRemote = true;
           user = {
             name = config.my.user.fullName;
             email = config.my.user.email;
@@ -43,25 +44,25 @@ in
         enable = true;
         enableDefaultConfig = false;
         extraConfig = ''
-          AddKeysToAgent yes
+          AddKeysToAgent no
 
           ${sshTcDiscourse}
 
           ${sshBeeHk1}
         '';
         settings = {
-          "*" = {
-            identityAgent = "~/.gnupg/S.gpg-agent.ssh";
-          };
+          "*" = { };
         };
       };
     };
+
+    home.packages = [ pkgs.gcr ];
 
     services.gpg-agent = {
       enable = true;
       enableScDaemon = true;
       enableSshSupport = true;
-      pinentry.package = pkgs.pinentry-gtk2;
+      pinentry.package = pkgs.pinentry-gnome3;
       defaultCacheTtl = 86400;
       maxCacheTtl = 604800;
       defaultCacheTtlSsh = 86400;
@@ -70,7 +71,6 @@ in
 
     home.file.".gnupg/scdaemon.conf".text = ''
       disable-ccid
-      pcsc-shared
     '';
   };
 }

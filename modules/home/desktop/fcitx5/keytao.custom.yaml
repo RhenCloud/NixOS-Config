@@ -13,6 +13,16 @@ patch:
     - lua_filter@*reduce_emoji_filter
   # "engine/processors/+":
   #   - lua_processor@*select_character
+  #
+  ascii_composer:
+    good_old_caps_lock: false
+    switch_key:
+      Caps_Lock: clear
+      Shift_L: noop
+      Shift_R: noop
+      Control_L: noop
+      Control_R: noop
+
   punctuator:
     full_shape:
       " ": { commit: "　" }

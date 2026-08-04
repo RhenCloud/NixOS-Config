@@ -27,8 +27,6 @@ in {
       };
 
       settings = {
-        flavor.use = "dracula";
-
         manager = {
           show_hidden = true;
           show_symlink = true;
@@ -85,6 +83,11 @@ in {
             }
           ];
         };
+      };
+
+      theme = {
+        flavor.dark = "dracula";
+        flavor.light = "dracula";
       };
 
       keymap = {

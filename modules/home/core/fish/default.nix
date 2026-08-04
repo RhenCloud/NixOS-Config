@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.fish;
-in {
+let
+  cfg = config.rhencloud.fish;
+in
+{
   options.rhencloud.fish.enable = mkEnableOption "Fish shell";
 
   config = mkIf cfg.enable {
@@ -51,6 +58,10 @@ in {
           {
             name = "autopair";
             src = pkgs.fishPlugins.autopair.src;
+          }
+          {
+            name = "forgit";
+            src = pkgs.fishPlugins.forgit.src;
           }
           {
             name = "tide";

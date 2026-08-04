@@ -87,6 +87,7 @@ let
     inputs.nvf.homeManagerModules.default
     inputs.rime-keytao.homeManagerModules.default
     inputs.vicinae.homeManagerModules.default
+    inputs.stylix.homeModules.stylix
   ];
 
   desktopHomeModulesFull = desktopHomeModules ++ desktopExtraHomeModules;

@@ -46,11 +46,6 @@ in {
 
       clipboard.enable = true;
 
-      theme = {
-        enable = true;
-        name = "dracula";
-      };
-
       luaConfigPre = ''
         vim.api.nvim_create_augroup("YankHighlight", { clear = true })
       '';

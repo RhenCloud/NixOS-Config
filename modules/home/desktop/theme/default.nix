@@ -14,7 +14,6 @@ in {
   config = mkIf cfg.enable {
     home = {
       packages = with pkgs; [
-        dracula-theme
         catppuccin-kvantum
         papirus-icon-theme
         libsForQt5.qtstyleplugin-kvantum
@@ -33,7 +32,6 @@ in {
       sessionVariables = {
         XDG_CURRENT_DESKTOP = "Hyprland";
         GTK_USE_PORTAL = "1";
-        QT_QPA_PLATFORMTHEME = lib.mkForce "gtk3";
         QT_STYLE_OVERRIDE = "kvantum";
         GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/glib-2.0/schemas";
       };
@@ -41,7 +39,6 @@ in {
 
     qt = {
       enable = true;
-      platformTheme.name = "gtk3";
       style = {
         package = pkgs.libsForQt5.qtstyleplugin-kvantum;
         name = "kvantum";
@@ -50,14 +47,6 @@ in {
 
     gtk = {
       enable = true;
-      font = {
-        name = "Maple Mono NF CN";
-        size = 12;
-      };
-      theme = {
-        name = "Dracula";
-        package = pkgs.dracula-theme;
-      };
       iconTheme = {
         name = "Papirus-Dark";
         package = pkgs.papirus-icon-theme;
