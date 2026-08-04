@@ -8,20 +8,23 @@
 with lib;
 let
   cfg = config.rhencloud.services.postgresql;
-  readSecret = path: builtins.readFile "${inputs.self}/secrets/${path}";
-  postgresPassword = builtins.replaceStrings [ "\n" ] [ "" ] (readSecret "postgresql/postgres-password");
-  initScript = pkgs.writeText "postgresql-init.sh" (''
+  sopsFile = ../../../../secrets/hosts/yc-hk-1.yaml;
+  secretOptions = {
+    inherit sopsFile;
+    owner = "postgres";
+    group = "postgres";
+    mode = "0440";
+  };
+  initScript = ''
     #!/usr/bin/env bash
     set -e
-  '' + (lib.concatMapStringsSep "\n" (db: let
-    password = builtins.replaceStrings [ "\n" ] [ "" ] (readSecret db.passwordSecret);
-  in ''
+  '' + (lib.concatMapStringsSep "\n" (db: ''
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-      DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${db.user}') THEN CREATE ROLE ${db.user} LOGIN PASSWORD '${password}'; END IF; END $$;
+      DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${db.user}') THEN CREATE ROLE ${db.user} LOGIN PASSWORD '${config.sops.placeholder."${db.passwordSecret}"}'; END IF; END $$;
       SELECT 'CREATE DATABASE ${db.name} OWNER ${db.user}'
       WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${db.name}')\gexec
     EOSQL
-  '') cfg.databases) + "\n");
+  '') cfg.databases) + "\n";
 in
 {
   options.rhencloud.services.postgresql = {
@@ -70,7 +73,7 @@ in
           };
           passwordSecret = mkOption {
             type = types.str;
-            description = "密码密钥路径（相对 secrets/ 目录）";
+            description = "sops secrets 键名（hosts/yc-hk-1.yaml 顶层 key）";
           };
         };
       });
@@ -80,9 +83,38 @@ in
   };
 
   config = mkIf cfg.enable {
+    users.users.postgres = {
+      isSystemUser = true;
+      group = "postgres";
+    };
+    users.groups.postgres = { gid = 999; };
+
+    sops.secrets = lib.listToAttrs (
+      [{
+        name = "postgres-postgres-password";
+        value = secretOptions;
+      }]
+      ++ map (db: {
+        name = db.passwordSecret;
+        value = secretOptions;
+      }) cfg.databases
+    );
+
+    sops.templates."postgresql-init.sh" = {
+      owner = "postgres";
+      group = "postgres";
+      mode = "0440";
+      content = initScript;
+    };
+
     systemd.tmpfiles.rules = [
-      "d ${cfg.dataDir} 0700 999 999 -"
+      "d ${cfg.dataDir} 0770 postgres postgres -"
     ];
+
+    systemd.services."podman-postgresql" = {
+      after = [ "sops-install-secrets.service" ];
+      requires = [ "sops-install-secrets.service" ];
+    };
 
     virtualisation.oci-containers.containers.postgresql = {
       image = cfg.image;
@@ -91,15 +123,16 @@ in
 
       volumes = [
         "${cfg.dataDir}:/var/lib/postgresql/data"
-        "${initScript}:/docker-entrypoint-initdb.d/10-init.sh:ro"
+        "${config.sops.templates."postgresql-init.sh".path}:/docker-entrypoint-initdb.d/10-init.sh:ro"
+        "${config.sops.secrets."postgres-postgres-password".path}:/run/secrets/postgres-password:ro"
       ];
 
       ports = [ "127.0.0.1:${toString cfg.port}:5432" ];
 
       environment = {
         POSTGRES_USER = cfg.superuser;
-        POSTGRES_PASSWORD = postgresPassword;
         POSTGRES_DB = cfg.initialDatabase;
+        POSTGRES_PASSWORD_FILE = "/run/secrets/postgres-password";
         PGDATA = "/var/lib/postgresql/data";
       };
     };

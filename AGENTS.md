@@ -11,14 +11,12 @@ flake/nixos.nix                # NixOS configurations (auto-discovers hosts/)
 flake/home-manager.nix         # Home Manager configurations (auto-discovers homes/)
 flake/packages.nix             # Custom packages (herdr-tab-rename, aicommits, etc.)
 flake/devshells.nix            # devShells (default + python)
-flake/lib.nix                  # flake.lib exports (readSecret, etc.)
 flake/helpers.nix              # Internal helpers (module/overlay discovery)
 systems/x86_64-linux/nixos-desktop/   # Single host entry (default.nix + hardware-configuration.nix)
 homes/x86_64-linux/rhencloud@nixos-desktop/  # Home Manager entry for rhencloud
 modules/nixos/{core,desktop,service}/  # System-level modules (auto-collected by collectDefaultNix)
 modules/home/{core,desktop,dev,service}/  # Home Manager modules (auto-collected)
-lib/                           # Library helpers (rhencloud.lib.* — not auto-exposed, use via inputs)
-secrets/                       # transcrypt-encrypted secrets
+secrets/                       # sops-encrypted secrets (common.yaml + hosts/<host>.yaml)
 overlays/                      # Custom package overlays (niri, portal-gtk, mexkey3-ccid)
 patches/                       # Patches for niri
 ```
@@ -64,8 +62,9 @@ nix develop .#python
 - **Channel**: `nixos-unstable`. This is a faster-moving, smaller binary cache.
 - **stateVersion**: `26.11`.
 - **Window managers**: Both Hyprland and Niri are configured.
-- **Secrets**: Managed with [transcrypt](https://github.com/elasticdog/transcrypt). Encrypted files live in `secrets/` at repo root. Uses `aes-256-cbc` cipher with transparent git clean/smudge filters.
-- **Path resolution**: `lib/secrets.nix` provides `rhencloud.lib.secrets.read`, a helper to read secrets from repo root without relative paths. Usage: `rhencloud.lib.secrets.read "opencode/github-token"`. Equivalent to TypeScript's `@/` imports via `inputs.self`. Also available as `inputs.self.lib.readSecret`.
+- **Secrets**: Managed with [sops-nix](https://github.com/Mic92/sops-nix). Encrypted files live in `secrets/` (`common.yaml` + `hosts/<host>.yaml`). Encryption keys: GPG admin subkey `CE243917D8877F3AFE5814335850468557847C77` (editing) + per-host SSH host key → age (runtime decrypt). `sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ]` per host.
+- **Secrets in modules**: Use `config.sops.secrets."<name>".path` (runtime-decrypted to `/run/secrets/<name>`) and `sops.templates` (placeholder `${config.sops.placeholder."<key>"}` rendered at activation). **Never** `builtins.readFile` secrets.
+- **HM secrets**: NixOS layer renders full config files via `sops.templates` (`/run/secrets/templates/`); HM references them with `config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/<file>"`.
 - **Theming**: Stylix for system-wide theming (Dracula theme).
 - **Overlays**: Applied in both NixOS (config.nix) and home-manager (commonHomeModules). Includes niri patches, portal-gtk integration, and mexkey3-ccid support.
 - **Module auto-discovery**: `collectDefaultNix` in `config.nix` recursively walks `modules/` and collects all `default.nix` files. Snowfall-style `rhencloud.*` options are plain NixOS module options, not namespace magic.
@@ -95,22 +94,17 @@ nix develop .#python
 ## Secrets Workflow
 
 ```bash
-# Initialize a fresh clone
-transcrypt -c aes-256-cbc -p '<password>'
+# Edit an encrypted file (GPG admin key decrypts; save re-encrypts)
+sops secrets/common.yaml
+sops secrets/hosts/nixos-desktop.yaml
 
-# List encrypted files
-git ls-crypt
+# Add a secret: edit the file, then declare it in a module
+sops.secrets."my-key" = { sopsFile = ./secrets/hosts/nixos-desktop.yaml; owner = "root"; mode = "0400"; };
 
-# Add a new secret: 1) place file in secrets/, 2) add to git, 3) commit (auto-encrypted)
-echo 'my-secret' > secrets/my-key
-git add secrets/my-key
-git commit -m "add my-key secret"
-
-# Display current credentials
-transcrypt --display
-
-# Rekey (change password)
-transcrypt --rekey
+# Add a new host: convert its SSH host pubkey to age, add to .sops.yaml, re-encrypt
+ssh-keyscan <host> | nix shell nixpkgs#ssh-to-age -c ssh-to-age
+sops updatekeys secrets/common.yaml
+sops updatekeys secrets/hosts/<host>.yaml
 ```
 
 ## Style

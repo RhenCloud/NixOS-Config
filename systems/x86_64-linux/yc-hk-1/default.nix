@@ -18,6 +18,8 @@ in
   my.host.name = hostName;
   nixpkgs.hostPlatform = "x86_64-linux";
 
+  sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+
   rhencloud.server.install.enable = true;
 
   boot.loader.grub = {
@@ -90,7 +92,7 @@ in
         {
           name = "nextbridge";
           user = "nextbridge";
-          passwordSecret = "postgresql/nextbridge-password";
+          passwordSecret = "postgres-nextbridge-password";
         }
       ];
     };
@@ -98,7 +100,8 @@ in
 
   users.users = {
     rhencloud.openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ i@rhen.cloud"
+      # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ i@rhen.cloud"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPuthZJ1ELm9QFDDUWBfzdfRZk5JE9iHOLWjU+QQTQbE cardno:FFFE_E046F201"
     ];
     wyf9 = {
       isNormalUser = true;
@@ -112,7 +115,8 @@ in
     root = {
       initialPassword = "nixos";
       openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ i@rhen.cloud"
+        # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ i@rhen.cloud"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPuthZJ1ELm9QFDDUWBfzdfRZk5JE9iHOLWjU+QQTQbE cardno:FFFE_E046F201"
       ];
     };
   };

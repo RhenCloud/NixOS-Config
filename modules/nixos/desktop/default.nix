@@ -4,6 +4,7 @@ let cfg = config.rhencloud.sunshine;
     avahiCfg = config.rhencloud.avahi;
 in {
   imports = [
+    ./sops-secrets.nix
     ./hyprland.nix
     ./mangowm.nix
     ./thunar.nix

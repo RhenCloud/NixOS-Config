@@ -8,10 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.services.mailer;
-  readSecret = path: builtins.readFile "${inputs.self}/secrets/${path}";
-  ghcrToken = builtins.replaceStrings [ "\n" ] [ "" ] (readSecret "opencode/github-token");
-  ghcrPasswordFile = pkgs.writeText "mailer-ghcr-password" ghcrToken;
-  configFile = pkgs.writeText "mailer-config.yaml" (readSecret "mailer/config.yaml");
 in
 {
   options.rhencloud.services.mailer = {
@@ -37,9 +33,41 @@ in
   };
 
   config = mkIf cfg.enable {
+    users.users.mailer = {
+      uid = 10001;
+      isSystemUser = true;
+      group = "mailer";
+    };
+    users.groups.mailer = { gid = 10001; };
+
+    sops.secrets."github-token" = {
+      sopsFile = ../../../../secrets/common.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    sops.secrets."mailer-config" = {
+      sopsFile = ../../../../secrets/hosts/yc-hk-1.yaml;
+      owner = "mailer";
+      group = "mailer";
+      mode = "0440";
+    };
+
+    sops.templates."mailer-config.yaml" = {
+      owner = "mailer";
+      group = "mailer";
+      mode = "0440";
+      content = config.sops.placeholder."mailer-config";
+    };
+
     systemd.tmpfiles.rules = [
       "d ${cfg.dataDir} 0755 10001 10001 -"
     ];
+
+    systemd.services."podman-mailer" = {
+      after = [ "sops-install-secrets.service" ];
+      requires = [ "sops-install-secrets.service" ];
+    };
 
     virtualisation.oci-containers.containers.mailer = {
       image = cfg.image;
@@ -47,7 +75,7 @@ in
       pull = "always";
 
       volumes = [
-        "${configFile}:/app/config.yaml:ro"
+        "${config.sops.templates."mailer-config.yaml".path}:/app/config.yaml:ro"
         "${cfg.dataDir}:/app/data"
       ];
 
@@ -57,7 +85,7 @@ in
 
       login = {
         username = cfg.ghcrUser;
-        passwordFile = "${ghcrPasswordFile}";
+        passwordFile = config.sops.secrets."github-token".path;
         registry = "ghcr.io";
       };
     };

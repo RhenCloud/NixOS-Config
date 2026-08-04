@@ -8,9 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.services.nextbridge;
-  readSecret = path: builtins.readFile "${inputs.self}/secrets/${path}";
-  ghcrToken = builtins.replaceStrings [ "\n" ] [ "" ] (readSecret "opencode/github-token");
-  ghcrPasswordFile = pkgs.writeText "nextbridge-ghcr-password" ghcrToken;
 in
 {
   options.rhencloud.services.nextbridge = {
@@ -47,10 +44,21 @@ in
   };
 
   config = mkIf cfg.enable {
+    sops.secrets."github-token" = {
+      sopsFile = ../../../../secrets/common.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
     systemd.tmpfiles.rules = [
       "d ${cfg.dataDir} 0755 root root -"
       "d ${cfg.dataDir}/logs 0755 root root -"
     ];
+
+    systemd.services."podman-nextbridge" = {
+      after = [ "sops-install-secrets.service" ];
+      requires = [ "sops-install-secrets.service" ];
+    };
 
     virtualisation.oci-containers.containers.nextbridge = {
       image = cfg.image;
@@ -71,7 +79,7 @@ in
 
       login = {
         username = cfg.ghcrUser;
-        passwordFile = "${ghcrPasswordFile}";
+        passwordFile = config.sops.secrets."github-token".path;
         registry = "ghcr.io";
       };
     };

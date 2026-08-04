@@ -8,9 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.services.wyf9s-bot;
-  readSecret = path: builtins.readFile "${inputs.self}/secrets/${path}";
-  token = builtins.replaceStrings [ "\n" ] [ "" ] (readSecret "wyf9s-bot/token");
-  tokenFile = pkgs.writeText "wyf9s-bot-tk.yaml" "token: ${token}";
   configFile = "${inputs.self}/modules/nixos/server/wyf9s-bot/config.yaml";
 in
 {
@@ -31,9 +28,26 @@ in
   };
 
   config = mkIf cfg.enable {
+    sops.secrets."wyf9s-bot-token" = {
+      sopsFile = ../../../../secrets/hosts/yc-hk-1.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    sops.templates."wyf9s-bot-tk.yaml" = {
+      owner = "root";
+      mode = "0400";
+      content = "token: ${config.sops.placeholder."wyf9s-bot-token"}";
+    };
+
     systemd.tmpfiles.rules = [
       "d ${cfg.dataDir} 0755 root root -"
     ];
+
+    systemd.services."podman-wyf9s-bot" = {
+      after = [ "sops-install-secrets.service" ];
+      requires = [ "sops-install-secrets.service" ];
+    };
 
     virtualisation.oci-containers.containers.wyf9s-bot = {
       image = cfg.image;
@@ -43,7 +57,7 @@ in
 
       volumes = [
         "${configFile}:/app/config/config.yaml:ro"
-        "${tokenFile}:/app/config/tk.yaml:ro"
+        "${config.sops.templates."wyf9s-bot-tk.yaml".path}:/app/config/tk.yaml:ro"
         "${cfg.dataDir}:/app/data"
       ];
 

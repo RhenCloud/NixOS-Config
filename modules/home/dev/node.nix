@@ -15,6 +15,6 @@ in {
       enable = true;
     };
 
-    home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixos/secrets/home/npm-token";
+    home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/npmrc";
   };
 }

@@ -184,7 +184,6 @@
         ./flake/home-manager.nix
         ./flake/packages.nix
         ./flake/devshells.nix
-        ./flake/lib.nix
         ./flake/deploy.nix
         ./flake/colmena.nix
       ];

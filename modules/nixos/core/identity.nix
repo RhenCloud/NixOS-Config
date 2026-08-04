@@ -1,4 +1,10 @@
-{ pkgs, inputs, config, lib, ... }:
+{
+  pkgs,
+  inputs,
+  config,
+  lib,
+  ...
+}:
 with lib;
 let
   user = config.my.user.name;
@@ -9,10 +15,15 @@ in {
   config = mkIf cfg.enable {
     _module.args.primaryUser = user;
 
+    sops.secrets."password-hash" = {
+      sopsFile = ../../../secrets/common.yaml;
+      neededForUsers = true;
+    };
+
     users.users.${user} = {
       isNormalUser = true;
       group = user;
-      hashedPassword = builtins.readFile "${inputs.self}/secrets/password-hash";
+      hashedPasswordFile = config.sops.secrets."password-hash".path;
       shell = pkgs.bash;
       extraGroups = [
         "networkmanager"

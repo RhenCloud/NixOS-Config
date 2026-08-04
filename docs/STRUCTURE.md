@@ -73,9 +73,7 @@ modules/home/
 │   ├── node.nix    # Node.js 开发环境
 │   └── python.nix  # Python 开发环境
 ├── secrets/        # 敏感信息管理
-│   ├── default.nix      # Home Manager secrets 配置
-│   ├── secrets.nix      # Agenix 规则文件
-│   └── *.age            # 加密的敏感文件
+│   └── ...         # 在仓库根 secrets/ 中由 sops 加密管理
 ├── service/        # 用户级服务配置
 │   └── mpd.nix     # MPD 音乐播放服务
 └── user/           # 用户特定配置
@@ -84,10 +82,9 @@ modules/home/
 ```
 
 #### secrets/ 子目录
-使用 agenix 管理敏感信息：
-- `secrets.nix`: 定义哪些文件需要加密
-- `default.nix`: 定义解密后的文件存放位置
-- `*.age`: 加密后的敏感文件
+敏感信息统一由仓库根目录的 `secrets/`（sops 加密）管理，NixOS 层通过
+`config.sops.secrets."<name>".path` 或 `sops.templates` 渲染完整配置文件，Home Manager 用
+`config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/<file>"` 引用运行期路径。
 
 ### overlays/ - 包覆盖
 

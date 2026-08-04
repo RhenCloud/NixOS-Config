@@ -26,45 +26,55 @@
 
 ## 管理 Secrets
 
-本仓库使用 [transcrypt](https://github.com/elasticdog/transcrypt) 透明加密 `secrets/` 目录下的敏感文件。
+本仓库使用 [sops-nix](https://github.com/Mic92/sops-nix) 管理 `secrets/` 目录下的敏感文件。
+加密由 GPG 管理员密钥（编辑）与各主机 SSH host key（运行时解密）共同持有。
 
-### 首次克隆后初始化
+### 目录结构
 
-```bash
-transcrypt -c aes-256-cbc -p '<密码>'
+```
+secrets/
+├── common.yaml                # 所有主机共享的密钥
+└── hosts/
+    ├── nixos-desktop.yaml     # desktop 专属密钥
+    └── yc-hk-1.yaml           # 服务器专属密钥
 ```
 
-### 查看加密文件列表
+### 查看 / 编辑加密文件
 
 ```bash
-git ls-crypt
+# 用 GPG 管理员密钥解密后编辑（sops 支持 JSON/YAML 结构编辑）
+sops secrets/common.yaml
+sops secrets/hosts/nixos-desktop.yaml
 ```
 
-### 添加新密钥
+### 添加新主机
 
 ```bash
-# 1) 在 secrets/ 下创建文件
-echo -n 'my-secret-value' > secrets/my-key
+# 1) 获取主机 SSH host public key
+ssh-keyscan <host>  # 或从服务器读取 /etc/ssh/ssh_host_ed25519_key.pub
 
-# 2) 提交（transcrypt 自动加密）
-git add secrets/my-key
-git commit -m "add my-key secret"
+# 2) 转换为 age 公钥
+nix shell nixpkgs#ssh-to-age -c ssh-to-age < pubkey
+
+# 3) 在 .sops.yaml 中为新主机添加 age recipient，然后更新已加密文件
+sops updatekeys secrets/common.yaml
+sops updatekeys secrets/hosts/<host>.yaml
 ```
 
 ### 在 Nix 模块中引用
 
 ```nix
-# lib/secrets.nix 提供中央 helper，通过 inputs.self 从仓库根目录解析路径
-# 等效于 TypeScript 的 @/ 导入
+# 声明 secret（运行时解密到 /run/secrets/<name>）
+sops.secrets."sleepy-token" = {
+  sopsFile = ./secrets/common.yaml;
+  owner = "root";
+  mode = "0400";
+};
 
-# 在模块中使用：
-{ inputs, lib, ... }:
-let
-  inherit (lib.strings) trim;
-  readSecret = path: trim (builtins.readFile "${inputs.self}/secrets/${path}");
-in {
-  token = readSecret "sleepy-token";              # → secrets/sleepy-token
-  apiKey = readSecret "opencode/github-token";     # → secrets/opencode/github-token
-  passwordHash = builtins.readFile "${inputs.self}/secrets/password-hash";
-}
+# 用模板渲染含密钥的完整配置（activation 时替换明文）
+sops.templates."sleepy-env" = {
+  content = "sleepy_main_secret=${config.sops.placeholder."sleepy-token"}\n";
+  mode = "0400";
+};
+# 引用: config.sops.secrets."sleepy-token".path / config.sops.templates."sleepy-env".path
 ```

@@ -26,6 +26,8 @@ in
           inputs.impermanence.nixosModules.impermanence
           inputs.selector4nix.nixosModules.selector4nix
           inputs.mangowm.nixosModules.mango
+          inputs.sops-nix.nixosModules.sops
+          { sops.useSystemdActivation = true; }
         ];
 
       nixpkgs.overlays = h.overlays;

@@ -8,7 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.services.frp;
-  readSecret = path: builtins.replaceStrings [ "\n" ] [ "" ] (builtins.readFile "${inputs.self}/secrets/${path}");
 in
 {
   options.rhencloud.services.frp = {
@@ -16,6 +15,16 @@ in
   };
 
   config = mkIf cfg.enable {
+    sops.secrets."frp-auth-token" = {
+      sopsFile = ../../../../secrets/hosts/yc-hk-1.yaml;
+      mode = "0644";
+    };
+
+    systemd.services."frp-server" = {
+      after = [ "sops-install-secrets.service" ];
+      requires = [ "sops-install-secrets.service" ];
+    };
+
     services.frp.instances.server = {
       enable = true;
       role = "server";
@@ -25,8 +34,13 @@ in
         webServer.addr = "0.0.0.0";
         webServer.port = 8080;
         subdomainHost = "rhen.cloud";
-        auth.method = "token";
-        auth.token = readSecret "frp/auth-token";
+        auth = {
+          method = "token";
+          tokenSource = {
+            type = "file";
+            file.path = config.sops.secrets."frp-auth-token".path;
+          };
+        };
       };
     };
   };

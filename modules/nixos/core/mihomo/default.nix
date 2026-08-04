@@ -5,14 +5,29 @@
 }@args:
 let
   cfg = config.rhencloud.services;
-  secretsDir = "${args.inputs.self}/secrets/mihomo";
-  secretProxies = builtins.readFile "${secretsDir}/proxies.yaml";
-  configTemplate = builtins.readFile ./config.yaml;
-  fullConfig = let
-    parts = lib.splitString "# __PROXIES_HERE__" configTemplate;
-  in builtins.head parts + secretProxies + builtins.elemAt parts 1;
+  parts = lib.splitString "# __PROXIES_HERE__" (builtins.readFile ./config.yaml);
+  headPart = builtins.head parts;
+  tailPart = builtins.elemAt parts 1;
 in {
   config = lib.mkIf cfg.enable {
-    environment.etc."mihomo/config.yaml".text = fullConfig;
+    sops.secrets."mihomo-proxies" = {
+      sopsFile = ../../../../secrets/hosts/nixos-desktop.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    sops.templates."mihomo-config.yaml" = {
+      owner = "root";
+      mode = "0400";
+      content = headPart + config.sops.placeholder."mihomo-proxies" + tailPart;
+    };
+
+    systemd.services.mihomo = {
+      after = [ "sops-install-secrets.service" ];
+      requires = [ "sops-install-secrets.service" ];
+    };
+
+    environment.etc."mihomo/config.yaml".source =
+      config.sops.templates."mihomo-config.yaml".path;
   };
 }

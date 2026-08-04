@@ -8,11 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.git;
-
-  inherit (inputs.self.lib) readSecret;
-
-  sshTcDiscourse = readSecret "ssh/tc-discourse";
-  sshBeeHk1 = readSecret "ssh/bee-hk-1";
 in
 {
   options.rhencloud.git.enable = mkEnableOption "git, SSH, and GPG";
@@ -46,9 +41,7 @@ in
         extraConfig = ''
           AddKeysToAgent no
 
-          ${sshTcDiscourse}
-
-          ${sshBeeHk1}
+          Include /run/secrets/templates/ssh-host-blocks
         '';
         settings = {
           "*" = { };

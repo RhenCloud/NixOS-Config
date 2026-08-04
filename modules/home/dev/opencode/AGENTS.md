@@ -120,7 +120,7 @@
 - **先理解**现有代码约定（导入、框架选择、命名、类型），再编写新代码
 - **外部临时目录**使用 `/tmp/opencode`
 - **完成修改后**运行 lint/typecheck（如果可用）
-- **敏感信息**通过 transcrypt 加密存储在仓库 `secrets/` 目录下
+- **敏感信息**通过 sops 加密存储在仓库 `secrets/` 目录下（`common.yaml` + `hosts/<host>.yaml`）
 
 ## 常见项目模式
 
@@ -140,8 +140,7 @@
 
 ### 管理密钥
 ```bash
-cd secrets
-echo '<value>' > opencode/<name>    # 创建新密钥文件
-git add opencode/<name>            # 自动加密（transcrypt clean filter）
-git commit -m "add <name> secret"
+sops secrets/common.yaml                    # GPG 管理员密钥解密编辑
+sops secrets/hosts/nixos-desktop.yaml
+# 保存后 sops 自动重新加密；然后声明到模块中 sops.secrets."<name>"，提交即可
 ```

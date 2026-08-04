@@ -26,6 +26,8 @@ in
               inputs.selector4nix.nixosModules.selector4nix
               inputs.home-manager.nixosModules.home-manager
               inputs.impermanence.nixosModules.impermanence
+              inputs.sops-nix.nixosModules.sops
+              ({ config, ... }: { sops.useSystemdActivation = true; })
               ({ config, ... }: {
                 home-manager = {
                   useGlobalPkgs = false;

@@ -11,7 +11,7 @@
 | `S3_PREFIX` | S3 路径前缀（可选） | `nix-cache` |
 | `AWS_ACCESS_KEY_ID` | S3 访问密钥 ID | `UA7PXLVPABCTYEO92K6A` |
 | `AWS_SECRET_ACCESS_KEY` | S3 访问密钥 | `cTs2DWCaJ6sTYZfiFImrXB3S536zNmdIfOZXs9Ly` |
-| `TRANSCRYPT_PASSWORD` | transcrypt 解密密码 | （用于解密 secrets/ 目录） |
+| `SOPS_AGE_KEY` | sops age 私钥（如需 CI 解密 secrets） | （可选，用于 `secrets/` 目录解密） |
 
 ## Cloudflare R2 配置示例
 

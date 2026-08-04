@@ -8,10 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.services.sleepy;
-  readSecret = path: builtins.readFile "${inputs.self}/secrets/${path}";
-  secret = builtins.replaceStrings [ "\n" ] [ "" ] (readSecret "sleepy-token");
-  ghcrToken = builtins.replaceStrings [ "\n" ] [ "" ] (readSecret "opencode/github-token");
-  ghcrPasswordFile = pkgs.writeText "sleepy-ghcr-password" ghcrToken;
 in
 {
   options.rhencloud.services.sleepy = {
@@ -35,12 +31,6 @@ in
       description = "对外映射端口";
     };
 
-    secret = mkOption {
-      type = types.str;
-      default = secret;
-      description = "sleepy_main_secret（用于会话签名）";
-    };
-
     pageName = mkOption {
       type = types.str;
       default = "Sleepy";
@@ -55,9 +45,32 @@ in
   };
 
   config = mkIf cfg.enable {
+    sops.secrets."github-token" = {
+      sopsFile = ../../../../secrets/common.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    sops.secrets."sleepy-token" = {
+      sopsFile = ../../../../secrets/common.yaml;
+      owner = "root";
+      mode = "0400";
+    };
+
+    sops.templates."sleepy-env" = {
+      owner = "root";
+      mode = "0400";
+      content = "sleepy_main_secret=${config.sops.placeholder."sleepy-token"}\n";
+    };
+
     systemd.tmpfiles.rules = [
       "d ${cfg.dataDir} 0755 root root -"
     ];
+
+    systemd.services."podman-sleepy" = {
+      after = [ "sops-install-secrets.service" ];
+      requires = [ "sops-install-secrets.service" ];
+    };
 
     virtualisation.oci-containers.containers.sleepy = {
       image = cfg.image;
@@ -70,15 +83,18 @@ in
 
       ports = [ "${toString cfg.port}:9010" ];
 
+      environmentFiles = [
+        config.sops.templates."sleepy-env".path
+      ];
+
       environment = {
         sleepy_main_colorful_log = "false";
-        sleepy_main_secret = cfg.secret;
         SLEEPY_PAGE_NAME = cfg.pageName;
       };
 
       login = {
         username = cfg.ghcrUser;
-        passwordFile = "${ghcrPasswordFile}";
+        passwordFile = config.sops.secrets."github-token".path;
         registry = "ghcr.io";
       };
     };
