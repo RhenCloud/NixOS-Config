@@ -29,7 +29,7 @@ in
               inputs.sops-nix.nixosModules.sops
               ({ config, ... }: { sops.useSystemdActivation = true; })
               ({ config, ... }: {
-                home-manager = {
+                home-manager = lib.mkIf config.my.homeManager.enable {
                   useGlobalPkgs = false;
                   useUserPackages = true;
                   backupFileExtension = "backup";

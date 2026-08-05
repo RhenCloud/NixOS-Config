@@ -38,7 +38,17 @@ in
           port = 1536;
         };
       };
-      openssh.enable = true;
+      openssh = {
+        enable = true;
+        settings = {
+          PermitRootLogin = "no";
+          PasswordAuthentication = true;
+          KbdInteractiveAuthentication = false;
+          MaxAuthTries = 3;
+          MaxSessions = 10;
+          LoginGraceTime = 30;
+        };
+      };
       pcscd = {
         enable = true;
         plugins = [ pkgs.ccid ];

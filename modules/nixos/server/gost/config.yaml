@@ -1,0 +1,62 @@
+services:
+  - name: service-0
+    addr: 0.0.0.0:22222
+    handler:
+      type: tcp
+      chain: chain-0
+    listener:
+      type: tcp
+
+  - name: service-1
+    addr: 0.0.0.0:22223
+    handler:
+      type: tcp
+      chain: chain-1
+    listener:
+      type: tcp
+
+  - name: service-2
+    addr: 0.0.0.0:22224
+    handler:
+      type: tcp
+      chain: chain-2
+    listener:
+      type: tcp
+
+chains:
+  - name: chain-0
+    hops:
+      - name: hop-0
+        nodes:
+          - name: node-0
+            addr: 104.168.78.16:42439
+            connector:
+              type: tcp
+            dialer:
+              type: tcp
+              tls:
+                serverName: 104.168.78.16
+  - name: chain-1
+    hops:
+      - name: hop-0
+        nodes:
+          - name: node-0
+            addr: 62.72.163.51:20848
+            connector:
+              type: tcp
+            dialer:
+              type: tcp
+              tls:
+                serverName: hk-wap-1.rhen.cloud
+  - name: chain-2
+    hops:
+      - name: hop-0
+        nodes:
+          - name: node-0
+            addr: 216.23.110.166:35278
+            connector:
+              type: tcp
+            dialer:
+              type: tcp
+              tls:
+                serverName: hk-aether-1.rhen.cloud

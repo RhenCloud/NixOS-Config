@@ -16,6 +16,7 @@ in
 
   networking.hostName = hostName;
   my.host.name = hostName;
+  my.homeManager.enable = false;
   nixpkgs.hostPlatform = "x86_64-linux";
 
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
@@ -86,6 +87,8 @@ in
     services.sleepy.enable = true;
     services.mailer.enable = true;
     services.wyf9s-bot.enable = true;
+    services.gost.enable = true;
+    services.rustdesk.enable = true;
     services.postgresql = {
       enable = true;
       databases = [

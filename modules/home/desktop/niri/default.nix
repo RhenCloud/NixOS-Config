@@ -42,7 +42,7 @@ in
       "niri/input.kdl".source = ./niri/input.kdl;
       "niri/keys.kdl".source = ./niri/keys.kdl;
       "niri/rule.kdl".source = ./niri/rule.kdl;
-      "niri/piri.toml".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/piri.toml";
+      "niri/piri.toml".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/piri.toml";
       "niri_tweaks" = {
         source = inputs.niri_tweaks;
       };

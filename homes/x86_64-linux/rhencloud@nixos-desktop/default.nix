@@ -4,6 +4,8 @@
   programs.home-manager.enable = true;
   programs.man.enable = false;
 
+  my.isDesktop = true;
+
   rhencloud = {
     fcitx5 = {
       enable = true;
@@ -61,6 +63,7 @@
     nvf.enable = true;
     helix.enable = true;
     hmOpenAgent.enable = true;
+    aider.enable = true;
 
     # service
     mpd.enable = true;

@@ -14,6 +14,7 @@ in {
         extraPortals = with pkgs; [
           xdg-desktop-portal-gnome
           xdg-desktop-portal-hyprland
+          xdg-desktop-portal-wlr
         ];
 
         configPackages = [ pkgs.niri pkgs.hyprland ];
@@ -27,6 +28,8 @@ in {
             default = [ "gnome" "gtk" ];
             "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
             "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+            "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+            "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
           };
         };
 

@@ -132,8 +132,13 @@ in
       };
     };
 
-    home.activation.installRimeLateConfig = ''
+    home.activation.installRimeLateConfig = lib.hm.dag.entryAfter [ "installRimeKeytao" ] ''
             rime_dir=$HOME/.local/share/fcitx5/rime
+
+            rm -f "$rime_dir/default.custom.yaml"
+            ln -sf ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
+            rm -f "$rime_dir/keytao.custom.yaml"
+            ln -sf ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
 
             for f in xmjd6 liangfen pinyin_simp; do
               rm -f "$rime_dir/$f"*.*

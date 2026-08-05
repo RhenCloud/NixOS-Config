@@ -46,6 +46,8 @@ in
 
       ports = [ "1880:80" ];
 
+      extraOptions = [ "--pull=always" ];
+
       environmentFiles = [
         config.sops.templates."vaultwarden-env".path
       ];
@@ -54,8 +56,6 @@ in
         DOMAIN = "https://vw.rhen.cloud";
         SIGNUPS_ALLOWED = "true";
       };
-
-      extraOptions = [ "--pull=always" ];
     };
   };
 }

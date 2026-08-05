@@ -1,8 +1,12 @@
 default:
   @just --list
 
-deploy host:
-  deploy -s .#{{host}} -- --extra-deprecated-features broken-string-escape
+deploy *target:
+  @if [ -z "{{target}}" ]; then \
+    deploy -s . -- --extra-deprecated-features broken-string-escape; \
+  else \
+    deploy -s .#{{target}} -- --extra-deprecated-features broken-string-escape; \
+  fi
 
 update:
   nix flake update

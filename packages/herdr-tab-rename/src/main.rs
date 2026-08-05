@@ -11,10 +11,10 @@ fn state_dir() -> PathBuf {
 
 fn tab_name(tab_id: &str) -> Option<String> {
     let out = Command::new("herdr")
-        .args(["tab", "get", tab_id, "--json"])
+        .args(["tab", "get", tab_id])
         .output().ok()?;
     let val: serde_json::Value = serde_json::from_slice(&out.stdout).ok()?;
-    val["result"]["name"].as_str().map(|s| s.to_owned())
+    val["result"]["tab"]["label"].as_str().map(|s| s.to_owned())
 }
 
 fn rename(tab_id: &str, name: &str) -> bool {

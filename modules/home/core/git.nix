@@ -41,7 +41,17 @@ in
         extraConfig = ''
           AddKeysToAgent no
 
-          Include /run/secrets/templates/ssh-host-blocks
+          Host yc-hk-1
+              HostName 83.229.127.169
+              Port 45855
+              User rhencloud
+
+          Host nixos-desktop
+              HostName 10.114.0.5
+              User rhencloud
+              ProxyJump yc-hk-1
+
+          Include /run/secrets/rendered/ssh-host-blocks
         '';
         settings = {
           "*" = { };

@@ -12,34 +12,37 @@ let
     in
     lib.filterAttrs (name: _: hasDefault name && !isDisabled name) dirs;
 
-  listSubdirs = dir:
+  listSubdirs =
+    dir:
     let
       entries = builtins.readDir dir;
     in
-      lib.filterAttrs (_n: t: t == "directory") entries;
+    lib.filterAttrs (_n: t: t == "directory") entries;
 
-  collectDefaultNix = dir:
+  collectDefaultNix =
+    dir:
     let
       rootDefault = lib.optional (builtins.pathExists "${dir}/default.nix") "${dir}/default.nix";
       subdirs = listSubdirs dir;
     in
-      rootDefault ++ lib.flatten (
-        lib.mapAttrsToList (name: _:
-          let sub = "${dir}/${name}";
-              hasDefault = builtins.pathExists "${sub}/default.nix";
-              isDisabled = builtins.pathExists "${sub}/disabled";
-          in
-            (if hasDefault && !isDisabled then [ "${sub}/default.nix" ] else [ ])
-            ++ lib.optionals (!isDisabled) (collectDefaultNix sub)
-        ) subdirs
-      );
+    rootDefault
+    ++ lib.flatten (
+      lib.mapAttrsToList (
+        name: _:
+        let
+          sub = "${dir}/${name}";
+          hasDefault = builtins.pathExists "${sub}/default.nix";
+          isDisabled = builtins.pathExists "${sub}/disabled";
+        in
+lib.optionals (!isDisabled) (collectDefaultNix sub)
+      ) subdirs
+    );
 
   discoverOverlays =
     let
       oDir = "${root}/overlays";
     in
-    map (name: import "${oDir}/${name}/default.nix" { }) (builtins.attrNames (collectActiveDirs oDir))
-    ++ lib.optional (inputs ? colmena) inputs.colmena.overlays.default;
+    map (name: import "${oDir}/${name}/default.nix" { }) (builtins.attrNames (collectActiveDirs oDir));
 
   overlays = discoverOverlays;
 
@@ -91,6 +94,8 @@ let
   ];
 
   desktopHomeModulesFull = desktopHomeModules ++ desktopExtraHomeModules;
+
+  desktopHosts = [ "nixos-desktop" ];
 in
 {
   inherit
@@ -103,5 +108,6 @@ in
     desktopHomeModules
     desktopExtraHomeModules
     desktopHomeModulesFull
+    desktopHosts
     ;
 }

@@ -32,3 +32,4 @@ packages/**/node_modules
 packages/**/target
 
 .omo/
+.aider*

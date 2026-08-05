@@ -1,10 +1,25 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.misc;
-in {
+let
+  cfg = config.rhencloud.misc;
+in
+{
   options.rhencloud.misc.enable = mkEnableOption "miscellaneous desktop apps";
 
   config = mkIf cfg.enable {
+    programs.fish.functions.rustdesk = {
+      body = ''
+        set -gx GDK_BACKEND x11
+        command rustdesk $argv
+        set -e GDK_BACKEND
+      '';
+    };
+
     home.packages = with pkgs; [
       chameleon-cli
       libreoffice
@@ -13,6 +28,8 @@ in {
       audacity
       kdePackages.kwave
       heroic
+      # rustdesk
+      rustdesk-flutter
     ];
   };
 }

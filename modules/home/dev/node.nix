@@ -1,8 +1,14 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.node;
-in {
+in
+{
   options.rhencloud.node.enable = mkEnableOption "Node.js development tools";
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
@@ -15,6 +21,6 @@ in {
       enable = true;
     };
 
-    home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/npmrc";
+    home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/npmrc";
   };
 }

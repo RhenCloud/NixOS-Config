@@ -5,6 +5,7 @@ _:
     if status is-interactive
         and command -sq herdr
         and not set -q HERDR_SOCKET
+        and not set -q SSH_CONNECTION
         if not herdr status server >/dev/null 2>&1
             herdr server </dev/null >/dev/null 2>&1 & disown
             for _ in (seq 1 50)

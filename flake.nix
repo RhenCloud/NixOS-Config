@@ -126,10 +126,6 @@
       url = "github:sxyazi/yazi";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    colmena = {
-      url = "github:nix-community/colmena";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     # ── 无 nixpkgs input 的输入（tarball / 未验证） ──
     siiway-cli.url = "https://gh-proxy.com/github.com/siiway/siiway-cli/archive/main.tar.gz";
@@ -185,7 +181,6 @@
         ./flake/packages.nix
         ./flake/devshells.nix
         ./flake/deploy.nix
-        ./flake/colmena.nix
       ];
 
       # Live CD 配置

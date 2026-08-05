@@ -8,27 +8,42 @@ in
     let
       archs = lib.filterAttrs (_n: t: t == "directory") (builtins.readDir homesDir);
     in
-      lib.concatMapAttrs (arch: _:
-        let
-          userDirs = lib.filterAttrs (_n: t: t == "directory")
-            (builtins.readDir "${homesDir}/${arch}");
-        in
-          lib.mapAttrs' (userEntry: _:
-            lib.nameValuePair userEntry (
-              let
-                pkgs = import inputs.nixpkgs {
-                  localSystem = { system = arch; };
-                  config.allowUnfree = true;
-                  overlays = h.overlays;
-                };
-              in
-              inputs.home-manager.lib.homeManagerConfiguration {
-                inherit pkgs;
-                modules = [ "${homesDir}/${arch}/${userEntry}" ]
-                  ++ h.homeModules ++ h.essentialHomeModules;
-                extraSpecialArgs = { inherit inputs; primaryUser = "rhencloud"; };
-              }
-            )
-          ) userDirs
-      ) archs;
+    lib.concatMapAttrs (
+      arch: _:
+      let
+        userDirs = lib.filterAttrs (_n: t: t == "directory") (builtins.readDir "${homesDir}/${arch}");
+      in
+      lib.mapAttrs' (
+        userEntry: _:
+        lib.nameValuePair userEntry (
+          let
+            pkgs = import inputs.nixpkgs {
+              localSystem = {
+                system = arch;
+              };
+              config.allowUnfree = true;
+              config.permittedInsecurePackages = [
+                "electron-39.8.10"
+                "pnpm-9.15.9"
+                "pnpm-10.29.2"
+              ];
+              overlays = h.overlays;
+            };
+          in
+          inputs.home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [
+              "${homesDir}/${arch}/${userEntry}"
+            ]
+            ++ h.homeModules
+            ++ h.essentialHomeModules
+            ++ lib.optionals (builtins.elem (lib.last (lib.splitString "@" userEntry)) h.desktopHosts) h.desktopHomeModulesFull;
+            extraSpecialArgs = {
+              inherit inputs;
+              primaryUser = "rhencloud";
+            };
+          }
+        )
+      ) userDirs
+    ) archs;
 }

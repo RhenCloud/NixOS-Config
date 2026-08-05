@@ -39,7 +39,6 @@ in
       wget
       deploy-rs
       just
-      colmena
     ];
   };
 }

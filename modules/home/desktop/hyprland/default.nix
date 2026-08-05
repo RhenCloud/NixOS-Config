@@ -10,7 +10,8 @@ let
   cfg = config.rhencloud.hm-hyprland;
 
   cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.stdenv.hostPlatform.system}.default;
-in {
+in
+{
   options.rhencloud.hm-hyprland.enable = mkEnableOption "Hyprland (HM)";
 
   config = mkIf cfg.enable {
@@ -19,7 +20,8 @@ in {
         source = ./hypr;
         recursive = true;
       };
-      "hypr/pyprland.toml".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/pyprland.toml";
+      "hypr/pyprland.toml".source =
+        config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/pyprland.toml";
     };
 
     home.sessionVariables = {

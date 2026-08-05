@@ -80,5 +80,13 @@ in
       default = false;
       description = "是否为桌面系统（控制是否加载桌面端 home-manager 模块）";
     };
+
+    homeManager = {
+      enable = mkOption {
+        type = types.bool;
+        default = true;
+        description = "是否由 NixOS 系统模块集成 home-manager（服务器可关闭，改用 deploy-rs 独立部署）";
+      };
+    };
   };
 }
