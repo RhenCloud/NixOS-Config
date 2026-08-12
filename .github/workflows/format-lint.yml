@@ -1,0 +1,119 @@
+name: Format & Lint
+
+on:
+  pull_request:
+    paths:
+      - "**/*.nix"
+      - "statix.toml"
+      - ".github/workflows/format-lint.yml"
+  push:
+    branches: [main]
+    paths:
+      - "**/*.nix"
+      - "statix.toml"
+      - ".github/workflows/format-lint.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: format-lint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # PR：只检查，不修改，失败即提示需格式化
+  check:
+    name: Check
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: nixfmt check
+        run: |
+          set -euo pipefail
+          nix shell nixpkgs#nixfmt-rfc-style -c bash -c '
+            mapfile -t files < <(git ls-files "*.nix")
+            if [ ${#files[@]} -eq 0 ]; then
+              echo "No .nix files"
+              exit 0
+            fi
+            if ! nixfmt --check "${files[@]}"; then
+              echo
+              echo "::error::部分 .nix 未按 nixfmt-rfc-style 格式化。"
+              echo "本地修复: nix shell nixpkgs#nixfmt-rfc-style -c nixfmt \$(git ls-files \'*.nix\')"
+              echo "或等待 / 手动运行 Format & Lint workflow 的 Autofix 开 PR。"
+              exit 1
+            fi
+          '
+
+      - name: statix check
+        run: |
+          set -euo pipefail
+          nix shell nixpkgs#statix -c statix check .
+
+  # main push / 手动：自动 nixfmt 并开 PR（不直推 main，避免循环）
+  autofix:
+    name: Autofix (PR)
+    if: >
+      github.repository == 'RhenCloud/NixOS-Config' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run nixfmt
+        run: |
+          set -euo pipefail
+          nix shell nixpkgs#nixfmt-rfc-style -c bash -c '
+            mapfile -t files < <(git ls-files "*.nix")
+            if [ ${#files[@]} -eq 0 ]; then
+              echo "No .nix files"
+              exit 0
+            fi
+            nixfmt "${files[@]}"
+          '
+
+      - name: statix check (report only)
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          nix shell nixpkgs#statix -c statix check .
+
+      - name: Create Pull Request if needed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "style: apply nixfmt-rfc-style"
+          title: "style: apply nixfmt-rfc-style"
+          body: |
+            ## Automated nixfmt fix
+
+            由 `Format & Lint` workflow 自动运行 `nixfmt-rfc-style` 生成。
+
+            - 合并后 PR 上的 Check 应通过
+            - **不会**直推 main，避免 format → push → format 循环
+            - statix 问题需人工处理（本 PR 只修格式）
+          branch: chore/nixfmt
+          delete-branch: true
+          labels: style, nix
+          add-paths: |
+            **/*.nix
