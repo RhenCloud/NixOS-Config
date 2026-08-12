@@ -4,9 +4,7 @@ let
   pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
 
   # 只强制求值 drvPath，不构建 closure —— 比 deployChecks 快几个数量级
-  evalDrv =
-    name: drv:
-    pkgs.writeText "eval-${name}" "${drv.drvPath}\n";
+  evalDrv = name: drv: pkgs.writeText "eval-${name}" "${drv.drvPath}\n";
 in
 {
   perSystem = { ... }: { };
@@ -56,9 +54,11 @@ in
       eval-nixos-desktop = evalDrv "nixos-desktop" inputs.self.nixosConfigurations.nixos-desktop.config.system.build.toplevel;
       eval-yc-hk-1 = evalDrv "yc-hk-1" inputs.self.nixosConfigurations.yc-hk-1.config.system.build.toplevel;
       eval-home-rhencloud-yc-hk-1 =
-        evalDrv "home-rhencloud-yc-hk-1" inputs.self.homeConfigurations."rhencloud@yc-hk-1".activationPackage;
+        evalDrv "home-rhencloud-yc-hk-1"
+          inputs.self.homeConfigurations."rhencloud@yc-hk-1".activationPackage;
       eval-home-wyf9-yc-hk-1 =
-        evalDrv "home-wyf9-yc-hk-1" inputs.self.homeConfigurations."wyf9@yc-hk-1".activationPackage;
+        evalDrv "home-wyf9-yc-hk-1"
+          inputs.self.homeConfigurations."wyf9@yc-hk-1".activationPackage;
 
       # 确认 deploy.nodes 结构齐全（hostname / profiles 字段存在）
       deploy-nodes-schema =
