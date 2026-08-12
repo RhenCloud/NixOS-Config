@@ -2,8 +2,8 @@ name: Mirror Repository
 
 on:
   push:
-  delete:          # 同步删除远程分支/标签
-  workflow_dispatch:  # 支持手动触发
+  delete:
+  workflow_dispatch:
 
 concurrency:
   group: mirror-${{ github.ref }}
@@ -16,39 +16,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # 完整历史，保证 --mirror 正确
+          fetch-depth: 0
 
       # ---------- GitLab ----------
       - name: Mirror to GitLab
-        if: ${{ secrets.GITLAB_TOKEN != '' }}
         env:
           TOKEN: ${{ secrets.GITLAB_TOKEN }}
-          # 默认假设目标仓库路径与 GitHub 相同，可按需修改
-          TARGET: https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/RhenCloud/NixOS-Config.git
         run: |
+          if [ -z "$TOKEN" ]; then
+            echo "GITLAB_TOKEN 未设置，跳过 GitLab 镜像"
+            exit 0
+          fi
           git remote remove gitlab 2>/dev/null || true
-          git remote add gitlab "$TARGET"
+          git remote add gitlab "https://oauth2:${TOKEN}@gitlab.com/RhenCloud/NixOS-Config.git"
           git push --mirror --force gitlab
 
       # ---------- Codeberg ----------
       - name: Mirror to Codeberg
-        if: ${{ secrets.CODEBERG_TOKEN != '' }}
         env:
           TOKEN: ${{ secrets.CODEBERG_TOKEN }}
-          TARGET: https://oauth2:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/RhenCloud/NixOS-Config.git
         run: |
+          if [ -z "$TOKEN" ]; then
+            echo "CODEBERG_TOKEN 未设置，跳过 Codeberg 镜像"
+            exit 0
+          fi
           git remote remove codeberg 2>/dev/null || true
-          git remote add codeberg "$TARGET"
+          git remote add codeberg "https://oauth2:${TOKEN}@codeberg.org/RhenCloud/NixOS-Config.git"
           git push --mirror --force codeberg
 
       # ---------- cnb.cool ----------
       - name: Mirror to cnb.cool
-        if: ${{ secrets.CNB_TOKEN != '' }}
         env:
           TOKEN: ${{ secrets.CNB_TOKEN }}
-          # cnb.cool 固定用户名为 cnb，密码为 access token
-          TARGET: https://cnb:${{ secrets.CNB_TOKEN }}@cnb.cool/RhenCloud/NixOS-Config.git
         run: |
+          if [ -z "$TOKEN" ]; then
+            echo "CNB_TOKEN 未设置，跳过 cnb.cool 镜像"
+            exit 0
+          fi
+          # cnb.cool 固定用户名为 cnb
           git remote remove cnb 2>/dev/null || true
-          git remote add cnb "$TARGET"
+          git remote add cnb "https://cnb:${TOKEN}@cnb.cool/RhenCloud/NixOS-Config.git"
           git push --mirror --force cnb
