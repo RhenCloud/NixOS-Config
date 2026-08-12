@@ -24,11 +24,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     # workflow_run：仅成功且来自 main；手动触发始终允许
+    # 手动指定 node 时只跑匹配的 matrix 项
     if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main' &&
-       github.event.workflow_run.event != 'pull_request')
+      (
+        github.event_name == 'workflow_dispatch' &&
+        (inputs.node == '' || inputs.node == matrix.node)
+      ) ||
+      (
+        github.event_name == 'workflow_run' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.event != 'pull_request'
+      )
     strategy:
       fail-fast: false
       matrix:
@@ -40,30 +47,20 @@ jobs:
       group: deploy-node-${{ matrix.node }}
       cancel-in-progress: false
     steps:
-      - name: Skip if manual node filter excludes this matrix entry
-        if: github.event_name == 'workflow_dispatch' && inputs.node != '' && inputs.node != matrix.node
-        run: |
-          echo "跳过 ${{ matrix.node }}（手动指定 node=${{ inputs.node }}）"
-          exit 0
-
       - uses: actions/checkout@v4
-        if: github.event_name == 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
 
       - uses: cachix/install-nix-action@v31
-        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
       - uses: cachix/cachix-action@v17
-        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
         with:
           name: rhencloud
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - name: Setup sops age key
-        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
@@ -76,7 +73,6 @@ jobs:
           chmod 600 ~/.config/sops/age/keys.txt
 
       - name: Setup SSH identity (deploy.nodes 负责 hostname / 端口)
-        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
         run: |
@@ -100,7 +96,6 @@ jobs:
           chmod 600 ~/.ssh/config
 
       - name: Deploy ${{ matrix.node }} via deploy-rs
-        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
         run: |
           set -euo pipefail
           # hostname、sshOpts（含端口）、profiles、magicRollback 均来自 flake/deploy.nix
