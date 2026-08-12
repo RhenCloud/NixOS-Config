@@ -1,5 +1,8 @@
 # RhenCloud 的 NixOS 配置
 
+[![Mirror Repository](https://github.com/RhenCloud/NixOS-Config/actions/workflows/mirror.yml/badge.svg)](https://github.com/RhenCloud/NixOS-Config/actions/workflows/mirror.yml)
+[![Build & Push to Cachix](https://github.com/RhenCloud/NixOS-Config/actions/workflows/cachix.yml/badge.svg)](https://github.com/RhenCloud/NixOS-Config/actions/workflows/cachix.yml)
+
 ## 镜像仓库
 
 本仓库同时托管于以下平台，内容保持同步：
