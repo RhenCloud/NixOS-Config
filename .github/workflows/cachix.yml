@@ -2,9 +2,29 @@ name: Build & Push to Cachix
 
 on:
   push:
-    branches: [main, master]   # 按需修改
-  pull_request:                # 可选，PR 也构建但不推送也可以
-  workflow_dispatch:           # 手动触发
+    branches: [main, master]
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "systems/**"
+      - "modules/**"
+      - "overlays/**"
+      - "homes/**"
+      - "packages/**"
+      - "secrets/**"
+      - ".github/workflows/cachix.yml"
+  pull_request:
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "systems/**"
+      - "modules/**"
+      - "overlays/**"
+      - "homes/**"
+      - "packages/**"
+      - "secrets/**"
+      - ".github/workflows/cachix.yml"
+  workflow_dispatch: # 手动触发始终可用
 
 jobs:
   build:
