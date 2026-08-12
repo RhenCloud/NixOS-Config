@@ -41,7 +41,7 @@ in
         "home-wyf9"
         "system"
       ];
-      magicRollback = false;
+      magicRollback = true;
     };
 
     checks = builtins.mapAttrs (
