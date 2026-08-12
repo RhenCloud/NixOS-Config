@@ -1,0 +1,60 @@
+name: Update flake.lock
+
+on:
+  schedule:
+    # 每周一 00:00 UTC
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: update-flake-lock
+  cancel-in-progress: true
+
+jobs:
+  update:
+    name: Update flake.lock (PR)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # 仅上游仓库；避免 fork 开 PR 刷屏
+    if: github.repository == 'RhenCloud/NixOS-Config'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # 需要完整历史以便 create-pull-request 正确推送分支
+          fetch-depth: 0
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update flake.lock
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          nix flake update
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update flake.lock"
+          title: "chore: update flake.lock"
+          body: |
+            ## Automated flake.lock update
+
+            由 `Update flake.lock` workflow 自动生成。
+
+            - 合并前请确认 CI（Build & Push to Cachix）通过
+            - 合并后会正常触发 build；**不会**再次触发本 lock 更新 workflow（仅 schedule / manual）
+          branch: chore/update-flake-lock
+          delete-branch: true
+          labels: dependencies, nix
+          # 无变更时不创建 PR，避免空转循环
+          add-paths: |
+            flake.lock

@@ -15,14 +15,27 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: build-hm-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: rhencloud
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          skipPush: true
 
       - name: Build Home Manager activation package
         run: |

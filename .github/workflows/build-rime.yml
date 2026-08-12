@@ -12,14 +12,27 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: build-rime-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: DeterminateSystems/nix-installer-action@v16
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: rhencloud
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          skipPush: true
 
       - name: Build rime-keytao package
         run: |
@@ -42,19 +55,7 @@ jobs:
           cp modules/home/desktop/fcitx5/default.custom.yaml output/rime/
           cp modules/home/desktop/fcitx5/keytao.custom.yaml output/rime/
 
-          # 4. 追加 require 到 rime.lua
-          # cat >> output/rime/rime.lua << 'LUAEOF'
-
-          # -- reduce_emoji_filter: 降低 emoji 在候选项的位置
-          # reduce_emoji_filter = require("reduce_emoji_filter")
-          # reduce_emoji_translator = reduce_emoji_filter
-          # reduce_emoji_processor = reduce_emoji_filter
-
-          # -- select_character: 首/末字选择
-          # select_character = require("select_character")
-          # LUAEOF
-
-          # 5. 创建空的 custom_phrase.txt（用户自行编辑）
+          # 4. 创建空的 custom_phrase.txt（用户自行编辑）
           touch output/rime/custom_phrase.txt
 
       - name: Package Rime config

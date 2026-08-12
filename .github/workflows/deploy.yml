@@ -1,0 +1,109 @@
+name: Deploy
+
+on:
+  # 仅在 main 上 Build 成功后触发，避免 PR / 循环部署
+  workflow_run:
+    workflows: ["Build & Push to Cachix"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      node:
+        description: "要部署的 deploy.nodes 名称（留空则部署全部远程节点）"
+        required: false
+        default: ""
+        type: string
+
+concurrency:
+  group: deploy-${{ github.event.workflow_run.head_branch || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # workflow_run：仅成功且来自 main；手动触发始终允许
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.event != 'pull_request')
+    strategy:
+      fail-fast: false
+      matrix:
+        # 仅远程节点；hostname / sshOpts / profiles 全部来自 flake/deploy.nix
+        node:
+          - yc-hk-1
+          # - arch-server
+    concurrency:
+      group: deploy-node-${{ matrix.node }}
+      cancel-in-progress: false
+    steps:
+      - name: Skip if manual node filter excludes this matrix entry
+        if: github.event_name == 'workflow_dispatch' && inputs.node != '' && inputs.node != matrix.node
+        run: |
+          echo "跳过 ${{ matrix.node }}（手动指定 node=${{ inputs.node }}）"
+          exit 0
+
+      - uses: actions/checkout@v4
+        if: github.event_name == 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
+
+      - uses: cachix/install-nix-action@v31
+        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v17
+        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
+        with:
+          name: rhencloud
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: Setup sops age key
+        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: |
+          if [ -z "$SOPS_AGE_KEY" ]; then
+            echo "SOPS_AGE_KEY 未设置，跳过"
+            exit 0
+          fi
+          mkdir -p ~/.config/sops/age
+          echo "$SOPS_AGE_KEY" > ~/.config/sops/age/keys.txt
+          chmod 600 ~/.config/sops/age/keys.txt
+
+      - name: Setup SSH identity (deploy.nodes 负责 hostname / 端口)
+        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$DEPLOY_SSH_KEY" ]; then
+            echo "DEPLOY_SSH_KEY 未设置"
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # 不写死 IP/端口：全部由 flake deploy.nodes.*.hostname / sshOpts 决定
+          # SSH 仅注入私钥，避免 --ssh-opts 覆盖 deploy.nix 里的 -p 等选项
+          cat > ~/.ssh/config <<'EOF'
+          Host *
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking accept-new
+            UserKnownHostsFile ~/.ssh/known_hosts
+          EOF
+          chmod 600 ~/.ssh/config
+
+      - name: Deploy ${{ matrix.node }} via deploy-rs
+        if: github.event_name != 'workflow_dispatch' || inputs.node == '' || inputs.node == matrix.node
+        run: |
+          set -euo pipefail
+          # hostname、sshOpts（含端口）、profiles、magicRollback 均来自 flake/deploy.nix
+          nix run github:serokell/deploy-rs -- \
+            ".#${{ matrix.node }}" \
+            --auto-rollback true
