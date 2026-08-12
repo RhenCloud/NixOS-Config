@@ -11,55 +11,47 @@ concurrency:
 
 jobs:
   mirror:
+    # 仅在上游仓库运行，防止 fork 误触发推送
+    if: github.repository == 'RhenCloud/NixOS-Config'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: GitLab
+            remote: gitlab
+            auth: oauth2
+            host: gitlab.com/RhenCloud/NixOS-Config.git
+            secret_name: GITLAB_TOKEN
+          - name: Codeberg
+            remote: codeberg
+            auth: oauth2
+            host: codeberg.org/RhenCloud/NixOS-Config.git
+            secret_name: CODEBERG_TOKEN
+          - name: cnb.cool
+            remote: cnb
+            auth: cnb
+            host: cnb.cool/RhenCloud/NixOS-Config.git
+            secret_name: CNB_TOKEN
+    name: Mirror to ${{ matrix.name }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # ---------- GitLab ----------
-      - name: Mirror to GitLab
+      - name: Mirror to ${{ matrix.name }}
         env:
-          TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          TOKEN: ${{ secrets[matrix.secret_name] }}
         run: |
           if [ -z "$TOKEN" ]; then
-            echo "GITLAB_TOKEN 未设置，跳过 GitLab 镜像"
+            echo "${{ matrix.secret_name }} 未设置，跳过 ${{ matrix.name }} 镜像"
             exit 0
           fi
-          git remote remove gitlab 2>/dev/null || true
-          git remote add gitlab "https://oauth2:${TOKEN}@gitlab.com/RhenCloud/NixOS-Config.git"
+          git remote remove ${{ matrix.remote }} 2>/dev/null || true
+          git remote add ${{ matrix.remote }} \
+            "https://${{ matrix.auth }}:${TOKEN}@${{ matrix.host }}"
           # 只推送 heads 和 tags，并 prune 删除远程多余分支
-          git push --force --prune gitlab \
-            'refs/heads/*:refs/heads/*' \
-            'refs/tags/*:refs/tags/*'
-
-      # ---------- Codeberg ----------
-      - name: Mirror to Codeberg
-        env:
-          TOKEN: ${{ secrets.CODEBERG_TOKEN }}
-        run: |
-          if [ -z "$TOKEN" ]; then
-            echo "CODEBERG_TOKEN 未设置，跳过 Codeberg 镜像"
-            exit 0
-          fi
-          git remote remove codeberg 2>/dev/null || true
-          git remote add codeberg "https://oauth2:${TOKEN}@codeberg.org/RhenCloud/NixOS-Config.git"
-          git push --force --prune codeberg \
-            'refs/heads/*:refs/heads/*' \
-            'refs/tags/*:refs/tags/*'
-
-      # ---------- cnb.cool ----------
-      - name: Mirror to cnb.cool
-        env:
-          TOKEN: ${{ secrets.CNB_TOKEN }}
-        run: |
-          if [ -z "$TOKEN" ]; then
-            echo "CNB_TOKEN 未设置，跳过 cnb.cool 镜像"
-            exit 0
-          fi
-          git remote remove cnb 2>/dev/null || true
-          git remote add cnb "https://cnb:${TOKEN}@cnb.cool/RhenCloud/NixOS-Config.git"
-          git push --force --prune cnb \
+          git push --force --prune ${{ matrix.remote }} \
             'refs/heads/*:refs/heads/*' \
             'refs/tags/*:refs/tags/*'
