@@ -1,8 +1,12 @@
 # statix 配置 — 运行 `statix check .` 检查所有 .nix 文件
 # 可用 lint 列表见 `statix list`
 # 生成完整配置：`statix dump > statix.toml`
+#
+# NixOS 模块习惯分写 boot.* / services.* / fileSystems.*，
+# repeated_keys 会误报且与社区写法冲突，故关闭。
 disabled = [
-  # "empty_pattern",
+  "repeated_keys",   # services.foo / boot.bar 分写是正常写法
+  "empty_pattern",   # overlay 里 `{ }:` 可接受；也可用 `_:` 代替
+  "manual_inherit",  # inherit 风格偏好，不强制
   # "useless_parens",
-  # "manual_inherit",
 ]
