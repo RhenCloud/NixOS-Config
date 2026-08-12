@@ -26,7 +26,8 @@ in
 with lib;
 let
   cfg = config.rhencloud.noctalia;
-in {
+in
+{
   options.rhencloud.noctalia.enable = mkEnableOption "Noctalia shell";
   config = mkIf cfg.enable {
     # v4 is kept installed as a fallback. It provides the `noctalia-shell` binary

@@ -1,5 +1,4 @@
-_:
-{
+_: {
   programs.kitty.settings = {
     active_tab_background = "#f8f8f2";
     active_tab_foreground = "#282a36";

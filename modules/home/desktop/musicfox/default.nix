@@ -1,8 +1,14 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.musicfox;
-in {
+in
+{
   options.rhencloud.musicfox.enable = mkEnableOption "Go Musicfox music player";
   config = mkIf cfg.enable {
     xdg.configFile = {

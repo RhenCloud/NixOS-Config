@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.sound;
-in {
+let
+  cfg = config.rhencloud.sound;
+in
+{
   options.rhencloud.sound.enable = mkEnableOption "sound (PipeWire)";
 
   config = mkIf cfg.enable {
@@ -77,7 +84,10 @@ in {
     systemd.user.services.virtual-mic = {
       enable = true;
       description = "Virtual microphone for system audio capture";
-      after = [ "pipewire-pulse.service" "pipewire-pulse.socket" ];
+      after = [
+        "pipewire-pulse.service"
+        "pipewire-pulse.socket"
+      ];
       bindsTo = [ "pipewire-pulse.service" ];
       wantedBy = [ "default.target" ];
       serviceConfig = {

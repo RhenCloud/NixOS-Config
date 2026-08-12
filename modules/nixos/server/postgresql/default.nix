@@ -18,13 +18,17 @@ let
   initScript = ''
     #!/usr/bin/env bash
     set -e
-  '' + (lib.concatMapStringsSep "\n" (db: ''
+  ''
+  + (lib.concatMapStringsSep "\n" (db: ''
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-      DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${db.user}') THEN CREATE ROLE ${db.user} LOGIN PASSWORD '${config.sops.placeholder."${db.passwordSecret}"}'; END IF; END $$;
+      DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${db.user}') THEN CREATE ROLE ${db.user} LOGIN PASSWORD '${
+        config.sops.placeholder."${db.passwordSecret}"
+      }'; END IF; END $$;
       SELECT 'CREATE DATABASE ${db.name} OWNER ${db.user}'
       WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${db.name}')\gexec
     EOSQL
-  '') cfg.databases) + "\n";
+  '') cfg.databases)
+  + "\n";
 in
 {
   options.rhencloud.services.postgresql = {
@@ -61,22 +65,24 @@ in
     };
 
     databases = mkOption {
-      type = types.listOf (types.submodule {
-        options = {
-          name = mkOption {
-            type = types.str;
-            description = "数据库名";
+      type = types.listOf (
+        types.submodule {
+          options = {
+            name = mkOption {
+              type = types.str;
+              description = "数据库名";
+            };
+            user = mkOption {
+              type = types.str;
+              description = "数据库用户";
+            };
+            passwordSecret = mkOption {
+              type = types.str;
+              description = "sops secrets 键名（hosts/yc-hk-1.yaml 顶层 key）";
+            };
           };
-          user = mkOption {
-            type = types.str;
-            description = "数据库用户";
-          };
-          passwordSecret = mkOption {
-            type = types.str;
-            description = "sops secrets 键名（hosts/yc-hk-1.yaml 顶层 key）";
-          };
-        };
-      });
+        }
+      );
       default = [ ];
       description = "额外创建的数据库和用户（首次初始化时执行）";
     };
@@ -87,13 +93,17 @@ in
       isSystemUser = true;
       group = "postgres";
     };
-    users.groups.postgres = { gid = 999; };
+    users.groups.postgres = {
+      gid = 999;
+    };
 
     sops.secrets = lib.listToAttrs (
-      [{
-        name = "postgres-postgres-password";
-        value = secretOptions;
-      }]
+      [
+        {
+          name = "postgres-postgres-password";
+          value = secretOptions;
+        }
+      ]
       ++ map (db: {
         name = db.passwordSecret;
         value = secretOptions;

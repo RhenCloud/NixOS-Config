@@ -1,7 +1,9 @@
 { config, lib, ... }:
 with lib;
-let cfg = config.rhencloud.nvidia;
-in {
+let
+  cfg = config.rhencloud.nvidia;
+in
+{
   options.rhencloud.nvidia.enable = mkEnableOption "NVIDIA GPU support";
 
   config = mkIf cfg.enable {

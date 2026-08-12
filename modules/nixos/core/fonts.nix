@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.fonts;
-in {
+let
+  cfg = config.rhencloud.fonts;
+in
+{
   options.rhencloud.fonts.enable = mkEnableOption "fonts configuration";
 
   config = mkIf cfg.enable {

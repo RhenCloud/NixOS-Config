@@ -2,7 +2,8 @@
 with lib;
 let
   cfg = config.rhencloud.impermanence;
-in {
+in
+{
   options.rhencloud.impermanence.enable = mkEnableOption "Impermanence";
   config = mkIf cfg.enable {
     environment.persistence."/persistent" = {
@@ -16,7 +17,7 @@ in {
       files = [
         "/etc/machine-id"
       ];
-    # /home 是独立 btrfs 分区，自然持久化，无需额外配置
+      # /home 是独立 btrfs 分区，自然持久化，无需额外配置
     };
 
     # 注意：当前根分区为 ext4，无法直接设置为只读

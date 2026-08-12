@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.hyprland;
-in {
+let
+  cfg = config.rhencloud.hyprland;
+in
+{
   options.rhencloud.hyprland.enable = mkEnableOption "Hyprland";
 
   config = mkIf cfg.enable {

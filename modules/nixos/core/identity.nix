@@ -9,7 +9,8 @@ with lib;
 let
   user = config.my.user.name;
   cfg = config.rhencloud.identity;
-in {
+in
+{
   options.rhencloud.identity.enable = mkEnableOption "user identity configuration";
 
   config = mkIf cfg.enable {

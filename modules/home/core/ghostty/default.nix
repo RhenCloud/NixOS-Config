@@ -1,7 +1,9 @@
 { config, lib, ... }:
 with lib;
-let cfg = config.rhencloud.ghostty;
-in {
+let
+  cfg = config.rhencloud.ghostty;
+in
+{
   options.rhencloud.ghostty.enable = mkEnableOption "Ghostty terminal";
 
   config = mkIf cfg.enable {

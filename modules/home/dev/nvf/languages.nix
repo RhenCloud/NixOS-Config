@@ -3,7 +3,9 @@
   lib,
   config,
   ...
-}: with lib; mkIf config.rhencloud.nvf.enable {
+}:
+with lib;
+mkIf config.rhencloud.nvf.enable {
   programs.nvf.settings.vim = {
     # ---- Treesitter ----
     treesitter = {
@@ -98,7 +100,10 @@
         formatters_by_ft = {
           nix = [ "nixfmt" ];
           lua = [ "stylua" ];
-          python = [ "isort" "black" ];
+          python = [
+            "isort"
+            "black"
+          ];
           rust = [ "rustfmt" ];
           go = [ "gofmt" ];
           javascript = [ "prettierd" ];

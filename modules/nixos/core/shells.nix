@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.shells;
-in {
+let
+  cfg = config.rhencloud.shells;
+in
+{
   options.rhencloud.shells.enable = mkEnableOption "shells configuration";
 
   config = mkIf cfg.enable {

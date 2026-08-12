@@ -1,8 +1,14 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.obsStudio;
-in {
+in
+{
   options.rhencloud.obsStudio.enable = mkEnableOption "OBS Studio";
   config = mkIf cfg.enable {
     programs.obs-studio = {

@@ -38,18 +38,16 @@ in
 
     extraLuaFiles = lib.mkOption {
       type = lib.types.listOf (
-        lib.types.submodule (
-          _: {
-            options.name = lib.mkOption {
-              type = lib.types.str;
-              description = "Name (filename) for the Lua file";
-            };
-            options.source = lib.mkOption {
-              type = lib.types.path;
-              description = "Path to the Lua file content directory";
-            };
-          }
-        )
+        lib.types.submodule (_: {
+          options.name = lib.mkOption {
+            type = lib.types.str;
+            description = "Name (filename) for the Lua file";
+          };
+          options.source = lib.mkOption {
+            type = lib.types.path;
+            description = "Path to the Lua file content directory";
+          };
+        })
       );
       default = [ ];
       description = "Extra Lua filter scripts to install";

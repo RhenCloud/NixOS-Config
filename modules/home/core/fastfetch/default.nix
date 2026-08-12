@@ -1,7 +1,9 @@
 { config, lib, ... }:
 with lib;
-let cfg = config.rhencloud.fastfetch;
-in {
+let
+  cfg = config.rhencloud.fastfetch;
+in
+{
   options.rhencloud.fastfetch.enable = mkEnableOption "fastfetch";
 
   config = mkIf cfg.enable {

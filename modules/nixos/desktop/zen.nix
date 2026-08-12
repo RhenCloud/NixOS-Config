@@ -27,7 +27,8 @@ let
     (extension "scriptcat" "{8e515334-52b5-4cc5-b4e8-675d50af677d}")
     (extension "immersive-translate" "{5efceaa7-f3a2-4e59-a547-85319448e305}")
   ];
-in {
+in
+{
   options.rhencloud.zen.enable = mkEnableOption "Zen browser";
 
   config = mkIf cfg.enable {

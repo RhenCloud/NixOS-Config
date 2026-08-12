@@ -2,7 +2,8 @@
 with lib;
 let
   cfg = config.rhencloud.nvf;
-in {
+in
+{
   options.rhencloud.nvf.enable = mkEnableOption "Neovim (nvf)";
   config = mkIf cfg.enable {
     programs.nvf.enable = true;

@@ -1,7 +1,9 @@
 { config, lib, ... }:
 with lib;
-let cfg = config.rhencloud.env;
-in {
+let
+  cfg = config.rhencloud.env;
+in
+{
   options.rhencloud.env.enable = mkEnableOption "system environment variables";
 
   config = mkIf cfg.enable {

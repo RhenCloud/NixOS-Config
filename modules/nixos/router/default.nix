@@ -1,8 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.router;
-in {
+in
+{
   options.rhencloud.router.enable = mkEnableOption "soft router (bridge, hostapd, dhcpd, NAT)";
 
   config = mkIf cfg.enable {
@@ -26,7 +32,10 @@ in {
           dhcpServerConfig = {
             PoolOffset = 100;
             PoolSize = 151;
-            DNS = [ "10.0.0.1" "8.8.8.8" ];
+            DNS = [
+              "10.0.0.1"
+              "8.8.8.8"
+            ];
             EmitDNS = true;
             EmitNTP = true;
             EmitRouter = true;
@@ -66,8 +75,14 @@ in {
 
     services.resolved = {
       enable = true;
-      settings.Resolve.DNS = [ "119.29.29.29" "223.5.5.5" ];
-      settings.Resolve.FallbackDNS = [ "1.1.1.1" "8.8.8.8" ];
+      settings.Resolve.DNS = [
+        "119.29.29.29"
+        "223.5.5.5"
+      ];
+      settings.Resolve.FallbackDNS = [
+        "1.1.1.1"
+        "8.8.8.8"
+      ];
     };
 
     services.hostapd = {
@@ -123,7 +138,10 @@ in {
       enableOnBoot = true;
       autoPrune = {
         enable = true;
-        flags = [ "--all" "--filter until=72h" ];
+        flags = [
+          "--all"
+          "--filter until=72h"
+        ];
       };
       daemon.settings = {
         registry-mirrors = [
@@ -138,46 +156,68 @@ in {
       };
     };
 
-    systemd.services = let
-      composeDirs = [
-        "Mailer" "gitea" "napcat" "postgreSQL" "lucky"
-        "openlist" "snappymail" "wakapi" "bili_tool_web"
-        "mimo-api" "reader" "bangumi-rs" "vw" "tuwunel"
-      ];
-      composeUp = dir: ''
-        cd /Data1/${dir}
-        ${pkgs.docker-compose}/bin/docker-compose up -d
-        ${pkgs.docker-compose}/bin/docker-compose start 2>/dev/null || true
-      '';
-    in builtins.listToAttrs (map (dir: {
-      name = "docker-compose-${dir}";
-      value = {
-        description = "Docker Compose ${dir}";
-        after = [ "docker.service" "Data1.mount" ];
-        requires = [ "docker.service" "Data1.mount" ];
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStart = pkgs.writeShellScript "compose-up-${dir}" (composeUp dir);
-          ExecStop = pkgs.writeShellScript "compose-down-${dir}" ''
-            cd /Data1/${dir}
-            ${pkgs.docker-compose}/bin/docker-compose down
-          '';
+    systemd.services =
+      let
+        composeDirs = [
+          "Mailer"
+          "gitea"
+          "napcat"
+          "postgreSQL"
+          "lucky"
+          "openlist"
+          "snappymail"
+          "wakapi"
+          "bili_tool_web"
+          "mimo-api"
+          "reader"
+          "bangumi-rs"
+          "vw"
+          "tuwunel"
+        ];
+        composeUp = dir: ''
+          cd /Data1/${dir}
+          ${pkgs.docker-compose}/bin/docker-compose up -d
+          ${pkgs.docker-compose}/bin/docker-compose start 2>/dev/null || true
+        '';
+      in
+      builtins.listToAttrs (
+        map (dir: {
+          name = "docker-compose-${dir}";
+          value = {
+            description = "Docker Compose ${dir}";
+            after = [
+              "docker.service"
+              "Data1.mount"
+            ];
+            requires = [
+              "docker.service"
+              "Data1.mount"
+            ];
+            wantedBy = [ "multi-user.target" ];
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              ExecStart = pkgs.writeShellScript "compose-up-${dir}" (composeUp dir);
+              ExecStop = pkgs.writeShellScript "compose-down-${dir}" ''
+                cd /Data1/${dir}
+                ${pkgs.docker-compose}/bin/docker-compose down
+              '';
+            };
+          };
+        }) composeDirs
+      )
+      // {
+        frpc = {
+          description = "frp client";
+          after = [ "network.target" ];
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            ExecStart = "${pkgs.frp}/bin/frpc -c /Data1/frp/frpc.toml";
+            Restart = "on-failure";
+            RestartSec = 5;
+          };
         };
       };
-    }) composeDirs) // {
-      frpc = {
-        description = "frp client";
-        after = [ "network.target" ];
-        wantedBy = [ "multi-user.target" ];
-        serviceConfig = {
-          ExecStart = "${pkgs.frp}/bin/frpc -c /Data1/frp/frpc.toml";
-          Restart = "on-failure";
-          RestartSec = 5;
-        };
-      };
-    };
 
     services.mysql = {
       enable = true;
@@ -186,7 +226,12 @@ in {
     services.nginx = {
       enable = true;
       virtualHosts."localhost" = {
-        listen = [ { addr = "0.0.0.0"; port = 80; } ];
+        listen = [
+          {
+            addr = "0.0.0.0";
+            port = 80;
+          }
+        ];
         locations."/" = {
           root = "/usr/share/nginx/html";
           index = "index.html index.htm";
@@ -202,8 +247,16 @@ in {
       };
     };
 
-    environment.pathsToLink = [ "/share/applications" "/share/xdg-desktop-portal" ];
+    environment.pathsToLink = [
+      "/share/applications"
+      "/share/xdg-desktop-portal"
+    ];
 
-    boot.kernelModules = [ "kvm-intel" "nf_conntrack_netlink" "xt_nat" "xt_MASQUERADE" ];
+    boot.kernelModules = [
+      "kvm-intel"
+      "nf_conntrack_netlink"
+      "xt_nat"
+      "xt_MASQUERADE"
+    ];
   };
 }

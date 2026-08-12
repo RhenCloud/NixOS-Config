@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.theme;
@@ -8,7 +13,8 @@ let
 
   kvantumThemePackage = pkgs.catppuccin-kvantum.override { inherit variant accent; };
   themeName = "catppuccin-${variant}-${accent}";
-in {
+in
+{
   options.rhencloud.theme.enable = mkEnableOption "desktop theme (GTK/Qt)";
 
   config = mkIf cfg.enable {

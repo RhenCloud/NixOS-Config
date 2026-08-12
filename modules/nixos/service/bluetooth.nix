@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.bluetooth;
@@ -6,7 +11,8 @@ let
   btIsoEnable = pkgs.callPackage ../../../packages/bt-iso-enable {
     kernel = config.boot.kernelPackages.kernel;
   };
-in {
+in
+{
   options.rhencloud.bluetooth.enable = mkEnableOption "Bluetooth";
 
   config = mkIf cfg.enable {

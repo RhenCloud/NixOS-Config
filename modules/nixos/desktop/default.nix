@@ -1,8 +1,10 @@
 { config, lib, ... }:
 with lib;
-let cfg = config.rhencloud.sunshine;
-    avahiCfg = config.rhencloud.avahi;
-in {
+let
+  cfg = config.rhencloud.sunshine;
+  avahiCfg = config.rhencloud.avahi;
+in
+{
   imports = [
     ./sops-secrets.nix
     ./hyprland.nix

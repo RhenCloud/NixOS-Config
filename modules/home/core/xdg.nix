@@ -1,7 +1,9 @@
 { config, lib, ... }:
 with lib;
-let cfg = config.rhencloud.hm-xdg;
-in {
+let
+  cfg = config.rhencloud.hm-xdg;
+in
+{
   options.rhencloud.hm-xdg.enable = mkEnableOption "XDG user directories";
 
   config = mkIf cfg.enable {

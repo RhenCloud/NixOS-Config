@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.hm-packages;
-in {
+let
+  cfg = config.rhencloud.hm-packages;
+in
+{
   options.rhencloud.hm-packages.enable = mkEnableOption "home packages";
 
   config = mkIf cfg.enable {

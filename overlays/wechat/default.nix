@@ -1,4 +1,5 @@
-{ }: _final: prev:
+{ }:
+_final: prev:
 let
   version = "4.1.1.4";
   src = prev.fetchurl {

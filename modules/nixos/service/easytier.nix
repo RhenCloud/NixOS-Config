@@ -3,7 +3,8 @@ with lib;
 let
   cfg = config.rhencloud.easytier;
   etUser = "easytier";
-in {
+in
+{
   options.rhencloud.easytier.enable = mkEnableOption "EasyTier VPN";
 
   config = mkIf cfg.enable {

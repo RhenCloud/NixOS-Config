@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.fcitx5;
-in {
+let
+  cfg = config.rhencloud.fcitx5;
+in
+{
   options.rhencloud.fcitx5.enable = mkEnableOption "Fcitx5 input method";
 
   config = mkIf cfg.enable {

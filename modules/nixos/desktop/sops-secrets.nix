@@ -114,7 +114,8 @@ let
       };
     };
   };
-in {
+in
+{
   config = mkIf config.my.isDesktop {
     sops.secrets = {
       "sleepy-token" = {
@@ -250,10 +251,7 @@ in {
         group = "rhencloud";
         mode = "0644";
         content =
-          config.sops.placeholder."ssh-tc-discourse"
-          + "\n\n"
-          + config.sops.placeholder."ssh-bee-hk-1"
-          + "\n";
+          config.sops.placeholder."ssh-tc-discourse" + "\n\n" + config.sops.placeholder."ssh-bee-hk-1" + "\n";
       };
 
       "piri.toml" = {

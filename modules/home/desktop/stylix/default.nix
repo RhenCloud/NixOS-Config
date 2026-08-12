@@ -1,8 +1,14 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.hmStylix;
-in {
+in
+{
   options.rhencloud.hmStylix.enable = mkEnableOption "HM Stylix theme";
   config = mkIf cfg.enable {
     stylix = {
