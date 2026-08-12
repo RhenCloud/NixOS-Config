@@ -1,0 +1,54 @@
+name: Mirror Repository
+
+on:
+  push:
+  delete:          # 同步删除远程分支/标签
+  workflow_dispatch:  # 支持手动触发
+
+concurrency:
+  group: mirror-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 完整历史，保证 --mirror 正确
+
+      # ---------- GitLab ----------
+      - name: Mirror to GitLab
+        if: ${{ secrets.GITLAB_TOKEN != '' }}
+        env:
+          TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          # 默认假设目标仓库路径与 GitHub 相同，可按需修改
+          TARGET: https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/RhenCloud/NixOS-Config.git
+        run: |
+          git remote remove gitlab 2>/dev/null || true
+          git remote add gitlab "$TARGET"
+          git push --mirror --force gitlab
+
+      # ---------- Codeberg ----------
+      - name: Mirror to Codeberg
+        if: ${{ secrets.CODEBERG_TOKEN != '' }}
+        env:
+          TOKEN: ${{ secrets.CODEBERG_TOKEN }}
+          TARGET: https://oauth2:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/RhenCloud/NixOS-Config.git
+        run: |
+          git remote remove codeberg 2>/dev/null || true
+          git remote add codeberg "$TARGET"
+          git push --mirror --force codeberg
+
+      # ---------- cnb.cool ----------
+      - name: Mirror to cnb.cool
+        if: ${{ secrets.CNB_TOKEN != '' }}
+        env:
+          TOKEN: ${{ secrets.CNB_TOKEN }}
+          # cnb.cool 固定用户名为 cnb，密码为 access token
+          TARGET: https://cnb:${{ secrets.CNB_TOKEN }}@cnb.cool/RhenCloud/NixOS-Config.git
+        run: |
+          git remote remove cnb 2>/dev/null || true
+          git remote add cnb "$TARGET"
+          git push --mirror --force cnb
