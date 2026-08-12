@@ -6,8 +6,16 @@
   ];
 
   # 基础硬件支持
-  boot.supportedFilesystems = [ "btrfs" "ntfs" "vfat" "ext4" ];
-  boot.kernelModules = [ "kvm-intel" "ntfs3" ];
+  boot.supportedFilesystems = [
+    "btrfs"
+    "ntfs"
+    "vfat"
+    "ext4"
+  ];
+  boot.kernelModules = [
+    "kvm-intel"
+    "ntfs3"
+  ];
 
   # 网络支持
   networking.wireless.enable = true;

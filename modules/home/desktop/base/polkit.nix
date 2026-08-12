@@ -1,8 +1,14 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.hmPolkit;
-in {
+in
+{
   options.rhencloud.hmPolkit.enable = mkEnableOption "Hyprland Polkit agent";
   config = mkIf cfg.enable {
     systemd.user.services.hyprpolkitagent = {

@@ -1,25 +1,31 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.python;
-in {
+in
+{
   options.rhencloud.python.enable = mkEnableOption "Python development tools";
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-    python315
-    prek
-    ruff
-    # python311
-  ];
+      python315
+      prek
+      ruff
+      # python311
+    ];
 
-  nixpkgs.config.allowInsecure = true;
+    nixpkgs.config.allowInsecure = true;
 
-  programs.uv = {
-    enable = true;
-    settings = {
-      system-certs = true;
-      index = [ { url = "https://pypi.org/simpl"; } ];
+    programs.uv = {
+      enable = true;
+      settings = {
+        system-certs = true;
+        index = [ { url = "https://pypi.org/simpl"; } ];
+      };
     };
-  };
   };
 }

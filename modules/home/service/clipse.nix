@@ -2,43 +2,44 @@
 with lib;
 let
   cfg = config.rhencloud.clipse;
-in {
+in
+{
   options.rhencloud.clipse.enable = mkEnableOption "Clipse clipboard manager";
   config = mkIf cfg.enable {
     services.clipse = {
-    enable = true;
-    settings = {
-      maxHistory = 10000;
-      imageDisplay.type = "kitty";
+      enable = true;
+      settings = {
+        maxHistory = 10000;
+        imageDisplay.type = "kitty";
+      };
+      theme = {
+        "useCustom" = true;
+        "TitleFore" = "#F8F8F2";
+        "TitleBack" = "#282A36";
+        "TitleInfo" = "#F8F8F2";
+        "NormalTitle" = "#FF79C6";
+        "DimmedTitle" = "#6272A4";
+        "SelectedTitle" = "#8BE9FD";
+        "NormalDesc" = "#BD93F9";
+        "DimmedDesc" = "#6272A4";
+        "SelectedDesc" = "#8BE9FD";
+        "StatusMsg" = "#BD93F9";
+        "PinIndicatorColor" = "#ff5555";
+        "SelectedBorder" = "#8BE9FD";
+        "SelectedDescBorder" = "#8BE9FD";
+        "FilteredMatch" = "#50FA7B";
+        "FilterPrompt" = "#FFB86C";
+        "FilterInfo" = "#F8F8F2";
+        "FilterText" = "#F8F8F2";
+        "FilterCursor" = "#FF79C6";
+        "HelpKey" = "#8BE9FD";
+        "HelpDesc" = "#F8F8F2";
+        "PageActiveDot" = "#50FA7B";
+        "PageInactiveDot" = "#6272A4";
+        "DividerDot" = "#FF5555";
+        "PreviewedText" = "#F8F8F2";
+        "PreviewBorder" = "#BD93F9";
+      };
     };
-    theme = {
-      "useCustom" = true;
-      "TitleFore" = "#F8F8F2";
-      "TitleBack" = "#282A36";
-      "TitleInfo" = "#F8F8F2";
-      "NormalTitle" = "#FF79C6";
-      "DimmedTitle" = "#6272A4";
-      "SelectedTitle" = "#8BE9FD";
-      "NormalDesc" = "#BD93F9";
-      "DimmedDesc" = "#6272A4";
-      "SelectedDesc" = "#8BE9FD";
-      "StatusMsg" = "#BD93F9";
-      "PinIndicatorColor" = "#ff5555";
-      "SelectedBorder" = "#8BE9FD";
-      "SelectedDescBorder" = "#8BE9FD";
-      "FilteredMatch" = "#50FA7B";
-      "FilterPrompt" = "#FFB86C";
-      "FilterInfo" = "#F8F8F2";
-      "FilterText" = "#F8F8F2";
-      "FilterCursor" = "#FF79C6";
-      "HelpKey" = "#8BE9FD";
-      "HelpDesc" = "#F8F8F2";
-      "PageActiveDot" = "#50FA7B";
-      "PageInactiveDot" = "#6272A4";
-      "DividerDot" = "#FF5555";
-      "PreviewedText" = "#F8F8F2";
-      "PreviewBorder" = "#BD93F9";
-    };
-  };
   };
 }

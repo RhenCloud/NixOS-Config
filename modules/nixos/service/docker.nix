@@ -1,7 +1,15 @@
-{ config, lib, pkgs, primaryUser, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  primaryUser,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.docker;
-in {
+let
+  cfg = config.rhencloud.docker;
+in
+{
   options.rhencloud.docker.enable = mkEnableOption "Docker";
 
   config = mkIf cfg.enable {

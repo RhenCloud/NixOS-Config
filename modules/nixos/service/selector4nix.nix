@@ -45,7 +45,8 @@ let
       priority = 45;
     }
   ];
-in {
+in
+{
   options.rhencloud.selector4nix.enable = mkEnableOption "selector4nix substituter";
 
   config = mkIf cfg.enable {

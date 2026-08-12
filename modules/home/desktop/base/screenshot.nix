@@ -1,8 +1,14 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.hmScreenshot;
-in {
+in
+{
   options.rhencloud.hmScreenshot.enable = mkEnableOption "screenshot tools";
   config = mkIf cfg.enable {
     services.flameshot = {

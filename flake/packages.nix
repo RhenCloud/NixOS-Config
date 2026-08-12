@@ -1,7 +1,8 @@
 { inputs, lib, ... }:
 let
   # 自动发现 packages/<name>/default.nix
-  discoverPackages = pkgs:
+  discoverPackages =
+    pkgs:
     let
       pDir = toString ../packages;
       entries = builtins.readDir pDir;
@@ -10,12 +11,12 @@ let
       isDisabled = name: builtins.pathExists "${pDir}/${name}/disabled";
       pkgDirs = lib.filterAttrs (name: _: hasDefault name && !isDisabled name) dirs;
     in
-      builtins.listToAttrs (
-        map (name: {
-          inherit name;
-          value = pkgs.callPackage "${pDir}/${name}/default.nix" { };
-        }) (builtins.attrNames pkgDirs)
-      );
+    builtins.listToAttrs (
+      map (name: {
+        inherit name;
+        value = pkgs.callPackage "${pDir}/${name}/default.nix" { };
+      }) (builtins.attrNames pkgDirs)
+    );
 in
 {
   perSystem = { pkgs, ... }: {

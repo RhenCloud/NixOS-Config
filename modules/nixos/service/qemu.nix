@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.qemu;
-in {
+let
+  cfg = config.rhencloud.qemu;
+in
+{
   options.rhencloud.qemu.enable = mkEnableOption "QEMU virtualization";
 
   config = mkIf cfg.enable {

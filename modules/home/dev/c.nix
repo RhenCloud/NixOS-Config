@@ -1,26 +1,32 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.c;
-in {
+in
+{
   options.rhencloud.c.enable = mkEnableOption "C/C++ development tools";
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-    clang
-    clang-tools
-    lldb
-    llvm
-    xmake
-    gnumake
-    cmake
-    ninja
-    pkg-config
-    mold
-  ];
+      clang
+      clang-tools
+      lldb
+      llvm
+      xmake
+      gnumake
+      cmake
+      ninja
+      pkg-config
+      mold
+    ];
 
-  home.sessionVariables = {
-    CC = "clang";
-    CXX = "clang++";
+    home.sessionVariables = {
+      CC = "clang";
+      CXX = "clang++";
     };
   };
 }

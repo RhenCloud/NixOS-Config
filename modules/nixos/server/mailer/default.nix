@@ -38,7 +38,9 @@ in
       isSystemUser = true;
       group = "mailer";
     };
-    users.groups.mailer = { gid = 10001; };
+    users.groups.mailer = {
+      gid = 10001;
+    };
 
     sops.secrets."github-token" = {
       sopsFile = ../../../../secrets/common.yaml;

@@ -1,9 +1,15 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.prismlauncher;
   username = config.home.username;
-in {
+in
+{
   options.rhencloud.prismlauncher.enable = mkEnableOption "Prism Launcher";
   config = mkIf cfg.enable {
     programs.prismlauncher = {

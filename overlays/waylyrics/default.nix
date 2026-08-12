@@ -1,4 +1,5 @@
-{ }: _final: prev:
+{ }:
+_final: prev:
 let
   src = prev.fetchFromGitHub {
     owner = "waylyrics";
@@ -6,7 +7,8 @@ let
     rev = "v0.4.0";
     hash = "sha256:08b2ciwdzn939vi6lyhgl80y1n04d6fgs9p219zdj18rwlkmwb1j";
   };
-in {
+in
+{
   waylyrics = prev.waylyrics.overrideAttrs (_old: {
     version = "0.4.0";
     inherit src;

@@ -3,7 +3,9 @@
   lib,
   config,
   ...
-}: with lib; mkIf config.rhencloud.nvf.enable {
+}:
+with lib;
+mkIf config.rhencloud.nvf.enable {
 
   home.packages = with pkgs; [
     neovide

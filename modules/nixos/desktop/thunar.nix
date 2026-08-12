@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.thunar;
-in {
+let
+  cfg = config.rhencloud.thunar;
+in
+{
   options.rhencloud.thunar.enable = mkEnableOption "Thunar file manager";
 
   config = mkIf cfg.enable {

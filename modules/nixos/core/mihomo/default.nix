@@ -8,7 +8,8 @@ let
   parts = lib.splitString "# __PROXIES_HERE__" (builtins.readFile ./config.yaml);
   headPart = builtins.head parts;
   tailPart = builtins.elemAt parts 1;
-in {
+in
+{
   config = lib.mkIf cfg.enable {
     sops.secrets."mihomo-proxies" = {
       sopsFile = ../../../../secrets/hosts/nixos-desktop.yaml;
@@ -27,7 +28,6 @@ in {
       requires = [ "sops-install-secrets.service" ];
     };
 
-    environment.etc."mihomo/config.yaml".source =
-      config.sops.templates."mihomo-config.yaml".path;
+    environment.etc."mihomo/config.yaml".source = config.sops.templates."mihomo-config.yaml".path;
   };
 }

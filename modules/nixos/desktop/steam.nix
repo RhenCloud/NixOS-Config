@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.steam;
-in {
+let
+  cfg = config.rhencloud.steam;
+in
+{
   options.rhencloud.steam.enable = mkEnableOption "Steam";
 
   config = mkIf cfg.enable {

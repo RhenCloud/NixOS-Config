@@ -2,7 +2,8 @@
 with lib;
 let
   cfg = config.rhencloud.hmSession;
-in {
+in
+{
   options.rhencloud.hmSession.enable = mkEnableOption "desktop session env vars";
   config = mkIf cfg.enable {
     home.sessionVariables = {

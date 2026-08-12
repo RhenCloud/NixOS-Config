@@ -1,8 +1,14 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.foot;
-in {
+in
+{
   options.rhencloud.foot.enable = mkEnableOption "Foot terminal";
   config = mkIf cfg.enable {
     programs.foot = {

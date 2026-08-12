@@ -8,7 +8,8 @@ with lib;
 let
   inherit (lib.generators) mkLuaInline;
   cfg = config.rhencloud.nvf;
-in {
+in
+{
   config = mkIf cfg.enable {
     programs.nvf.settings.vim = {
       viAlias = true;

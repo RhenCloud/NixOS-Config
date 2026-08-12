@@ -1,7 +1,6 @@
-_:
-_final: prev: {
+_: _final: prev: {
   niri = prev.niri.overrideAttrs (old: {
-    patches = (old.patches or []) ++ [
+    patches = (old.patches or [ ]) ++ [
       ../../patches/niri/mouse-passthrough.patch
       ../../patches/niri/pin.patch
     ];

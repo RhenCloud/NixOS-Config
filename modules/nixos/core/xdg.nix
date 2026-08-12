@@ -1,7 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with lib;
-let cfg = config.rhencloud.xdg;
-in {
+let
+  cfg = config.rhencloud.xdg;
+in
+{
   options.rhencloud.xdg.enable = mkEnableOption "XDG portals configuration";
 
   config = mkIf cfg.enable {
@@ -17,15 +24,24 @@ in {
           xdg-desktop-portal-wlr
         ];
 
-        configPackages = [ pkgs.niri pkgs.hyprland ];
+        configPackages = [
+          pkgs.niri
+          pkgs.hyprland
+        ];
 
         config = {
           hyprland = {
-            default = [ "hyprland" "gtk" ];
+            default = [
+              "hyprland"
+              "gtk"
+            ];
             "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
           };
           niri = {
-            default = [ "gnome" "gtk" ];
+            default = [
+              "gnome"
+              "gtk"
+            ];
             "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
             "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
             "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];

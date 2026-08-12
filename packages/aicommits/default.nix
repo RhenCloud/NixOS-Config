@@ -29,7 +29,11 @@ stdenv.mkDerivation {
     hash = "sha256-nEJ7PGfLnpD9xyLk5iPDtFAzi3BQ7CQ+lWJuKieM4jk=";
   };
 
-  nativeBuildInputs = [ pnpm pnpmConfigHook nodejs ];
+  nativeBuildInputs = [
+    pnpm
+    pnpmConfigHook
+    nodejs
+  ];
 
   buildPhase = ''
     runHook preBuild

@@ -1,4 +1,9 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.hmBasePackages;
@@ -9,7 +14,8 @@ let
     runtimeInputs = [ pkgs.emote ];
     text = "exec ${lib.getExe pkgs.emote} \"$@\" 2>/dev/null";
   };
-in {
+in
+{
   options.rhencloud.hmBasePackages.enable = mkEnableOption "base desktop packages";
   config = mkIf cfg.enable {
     home.packages = with pkgs; [

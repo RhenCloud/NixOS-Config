@@ -10,7 +10,8 @@ let
   cfg = config.rhencloud.yazi;
 
   dracula-flavor = "${inputs.yazi-flavors}/dracula.yazi";
-in {
+in
+{
   options.rhencloud.yazi.enable = mkEnableOption "Yazi file manager";
 
   config = mkIf cfg.enable {
@@ -60,7 +61,7 @@ in {
         opener = {
           edit = [
             {
-              run = ''$'' + ''{EDITOR:-zed} "$@"'';
+              run = "$" + ''{EDITOR:-zed} "$@"'';
               block = true;
               orphan = false;
               desc = "Edit";
@@ -98,7 +99,10 @@ in {
             desc = "Smart enter";
           }
           {
-            on = [ "g" "i" ];
+            on = [
+              "g"
+              "i"
+            ];
             run = "plugin gitui";
             desc = "Git UI";
           }
