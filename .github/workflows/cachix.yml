@@ -87,10 +87,10 @@ jobs:
       (github.event_name != 'workflow_dispatch' || inputs.deploy == true)
     timeout-minutes: 60
     strategy:
-      fail-fast: false
       matrix:
-        node:
-          - yc-hk-1
+        include:
+          - node: yc-hk-1
+            ssh_port: "45855"
           # - arch-server
     name: Deploy ${{ matrix.node }}
     concurrency:
@@ -143,5 +143,5 @@ jobs:
           # 这里只补充私钥路径
           nix run github:serokell/deploy-rs -- \
             ".#${{ matrix.node }}" \
-            --ssh-opts="-i $HOME/.ssh/deploy_key -o StrictHostKeyChecking=accept-new" \
+            --ssh-opts="-i $HOME/.ssh/deploy_key -p ${{ matrix.ssh_port }} -o StrictHostKeyChecking=accept-new" \
             --auto-rollback true
