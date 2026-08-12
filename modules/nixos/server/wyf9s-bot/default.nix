@@ -2,13 +2,14 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 with lib;
 let
   cfg = config.rhencloud.services.wyf9s-bot;
-  configFile = "${inputs.self}/modules/nixos/server/wyf9s-bot/config.yaml";
+  # 相对路径：只把单个文件进 store，避免 inputs.self 整仓复制导致
+  # “store path was hashed … contents have changed” 评估失败
+  configFile = ./config.yaml;
 in
 {
   options.rhencloud.services.wyf9s-bot = {
