@@ -1,0 +1,46 @@
+name: Build & Push to Cachix
+
+on:
+  push:
+    branches: [main, master]   # 按需修改
+  pull_request:                # 可选，PR 也构建但不推送也可以
+  workflow_dispatch:           # 手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: rhencloud
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          # 可选：同时拉取其他社区缓存
+          # extraPullNames: nix-community
+
+      # ===== 核心构建步骤（按你的实际配置选择一种） =====
+
+      # 方式 A：构建整个系统配置（推荐，最全面）
+      - name: Build NixOS system
+        run: |
+          nix build .#nixosConfigurations.nixos-desktop.config.system.build.toplevel -L
+          # 如果有多个 host，可以循环或 matrix
+
+      # 方式 B：只构建你关心的自定义包 / overlays 包
+      # - name: Build custom packages
+      #   run: |
+      #     nix build .#packages.x86_64-linux.my-custom-pkg -L
+      #     nix build .#packages.x86_64-linux.another-pkg -L
+
+      # 方式 C：构建所有 packages（如果 flake 里定义了 packages）
+      # - run: nix build .#packages.x86_64-linux.default -L
+
+      # 可选：额外检查
+      # - run: nix flake check -L
