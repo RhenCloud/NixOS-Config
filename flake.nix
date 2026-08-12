@@ -127,8 +127,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # ── 无 nixpkgs input 的输入（tarball / 未验证） ──
-    siiway-cli.url = "https://gh-proxy.com/github.com/siiway/siiway-cli/archive/main.tar.gz";
+    # ── 其它 flake 输入 ────────────────────────────────
+    # 勿用 gh-proxy 等镜像 URL：GitHub Actions 上常 403，且无法走 github: 协议缓存
+    siiway-cli.url = "github:siiway/siiway-cli";
     siiway-oc-plugin.url = "github:SiiWay/VoidSwitch";
 
     # ── flake = false（纯数据源，无 flake.nix） ────────
