@@ -24,11 +24,30 @@ on:
       - "packages/**"
       - "secrets/**"
       - ".github/workflows/cachix.yml"
-  workflow_dispatch: # 手动触发始终可用
+  workflow_dispatch:
+      inputs:
+        deploy:
+          description: "构建成功后是否部署"
+          required: false
+          default: true
+          type: boolean
+
+concurrency:
+  group: cachix-deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        host:
+          - nixos-desktop
+          - yc-hk-1
+          # - arch-server
+    name: Build ${{ matrix.host }}
     steps:
       - uses: actions/checkout@v4
 
@@ -41,26 +60,88 @@ jobs:
       - uses: cachix/cachix-action@v17
         with:
           name: rhencloud
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          # 可选：同时拉取其他社区缓存
-          # extraPullNames: nix-community
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
-      # ===== 核心构建步骤（按你的实际配置选择一种） =====
-
-      # 方式 A：构建整个系统配置（推荐，最全面）
-      - name: Build NixOS system
+      - name: Setup sops age key
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          nix build .#nixosConfigurations.nixos-desktop.config.system.build.toplevel -L
-          # 如果有多个 host，可以循环或 matrix
+          if [ -z "$SOPS_AGE_KEY" ]; then
+            echo "SOPS_AGE_KEY 未设置，跳过"
+            exit 0
+          fi
+          mkdir -p ~/.config/sops/age
+          echo "$SOPS_AGE_KEY" > ~/.config/sops/age/keys.txt
+          chmod 600 ~/.config/sops/age/keys.txt
 
-      # 方式 B：只构建你关心的自定义包 / overlays 包
-      # - name: Build custom packages
-      #   run: |
-      #     nix build .#packages.x86_64-linux.my-custom-pkg -L
-      #     nix build .#packages.x86_64-linux.another-pkg -L
+      - name: Build ${{ matrix.host }}
+        run: |
+          nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" -L
 
-      # 方式 C：构建所有 packages（如果 flake 里定义了 packages）
-      # - run: nix build .#packages.x86_64-linux.default -L
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
+      (github.event_name != 'workflow_dispatch' || inputs.deploy == true)
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - yc-hk-1
+          # - arch-server
+    name: Deploy ${{ matrix.node }}
+    concurrency:
+      group: deploy-${{ matrix.node }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
 
-      # 可选：额外检查
-      # - run: nix flake check -L
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: rhencloud
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: Setup sops age key
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: |
+          if [ -z "$SOPS_AGE_KEY" ]; then
+            echo "SOPS_AGE_KEY 未设置，跳过"
+            exit 0
+          fi
+          mkdir -p ~/.config/sops/age
+          echo "$SOPS_AGE_KEY" > ~/.config/sops/age/keys.txt
+          chmod 600 ~/.config/sops/age/keys.txt
+
+      - name: Setup SSH key
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          if [ -z "$DEPLOY_SSH_KEY" ]; then
+            echo "DEPLOY_SSH_KEY 未设置"
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # 可选：预写 known_hosts，减少首次连接交互问题
+          # 端口/IP 以 deploy.nix 为准；yc-hk-1 当前为 45855 / 83.229.127.169
+          ssh-keyscan -p 45855 -H 83.229.127.169 >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Deploy ${{ matrix.node }}
+        run: |
+          # hostname / sshOpts（含 -p）来自 flake 的 deploy.nodes
+          # 这里只补充私钥路径
+          nix run github:serokell/deploy-rs -- \
+            ".#${{ matrix.node }}" \
+            --ssh-opts="-i $HOME/.ssh/deploy_key -o StrictHostKeyChecking=accept-new" \
+            --auto-rollback true
