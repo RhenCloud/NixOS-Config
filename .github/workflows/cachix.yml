@@ -60,7 +60,8 @@ jobs:
       - uses: cachix/cachix-action@v17
         with:
           name: rhencloud
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush: true   # 禁止自动推送中间产物（.deb 等）
 
       - name: Setup sops age key
         env:
@@ -74,9 +75,74 @@ jobs:
           echo "$SOPS_AGE_KEY" > ~/.config/sops/age/keys.txt
           chmod 600 ~/.config/sops/age/keys.txt
 
-      - name: Build ${{ matrix.host }}
+# ========== 构建前检查 ==========
+      - name: Flake check
         run: |
-          nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" -L
+          set -euo pipefail
+          # 跑 flake 里定义的 checks（eval / 测试 / 格式等）
+          nix flake check -L
+
+      # 可选：只求值、不构建，确认当前 matrix host 配置能解析
+      - name: Eval host configuration
+        run: |
+          set -euo pipefail
+          echo "==> Evaluating nixosConfigurations.${{ matrix.host }}"
+          nix eval --raw \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath"
+          echo "OK: ${{ matrix.host }} 配置可求值"
+
+      # ========== 正式构建 ==========
+      - name: Build custom packages + overlay packages
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/out-paths
+          : > /tmp/out-paths/list
+
+          echo "==> Building flake packages"
+          for name in $(nix eval --json '.#packages.x86_64-linux' --apply 'builtins.attrNames' | jq -r '.[]'); do
+            echo "---- .#$name ----"
+            nix build ".#packages.x86_64-linux.$name" -L --print-out-paths | tee -a /tmp/out-paths/list
+          done
+
+          echo "==> Building overlay-modified packages (auto-discovered)"
+          nix build -L --print-out-paths --impure --expr '
+            let
+              flake = builtins.getFlake (toString ./.);
+              system = "x86_64-linux";
+              lib = flake.inputs.nixpkgs.lib;
+              helpers = import ./flake/helpers.nix {
+                inherit lib;
+                inputs = flake.inputs // { self = flake; };
+              };
+              pkgs0 = import flake.inputs.nixpkgs {
+                inherit system;
+                config.allowUnfree = true;
+              };
+              overlays = helpers.overlays;
+              overlayAttrNames = lib.unique (
+                lib.concatMap (ov: builtins.attrNames (ov pkgs0 pkgs0)) overlays
+              );
+              pkgs = import flake.inputs.nixpkgs {
+                inherit system;
+                config.allowUnfree = true;
+                inherit overlays;
+              };
+            in
+              map (name: pkgs.${name}) overlayAttrNames
+          ' | tee -a /tmp/out-paths/list
+
+          echo "All paths to push:"
+          cat /tmp/out-paths/list
+
+      - name: Push to Cachix
+        if: github.event_name != 'pull_request'
+        run: |
+          set -euo pipefail
+          if [ ! -s /tmp/out-paths/list ]; then
+            echo "没有可推送的路径，跳过"
+            exit 0
+          fi
+          cachix push rhencloud < /tmp/out-paths/list
 
   deploy:
     needs: build
