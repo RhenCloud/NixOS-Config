@@ -1,5 +1,16 @@
 # RhenCloud 的 NixOS 配置
 
+## 镜像仓库
+
+本仓库同时托管于以下平台，内容保持同步：
+
+| 平台 | 链接 |
+|------|------|
+| **GitHub** | https://github.com/RhenCloud/NixOS-Config |
+| **GitLab** | https://gitlab.com/RhenCloud/NixOS-Config |
+| **Codeberg** | https://codeberg.org/RhenCloud/NixOS-Config |
+| **cnb.cool** | https://cnb.cool/RhenCloud/NixOS-Config |
+
 ## 介绍
 
 | 项目       | 实现                                                           |
