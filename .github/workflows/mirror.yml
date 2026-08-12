@@ -29,7 +29,10 @@ jobs:
           fi
           git remote remove gitlab 2>/dev/null || true
           git remote add gitlab "https://oauth2:${TOKEN}@gitlab.com/RhenCloud/NixOS-Config.git"
-          git push --mirror --force gitlab
+          # 只推送 heads 和 tags，并 prune 删除远程多余分支
+          git push --force --prune gitlab \
+            'refs/heads/*:refs/heads/*' \
+            'refs/tags/*:refs/tags/*'
 
       # ---------- Codeberg ----------
       - name: Mirror to Codeberg
@@ -42,7 +45,9 @@ jobs:
           fi
           git remote remove codeberg 2>/dev/null || true
           git remote add codeberg "https://oauth2:${TOKEN}@codeberg.org/RhenCloud/NixOS-Config.git"
-          git push --mirror --force codeberg
+          git push --force --prune codeberg \
+            'refs/heads/*:refs/heads/*' \
+            'refs/tags/*:refs/tags/*'
 
       # ---------- cnb.cool ----------
       - name: Mirror to cnb.cool
@@ -53,7 +58,8 @@ jobs:
             echo "CNB_TOKEN 未设置，跳过 cnb.cool 镜像"
             exit 0
           fi
-          # cnb.cool 固定用户名为 cnb
           git remote remove cnb 2>/dev/null || true
           git remote add cnb "https://cnb:${TOKEN}@cnb.cool/RhenCloud/NixOS-Config.git"
-          git push --mirror --force cnb
+          git push --force --prune cnb \
+            'refs/heads/*:refs/heads/*' \
+            'refs/tags/*:refs/tags/*'
