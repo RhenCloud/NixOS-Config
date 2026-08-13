@@ -101,24 +101,31 @@ jobs:
           set -euo pipefail
           nix shell nixpkgs#statix -c statix check .
 
-      - name: Commit and push if changed
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Commit & Push changes
+        uses: siiway/verified_bot_commit@v0
+        with:
+          if-no-commit: info
+          message: 'style: apply nixfmt-rfc-style'
+          files: |
+            **
+      # - name: Commit and push if changed
+      #   run: |
+      #     set -euo pipefail
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet && git diff --cached --quiet; then
-            echo "无格式变更，跳过提交"
-            exit 0
-          fi
+      #     if git diff --quiet && git diff --cached --quiet; then
+      #       echo "无格式变更，跳过提交"
+      #       exit 0
+      #     fi
 
-          git add -- '**/*.nix' '*.nix' || git add -u -- '*.nix'
-          # 再次确认有 staged 变更
-          if git diff --cached --quiet; then
-            echo "无 staged 变更，跳过提交"
-            exit 0
-          fi
+      #     git add -- '**/*.nix' '*.nix' || git add -u -- '*.nix'
+      #     # 再次确认有 staged 变更
+      #     if git diff --cached --quiet; then
+      #       echo "无 staged 变更，跳过提交"
+      #       exit 0
+      #     fi
 
-          # 提交信息带标记，配合 job if 防止 format → push → format 循环
-          git commit -m "style: apply nixfmt-rfc-style"
-          git push
+          # # 提交信息带标记，配合 job if 防止 format → push → format 循环
+          # git commit -m "style: apply nixfmt-rfc-style"
+          # git push
