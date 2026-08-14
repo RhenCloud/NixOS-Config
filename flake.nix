@@ -2,15 +2,16 @@
   description = "RhenCloud NixOS";
 
   nixConfig = {
-    extra-substituters = [
-      "s3://hi168-h5hv6zw90zf-sslnc1b0-s/nix-cache?endpoint=https://s3.hi168.com&region=auto"
-      "https://yazi.cachix.org"
-    ];
-    extra-trusted-substituters = [
-      "s3://hi168-h5hv6zw90zf-sslnc1b0-s/nix-cache?endpoint=https://s3.hi168.com&region=auto"
-      "https://yazi.cachix.org"
-    ];
+    # extra-substituters = [
+    #   # "s3://hi168-h5hv6zw90zf-sslnc1b0-s/nix-cache?endpoint=https://s3.hi168.com&region=auto"
+    #   "https://yazi.cachix.org"
+    # ];
+    # extra-trusted-substituters = [
+    #   # "s3://hi168-h5hv6zw90zf-sslnc1b0-s/nix-cache?endpoint=https://s3.hi168.com&region=auto"
+    #   "https://yazi.cachix.org"
+    # ];
     substituters = [
+      "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
       "https://cache.nixos.org"
@@ -21,12 +22,11 @@
       "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
     trusted-substituters = [
-      "https://hyprland.cachix.org"
-      "https://nix-community.cachix.org"
       "https://mirror.sjtu.edu.cn"
       "https://mirrors.ustc.edu.cn"
     ];
     trusted-public-keys = [
+      "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
@@ -79,7 +79,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
-      url = "github:sodiboo/niri-flake";
+      # 临时锁定到 PR #1853，修复 nixpkgs 移除 libdisplay-info_0_2 后构建失败
+      # 上游合并后可移除此固定（TODO: niri-flake release）
+      url = "github:sodiboo/niri-flake/7e196a5ce0bf209d3aca844bb31edce5284d6484";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mangowm = {
@@ -128,7 +130,6 @@
     };
 
     # ── 其它 flake 输入 ────────────────────────────────
-    # 勿用 gh-proxy 等镜像 URL：GitHub Actions 上常 403，且无法走 github: 协议缓存
     siiway-cli.url = "github:siiway/siiway-cli";
     siiway-oc-plugin.url = "github:SiiWay/VoidSwitch";
 
