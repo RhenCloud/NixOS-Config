@@ -37,12 +37,16 @@ diff -ruN a/src/layout/monitor.rs b/src/layout/monitor.rs
              let (win, hit) = ws.window_under(pos_within_output - geo.loc)?;
              Some((win, hit.offset_win_pos(geo.loc)))
          }
-@@ -1747,6 +1757,26 @@
+@@ -1747,6 +1757,30 @@
 
              ws.render_scrolling(ctx.r(), xray_pos, focus_ring, push!());
          }
 +
 +        // Render pinned floating tiles from all workspaces on top of everything.
++        let crop_bounds = Rectangle::new(
++            Point::from((-i32::MAX / 2, -i32::MAX / 2)),
++            Size::from((i32::MAX, i32::MAX)),
++        );
 +        let active_geo = self.workspaces_render_geo()
 +            .nth(self.active_workspace_idx)
 +            .unwrap_or_default();
