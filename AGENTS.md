@@ -47,11 +47,14 @@ patches/                       # niri 的补丁
 ## 常用命令
 
 ```bash
-# 仅构建（创建 ./result 符号链接）
-nixos-rebuild build --flake .#nixos-desktop
+# 统一入口（flake apps，见 README「构建 / 测试 / 部署」）
+nix run .#build -- nixos-desktop        # 仅构建
+nix run .#test -- nixos-desktop         # 测试但不创建引导项
+nix run .#switch -- nixos-desktop       # 构建并切换
+nix run .#deploy -- yc-hk-1             # 部署到远程服务器
 
-# 测试但不创建引导项
-sudo nixos-rebuild test --flake .#nixos-desktop
+# 等价的原生命令
+nixos-rebuild build --flake .#nixos-desktop
 
 # 对比当前与新建闭包的包差异
 nix diff-closures /run/current-system result

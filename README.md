@@ -35,6 +35,103 @@
 | 桌面歌词   | [Waylyrics](https://github.com/waylyrics/waylyrics)            |
 | 浏览器     | [Zen Browser](https://zen-browser.app)                         |
 
+## 架构
+
+本仓库使用 [flake-parts](https://flake.parts) 组织为一个 Nix flake，所有输出由
+`flake.nix` 统一声明：
+
+```text
+flake.nix
+    │
+    ▼
+flake-parts
+    │
+    ├── nixosConfigurations   → systems/ 下每台主机的系统配置
+    ├── homeConfigurations    → homes/ 下每位用户的主机配置
+    ├── packages              → packages/ 下的自定义包
+    ├── devShells             → 开发环境（default / python）
+    ├── checks                → 质量检查（nix flake check 统一入口）
+    ├── apps                  → build / test / switch / deploy 统一入口
+    └── deploy                → deploy-rs 部署节点定义
+```
+
+顶层目录职责：
+
+```text
+systems/   → NixOS host（每主机一个目录，含 hardware-configuration.nix）
+homes/     → Home Manager profile（<用户>@<主机> 一个目录）
+modules/   → 可复用模块（nixos/ 与 home/，自动发现）
+overlays/  → 包覆盖（对 nixpkgs 包的修改）
+secrets/   → sops 加密的密钥
+flake/     → flake 实现（各输出模块）
+packages/  → 自定义包（自动发现）
+```
+
+## 主机（Hosts）
+
+| 主机          | 类型     | 说明                     |
+| ------------- | -------- | ------------------------ |
+| `nixos-desktop` | 桌面     | 日常使用，Hyprland / Niri |
+| `yc-hk-1`     | 服务器   | 远程部署，容器化服务     |
+| `arch-server` | 服务器   | 未使用                   |
+
+## 模块发现
+
+模块、主机、home、包与 overlay 均通过目录约定自动发现，无需手动注册：
+
+- **NixOS 模块**：`modules/nixos/<category>/<name>/default.nix`
+- **Home Manager 模块**：`modules/home/<category>/<name>/default.nix`
+- **主机**：`systems/<arch>/<host>/`
+- **home**：`homes/<arch>/<user>@<host>/`
+- **自定义包**：`packages/<name>/default.nix`
+- **overlay**：`overlays/<name>/default.nix`
+
+自动发现逻辑见 `flake/helpers.nix`（`collectDefaultNix` / `discoverOverlays`）。
+目录含 `disabled` 文件时该模块会被跳过。
+
+## 构建 / 测试 / 部署
+
+常用操作已封装为 flake apps，无需记忆复杂命令：
+
+```bash
+nix run .#build -- nixos-desktop        # 仅构建，不切换
+nix run .#test -- nixos-desktop         # 测试但不创建引导项（需 root）
+nix run .#switch -- nixos-desktop       # 构建并切换（需 root）
+nix run .#deploy -- yc-hk-1             # 部署到远程服务器
+```
+
+等价的原生命令：
+
+```bash
+nixos-rebuild build --flake .#nixos-desktop
+sudo nixos-rebuild test --flake .#nixos-desktop
+sudo nixos-rebuild switch --flake .#nixos-desktop
+nix run .#deploy-rs -- ".#yc-hk-1" --auto-rollback true
+```
+
+> 省略参数时默认目标：build/test/switch 为 `nixos-desktop`，deploy 为 `yc-hk-1`。
+
+## 质量检查
+
+```bash
+# 统一质量入口：格式化 + lint + 求值 + 密钥扫描
+nix flake check --all-systems
+```
+
+## CI
+
+GitHub Actions 提供以下工作流：
+
+| 工作流             | 触发                     | 作用                           |
+| ------------------ | ------------------------ | ------------------------------ |
+| `format-lint.yml`  | PR / push main           | nixfmt + statix + deadnix + gitleaks + flake check |
+| `build.yml`        | PR / push main           | 构建各主机 + 推送 Cachix       |
+| `build-home-manager.yml` | push main         | 构建 home activation 包        |
+| `build-rime.yml`   | push main                | 构建 Rime 配置                 |
+| `deploy.yml`       | build.yml 成功后         | 用 deploy-rs 部署 yc-hk-1      |
+| `update-flake-lock.yml` | 定时                | 自动更新 flake.lock            |
+| `mirror.yml`       | push main                | 同步镜像到 GitLab/Codeberg/cnb |
+
 ## 展示
 
 ![RhenCloud NixOS Desktop](./show/image.png)
