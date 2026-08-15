@@ -33,3 +33,5 @@ packages/**/target
 
 .omo/
 .aider*
+
+archive.tar.gz
