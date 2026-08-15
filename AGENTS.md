@@ -16,6 +16,7 @@ flake/deploy.nix               # deploy-rs 节点定义
 flake/helpers.nix              # 内部辅助（overlay 发现、home 模块分组、collectDefaultNix）
 systems/x86_64-linux/{nixos-desktop,yc-hk-1,arch-server}/
                                # 每主机入口（default.nix + hardware-configuration.nix）
+roles/{desktop,server}/         # 角色层（聚合模块启用，host 通过 rhencloud.roles.<name>.enable 选择）
 homes/x86_64-linux/{rhencloud@nixos-desktop,rhencloud@yc-hk-1,rhencloud@arch-server,wyf9@yc-hk-1}/
                                # 每用户每主机的 Home Manager 入口
 modules/nixos/{core,desktop,service}/  # 系统级模块（collectDefaultNix 自动收集）
@@ -30,6 +31,7 @@ patches/                       # niri 的补丁
 ## 架构说明
 
 - **框架**：flake-parts 取代 Snowfall Lib。
+- **分层**：host → role → module。`systems/<arch>/<host>/default.nix` 只负责机器身份（hostname）、硬件、网络/存储等宿主信息；`roles/<name>/default.nix` 通过 `rhencloud.roles.<name>.enable` 聚合一类机器的能力（如 desktop、server），host 只需一行启用；具体实现在 `modules/nixos/`。
 - **主机**：`nixos-desktop`（桌面）、`yc-hk-1`（服务器）、`arch-server`（未使用）。主机名在 `systems/<arch>/<host>/default.nix` 中设置。
 - **主用户**：`rhencloud`，选项定义于 `modules/options.nix`（`my.*`）。NixOS 配置通过 `flake/nixos.nix` 的 `specialArgs`（`{ inherit inputs; }`）与 HM 的 `extraSpecialArgs`（`primaryUser`）传入。
 - **频道**：`nixos-unstable`（另有 `nixpkgs-stable` = 25.11 输入）。
@@ -40,7 +42,7 @@ patches/                       # niri 的补丁
 - **HM 密钥**：NixOS 层通过 `sops.templates`（`/run/secrets/templates/`）渲染完整配置文件；HM 用 `config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/<file>"` 引用。
 - **主题**：Stylix 提供系统级主题（Dracula）。
 - **Overlays**：定义于 `overlays/<name>/default.nix`，在 NixOS（`flake/nixos.nix`）与 home-manager（`flake/helpers.nix` 的 `essentialHomeModules`）中均通过 `nixpkgs.overlays` 应用。
-- **模块自动发现**：`flake/helpers.nix` 的 `collectDefaultNix` 递归遍历 `modules/nixos` 与 `modules/home` 收集所有 `default.nix`（含 `disabled` 标记跳过）。Snowfall 风格的 `rhencloud.*` 选项是普通 NixOS 模块选项，而非命名空间魔法。
+- **模块自动发现**：`flake/helpers.nix` 的 `collectDefaultNix` 递归遍历 `modules/nixos`、`roles` 与 `modules/home` 收集所有 `default.nix`（含 `disabled` 标记跳过）。Snowfall 风格的 `rhencloud.*` 选项是普通 NixOS 模块选项，而非命名空间魔法。
 - **主机/home 自动发现**：`flake/nixos.nix` 扫描 `systems/<arch>/`，`flake/home-manager.nix` 扫描 `homes/<arch>/`，无需手动注册。
 - **checks**：`flake/checks.nix` 定义 formatting/statix/deadnix/eval/secrets 检查，由 `nix flake check` 统一执行。
 
@@ -91,7 +93,9 @@ nix flake check --all-systems
 
 **新增 NixOS 模块**：创建 `modules/nixos/<category>/<name>/default.nix`。同样自动包含。
 
-**新增主机**：1) 创建 `systems/x86_64-linux/<hostname>/default.nix` + `hardware-configuration.nix`。2) 创建对应的 `homes/x86_64-linux/<user>@<hostname>/default.nix`。两者由 `flake/nixos.nix` 和 `flake/home-manager.nix` 自动发现。
+**新增角色**：创建 `roles/<name>/default.nix`，定义 `rhencloud.roles.<name>.enable` 选项并在启用时聚合相关 `rhencloud.*` 模块。自动收集，host 只需 `rhencloud.roles.<name>.enable = true;`。
+
+**新增主机**：1) 创建 `systems/x86_64-linux/<hostname>/default.nix`（仅身份/硬件/网络/存储 + `rhencloud.roles.<name>.enable`）+ `hardware-configuration.nix`。2) 创建对应的 `homes/x86_64-linux/<user>@<hostname>/default.nix`。两者由 `flake/nixos.nix` 和 `flake/home-manager.nix` 自动发现。
 
 **新增 flake input**：添加到 `flake.nix` 的 `inputs`。若提供 NixOS 模块，加入 `flake/nixos.nix` 的 `modules` 列表；若提供 Home Manager 模块，加入 `flake/helpers.nix` 的 `essentialHomeModules` / `desktopExtraHomeModules`。
 

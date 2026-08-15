@@ -20,7 +20,21 @@ in
 
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
+  rhencloud.roles.server.enable = true;
+
   rhencloud.server.install.enable = true;
+
+  rhencloud.services = {
+    nextbridge.enable = true;
+    frp.enable = true;
+    easytier.enable = true;
+    vaultwarden.enable = true;
+    sleepy.enable = true;
+    mailer.enable = true;
+    wyf9s-bot.enable = true;
+    gost.enable = true;
+    rustdesk.enable = true;
+  };
 
   boot.loader.grub = {
     enable = true;
@@ -72,32 +86,14 @@ in
 
   virtualisation.podman.dockerCompat = true;
 
-  rhencloud = {
-    identity.enable = true;
-    locale.enable = true;
-    nix.enable = true;
-    packages.enable = true;
-    shells.enable = true;
-    cloudflared.enable = true;
-    services.nextbridge.enable = true;
-    services.frp.enable = true;
-    services.easytier.enable = true;
-    services.vaultwarden.enable = true;
-    services.sleepy.enable = true;
-    services.mailer.enable = true;
-    services.wyf9s-bot.enable = true;
-    services.gost.enable = true;
-    services.rustdesk.enable = true;
-    services.postgresql = {
-      enable = true;
-      databases = [
-        {
-          name = "nextbridge";
-          user = "nextbridge";
-          passwordSecret = "postgres-nextbridge-password";
-        }
-      ];
-    };
+  rhencloud.services.postgresql = {
+    databases = [
+      {
+        name = "nextbridge";
+        user = "nextbridge";
+        passwordSecret = "postgres-nextbridge-password";
+      }
+    ];
   };
 
   users.users = {

@@ -59,6 +59,7 @@ flake-parts
 
 ```text
 systems/   → NixOS host（每主机一个目录，含 hardware-configuration.nix）
+roles/     → 角色层（桌面 / 服务器能力聚合）
 homes/     → Home Manager profile（<用户>@<主机> 一个目录）
 modules/   → 可复用模块（nixos/ 与 home/，自动发现）
 overlays/  → 包覆盖（对 nixpkgs 包的修改）
@@ -66,6 +67,8 @@ secrets/   → sops 加密的密钥
 flake/     → flake 实现（各输出模块）
 packages/  → 自定义包（自动发现）
 ```
+
+分层关系：`host → role → module`。`systems/` 下每个主机只声明身份（hostname）、硬件、网络与存储等宿主信息，并通过一行 `rhencloud.roles.<name>.enable = true` 选择能力；`roles/<name>/default.nix` 聚合该角色所需的 `modules/` 启用；具体实现都留在可复用模块中。新增主机时大部分配置通过复用 role/module 完成。
 
 ## 主机（Hosts）
 
@@ -80,6 +83,7 @@ packages/  → 自定义包（自动发现）
 模块、主机、home、包与 overlay 均通过目录约定自动发现，无需手动注册：
 
 - **NixOS 模块**：`modules/nixos/<category>/<name>/default.nix`
+- **角色**：`roles/<name>/default.nix`（定义 `rhencloud.roles.<name>.enable`，启用时聚合相关模块）
 - **Home Manager 模块**：`modules/home/<category>/<name>/default.nix`
 - **主机**：`systems/<arch>/<host>/`
 - **home**：`homes/<arch>/<user>@<host>/`

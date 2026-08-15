@@ -56,7 +56,8 @@ in
               })
               { nixpkgs.overlays = h.overlays; }
             ]
-            ++ h.nixosModules;
+            ++ h.nixosModules
+            ++ h.rolesModules;
 
             specialArgs = { inherit inputs; };
           }

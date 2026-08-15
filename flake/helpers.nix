@@ -47,6 +47,8 @@ let
 
   nixosModules = collectDefaultNix "${root}/modules/nixos";
 
+  rolesModules = collectDefaultNix "${root}/roles";
+
   homeBase = "${root}/modules/home";
 
   # 按用途分组的 home 模块
@@ -101,6 +103,7 @@ in
     root
     overlays
     nixosModules
+    rolesModules
     homeModules
     optionsModule
     essentialHomeModules
