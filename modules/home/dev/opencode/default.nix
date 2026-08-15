@@ -30,6 +30,12 @@ in
         force = true;
       };
 
+      "opencode/agents/code-reviewer.md".source = ./agents/code-reviewer.md;
+      "opencode/agents/security-auditor.md".source = ./agents/security-auditor.md;
+      "opencode/agents/docs-writer.md".source = ./agents/docs-writer.md;
+      "opencode/agents/explorer.md".source = ./agents/explorer.md;
+      "opencode/agents/git-helper.md".source = ./agents/git-helper.md;
+
       "opencode/skills/code-review-skill/SKILL.md".source = ./skills/code-review-skill/SKILL.md;
       "opencode/skills/frontend-design/SKILL.md".source = ./skills/frontend-design/SKILL.md;
       "opencode/skills/frontend-design/LICENSE.txt".source = ./skills/frontend-design/LICENSE.txt;
