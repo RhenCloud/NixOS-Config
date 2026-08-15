@@ -84,18 +84,15 @@ jobs:
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath"
           echo "OK: ${{ matrix.host }} 配置可求值"
 
-      - name: Build toplevel + packages + overlay packages (single scheduling)
+      - name: Build + push to Cachix
         run: |
           set -euo pipefail
-          mkdir -p /tmp/out-paths
-          : > /tmp/out-paths/list
-
-          echo "==> Building nixosConfigurations.${{ matrix.host }} toplevel + all flake/overlay packages"
-          # 一次 nix build 统一调度整个依赖图，避免多次求值与重复构建
-          nix build -L --print-out-paths --impure --expr "
+          # 一次 nix build 统一调度整个依赖图（toplevel + flake 包 + overlay 包），
+          # 非 PR 时用 cachix watch-exec 边构建边推送，自动收集全部新建路径（含闭包）
+          expr='
             let
               flake = builtins.getFlake (toString ./.);
-              system = \"x86_64-linux\";
+              system = "x86_64-linux";
               lib = flake.inputs.nixpkgs.lib;
               helpers = import ./flake/helpers.nix {
                 inherit lib;
@@ -115,22 +112,14 @@ jobs:
                 inherit overlays;
               };
               toplevel = flake.nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel;
-              flakePkgs = lib.attrValues flake.packages.\${system};
-              overlayPkgs = map (name: pkgs.\${name}) overlayAttrNames;
+              flakePkgs = lib.attrValues flake.packages.${system};
+              overlayPkgs = map (name: pkgs.${name}) overlayAttrNames;
             in
               [ toplevel ] ++ flakePkgs ++ overlayPkgs
-          " | tee -a /tmp/out-paths/list
+          '
 
-          sort -u /tmp/out-paths/list -o /tmp/out-paths/list
-          echo "All paths to push:"
-          cat /tmp/out-paths/list
-
-      - name: Push to Cachix
-        if: github.event_name != 'pull_request'
-        run: |
-          set -euo pipefail
-          if [ ! -s /tmp/out-paths/list ]; then
-            echo "没有可推送的路径，跳过"
-            exit 0
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            cachix watch-exec rhencloud -- nix build -L --impure --expr "$expr"
+          else
+            nix build -L --impure --expr "$expr"
           fi
-          cachix push rhencloud < /tmp/out-paths/list
