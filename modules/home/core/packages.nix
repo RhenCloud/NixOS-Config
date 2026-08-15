@@ -16,10 +16,11 @@ in
       nh
       fzf
       perl
-      themechanger
-      google-chrome
+      # themechanger
+      # google-chrome
       eza
       nixfmt
+      nix-update
       keymapper
       wemeet
       qbittorrent

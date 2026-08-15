@@ -59,7 +59,7 @@ in
       rar
 
       localsend
-      moonlight-qt
+      # moonlight-qt
 
       splayer
 

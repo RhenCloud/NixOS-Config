@@ -9,13 +9,13 @@
 }:
 
 let
-  version = "3.4.0";
+  version = "4.1.1";
 
   src = fetchFromGitHub {
     owner = "nutlope";
     repo = "aicommits";
     rev = "v${version}";
-    hash = "sha256-xh7TM3ThajeOXYCj2Vc246u3kYxA1VCHFWM4QbM8DGo=";
+    hash = "sha256-W3+nXPJm5sCBozM3ZhreD9AQql8y+L+qe34JWe8Volo=";
   };
 in
 stdenv.mkDerivation {
@@ -26,7 +26,7 @@ stdenv.mkDerivation {
     pname = "aicommits-pnpm-deps";
     inherit version src;
     fetcherVersion = 4;
-    hash = "sha256-nEJ7PGfLnpD9xyLk5iPDtFAzi3BQ7CQ+lWJuKieM4jk=";
+    hash = "sha256-5WXLKMcI6MWM+pjXIIX1cmVluIsX0FUZnFNfvCW5rFY=";
   };
 
   nativeBuildInputs = [
