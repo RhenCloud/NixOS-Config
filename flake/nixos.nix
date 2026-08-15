@@ -28,7 +28,7 @@ in
               inputs.impermanence.nixosModules.impermanence
               inputs.sops-nix.nixosModules.sops
               inputs.fast-nix-gc.nixosModules.default
-              ({ config, ... }: { sops.useSystemdActivation = true; })
+              ({ ... }: { sops.useSystemdActivation = true; })
               ({ config, ... }: {
                 home-manager = lib.mkIf config.my.homeManager.enable {
                   useGlobalPkgs = false;
