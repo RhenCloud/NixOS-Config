@@ -111,6 +111,7 @@ jobs:
         run: |
           set -euo pipefail
           # hostname、sshOpts（含端口）、profiles、magicRollback 均来自 flake/deploy.nix
-          nix run github:serokell/deploy-rs -- \
+          # deploy-rs 用 flake 输出 packages.deploy-rs（跟随 flake.lock 固定版本），避免运行时抓取最新
+          nix run ".#deploy-rs" -- \
             ".#${{ matrix.node }}" \
             --auto-rollback true

@@ -22,6 +22,8 @@ in
   perSystem = { pkgs, ... }: {
     packages = (discoverPackages pkgs) // {
       rime-keytao = inputs.rime-keytao.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      # 固定 deploy-rs 版本（跟随 flake.lock），供 deploy.yml 使用
+      deploy-rs = inputs.deploy-rs.packages.${pkgs.stdenv.hostPlatform.system}.deploy-rs;
     };
   };
 }

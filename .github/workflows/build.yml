@@ -84,32 +84,18 @@ jobs:
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath"
           echo "OK: ${{ matrix.host }} 配置可求值"
 
-      - name: Build system toplevel
+      - name: Build toplevel + packages + overlay packages (single scheduling)
         run: |
           set -euo pipefail
           mkdir -p /tmp/out-paths
           : > /tmp/out-paths/list
-          echo "==> Building nixosConfigurations.${{ matrix.host }} toplevel"
-          nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" \
-            -L --print-out-paths | tee -a /tmp/out-paths/list
 
-      - name: Build custom packages + overlay packages
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/out-paths
-          touch /tmp/out-paths/list
-
-          echo "==> Building flake packages"
-          for name in $(nix eval --json '.#packages.x86_64-linux' --apply 'builtins.attrNames' | jq -r '.[]'); do
-            echo "---- .#$name ----"
-            nix build ".#packages.x86_64-linux.$name" -L --print-out-paths | tee -a /tmp/out-paths/list
-          done
-
-          echo "==> Building overlay-modified packages (auto-discovered)"
-          nix build -L --print-out-paths --impure --expr '
+          echo "==> Building nixosConfigurations.${{ matrix.host }} toplevel + all flake/overlay packages"
+          # 一次 nix build 统一调度整个依赖图，避免多次求值与重复构建
+          nix build -L --print-out-paths --impure --expr "
             let
               flake = builtins.getFlake (toString ./.);
-              system = "x86_64-linux";
+              system = \"x86_64-linux\";
               lib = flake.inputs.nixpkgs.lib;
               helpers = import ./flake/helpers.nix {
                 inherit lib;
@@ -128,9 +114,12 @@ jobs:
                 config.allowUnfree = true;
                 inherit overlays;
               };
+              toplevel = flake.nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel;
+              flakePkgs = lib.attrValues flake.packages.\${system};
+              overlayPkgs = map (name: pkgs.\${name}) overlayAttrNames;
             in
-              map (name: pkgs.${name}) overlayAttrNames
-          ' | tee -a /tmp/out-paths/list
+              [ toplevel ] ++ flakePkgs ++ overlayPkgs
+          " | tee -a /tmp/out-paths/list
 
           sort -u /tmp/out-paths/list -o /tmp/out-paths/list
           echo "All paths to push:"
