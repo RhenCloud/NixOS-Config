@@ -27,6 +27,7 @@ in
               inputs.home-manager.nixosModules.home-manager
               inputs.impermanence.nixosModules.impermanence
               inputs.sops-nix.nixosModules.sops
+              inputs.fast-nix-gc.nixosModules.default
               ({ config, ... }: { sops.useSystemdActivation = true; })
               ({ config, ... }: {
                 home-manager = lib.mkIf config.my.homeManager.enable {

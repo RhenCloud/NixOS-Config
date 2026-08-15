@@ -36,9 +36,20 @@ in
     };
 
     nix.gc = {
-      automatic = lib.mkDefault true;
-      dates = lib.mkDefault "weekly";
-      options = lib.mkDefault "--delete-older-than 7d";
+      automatic = lib.mkDefault false;
+    };
+
+    # 用 fast-nix-gc 替换内置 nix-store --gc（快 25-180 倍）
+    services.fast-nix-gc = {
+      enable = true;
+      automatic = true;
+      dates = "weekly";
+      deleteOlderThan = "7d";
+    };
+    services.fast-nix-optimise = {
+      enable = true;
+      automatic = true;
+      dates = "04:15";
     };
   };
 }

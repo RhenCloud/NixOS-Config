@@ -26,12 +26,6 @@ Module discovery is handled by `collectDefaultNix` in `flake/helpers.nix` — re
 ## Key Commands
 
 ```bash
-# Build and switch (apply) the system config (先查缓存，有则跳过构建)
-./scripts/rebuild.sh
-
-# Dry-run only: check cache status without building
-./scripts/rebuild.sh check
-
 # Build only (creates ./result symlink)
 nixos-rebuild build --flake .#nixos-desktop
 

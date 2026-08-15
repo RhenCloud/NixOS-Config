@@ -165,6 +165,10 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    fast-nix-gc = {
+      url = "github:Mic92/fast-nix-gc";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sleepy = {
       url = "github:sleepy-project/sleepy/6babc99";
       flake = false;
