@@ -187,6 +187,7 @@
         ./flake/packages.nix
         ./flake/devshells.nix
         ./flake/deploy.nix
+        ./flake/checks.nix
       ];
 
       # Live CD 配置

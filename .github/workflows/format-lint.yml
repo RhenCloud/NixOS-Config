@@ -24,7 +24,7 @@ jobs:
     name: Check
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -33,6 +33,11 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: rhencloud
+          skipPush: true
 
       - name: nixfmt check
         run: |
@@ -56,6 +61,25 @@ jobs:
         run: |
           set -euo pipefail
           nix shell nixpkgs#statix -c statix check .
+
+      - name: deadnix check
+        run: |
+          set -euo pipefail
+          nix shell nixpkgs#deadnix -c deadnix --fail -L .
+
+      - name: gitleaks detect
+        run: |
+          set -euo pipefail
+          nix shell nixpkgs#gitleaks -c gitleaks detect \
+            --source . \
+            --config .gitleaks.toml \
+            --no-banner \
+            --exit-code 1
+
+      - name: nix flake check
+        run: |
+          set -euo pipefail
+          nix flake check --all-systems
 
   # main / 手动：nixfmt 后有变更则直接提交到当前分支
   autofix:

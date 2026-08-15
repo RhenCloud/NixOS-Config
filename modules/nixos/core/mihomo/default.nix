@@ -2,7 +2,7 @@
   config,
   lib,
   ...
-}@args:
+}:
 let
   cfg = config.rhencloud.services;
   parts = lib.splitString "# __PROXIES_HERE__" (builtins.readFile ./config.yaml);

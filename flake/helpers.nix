@@ -31,7 +31,6 @@ let
         name: _:
         let
           sub = "${dir}/${name}";
-          hasDefault = builtins.pathExists "${sub}/default.nix";
           isDisabled = builtins.pathExists "${sub}/disabled";
         in
         lib.optionals (!isDisabled) (collectDefaultNix sub)

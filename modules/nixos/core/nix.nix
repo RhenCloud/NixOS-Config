@@ -12,7 +12,7 @@ in
   options.rhencloud.nix.enable = mkEnableOption "Nix daemon settings";
   config = mkIf cfg.enable {
     nixpkgs.overlays = [
-      (final: prev: {
+      (_final: prev: {
         inherit (prev.lixPackageSets.stable)
           nixpkgs-review
           nix-eval-jobs

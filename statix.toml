@@ -8,5 +8,6 @@ disabled = [
   "repeated_keys",   # services.foo / boot.bar 分写是正常写法
   "empty_pattern",   # overlay 里 `{ }:` 可接受；也可用 `_:` 代替
   "manual_inherit",  # inherit 风格偏好，不强制
+  "manual_inherit_from",  # x = foo.bar 写法可读性更好，不强制
   # "useless_parens",
 ]
