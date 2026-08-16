@@ -1,0 +1,13 @@
+diff --git a/src/main/store.js b/src/main/store.js
+index 1b0e1a3..c9c0bcf 100644
+--- a/src/main/store.js
++++ b/src/main/store.js
+@@ -101,7 +101,7 @@
+ exports.scanPluginDirectory = () => {
+     fs.mkdirSync(LiteLoader.path.plugins, { recursive: true });
+     return fs.readdirSync(LiteLoader.path.plugins, { withFileTypes: true })
+-        .map(dirent => path.join(dirent.path, dirent.name, "manifest.json"))
++        .map(dirent => path.join(LiteLoader.path.plugins, dirent.name, "manifest.json"))
+         .filter(manifest => fs.existsSync(manifest))
+         .map(manifest => ({
+             path: path.dirname(manifest),

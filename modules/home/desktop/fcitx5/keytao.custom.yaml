@@ -23,6 +23,11 @@ patch:
       Control_L: noop
       Control_R: noop
 
+  switches:
+    - name: sbb_disable_full
+      reset: 1
+      states: ["开₆₃₀全码", "关₆₃₀全码"]
+
   punctuator:
     full_shape:
       " ": { commit: "　" }

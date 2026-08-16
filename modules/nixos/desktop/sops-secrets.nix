@@ -99,6 +99,7 @@ let
           "claude-sonnet-4-5" = { };
           "grok-4.3-beta" = { };
           "doghubx-gpt-5.5" = { };
+          "gpt-5.6-luna" = { };
         };
       };
       zhi = {

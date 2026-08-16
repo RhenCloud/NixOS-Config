@@ -10,7 +10,13 @@ let
   cfg = config.rhencloud.chat;
 
   qqPackage = pkgs.qq;
-  liteLoaderQQNT = inputs.liteloaderqqnt;
+  liteLoaderQQNT = pkgs.applyPatches {
+    name = "LiteLoaderQQNT-directpath";
+    src = inputs.liteloaderqqnt;
+    patches = [ ../../../../patches/liteloaderqqnt/dirent-path.patch ];
+  };
+
+  effectiveQqPackage = if cfg.enableLiteLoaderQQNT then qqWithLiteLoaderPackage else qqPackage;
 
   qqWithLiteLoaderPackage = qqPackage.overrideAttrs (previousAttrs: {
     nativeBuildInputs = (previousAttrs.nativeBuildInputs or [ ]) ++ [ pkgs.gnused ];
@@ -33,9 +39,10 @@ let
     text = ''
       set -euo pipefail
 
-      profile_root="''${XDG_DATA_HOME:-$HOME/.local/share}/liteloaderqqnt"
-
-      export LITELOADERQQNT_PROFILE="$profile_root"
+      ${optionalString cfg.enableLiteLoaderQQNT ''
+        profile_root="''${XDG_DATA_HOME:-$HOME/.local/share}/liteloaderqqnt"
+        export LITELOADERQQNT_PROFILE="$profile_root"
+      ''}
       export XDG_SESSION_TYPE=wayland
       export NIXOS_OZONE_WL=1
       export ELECTRON_OZONE_PLATFORM_HINT=wayland
@@ -47,19 +54,24 @@ let
       export LD_LIBRARY_PATH=${pkgs.stdenv.cc.cc.lib}/lib
       export VIPS_BLOCK_UNTRUSTED=1
 
-      exec ${qqWithLiteLoaderPackage}/bin/qq --ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations "$@"
+      exec ${effectiveQqPackage}/bin/qq --ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations "$@"
     '';
   };
 in
 {
   options.rhencloud.chat.enable = mkEnableOption "chat apps (QQ, WeChat, Discord)";
+  options.rhencloud.chat.enableLiteLoaderQQNT = mkOption {
+    type = types.bool;
+    default = false;
+    description = "启用 LiteLoaderQQNT 插件注入（默认禁用）";
+  };
 
   config = mkIf cfg.enable {
     xdg.desktopEntries.qq = {
       name = "QQ";
-      comment = "Tencent QQ with LiteLoaderQQNT";
+      comment = if cfg.enableLiteLoaderQQNT then "Tencent QQ with LiteLoaderQQNT" else "Tencent QQ";
       exec = "qq %U";
-      icon = "${qqWithLiteLoaderPackage}/share/icons/hicolor/512x512/apps/qq.png";
+      icon = "${effectiveQqPackage}/share/icons/hicolor/512x512/apps/qq.png";
       terminal = false;
       categories = [
         "Network"
@@ -100,7 +112,7 @@ in
         '';
       })
       (symlinkJoin {
-        name = "qq-wayland-liteloader";
+        name = "qq-wayland";
         paths = [ qqWithLiteLoader ];
         nativeBuildInputs = [ makeWrapper ];
         postBuild = ''

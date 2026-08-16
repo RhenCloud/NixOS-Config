@@ -62,7 +62,7 @@ in
     extraUserPhrases = lib.mkOption {
       type = lib.types.lines;
       default = "";
-      description = "Extra user phrases (word code)";
+      description = "额外用户词组（词组<Tab>编码[<Tab>词频]，词频默认 999）";
     };
 
     extraYamlFiles = lib.mkOption {
@@ -157,9 +157,7 @@ in
             fi
 
             ${lib.optionalString (cfg.extraUserPhrases != "") ''
-              cat > "$rime_dir/custom_phrase.txt" << EOF
-              ${cfg.extraUserPhrases}
-              EOF
+              printf '%s\n' '${cfg.extraUserPhrases}' | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF==3 {print}' > "$rime_dir/custom_phrase.txt"
             ''}
 
             ${lib.optionalString (cfg.keytaoUserDict != "") ''

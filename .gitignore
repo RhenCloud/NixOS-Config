@@ -35,3 +35,5 @@ packages/**/target
 .aider*
 
 archive.tar.gz
+
+**/__pycache__/

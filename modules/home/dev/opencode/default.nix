@@ -12,18 +12,18 @@ in
   options.rhencloud.hmOpenAgent.enable = mkEnableOption "opencode agent config";
   config = mkIf cfg.enable {
     xdg.configFile = {
-      "opencode/oh-my-openagent.jsonc".text = builtins.toJSON {
-        agents = {
-          atlas.model = "voidswitch/glm-4.7-flash-cf";
-          hephaestus.model = "voidswitch/claude-opus-4-8";
-          oracle.model = "voidswitch/claude-opus-4-8";
-          prometheus.model = "voidswitch/glm-4.7-flash-cf";
-          sisyphus.model = "voidswitch/claude-opus-4-8";
-        };
-        categories = {
-          "visual-engineering".model = "voidswitch/claude-opus-4-8";
-        };
-      };
+      # "opencode/oh-my-openagent.jsonc".text = builtins.toJSON {
+      #   agents = {
+      #     atlas.model = "voidswitch/glm-4.7-flash-cf";
+      #     hephaestus.model = "voidswitch/claude-opus-4-8";
+      #     oracle.model = "voidswitch/claude-opus-4-8";
+      #     prometheus.model = "voidswitch/glm-4.7-flash-cf";
+      #     sisyphus.model = "voidswitch/claude-opus-4-8";
+      #   };
+      #   categories = {
+      #     "visual-engineering".model = "voidswitch/claude-opus-4-8";
+      #   };
+      # };
 
       "opencode/AGENTS.md" = {
         source = ./AGENTS.md;

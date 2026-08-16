@@ -36,7 +36,6 @@ in
         name = "BreezeX-RosePine-Linux";
       };
       sessionVariables = {
-        XDG_CURRENT_DESKTOP = "Hyprland";
         GTK_USE_PORTAL = "1";
         QT_STYLE_OVERRIDE = "kvantum";
         GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/glib-2.0/schemas";
