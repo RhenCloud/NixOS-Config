@@ -23,6 +23,11 @@ patch:
       Control_L: noop
       Control_R: noop
 
+<<<<<<< Updated upstream
+=======
+  "switches/sbb_disable_full/reset": 1
+
+>>>>>>> Stashed changes
   punctuator:
     full_shape:
       " ": { commit: "　" }

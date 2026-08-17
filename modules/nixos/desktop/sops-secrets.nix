@@ -11,10 +11,11 @@ let
   opencodeConfig = {
     "$schema" = "https://opencode.ai/config.json";
     lsp = true;
-    model = "voidswitch/claude-opus-4-8";
+    model = "voidswitch/deepseek-v4-pro";
     small_model = "voidswitch/glm-4.7-flash-cf";
     mcp = {
       chrome-devtools = {
+        enabled = false;
         command = [
           "npx"
           "-y"
@@ -37,6 +38,20 @@ let
         command = [
           "uvx"
           "mcp-nixos"
+        ];
+        enabled = true;
+        type = "local";
+      };
+      playwright = {
+        command = [
+          "npx"
+          "-y"
+          "@playwright/mcp@latest"
+          "--browser"
+          "chromium"
+          "--executable-path"
+          "${pkgs.chromium}/bin/chromium"
+          "--headless"
         ];
         enabled = true;
         type = "local";
