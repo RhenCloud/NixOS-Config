@@ -28,6 +28,7 @@ in
 
       # desktop
       desktopPackages.enable = true;
+      gnome.enable = false;
       hyprland.enable = true;
       mangowm.enable = true;
       thunar.enable = true;

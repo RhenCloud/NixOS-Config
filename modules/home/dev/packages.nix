@@ -34,6 +34,7 @@ in
       codegraph
       gh
       tokei
+      frida-tools
     ];
 
     # programs.opencode = {
