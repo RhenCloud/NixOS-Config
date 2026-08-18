@@ -37,10 +37,12 @@ in
                   "aptx_hd"
                 ];
                 "bluez5.roles" = [
-                  "hsp_hs"
-                  "hsp_ag"
-                  "hfp_hf"
+                  "a2dp_sink"
+                  "a2dp_source"
+                  "bap_sink"
+                  "bap_source"
                   "hfp_ag"
+                  "hsp_ag"
                 ];
               };
             };
