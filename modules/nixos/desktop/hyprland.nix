@@ -20,11 +20,11 @@ in
     };
     environment.systemPackages = with pkgs; [
       awww
-      swayosd
+      # swayosd
       hyprlock
       blueman
       pavucontrol
-      swaynotificationcenter
+      # swaynotificationcenter
     ];
   };
 }
