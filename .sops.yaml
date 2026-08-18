@@ -2,6 +2,8 @@ keys:
   - &admin CE243917D8877F3AFE5814335850468557847C77
   - &desktop age1m83y7m8yx53fdqd2ttm63ncv7nu0reweafufuhfdyc0e927f44fsxx97f0
   - &yc-hk-1 age1h8wlkmqz9p4p5l9m69kzr2k8guqym7jt46j93egvum7fvmswy3tsu80agu
+  - &homeserver age1kyv5cxytwjs4xuklrpwq6n4xf5vjln29ur0pjy4mkdkh9qdfe57qy5s9pw
+  - &rhencloud age16lwtmhhseeet0pu7v5hzle8tph99zyv2856rxcw58dw9gdjqvptspd2at0
 
 creation_rules:
   - path_regex: secrets/common\.yaml$
@@ -11,12 +13,15 @@ creation_rules:
         age:
           - *desktop
           - *yc-hk-1
+          - *homeserver
+          - *rhencloud
   - path_regex: secrets/hosts/nixos-desktop\.yaml$
     key_groups:
       - pgp:
           - *admin
         age:
           - *desktop
+          - *rhencloud
   - path_regex: secrets/hosts/yc-hk-1\.yaml$
     key_groups:
       - pgp:

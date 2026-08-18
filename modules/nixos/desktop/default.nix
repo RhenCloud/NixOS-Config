@@ -6,7 +6,6 @@ let
 in
 {
   imports = [
-    ./sops-secrets.nix
     ./gnome.nix
     ./hyprland.nix
     ./mangowm.nix

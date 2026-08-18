@@ -21,6 +21,15 @@ in
       enable = true;
     };
 
-    home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink "/run/secrets/rendered/npmrc";
+    sops.secrets."npm-token" = {
+      sopsFile = ../../../secrets/hosts/nixos-desktop.yaml;
+    };
+
+    sops.templates."npmrc" = {
+      mode = "0400";
+      content = config.sops.placeholder."npm-token";
+    };
+
+    home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink config.sops.templates."npmrc".path;
   };
 }

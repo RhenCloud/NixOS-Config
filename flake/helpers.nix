@@ -67,6 +67,7 @@ let
   essentialHomeModules = [
     optionsModule
     inputs.lucy.homeManagerModules.default
+    inputs.sops-nix.homeManagerModules.sops
     inputs.noctalia-v4.homeModules.default
     inputs.nix-index-database.homeModules.nix-index
     { nixpkgs.overlays = overlays; }

@@ -50,12 +50,27 @@ in
               User rhencloud
               ProxyJump yc-hk-1
 
-          Include /run/secrets/rendered/ssh-host-blocks
+          Include ${config.sops.templates."ssh-host-blocks".path}
         '';
         settings = {
           "*" = { };
         };
       };
+    };
+
+    sops.secrets = {
+      "ssh-tc-discourse" = {
+        sopsFile = ../../../secrets/hosts/nixos-desktop.yaml;
+      };
+      "ssh-bee-hk-1" = {
+        sopsFile = ../../../secrets/hosts/nixos-desktop.yaml;
+      };
+    };
+
+    sops.templates."ssh-host-blocks" = {
+      mode = "0644";
+      content =
+        config.sops.placeholder."ssh-tc-discourse" + "\n\n" + config.sops.placeholder."ssh-bee-hk-1" + "\n";
     };
 
     home.packages = [ pkgs.gcr ];
