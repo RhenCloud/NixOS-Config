@@ -52,7 +52,7 @@
     android.enable = true;
     golang.enable = true;
     java.enable = true;
-    lucy.enable = true;
+    # lucy.enable = true;
     node.enable = true;
     python.enable = true;
     rust.enable = true;

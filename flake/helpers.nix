@@ -66,7 +66,7 @@ let
   # 所有系统共用的 HM 基础设施
   essentialHomeModules = [
     optionsModule
-    inputs.lucy.homeManagerModules.default
+    # inputs.lucy.homeManagerModules.default
     inputs.sops-nix.homeManagerModules.sops
     inputs.noctalia-v4.homeModules.default
     inputs.nix-index-database.homeModules.nix-index

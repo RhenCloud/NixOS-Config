@@ -6,7 +6,7 @@
     ./emacs.nix
     ./golang.nix
     ./java.nix
-    ./lucy.nix
+    # ./lucy.nix
     ./node.nix
     ./python.nix
     ./rust.nix

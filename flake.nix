@@ -62,10 +62,10 @@
       url = "github:noctalia-dev/noctalia-shell/v5.0.0-beta.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    lucy = {
-      url = "github:RhenCloud/lucy";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # lucy = {
+    #   url = "github:RhenCloud/lucy";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     piri = {
       url = "github:RhenCloud/piri";
       inputs.nixpkgs.follows = "nixpkgs";
