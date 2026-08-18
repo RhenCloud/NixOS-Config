@@ -35,7 +35,7 @@ in
         deploy = mkApp "deploy" (
           pkgs.writeShellScriptBin "deploy" ''
             node="''${1:-${defaultNode}}"
-            exec ${deployRs}/bin/deploy-rs ".#''${node}" --auto-rollback true
+            exec ${deployRs}/bin/deploy ".#''${node}" --auto-rollback true
           ''
         );
       };
