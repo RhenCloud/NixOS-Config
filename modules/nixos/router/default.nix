@@ -14,6 +14,8 @@ in
   config = mkIf cfg.enable {
     networking.useNetworkd = true;
 
+    networking.firewall.allowedUDPPorts = [ 67 ];
+
     systemd.network = {
       netdevs."10-br0" = {
         netdevConfig.Name = "br0";
@@ -43,27 +45,13 @@ in
         };
 
         "20-internal" = {
-          matchConfig.Name = "intern*";
+          matchConfig.Name = "enp0s20u2";
           linkConfig.Multicast = true;
           networkConfig.Bridge = "br0";
         };
 
-        "25-wlan-internal" = {
-          matchConfig.Name = "intern1";
-          networkConfig = {
-            Address = "10.0.1.1/24";
-            IPMasquerade = "both";
-          };
-          dhcpServerConfig = {
-            DNS = "10.0.1.1";
-            EmitDNS = true;
-            EmitNTP = true;
-            EmitRouter = true;
-          };
-        };
-
         "30-external" = {
-          matchConfig.Name = "extern0";
+          matchConfig.Name = "enp3s0";
           networkConfig = {
             DHCP = "yes";
             IPv6AcceptRA = true;
@@ -93,6 +81,7 @@ in
           channel = 6;
           countryCode = "CN";
           wifi4.enable = true;
+          settings."bridge" = "br0";
           networks = {
             wlp1s0 = {
               ssid = "LinuxAP";
@@ -148,31 +137,14 @@ in
           "https://docker.1ms.run"
           "https://docker.cattt.net"
         ];
-        proxies = {
-          "http-proxy" = "http://127.0.0.1:7890";
-          "https-proxy" = "http://127.0.0.1:7890";
-          "no-proxy" = "localhost,127.0.0.1";
-        };
       };
     };
 
     systemd.services =
       let
         composeDirs = [
-          "Mailer"
-          "gitea"
           "napcat"
-          "postgreSQL"
-          "lucky"
           "openlist"
-          "snappymail"
-          "wakapi"
-          "bili_tool_web"
-          "mimo-api"
-          "reader"
-          "bangumi-rs"
-          "vw"
-          "tuwunel"
         ];
         composeUp = dir: ''
           cd /Data1/${dir}
