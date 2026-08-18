@@ -41,5 +41,26 @@ in
       ];
       magicRollback = true;
     };
+
+    deploy.nodes.nixos-homeserver = {
+      hostname = "10.0.0.1";
+      sshUser = "rhencloud";
+      profiles.system = {
+        user = "root";
+        path = deployLib.activate.nixos inputs.self.nixosConfigurations.nixos-homeserver;
+      };
+      profiles.home-rhencloud = {
+        user = "rhencloud";
+        sshUser = "rhencloud";
+        path =
+          deployLib.activate."home-manager"
+            inputs.self.homeConfigurations."rhencloud@nixos-homeserver";
+      };
+      profilesOrder = [
+        "home-rhencloud"
+        "system"
+      ];
+      magicRollback = true;
+    };
   };
 }

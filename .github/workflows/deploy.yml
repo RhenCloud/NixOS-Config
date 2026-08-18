@@ -35,7 +35,7 @@ jobs:
         # 仅远程节点；hostname / sshOpts / profiles 全部来自 flake/deploy.nix
         node:
           - yc-hk-1
-          # - arch-server
+          # - nixos-homeserver
     concurrency:
       group: deploy-node-${{ matrix.node }}
       cancel-in-progress: false

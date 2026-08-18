@@ -14,10 +14,10 @@ flake/devshells.nix            # devShells（default + python）+ formatter（ni
 flake/checks.nix               # flake checks（formatting/statix/deadnix/eval/secrets）
 flake/deploy.nix               # deploy-rs 节点定义
 flake/helpers.nix              # 内部辅助（overlay 发现、home 模块分组、collectDefaultNix）
-systems/x86_64-linux/{nixos-desktop,yc-hk-1,arch-server}/
+systems/x86_64-linux/{nixos-desktop,yc-hk-1,nixos-homeserver}/
                                # 每主机入口（default.nix + hardware-configuration.nix）
 roles/{desktop,server}/         # 角色层（聚合模块启用，host 通过 rhencloud.roles.<name>.enable 选择）
-homes/x86_64-linux/{rhencloud@nixos-desktop,rhencloud@yc-hk-1,rhencloud@arch-server,wyf9@yc-hk-1}/
+homes/x86_64-linux/{rhencloud@nixos-desktop,rhencloud@yc-hk-1,rhencloud@nixos-homeserver,wyf9@yc-hk-1}/
                                # 每用户每主机的 Home Manager 入口
 modules/nixos/{core,desktop,service}/  # 系统级模块（collectDefaultNix 自动收集）
 modules/home/{core,desktop,dev,service}/  # Home Manager 模块（自动收集）
@@ -32,7 +32,7 @@ patches/                       # niri 的补丁
 
 - **框架**：flake-parts 取代 Snowfall Lib。
 - **分层**：host → role → module。`systems/<arch>/<host>/default.nix` 只负责机器身份（hostname）、硬件、网络/存储等宿主信息；`roles/<name>/default.nix` 通过 `rhencloud.roles.<name>.enable` 聚合一类机器的能力（如 desktop、server），host 只需一行启用；具体实现在 `modules/nixos/`。
-- **主机**：`nixos-desktop`（桌面）、`yc-hk-1`（服务器）、`arch-server`（未使用）。主机名在 `systems/<arch>/<host>/default.nix` 中设置。
+- **主机**：`nixos-desktop`（桌面）、`yc-hk-1`（服务器）、`nixos-homeserver`（未使用）。主机名在 `systems/<arch>/<host>/default.nix` 中设置。
 - **主用户**：`rhencloud`，选项定义于 `modules/options.nix`（`my.*`）。NixOS 配置通过 `flake/nixos.nix` 的 `specialArgs`（`{ inherit inputs; }`）与 HM 的 `extraSpecialArgs`（`primaryUser`）传入。
 - **频道**：`nixos-unstable`（另有 `nixpkgs-stable` = 25.11 输入）。
 - **stateVersion**：`26.11`。
