@@ -45,12 +45,6 @@ in
       "opencode/plugins/worktree".source = "${inputs.opencode-worktree}/src/plugin/worktree";
       "opencode/plugins/kdco-primitives".source =
         "${inputs.opencode-worktree}/src/plugin/kdco-primitives";
-
-      "opencode/package.json".text = builtins.toJSON {
-        dependencies = {
-          "jsonc-parser" = "*";
-        };
-      };
     };
   };
 }

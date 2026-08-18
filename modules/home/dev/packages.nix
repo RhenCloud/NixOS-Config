@@ -20,7 +20,6 @@ in
       cloudflared
       ghidra-bin
       codex
-      opencode
       gitkraken
       cc-switch
       deno
