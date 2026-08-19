@@ -13,7 +13,7 @@ in
   options.rhencloud.hmDevPackages.enable = mkEnableOption "development packages";
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      inputs."siiway-cli".packages.${pkgs.stdenv.hostPlatform.system}.default
+      # inputs."siiway-cli".packages.${pkgs.stdenv.hostPlatform.system}.default
       act
       lychee
       lazygit

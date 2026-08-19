@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  inputs,
   ...
 }:
 with lib;
@@ -35,6 +36,7 @@ in
       slurp
       grim
       satty
+      inputs.niri-shot.packages.${pkgs.stdenv.hostPlatform.system}.default
       shutter
 
       playerctl

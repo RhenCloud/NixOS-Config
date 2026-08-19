@@ -35,6 +35,9 @@ in
       trusted-users = [ "@wheel" ];
     };
 
+    # 构建沙箱内需要 DNS 解析（VSCode、WeChat 等包需要下载）
+    nix.settings.extra-sandbox-paths = [ "/etc/resolv.conf" ];
+
     systemd.services.nix-daemon.serviceConfig.Environment = [
       "http_proxy=http://127.0.0.1:7890"
       "https_proxy=http://127.0.0.1:7890"

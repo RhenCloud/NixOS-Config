@@ -46,7 +46,7 @@ in
 
     editor = mkOption {
       type = types.str;
-      default = "hx";
+      default = "vim";
     };
 
     terminal = mkOption {

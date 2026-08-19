@@ -43,8 +43,6 @@
 
     # ── 频道 / 基础 ────────────────────────────────────
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
-
     # ── 统一 follow nixpkgs 的子 flake ─────────────────
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -82,6 +80,10 @@
       # 临时锁定到 PR #1853，修复 nixpkgs 移除 libdisplay-info_0_2 后构建失败
       # 上游合并后可移除此固定（TODO: niri-flake release）
       url = "github:sodiboo/niri-flake/7e196a5ce0bf209d3aca844bb31edce5284d6484";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    niri-shot = {
+      url = "github:RhenCloud/niri-shot";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mangowm = {
@@ -130,8 +132,14 @@
     };
 
     # ── 其它 flake 输入 ────────────────────────────────
-    siiway-cli.url = "github:siiway/siiway-cli";
-    siiway-oc-plugin.url = "github:SiiWay/VoidSwitch";
+    # siiway-cli = {
+    #   url = "github:siiway/siiway-cli";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    siiway-oc-plugin = {
+      url = "github:SiiWay/VoidSwitch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # ── flake = false（纯数据源，无 flake.nix） ────────
     niri_tweaks = {
@@ -156,6 +164,7 @@
     };
     impermanence = {
       url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     disko = {
       url = "github:nix-community/disko";

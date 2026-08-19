@@ -22,7 +22,6 @@ in
             modules = [
               h.optionsModule
               "${hostsDir}/${host}"
-              inputs.mangowm.nixosModules.mango
               inputs.selector4nix.nixosModules.selector4nix
               inputs.home-manager.nixosModules.home-manager
               inputs.impermanence.nixosModules.impermanence
@@ -56,8 +55,13 @@ in
               })
               { nixpkgs.overlays = h.overlays; }
             ]
-            ++ h.nixosModules
-            ++ h.rolesModules;
+            ++ lib.optionals (builtins.elem host h.desktopHosts) ([
+              inputs.mangowm.nixosModules.mango
+            ] ++ h.rolesModuleDesktop ++ h.nixosModulesDesktop)
+            ++ h.nixosModulesCore
+            ++ h.nixosModulesService
+            ++ h.nixosModulesRouter
+            ++ lib.optionals (builtins.elem host h.serverHosts) (h.rolesModuleServer ++ h.nixosModulesServer);
 
             specialArgs = { inherit inputs; };
           }

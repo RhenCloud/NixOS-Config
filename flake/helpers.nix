@@ -45,9 +45,26 @@ let
 
   overlays = discoverOverlays;
 
-  nixosModules = collectDefaultNix "${root}/modules/nixos";
+  nixosModulesCore = [
+    "${root}/modules/nixos/core/default.nix"
+    "${root}/modules/nixos/core/impermanence/default.nix"
+    "${root}/modules/nixos/core/mihomo/default.nix"
+  ];
+  nixosModulesDesktop = [
+    "${root}/modules/nixos/desktop/default.nix"
+  ];
+  nixosModulesServer = [
+    "${root}/modules/nixos/server/default.nix"
+  ];
+  nixosModulesService = [
+    "${root}/modules/nixos/service/default.nix"
+  ];
+  nixosModulesRouter = [
+    "${root}/modules/nixos/router/default.nix"
+  ];
 
-  rolesModules = collectDefaultNix "${root}/roles";
+  rolesModuleDesktop = [ "${root}/roles/desktop/default.nix" ];
+  rolesModuleServer = [ "${root}/roles/server/default.nix" ];
 
   homeBase = "${root}/modules/home";
 
@@ -98,13 +115,19 @@ let
   desktopHomeModulesFull = desktopHomeModules ++ desktopExtraHomeModules;
 
   desktopHosts = [ "nixos-desktop" ];
+  serverHosts = [ "yc-hk-1" ];
 in
 {
   inherit
     root
     overlays
-    nixosModules
-    rolesModules
+    nixosModulesCore
+    nixosModulesDesktop
+    nixosModulesServer
+    nixosModulesService
+    nixosModulesRouter
+    rolesModuleDesktop
+    rolesModuleServer
     homeModules
     optionsModule
     essentialHomeModules
@@ -112,5 +135,6 @@ in
     desktopExtraHomeModules
     desktopHomeModulesFull
     desktopHosts
+    serverHosts
     ;
 }
