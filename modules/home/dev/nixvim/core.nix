@@ -1,17 +1,11 @@
-{
-  lib,
-  pkgs,
-  config,
-  ...
-}:
+{ lib, pkgs, config, ... }:
 with lib;
 let
-  inherit (lib.generators) mkLuaInline;
-  cfg = config.rhencloud.nvf;
+  cfg = config.rhencloud.nixvim;
 in
 {
   config = mkIf cfg.enable {
-    programs.nvf.settings.vim = {
+    programs.nixvim = {
       viAlias = true;
       vimAlias = true;
 
@@ -20,7 +14,7 @@ in
         maplocalleader = " ";
       };
 
-      options = {
+      opts = {
         number = true;
         relativenumber = true;
         shiftwidth = 2;
@@ -45,13 +39,16 @@ in
         clipboard = lib.mkForce "unnamedplus";
       };
 
-      clipboard.enable = true;
+      clipboard = {
+        register = "unnamedplus";
+        providers.wl-copy.enable = true;
+      };
 
       luaConfigPre = ''
         vim.api.nvim_create_augroup("YankHighlight", { clear = true })
       '';
 
-      autocmds = [
+      autoCmd = [
         {
           event = [ "TermOpen" ];
           pattern = [ "*" ];
@@ -61,7 +58,9 @@ in
           event = [ "TextYankPost" ];
           pattern = [ "*" ];
           group = "YankHighlight";
-          callback = mkLuaInline "function() vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 150 }) end";
+          callback = {
+            __raw = "function() vim.highlight.on_yank({ higroup = 'IncSearch', timeout = 150 }) end";
+          };
         }
         {
           event = [ "VimResized" ];
@@ -73,7 +72,7 @@ in
 
     home.packages = with pkgs; [
       nil
-      pkgs.nixfmt
+      nixfmt
       shellcheck
     ];
   };

@@ -1,12 +1,12 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rhencloud.nvf;
+  cfg = config.rhencloud.nixvim;
 in
 {
-  options.rhencloud.nvf.enable = mkEnableOption "Neovim (nvf)";
+  options.rhencloud.nixvim.enable = mkEnableOption "Neovim (nixvim)";
   config = mkIf cfg.enable {
-    programs.nvf.enable = true;
+    programs.nixvim.enable = true;
   };
 
   imports = [

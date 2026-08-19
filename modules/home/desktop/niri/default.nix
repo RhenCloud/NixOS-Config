@@ -74,6 +74,7 @@ in
 
         [sleepy]
         server_url = "https://sleepy.rhen.cloud"
+        # server_url = "https://sleepy-eo.rhen.cloud"
         device_id = "nixos-desktop"
         device_name = "NixOS Desktop"
         token = "${config.sops.placeholder."sleepy-token"}"

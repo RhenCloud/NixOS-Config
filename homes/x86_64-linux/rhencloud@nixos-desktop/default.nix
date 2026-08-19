@@ -21,7 +21,7 @@
     "hm-packages".enable = true;
     "hm-xdg".enable = true;
     fish.enable = true;
-    ghostty.enable = true;
+    ghostty.enable = false;
     yazi.enable = true;
     fastfetch.enable = true;
     herdr.enable = true;
@@ -60,7 +60,7 @@
     certs.enable = true;
     opencode.enable = true;
     emacs.enable = false;
-    nvf.enable = true;
+    nixvim.enable = true;
     helix.enable = true;
     hmOpenAgent.enable = true;
     aider.enable = true;

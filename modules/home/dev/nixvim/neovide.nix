@@ -1,15 +1,8 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}:
+{ pkgs, lib, config, ... }:
 with lib;
-mkIf config.rhencloud.nvf.enable {
+mkIf config.rhencloud.nixvim.enable {
 
-  home.packages = with pkgs; [
-    neovide
-  ];
+  home.packages = with pkgs; [ neovide ];
 
   xdg.configFile."neovide/config.toml".text = ''
     font = { size = 14.0, normal = ["Maple Mono NF CN", "Noto Sans Mono CJK SC", "monospace"], features = { Onum = [] } }

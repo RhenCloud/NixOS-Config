@@ -1,10 +1,4 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}:
-
+{ pkgs, lib, config, ... }:
 let
   luanativeobjects = pkgs.stdenv.mkDerivation {
     name = "luanativeobjects";
@@ -36,23 +30,12 @@ let
       sha256 = "0nh3swbq4cn3gr00w14rd75pkn0s5bnnwjddvn6ggglsawh03fsl";
     };
 
-    buildInputs = with pkgs; [
-      librime
-      luajit
-    ];
-    nativeBuildInputs = with pkgs; [
-      xmake
-      pkg-config
-      patchelf
-      git
-      luanativeobjects
-    ];
+    buildInputs = with pkgs; [ librime luajit ];
+    nativeBuildInputs = with pkgs; [ xmake pkg-config patchelf git luanativeobjects ];
 
     LUA_PATH = "${luanativeobjects}/share/lua/5.1/?.lua;${luanativeobjects}/share/lua/5.1/?/init.lua;;";
 
-    prePatch = ''
-      sed -i -e '/add_requires/d' -e '/add_packages/d' xmake.lua
-    '';
+    prePatch = ''sed -i -e '/add_requires/d' -e '/add_packages/d' xmake.lua'';
 
     preBuild = ''
       export XMAKE_GLOBALDIR="$NIX_BUILD_TOP/xmake"
@@ -67,20 +50,19 @@ let
     '';
 
     postInstall = ''
-            mkdir -p "$out/lua"
-            cp -r lua/* "$out/lua/"
-            for pkg in packages/*/lua; do
-              [ -d "$pkg" ] && cp -r --no-preserve=mode "$pkg"/* "$out/lua/"
-            done
-            find build -name "*.so" -exec cp -t "$out/lua/" {} \;
-            for f in "$out/lua/"*.so; do
+      mkdir -p "$out/lua"
+      cp -r lua/* "$out/lua/"
+      for pkg in packages/*/lua; do
+        [ -d "$pkg" ] && cp -r --no-preserve=mode "$pkg"/* "$out/lua/"
+      done
+      find build -name "*.so" -exec cp -t "$out/lua/" {} \;
+      for f in "$out/lua/"*.so; do
         [ -f "$f" ] && patchelf --set-rpath "${pkgs.librime}/lib:${pkgs.luajit}/lib:${pkgs.stdenv.cc.cc.lib}/lib" "$f"
       done
-            rm -f "$out/lua/vim/version.lua"
+      rm -f "$out/lua/vim/version.lua"
     '';
 
     doCheck = false;
-
     meta = {
       homepage = "https://github.com/rimeinn/rime.nvim";
       description = "Rime input method for Neovim";
@@ -89,10 +71,10 @@ let
   };
 in
 with lib;
-mkIf config.rhencloud.nvf.enable {
-  programs.nvf.settings.vim.extraPlugins.rime-nvim = {
-    package = rime-nvim;
-    setup = ''
+mkIf config.rhencloud.nixvim.enable {
+  programs.nixvim = {
+    extraPlugins = [ rime-nvim ];
+    extraConfigLua = ''
       local ok, Rime = pcall(require, 'rime.nvim.rime')
       if ok then
         local rime = Rime()
