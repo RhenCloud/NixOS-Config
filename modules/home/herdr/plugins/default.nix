@@ -9,5 +9,6 @@
     ./spreader/default.nix
     ./tab-rename/default.nix
     ./window-title-sync/default.nix
+    ./mobile-relay/default.nix
   ];
 }
