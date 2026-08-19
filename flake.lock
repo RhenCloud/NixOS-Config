@@ -573,19 +573,20 @@
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
-        ]
+        ],
+        "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1781540022,
-        "narHash": "sha256-DjCSwhRMBRE9lSvjpX6m8IpoEgUbOP1jcmeXMlQlSQY=",
+        "lastModified": 1785783176,
+        "narHash": "sha256-empFQ+hrnCh2JhOzQRWSCLV0YoZC3DXW3bY6k8YuJjk=",
         "owner": "ogulcancelik",
         "repo": "herdr",
-        "rev": "0bf9bb58eb9c9495f660aed1bd9336121b953fdc",
+        "rev": "346411fa21afd297f5ed3b3fa56f9e3fbf7654b7",
         "type": "github"
       },
       "original": {
         "owner": "ogulcancelik",
-        "ref": "v0.7.0",
+        "ref": "v0.8.0",
         "repo": "herdr",
         "type": "github"
       }
@@ -1486,7 +1487,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay_2"
+        "rust-overlay": "rust-overlay_3"
       },
       "locked": {
         "lastModified": 1785581118,
@@ -1606,6 +1607,27 @@
     },
     "rust-overlay_2": {
       "inputs": {
+        "nixpkgs": [
+          "herdr",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1783577481,
+        "narHash": "sha256-EWMxOWrJ031f8f/lrcEmhTRs4npw1/5N3Hcjin846c8=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "4cdea398dc491b082dccdce0fad1ed0b75fa3394",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_3": {
+      "inputs": {
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
@@ -1622,7 +1644,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_3": {
+    "rust-overlay_4": {
       "inputs": {
         "nixpkgs": [
           "yazi",
@@ -2224,7 +2246,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay_3"
+        "rust-overlay": "rust-overlay_4"
       },
       "locked": {
         "lastModified": 1786883019,
