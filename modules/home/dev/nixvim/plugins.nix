@@ -49,8 +49,14 @@ mkIf cfg.enable {
     plugins.lualine = {
       enable = true;
       settings = {
-        options.component_separators = { left = "│"; right = "│"; };
-        options.section_separators = { left = ""; right = ""; };
+        options.component_separators = {
+          left = "│";
+          right = "│";
+        };
+        options.section_separators = {
+          left = "";
+          right = "";
+        };
       };
     };
 
@@ -63,57 +69,30 @@ mkIf cfg.enable {
           virtual_text_pos = "eol";
         };
       };
-      keymaps = {
-        nextHunk = "]h";
-        previousHunk = "[h";
-        stageHunk = "<leader>gs";
-        stageBuffer = "<leader>gS";
-        undoStageHunk = "<leader>gu";
-        blameLine = "<leader>gb";
-        diffThis = "<leader>gd";
-        toggleDeleted = "<leader>gD";
-        previewHunk = "<leader>gp";
-      };
     };
 
     plugins.which-key = {
       enable = true;
       settings.spec = [
-        {
-          __unkeyed-1 = "<leader>f";
-          group = "查找 / Telescope";
-        }
-        {
-          __unkeyed-1 = "<leader>c";
-          group = "代码 / Code";
-        }
-        {
-          __unkeyed-1 = "<leader>g";
-          group = "Git";
-        }
-        {
-          __unkeyed-1 = "<leader>w";
-          group = "窗口 / Window";
-        }
-        {
-          __unkeyed-1 = "<leader>x";
-          group = "诊断 / Trouble";
-        }
-        {
-          __unkeyed-1 = "<leader>o";
-          group = "Oil 文件";
-        }
+        { __unkeyed-1 = "<leader>f"; group = "查找 / Telescope"; }
+        { __unkeyed-1 = "<leader>c"; group = "代码 / Code"; }
+        { __unkeyed-1 = "<leader>g"; group = "Git"; }
+        { __unkeyed-1 = "<leader>w"; group = "窗口 / Window"; }
+        { __unkeyed-1 = "<leader>x"; group = "诊断 / Trouble"; }
+        { __unkeyed-1 = "<leader>o"; group = "Oil 文件"; }
       ];
     };
 
     plugins.neo-tree = {
       enable = true;
-      closeIfLastWindow = true;
-      filesystem = {
-        filteredItems = {
-          hideDotfiles = false;
-          hideGitignored = true;
-          hideHidden = false;
+      settings = {
+        close_if_last_window = true;
+        filesystem = {
+          filtered_items = {
+            hide_dotfiles = false;
+            hide_gitignored = true;
+            hide_hidden = false;
+          };
         };
       };
     };
@@ -143,32 +122,21 @@ mkIf cfg.enable {
 
     plugins.trouble = {
       enable = true;
-      keymaps = {
-        documentDiagnostics = "<leader>xX";
-        workspaceDiagnostics = "<leader>xx";
-        symbols = "<leader>cs";
-      };
     };
 
     plugins.aerial = {
       enable = true;
       settings.backends = [ "treesitter" "lsp" ];
-      keymaps = {
-        toggle = "<leader>a";
-      };
     };
 
     plugins.flash = {
       enable = true;
       settings = {
         labels = "asdfghjklqwertyuiopzxcvbnm";
-        modes.search.enabled = true;
-        modes.char.enabled = true;
-      };
-      keymaps = {
-        jump = "s";
-        treesitter = "S";
-        remote = "<leader>r";
+        modes = {
+          search.enabled = true;
+          char.enabled = true;
+        };
       };
     };
 
@@ -191,8 +159,6 @@ mkIf cfg.enable {
 
     plugins.comment-nvim = {
       enable = true;
-      settings.toggler.line = "gcc";
-      settings.toggler.block = "gbc";
     };
 
     plugins.todo-comments = {
@@ -254,6 +220,102 @@ mkIf cfg.enable {
       key = "<leader>u";
       action = "<cmd>UndotreeToggle<CR>";
       options.desc = "撤销树";
+    }
+    {
+      mode = "n";
+      key = "]h";
+      action = "<cmd>Gitsigns next_hunk<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "[h";
+      action = "<cmd>Gitsigns prev_hunk<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "<leader>gs";
+      action = "<cmd>Gitsigns stage_hunk<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "<leader>gS";
+      action = "<cmd>Gitsigns stage_buffer<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "<leader>gu";
+      action = "<cmd>Gitsigns undo_stage_hunk<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "<leader>gb";
+      action = "<cmd>Gitsigns blame_line<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "<leader>gd";
+      action = "<cmd>Gitsigns diffthis<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "<leader>gD";
+      action = "<cmd>Gitsigns toggle_deleted<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "<leader>gp";
+      action = "<cmd>Gitsigns preview_hunk<CR>";
+
+    }
+    {
+      mode = "n";
+      key = "<leader>xx";
+      action = "<cmd>Trouble diagnostics toggle<CR>";
+      options.desc = "诊断面板";
+    }
+    {
+      mode = "n";
+      key = "<leader>xX";
+      action = "<cmd>Trouble diagnostics toggle filter.buf=0<CR>";
+      options.desc = "当前文件诊断";
+    }
+    {
+      mode = "n";
+      key = "<leader>cs";
+      action = "<cmd>Trouble symbols toggle<CR>";
+      options.desc = "符号列表";
+    }
+    {
+      mode = "n";
+      key = "<leader>a";
+      action = "<cmd>AerialToggle<CR>";
+      options.desc = "代码大纲";
+    }
+    {
+      mode = "n";
+      key = "s";
+      action = { __raw = "function() require('flash').jump() end"; };
+      options.desc = "Flash 跳转";
+    }
+    {
+      mode = "n";
+      key = "S";
+      action = { __raw = "function() require('flash').treesitter() end"; };
+      options.desc = "Flash Treesitter";
+    }
+    {
+      mode = "n";
+      key = "<leader>r";
+      action = { __raw = "function() require('flash').remote() end"; };
+      options.desc = "Flash 远程";
     }
   ];
 }
