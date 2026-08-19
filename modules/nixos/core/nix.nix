@@ -29,6 +29,8 @@ in
         "flakes"
       ];
       accept-flake-config = true;
+      http-proxy = "http://127.0.0.1:7890";
+      https-proxy = "http://127.0.0.1:7890";
       max-jobs = "auto";
       builders-use-substitutes = true;
       auto-optimise-store = true;
