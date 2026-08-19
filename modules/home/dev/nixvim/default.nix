@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, pkgs, ... }:
 with lib;
 let
   cfg = config.rhencloud.nixvim;
@@ -6,7 +6,10 @@ in
 {
   options.rhencloud.nixvim.enable = mkEnableOption "Neovim (nixvim)";
   config = mkIf cfg.enable {
-    programs.nixvim.enable = true;
+    programs.nixvim = {
+      enable = true;
+      nixpkgs.source = pkgs.path;
+    };
   };
 
   imports = [
