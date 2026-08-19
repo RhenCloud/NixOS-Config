@@ -157,9 +157,7 @@ mkIf cfg.enable {
 
     plugins.nvim-autopairs.enable = true;
 
-    plugins.comment-nvim = {
-      enable = true;
-    };
+    plugins.comment.enable = true;
 
     plugins.todo-comments = {
       enable = true;
