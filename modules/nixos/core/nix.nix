@@ -29,13 +29,17 @@ in
         "flakes"
       ];
       accept-flake-config = true;
-      http-proxy = "http://127.0.0.1:7890";
-      https-proxy = "http://127.0.0.1:7890";
       max-jobs = "auto";
       builders-use-substitutes = true;
       auto-optimise-store = true;
       trusted-users = [ "@wheel" ];
     };
+
+    systemd.services.nix-daemon.serviceConfig.Environment = [
+      "http_proxy=http://127.0.0.1:7890"
+      "https_proxy=http://127.0.0.1:7890"
+      "all_proxy=http://127.0.0.1:7890"
+    ];
 
     nix.gc = {
       automatic = lib.mkDefault false;
