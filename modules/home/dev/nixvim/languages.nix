@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 with lib;
 mkIf config.rhencloud.nixvim.enable {
   programs.nixvim = {
@@ -43,7 +48,10 @@ mkIf config.rhencloud.nixvim.enable {
         formatters_by_ft = {
           nix = [ "nixfmt" ];
           lua = [ "stylua" ];
-          python = [ "isort" "black" ];
+          python = [
+            "isort"
+            "black"
+          ];
           rust = [ "rustfmt" ];
           go = [ "gofmt" ];
           javascript = [ "prettierd" ];

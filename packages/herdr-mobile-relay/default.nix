@@ -7,24 +7,30 @@
 let
   version = "0.16.4";
   system = stdenvNoCC.hostPlatform.system;
-  arch = {
-    x86_64-linux = "amd64";
-    aarch64-linux = "arm64";
-    x86_64-darwin = "amd64";
-    aarch64-darwin = "arm64";
-  }.${system} or (throw "unsupported system: ${system}");
-  os = {
-    x86_64-linux = "linux";
-    aarch64-linux = "linux";
-    x86_64-darwin = "darwin";
-    aarch64-darwin = "darwin";
-  }.${system} or (throw "unsupported system: ${system}");
-  binaryHash = {
-    x86_64-linux = "sha256-YSq7tL+vnjUvrKwTJ4dXO0TDMn4Vii31YVTjIWEwLUU=";
-    aarch64-linux = "sha256-Ihaq8lmpPhVDS91OwKtksU3E+wsoMdGQaQuhLc5+DE4=";
-    x86_64-darwin = "sha256-zh/g9WxW2olQTSe3BoCupJEAs0NzPY4UFCohmEcv9FQ=";
-    aarch64-darwin = "sha256-nEaiLIG5/fEcNb+P5oaCgvgzCfnJk88hsXuoSONxsxE=";
-  }.${system} or (throw "unsupported system: ${system}");
+  arch =
+    {
+      x86_64-linux = "amd64";
+      aarch64-linux = "arm64";
+      x86_64-darwin = "amd64";
+      aarch64-darwin = "arm64";
+    }
+    .${system} or (throw "unsupported system: ${system}");
+  os =
+    {
+      x86_64-linux = "linux";
+      aarch64-linux = "linux";
+      x86_64-darwin = "darwin";
+      aarch64-darwin = "darwin";
+    }
+    .${system} or (throw "unsupported system: ${system}");
+  binaryHash =
+    {
+      x86_64-linux = "sha256-YSq7tL+vnjUvrKwTJ4dXO0TDMn4Vii31YVTjIWEwLUU=";
+      aarch64-linux = "sha256-Ihaq8lmpPhVDS91OwKtksU3E+wsoMdGQaQuhLc5+DE4=";
+      x86_64-darwin = "sha256-zh/g9WxW2olQTSe3BoCupJEAs0NzPY4UFCohmEcv9FQ=";
+      aarch64-darwin = "sha256-nEaiLIG5/fEcNb+P5oaCgvgzCfnJk88hsXuoSONxsxE=";
+    }
+    .${system} or (throw "unsupported system: ${system}");
   binarySrc = fetchurl {
     url = "https://github.com/0cv/herdr-mobile-relay/releases/download/v${version}/herdr-mobile-relay_${version}_${os}_${arch}.tar.gz";
     hash = binaryHash;

@@ -55,9 +55,13 @@ in
               })
               { nixpkgs.overlays = h.overlays; }
             ]
-            ++ lib.optionals (builtins.elem host h.desktopHosts) ([
-              inputs.mangowm.nixosModules.mango
-            ] ++ h.rolesModuleDesktop ++ h.nixosModulesDesktop)
+            ++ lib.optionals (builtins.elem host h.desktopHosts) (
+              [
+                inputs.mangowm.nixosModules.mango
+              ]
+              ++ h.rolesModuleDesktop
+              ++ h.nixosModulesDesktop
+            )
             ++ h.nixosModulesCore
             ++ h.nixosModulesService
             ++ h.nixosModulesRouter

@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 with lib;
 let
   cfg = config.rhencloud.nixvim;
@@ -74,12 +79,30 @@ mkIf cfg.enable {
     plugins.which-key = {
       enable = true;
       settings.spec = [
-        { __unkeyed-1 = "<leader>f"; group = "查找 / Telescope"; }
-        { __unkeyed-1 = "<leader>c"; group = "代码 / Code"; }
-        { __unkeyed-1 = "<leader>g"; group = "Git"; }
-        { __unkeyed-1 = "<leader>w"; group = "窗口 / Window"; }
-        { __unkeyed-1 = "<leader>x"; group = "诊断 / Trouble"; }
-        { __unkeyed-1 = "<leader>o"; group = "Oil 文件"; }
+        {
+          __unkeyed-1 = "<leader>f";
+          group = "查找 / Telescope";
+        }
+        {
+          __unkeyed-1 = "<leader>c";
+          group = "代码 / Code";
+        }
+        {
+          __unkeyed-1 = "<leader>g";
+          group = "Git";
+        }
+        {
+          __unkeyed-1 = "<leader>w";
+          group = "窗口 / Window";
+        }
+        {
+          __unkeyed-1 = "<leader>x";
+          group = "诊断 / Trouble";
+        }
+        {
+          __unkeyed-1 = "<leader>o";
+          group = "Oil 文件";
+        }
       ];
     };
 
@@ -126,7 +149,10 @@ mkIf cfg.enable {
 
     plugins.aerial = {
       enable = true;
-      settings.backends = [ "treesitter" "lsp" ];
+      settings.backends = [
+        "treesitter"
+        "lsp"
+      ];
     };
 
     plugins.flash = {
@@ -201,7 +227,11 @@ mkIf cfg.enable {
         auto_save_enabled = true;
         auto_restore_enabled = true;
         auto_create_enabled = true;
-        suppressed_dirs = [ "/" "/tmp" "/etc" ];
+        suppressed_dirs = [
+          "/"
+          "/tmp"
+          "/etc"
+        ];
       };
     };
   };
@@ -300,19 +330,25 @@ mkIf cfg.enable {
     {
       mode = "n";
       key = "s";
-      action = { __raw = "function() require('flash').jump() end"; };
+      action = {
+        __raw = "function() require('flash').jump() end";
+      };
       options.desc = "Flash 跳转";
     }
     {
       mode = "n";
       key = "S";
-      action = { __raw = "function() require('flash').treesitter() end"; };
+      action = {
+        __raw = "function() require('flash').treesitter() end";
+      };
       options.desc = "Flash Treesitter";
     }
     {
       mode = "n";
       key = "<leader>r";
-      action = { __raw = "function() require('flash').remote() end"; };
+      action = {
+        __raw = "function() require('flash').remote() end";
+      };
       options.desc = "Flash 远程";
     }
   ];

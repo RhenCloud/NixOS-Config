@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   luanativeobjects = pkgs.stdenv.mkDerivation {
     name = "luanativeobjects";
@@ -30,12 +35,21 @@ let
       sha256 = "0nh3swbq4cn3gr00w14rd75pkn0s5bnnwjddvn6ggglsawh03fsl";
     };
 
-    buildInputs = with pkgs; [ librime luajit ];
-    nativeBuildInputs = with pkgs; [ xmake pkg-config patchelf git luanativeobjects ];
+    buildInputs = with pkgs; [
+      librime
+      luajit
+    ];
+    nativeBuildInputs = with pkgs; [
+      xmake
+      pkg-config
+      patchelf
+      git
+      luanativeobjects
+    ];
 
     LUA_PATH = "${luanativeobjects}/share/lua/5.1/?.lua;${luanativeobjects}/share/lua/5.1/?/init.lua;;";
 
-    prePatch = ''sed -i -e '/add_requires/d' -e '/add_packages/d' xmake.lua'';
+    prePatch = "sed -i -e '/add_requires/d' -e '/add_packages/d' xmake.lua";
 
     preBuild = ''
       export XMAKE_GLOBALDIR="$NIX_BUILD_TOP/xmake"
