@@ -39,12 +39,9 @@ in
         clipboard = lib.mkForce "unnamedplus";
       };
 
-      clipboard = {
-        register = "unnamedplus";
-        providers.wl-copy.enable = true;
-      };
+      clipboard.providers.wl-copy.enable = true;
 
-      luaConfigPre = ''
+      extraConfigLuaPre = ''
         vim.api.nvim_create_augroup("YankHighlight", { clear = true })
       '';
 
