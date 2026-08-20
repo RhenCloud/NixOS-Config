@@ -18,12 +18,12 @@ in
       lychee
       lazygit
       cloudflared
-      ghidra-bin
+      # ghidra-bin
       codex
-      gitkraken
+      # gitkraken
       cc-switch
       deno
-      claude-code
+      # claude-code
       inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zed-globalization
       openssl
       ripgrep

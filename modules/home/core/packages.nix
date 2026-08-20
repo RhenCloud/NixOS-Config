@@ -22,7 +22,7 @@ in
       nixfmt
       nix-update
       keymapper
-      wemeet
+      # wemeet
       qbittorrent
       blender
       aliyunpan

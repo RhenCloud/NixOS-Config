@@ -101,9 +101,9 @@ sniffer:
     QUIC:
       # QUIC 嗅探 (针对 YouTube/Google 优化)
       ports: [443]
-  force-domain:
-    # 强制进行域名解析还原的域名
-    - "+" # 对所有能嗅探到的流量执行还原，确保规则匹配最准
+  # force-domain:
+  # 强制进行域名解析还原的域名
+  # - "+" # 对所有能嗅探到的流量执行还原，确保规则匹配最准
   skip-domain:
     # 跳过嗅探的域名 (避免某些加密连接因嗅探握手失败)
     - "Mijia Cloud"

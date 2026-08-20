@@ -7,6 +7,12 @@
 with lib;
 mkIf config.rhencloud.nixvim.enable {
   programs.nixvim = {
+    extraConfigLuaPre = ''
+      if vim.fn.has("nvim-0.11") == 1 then
+        vim.lsp.uri_from_bufnr = vim.uri_from_bufnr
+      end
+    '';
+
     plugins.treesitter = {
       enable = true;
       settings.highlight.enable = true;

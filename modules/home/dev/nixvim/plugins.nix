@@ -183,6 +183,8 @@ mkIf cfg.enable {
 
     plugins.nvim-autopairs.enable = true;
 
+    plugins.render-markdown.enable = true;
+
     plugins.comment.enable = true;
 
     plugins.todo-comments = {

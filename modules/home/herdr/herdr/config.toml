@@ -23,6 +23,17 @@ type = "plugin_action"
 command = "cloudmanic.herdr-plus.quick-actions"
 description = "herdr-plus: quick actions"
 
+# [[keys.command]]
+# key = "ctrl+b"
+# type = "plugin_action"
+# command = "herdr"
+# description = "herdr-sidebar"
+
+[[keys.command]]
+key = "ctrl+r"
+type = "plugin_action"
+command = "persiyanov.reviewr.toggle"
+
 [ui]
 show_agent_labels_on_pane_borders = true
 

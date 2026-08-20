@@ -12,24 +12,22 @@ in
       arch: _:
       let
         userDirs = lib.filterAttrs (_n: t: t == "directory") (builtins.readDir "${homesDir}/${arch}");
+        pkgs = import inputs.nixpkgs {
+          localSystem = {
+            system = arch;
+          };
+          config.allowUnfree = true;
+          config.permittedInsecurePackages = [
+            "electron-39.8.10"
+            "pnpm-9.15.9"
+            "pnpm-10.29.2"
+          ];
+          overlays = h.overlays;
+        };
       in
       lib.mapAttrs' (
         userEntry: _:
         lib.nameValuePair userEntry (
-          let
-            pkgs = import inputs.nixpkgs {
-              localSystem = {
-                system = arch;
-              };
-              config.allowUnfree = true;
-              config.permittedInsecurePackages = [
-                "electron-39.8.10"
-                "pnpm-9.15.9"
-                "pnpm-10.29.2"
-              ];
-              overlays = h.overlays;
-            };
-          in
           inputs.home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [
