@@ -1,5 +1,7 @@
 set -g fish_greeting ''
 
+set -gx NH_OS_FLAKE $HOME/Project/NixOS-Config
+
 fish_config theme choose Dracula
 
 # Tide prompt in Dracula palette

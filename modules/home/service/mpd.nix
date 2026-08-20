@@ -13,6 +13,19 @@ in
         audio_output {
           type "pipewire"
           name "PipeWire Output"
+          format "48000:16:2"
+        }
+
+        # 网易云 CDN 错误地把 FLAC 流标注为 audio/mpeg，
+        # 导致 MPD 选择 mpg123/mad 解码 FLAC 失败产生电流音。
+        # 禁用 mp3 专用解码器，强制使用 ffmpeg 自动探测真实格式。
+        decoder {
+          plugin "mad"
+          enabled "no"
+        }
+        decoder {
+          plugin "mpg123"
+          enabled "no"
         }
       '';
 
