@@ -30,6 +30,7 @@ in
       ntfs3g
       opensc
       pcsc-tools
+      yubikey-manager
       sops
       tree
       udisks

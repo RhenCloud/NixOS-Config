@@ -34,6 +34,12 @@ key = "ctrl+r"
 type = "plugin_action"
 command = "persiyanov.reviewr.toggle"
 
+[keys]
+focus_pane_left = ["prefix+h", "ctrl+h"]
+focus_pane_down = ["prefix+j", "ctrl+j"]
+focus_pane_up = ["prefix+k", "ctrl+k"]
+focus_pane_right = ["prefix+l", "ctrl+l"]
+
 [ui]
 show_agent_labels_on_pane_borders = true
 

@@ -14,7 +14,7 @@ in
   config = mkIf cfg.enable {
     networking.useNetworkd = true;
 
-    networking.firewall.allowedUDPPorts = [ 67 ];
+    networking.firewall.allowedUDPPorts = [ 67 53 ];
 
     systemd.network = {
       netdevs."10-br0" = {
@@ -63,14 +63,17 @@ in
 
     services.resolved = {
       enable = true;
-      settings.Resolve.DNS = [
-        "119.29.29.29"
-        "223.5.5.5"
-      ];
-      settings.Resolve.FallbackDNS = [
-        "1.1.1.1"
-        "8.8.8.8"
-      ];
+      settings.Resolve = {
+        DNS = [
+          "119.29.29.29"
+          "223.5.5.5"
+        ];
+        FallbackDNS = [
+          "1.1.1.1"
+          "8.8.8.8"
+        ];
+        DNSStubListenerExtra = [ "10.0.0.1" ];
+      };
     };
 
     services.hostapd = {

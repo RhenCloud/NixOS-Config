@@ -14,6 +14,8 @@ in
   config = mkIf cfg.enable {
     zramSwap.enable = true;
 
+    hardware.gpgSmartcards.enable = true;
+
     networking = {
       firewall.enable = false;
       networkmanager.enable = true;
