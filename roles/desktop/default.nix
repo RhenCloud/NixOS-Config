@@ -41,6 +41,7 @@ in
       # service
       bluetooth.enable = true;
       docker.enable = true;
+      podman.enable = true;
       displayManagers.enable = true;
       easytier.enable = true;
       selector4nix.enable = true;

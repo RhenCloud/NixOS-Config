@@ -74,6 +74,93 @@ in
             };
           };
         };
+        extraConfig.pipewire."90-surround-loopback" = {
+          "context.objects" = [
+            {
+              factory = "adapter";
+              args = {
+                "factory.name" = "support.null-audio-sink";
+                "node.name" = "surround_master";
+                "node.description" = "环绕立体声（USB 前置 + 3.5mm 后置）";
+                "media.class" = "Audio/Sink";
+                "audio.channels" = 4;
+                "audio.position" = [
+                  "FL"
+                  "FR"
+                  "RL"
+                  "RR"
+                ];
+              };
+            }
+          ];
+          "context.modules" = [
+            {
+              name = "libpipewire-module-loopback";
+              args = {
+                "node.description" = "前置 USB";
+                "capture.props" = {
+                  "node.name" = "capture.usb_front";
+                  "stream.capture.sink" = true;
+                  "target.object" = "surround_master";
+                  "audio.position" = [
+                    "FL"
+                    "FR"
+                  ];
+                  "stream.dont-remix" = true;
+                  "node.passive" = true;
+                };
+                "playback.props" = {
+                  "node.name" = "playback.usb_front";
+                  "target.object" = "alsa_output.usb-EDIFIER_EDIFIER_R20_415035303039340E-00.analog-stereo";
+                  "audio.position" = [
+                    "FL"
+                    "FR"
+                  ];
+                  "stream.dont-remix" = true;
+                };
+              };
+            }
+            {
+              name = "libpipewire-module-loopback";
+              args = {
+                "node.description" = "后置 3.5mm";
+                "target.delay.sec" = 0.16;
+                "capture.props" = {
+                  "node.name" = "capture.onboard_rear";
+                  "stream.capture.sink" = true;
+                  "target.object" = "surround_master";
+                  "audio.position" = [
+                    "RL"
+                    "RR"
+                  ];
+                  "stream.dont-remix" = true;
+                  "node.passive" = true;
+                };
+                "playback.props" = {
+                  "node.name" = "playback.onboard_rear";
+                  "target.object" = "alsa_output.pci-0000_00_1b.0.analog-stereo";
+                  "audio.position" = [
+                    "FL"
+                    "FR"
+                  ];
+                  "stream.dont-remix" = true;
+                };
+              };
+            }
+          ];
+        };
+        extraConfig.client."90-upmix-stereo" = {
+          "stream.properties" = {
+            "channelmix.upmix" = true;
+            "channelmix.upmix-method" = "simple";
+          };
+        };
+        extraConfig.pipewire-pulse."90-upmix-stereo" = {
+          "stream.properties" = {
+            "channelmix.upmix" = true;
+            "channelmix.upmix-method" = "simple";
+          };
+        };
       };
     };
 

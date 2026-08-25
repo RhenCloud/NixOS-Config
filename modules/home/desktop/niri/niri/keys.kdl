@@ -15,12 +15,13 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     // Mod+Return { spawn "kitty"; }
-    Mod+Return { spawn "sh" "-c" "python3 \"$HOME/.config/niri_tweaks/niri_spawnjump.py\" kitty -w -p -s"; }
+    // Mod+Return { spawn "sh" "-c" "python3 \"$HOME/.config/niri_tweaks/niri_spawnjump.py\" kitty -w -p -s"; }
+    Mod+Return { spawn "kitty"; }
     Mod+A { spawn-sh "noctalia msg panel-toggle launcher"; }
     // Super+Alt+L { spawn "swaylock"; }
 
-    Ctrl+Alt+W { spawn "sh" "-c" "python3 \"$HOME/.config/niri_tweaks/niri_spawnjump.py\" wechat -t scratch"; }
-    Ctrl+Alt+X { spawn "sh" "-c" "python3 \"$HOME/.config/niri_tweaks/niri_spawnjump.py\" QQ -t scratch"; }
+    // Ctrl+Alt+W { spawn "sh" "-c" "python3 \"$HOME/.config/niri_tweaks/niri_spawnjump.py\" wechat -t scratch"; }
+    // Ctrl+Alt+X { spawn "sh" "-c" "python3 \"$HOME/.config/niri_tweaks/niri_spawnjump.py\" QQ -t scratch"; }
 
     Mod+Space { toggle-window-floating; }
 
@@ -32,11 +33,16 @@ binds {
     Mod+B { spawn "zen"; }
 
     Mod+C { spawn "zed"; }
+    
+    Mod+D { spawn "vesktop"; }
 
     Mod+Shift+V { spawn "kitty" "--class" "clipse" "-e" "clipse"; }
     Mod+V { spawn-sh "noctalia msg panel-toggle clipboard"; }
 
     Mod+W { toggle-column-tabbed-display; }
+
+    // 切换当前列为标签页分组模式 (Tabbed Group) / Toggle column tabbed display
+    Mod+G { toggle-column-tabbed-display; }
 
     Mod+X { spawn-sh "noctalia msg panel-toggle session"; }
     Mod+Shift+B { spawn-sh "noctalia msg bar-toggle"; }

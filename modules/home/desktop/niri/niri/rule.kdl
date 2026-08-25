@@ -19,6 +19,27 @@ window-rule {
 
 }
 
+layer-rule {
+    match namespace="^noctalia-wallpaper*"
+    place-within-backdrop true
+}
+
+layer-rule {
+    match namespace="^mpvpaper$"
+    place-within-backdrop true
+}
+
+// noctalia(v5.0.0) 状态栏的命名空间
+layer-rule {
+    match namespace="^noctalia-bar-bar$"
+    opacity 1.0
+    geometry-corner-radius 0
+    shadow { off; }
+    background-effect {
+        blur true
+    }
+}
+
 blur {
     passes 3
     offset 3
@@ -27,7 +48,32 @@ blur {
 }
 
 window-rule {
-    match app-id="musicofx"
+    match app-id=r"^org\.gnome\.Calculator$"
+    match app-id=r"^gnome-calculator$"
+    match app-id=r"^galculator$"
+    match app-id=r"^blueman-manager$"
+    match app-id=r"^org\.gnome\.Nautilus$"
+    match app-id=r"^xdg-desktop-portal$"
+    open-floating true
+}
+
+// ==========================================
+// 游戏专属规则：强制无特效、最高性能
+// ==========================================
+window-rule {
+    match app-id=r"^steam_app_.*"
+    match app-id=r"^gamescope$"
+    match app-id=r"^wine$"
+    match title=r"(?i)genshin impact|zenless zone zero|victoria 3|Minecraft|Endfield"
+    opacity 1.0
+    background-effect {
+        blur false
+    }
+    draw-border-with-background false
+}
+
+window-rule {
+    match app-id="musicfox"
     open-floating true
     default-column-width { fixed 1200; }
     default-window-height { fixed 700; }
@@ -98,13 +144,13 @@ layer-rule {
     }
 }
 
-layer-rule {
-  // noctalia v5 renders the wallpaper on the `noctalia-wallpaper` /
-  // `noctalia-backdrop` layers (v4 used `noctalia-overview`). Keep placing it
-  // within niri's backdrop so it shows behind windows / in the overview.
-  match namespace="^noctalia-(wallpaper|backdrop)"
-  place-within-backdrop true
-}
+// layer-rule {
+//   // noctalia v5 renders the wallpaper on the `noctalia-wallpaper` /
+//   // `noctalia-backdrop` layers (v4 used `noctalia-overview`). Keep placing it
+//   // within niri's backdrop so it shows behind windows / in the overview.
+//   match namespace="^noctalia-(wallpaper|backdrop)"
+//   place-within-backdrop true
+// }
 
 layer-rule {
   match namespace="^awww-daemon$"

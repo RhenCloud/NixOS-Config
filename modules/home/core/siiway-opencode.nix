@@ -20,6 +20,7 @@ let
     "$schema" = "https://opencode.ai/config.json";
     model = "voidswitch/deepseek-v4-pro";
     small_model = "voidswitch/glm-4.7-flash-cf";
+    lsp = true;
     mcp = {
       chrome-devtools = {
         enabled = false;
@@ -69,6 +70,7 @@ let
       "opencode-chrome-devtools"
       "@tarquinen/opencode-dcp@latest"
       "@nick-vi/opencode-type-inject"
+      "remote-code"
     ];
     provider = {
       FriModel = {

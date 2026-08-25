@@ -9,7 +9,14 @@ let
   cfg = config.rhencloud.git;
 in
 {
-  options.rhencloud.git.enable = mkEnableOption "git, SSH, and GPG";
+  options.rhencloud.git = {
+    enable = mkEnableOption "git, SSH, and GPG";
+    sshHostBlocks = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Whether to include SSH host blocks from sops secrets";
+    };
+  };
 
   config = mkIf cfg.enable {
     programs = {
@@ -49,6 +56,8 @@ in
               HostName 10.114.0.5
               User rhencloud
               ProxyJump yc-hk-1
+        ''
+        + lib.optionalString cfg.sshHostBlocks ''
 
           Include ${config.sops.templates."ssh-host-blocks".path}
         '';
@@ -58,7 +67,7 @@ in
       };
     };
 
-    sops.secrets = {
+    sops.secrets = lib.mkIf cfg.sshHostBlocks {
       "ssh-tc-discourse" = {
         sopsFile = ../../../secrets/hosts/nixos-desktop.yaml;
       };
@@ -67,7 +76,7 @@ in
       };
     };
 
-    sops.templates."ssh-host-blocks" = {
+    sops.templates."ssh-host-blocks" = lib.mkIf cfg.sshHostBlocks {
       mode = "0644";
       content =
         config.sops.placeholder."ssh-tc-discourse" + "\n\n" + config.sops.placeholder."ssh-bee-hk-1" + "\n";

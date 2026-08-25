@@ -15,6 +15,13 @@ in
     home.sessionVariables = {
       NIX_BUILD_SHELL = "${pkgs.fish}/bin/fish";
       SHELL = "${pkgs.fish}/bin/fish";
+      PKG_CONFIG_PATH = "${pkgs.libffi.dev}/lib/pkgconfig:${pkgs.zlib.dev}/lib/pkgconfig:${pkgs.libpng.dev}/lib/pkgconfig:${
+        pkgs.lib.concatStringsSep ":" (map (p: "${p.dev or p}/lib/pkgconfig") (with pkgs; [
+          libjpeg_turbo
+          openssl
+          libxml2
+        ]))
+      }:$PKG_CONFIG_PATH";
     };
 
     home.packages = with pkgs; [

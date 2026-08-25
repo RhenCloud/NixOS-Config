@@ -176,6 +176,9 @@ in
               if ! grep -q "ice2keytao" "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
                 sed -i '/^\.\.\.$/a\  - ice2keytao' "$rime_dir/keytao.extended.dict.yaml"
               fi
+              if awk '/^  - keytao\.user$/{user=NR} /^  - keytao\.phrase$/{phrase=NR} END{exit !(user>0 && phrase>0 && user>phrase)}' "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
+                sed -i '/^  - keytao\.user$/d; /^  - keytao\.phrase$/i\  - keytao.user' "$rime_dir/keytao.extended.dict.yaml"
+              fi
             fi
 
             ${lib.optionalString (cfg.extraDictFiles != { }) ''

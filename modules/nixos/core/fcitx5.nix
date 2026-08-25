@@ -21,6 +21,7 @@ in
           qt6Packages.fcitx5-configtool
           qt6Packages.fcitx5-chinese-addons
           fcitx5-gtk
+          fcitx5-mozc
           librime
           librime-octagram
           librime-lua

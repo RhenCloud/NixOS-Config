@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 {
   home.stateVersion = lib.mkDefault "26.11";
   programs.home-manager.enable = true;
@@ -10,8 +10,11 @@
     fcitx5 = {
       enable = true;
       keytaoUserDict = ''
-        泠云	lgyw
         李佳润	ljr
+        泠云	lgyw
+        联通性	ltx
+        气笑了	qxl
+        气笑	qx
       '';
     };
 
@@ -20,6 +23,7 @@
     git.enable = true;
     "hm-packages".enable = true;
     "hm-xdg".enable = true;
+    "hm-wallpapers".enable = true;
     fish.enable = true;
     ghostty.enable = false;
     yazi.enable = true;
@@ -59,6 +63,7 @@
     hmDevPackages.enable = true;
     certs.enable = true;
     opencode.enable = true;
+    opencode-podman.enable = true;
     emacs.enable = false;
     nixvim.enable = true;
     helix.enable = true;

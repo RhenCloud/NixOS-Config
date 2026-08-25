@@ -12,6 +12,5 @@
     ./rust.nix
     ./packages.nix
     ./certs.nix
-    ./siiway-opencode.nix
   ];
 }

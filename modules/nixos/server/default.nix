@@ -1,6 +1,8 @@
 { ... }:
 {
   imports = [
+    ./beszel
+    ./beszel-agent
     ./easytier
     ./frp
     ./gost

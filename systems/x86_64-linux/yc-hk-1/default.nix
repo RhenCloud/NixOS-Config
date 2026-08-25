@@ -25,6 +25,7 @@ in
   rhencloud.server.install.enable = true;
 
   rhencloud.services = {
+    beszel.enable = true;
     nextbridge.enable = true;
     frp.enable = true;
     easytier.enable = true;

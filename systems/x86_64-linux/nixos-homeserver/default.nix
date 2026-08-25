@@ -16,6 +16,8 @@
 
   services.dbus.implementation = lib.mkForce "broker";
 
+  sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+
   rhencloud = {
     boot.enable = true;
     identity.enable = true;
@@ -26,6 +28,9 @@
     shells.enable = true;
 
     docker.enable = true;
+    podman.enable = true;
     router.enable = true;
+
+    services.beszel-agent.enable = true;
   };
 }

@@ -40,6 +40,7 @@
   inputs = {
     # ── 框架 ────────────────────────────────────────────
     flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:denful/import-tree";
 
     # ── 频道 / 基础 ────────────────────────────────────
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";

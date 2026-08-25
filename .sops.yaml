@@ -28,3 +28,9 @@ creation_rules:
           - *admin
         age:
           - *yc-hk-1
+  - path_regex: secrets/hosts/nixos-homeserver\.yaml$
+    key_groups:
+      - pgp:
+          - *admin
+        age:
+          - *homeserver

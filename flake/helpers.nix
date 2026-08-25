@@ -2,6 +2,14 @@
 let
   root = toString inputs.self;
 
+  it = inputs.import-tree;
+
+  # 只收集各目录的 default.nix；目录内的 flat 文件由对应 default.nix 自行 import
+  collectDefaultNix = it.filter (s: s == "/default.nix" || lib.hasSuffix "/default.nix" s);
+
+  # 只收集根目录自身的 default.nix（子模块由父级 default.nix 以目录方式聚合）
+  collectTopDefault = it.filter (s: s == "/default.nix");
+
   overlays = [
     (import "${root}/overlays/mexkey3-ccid/default.nix" { })
     (import "${root}/overlays/musicfox/default.nix" { })
@@ -11,69 +19,22 @@ let
     (import "${root}/overlays/wechat/default.nix" { })
   ];
 
-  nixosModulesCore = [
-    "${root}/modules/nixos/core/default.nix"
-    "${root}/modules/nixos/core/impermanence/default.nix"
-    "${root}/modules/nixos/core/mihomo/default.nix"
-  ];
-  nixosModulesDesktop = [
-    "${root}/modules/nixos/desktop/default.nix"
-  ];
-  nixosModulesServer = [
-    "${root}/modules/nixos/server/default.nix"
-  ];
-  nixosModulesService = [
-    "${root}/modules/nixos/service/default.nix"
-  ];
-  nixosModulesRouter = [
-    "${root}/modules/nixos/router/default.nix"
-  ];
+  nixosModulesCore = [ (collectDefaultNix "${root}/modules/nixos/core") ];
+  nixosModulesDesktop = [ (collectTopDefault "${root}/modules/nixos/desktop") ];
+  nixosModulesServer = [ (collectTopDefault "${root}/modules/nixos/server") ];
+  nixosModulesService = [ (collectTopDefault "${root}/modules/nixos/service") ];
+  nixosModulesRouter = [ (collectTopDefault "${root}/modules/nixos/router") ];
 
-  rolesModuleDesktop = [ "${root}/roles/desktop/default.nix" ];
-  rolesModuleServer = [ "${root}/roles/server/default.nix" ];
+  rolesModuleDesktop = [ (collectTopDefault "${root}/roles/desktop") ];
+  rolesModuleServer = [ (collectTopDefault "${root}/roles/server") ];
 
   homeBase = "${root}/modules/home";
 
-  homeCore = [
-    "${homeBase}/core/default.nix"
-    "${homeBase}/core/fastfetch/default.nix"
-    "${homeBase}/core/fish/default.nix"
-    "${homeBase}/core/ghostty/default.nix"
-    "${homeBase}/core/sops/default.nix"
-    "${homeBase}/core/yazi/default.nix"
-  ];
-  homeService = [
-    "${homeBase}/service/default.nix"
-  ];
-  homeDesktop = [
-    "${homeBase}/desktop/base/default.nix"
-    "${homeBase}/desktop/chat/default.nix"
-    "${homeBase}/desktop/fcitx5/default.nix"
-    "${homeBase}/desktop/foot/default.nix"
-    "${homeBase}/desktop/hyprland/default.nix"
-    "${homeBase}/desktop/kitty/default.nix"
-    "${homeBase}/desktop/mango/default.nix"
-    "${homeBase}/desktop/misc/default.nix"
-    "${homeBase}/desktop/musicfox/default.nix"
-    "${homeBase}/desktop/niri/default.nix"
-    "${homeBase}/desktop/noctalia/default.nix"
-    "${homeBase}/desktop/obs/default.nix"
-    "${homeBase}/desktop/prismlauncher/default.nix"
-    "${homeBase}/desktop/stylix/default.nix"
-    "${homeBase}/desktop/theme/default.nix"
-    "${homeBase}/desktop/tofi/default.nix"
-    "${homeBase}/desktop/vicinae/default.nix"
-  ];
-  homeDev = [
-    "${homeBase}/dev/default.nix"
-    "${homeBase}/dev/aider/default.nix"
-    "${homeBase}/dev/helix/default.nix"
-    "${homeBase}/dev/nixvim/default.nix"
-    "${homeBase}/dev/opencode/default.nix"
-  ];
-  homeHerdr = [
-    "${homeBase}/herdr/default.nix"
-  ];
+  homeCore = [ (collectDefaultNix "${homeBase}/core") ];
+  homeService = [ (collectTopDefault "${homeBase}/service") ];
+  homeDesktop = [ (collectDefaultNix "${homeBase}/desktop") ];
+  homeDev = [ (collectDefaultNix "${homeBase}/dev") ];
+  homeHerdr = [ (collectTopDefault "${homeBase}/herdr") ];
 
   # 所有系统共用的 home 模块
   homeModules = homeCore ++ homeService ++ homeHerdr;
@@ -115,7 +76,10 @@ let
   desktopHomeModulesFull = desktopHomeModules ++ desktopExtraHomeModules;
 
   desktopHosts = [ "nixos-desktop" ];
-  serverHosts = [ "yc-hk-1" ];
+  serverHosts = [
+    "yc-hk-1"
+    "nixos-homeserver"
+  ];
 in
 {
   inherit

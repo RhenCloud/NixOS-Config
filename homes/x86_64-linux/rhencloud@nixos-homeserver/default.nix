@@ -6,5 +6,11 @@
   rhencloud = {
     fish.enable = true;
     herdr.enable = false;
+    git = {
+      enable = true;
+      sshHostBlocks = false;
+    };
+    opencode.enable = true;
+    opencode-podman.enable = true;
   };
 }

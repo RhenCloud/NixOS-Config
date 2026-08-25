@@ -15,6 +15,7 @@ in
       python315
       prek
       ruff
+      libffi.dev
       # python311
     ];
 

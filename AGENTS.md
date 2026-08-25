@@ -13,14 +13,14 @@ flake/packages.nix             # 自定义包（herdr-tab-rename、aicommits、d
 flake/devshells.nix            # devShells（default + python）+ formatter（nixfmt）
 flake/checks.nix               # flake checks（formatting/statix/deadnix/eval/secrets）
 flake/deploy.nix               # deploy-rs 节点定义
-flake/helpers.nix              # 内部辅助（overlay 发现、home 模块分组、collectDefaultNix）
+flake/helpers.nix              # 内部辅助（overlay 发现、home 模块分组、import-tree 模块收集）
 systems/x86_64-linux/{nixos-desktop,yc-hk-1,nixos-homeserver}/
                                # 每主机入口（default.nix + hardware-configuration.nix）
 roles/{desktop,server}/         # 角色层（聚合模块启用，host 通过 rhencloud.roles.<name>.enable 选择）
 homes/x86_64-linux/{rhencloud@nixos-desktop,rhencloud@yc-hk-1,rhencloud@nixos-homeserver,wyf9@yc-hk-1}/
                                # 每用户每主机的 Home Manager 入口
-modules/nixos/{core,desktop,service}/  # 系统级模块（collectDefaultNix 自动收集）
-modules/home/{core,desktop,dev,service}/  # Home Manager 模块（自动收集）
+modules/nixos/{core,desktop,service}/  # 系统级模块（import-tree 自动收集 default.nix）
+modules/home/{core,desktop,dev,service}/  # Home Manager 模块（import-tree 自动收集）
 modules/options.nix            # 全局选项（my.*，如 my.user / my.host / my.stateVersion）
 secrets/                       # sops 加密的密钥（common.yaml + hosts/<host>.yaml）
 overlays/                      # 自定义包 overlay（niri、portal-gtk、mexkey3-ccid、go-musicfox 等）
@@ -42,7 +42,7 @@ patches/                       # niri 的补丁
 - **HM 密钥**：NixOS 层通过 `sops.templates`（`/run/secrets/templates/`）渲染完整配置文件；HM 用 `config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/<file>"` 引用。
 - **主题**：Stylix 提供系统级主题（Dracula）。
 - **Overlays**：定义于 `overlays/<name>/default.nix`，在 NixOS（`flake/nixos.nix`）与 home-manager（`flake/helpers.nix` 的 `essentialHomeModules`）中均通过 `nixpkgs.overlays` 应用。
-- **模块自动发现**：`flake/helpers.nix` 的 `collectDefaultNix` 递归遍历 `modules/nixos`、`roles` 与 `modules/home` 收集所有 `default.nix`（含 `disabled` 标记跳过）。Snowfall 风格的 `rhencloud.*` 选项是普通 NixOS 模块选项，而非命名空间魔法。
+- **模块自动发现**：`flake/helpers.nix` 通过 [import-tree](https://github.com/denful/import-tree)（`inputs.import-tree`）按目录收集模块，取代手写模块列表。两个过滤器：`collectDefaultNix`（收集根目录及直接子目录的 `default.nix`，供 `core`、`dev`、`desktop` 等父级 default.nix 不聚合子目录的组使用）、`collectTopDefault`（仅收集根目录自身的 `default.nix`，供父级 default.nix 以目录路径聚合子模块的组使用，如 `server/`、`herdr/`，避免目录键与文件键重复声明选项）。注意 import-tree 过滤器回调收到的是带前导 `/` 的相对路径（如 `/default.nix`）。Snowfall 风格的 `rhencloud.*` 选项是普通 NixOS 模块选项，而非命名空间魔法。
 - **主机/home 自动发现**：`flake/nixos.nix` 扫描 `systems/<arch>/`，`flake/home-manager.nix` 扫描 `homes/<arch>/`，无需手动注册。
 - **checks**：`flake/checks.nix` 定义 formatting/statix/deadnix/eval/secrets 检查，由 `nix flake check` 统一执行。
 
@@ -89,9 +89,9 @@ nix flake check --all-systems
 
 ## 常见修改模式
 
-**新增 Home Manager 模块**：创建 `modules/home/<category>/<name>/default.nix`。`collectDefaultNix` 自动包含。
+**新增 Home Manager 模块**：创建 `modules/home/<category>/<name>/default.nix`。若该分类的父级 `default.nix` 以目录路径 import 子目录（如 `herdr/`），自动包含；否则需在分类父级 `default.nix` 的 `imports` 中显式添加（如 `core/`、`dev/`、`desktop/`、`service/` 的 flat 文件）。
 
-**新增 NixOS 模块**：创建 `modules/nixos/<category>/<name>/default.nix`。同样自动包含。
+**新增 NixOS 模块**：创建 `modules/nixos/<category>/<name>/default.nix`。若该分类的父级 `default.nix` 以目录路径 import 子目录（如 `server/`），自动包含；否则需在分类父级 `default.nix` 的 `imports` 中显式添加（如 `core/`、`desktop/`、`service/` 的 flat 文件）。
 
 **新增角色**：创建 `roles/<name>/default.nix`，定义 `rhencloud.roles.<name>.enable` 选项并在启用时聚合相关 `rhencloud.*` 模块。自动收集，host 只需 `rhencloud.roles.<name>.enable = true;`。
 

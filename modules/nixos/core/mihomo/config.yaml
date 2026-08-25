@@ -421,6 +421,8 @@ rules:
 
   - PROCESS-NAME,cloudflared,DIRECT
 
+  - PROCESS-NAME,ssh,DIRECT
+
   # Minecraft 游戏直连
   - DOMAIN-SUFFIX,minecraft.net,DIRECT
   - DOMAIN-SUFFIX,minecraftservices.com,DIRECT

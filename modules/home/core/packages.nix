@@ -20,6 +20,8 @@ in
       # google-chrome
       eza
       nixfmt
+      statix
+      deadnix
       nix-update
       keymapper
       # wemeet
