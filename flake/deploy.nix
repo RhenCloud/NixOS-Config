@@ -49,15 +49,9 @@ in
         user = "root";
         path = deployLib.activate.nixos inputs.self.nixosConfigurations.nixos-homeserver;
       };
-      profiles.home-rhencloud = {
-        user = "rhencloud";
-        sshUser = "rhencloud";
-        path =
-          deployLib.activate."home-manager"
-            inputs.self.homeConfigurations."rhencloud@nixos-homeserver";
-      };
+      # nixos-homeserver 的 home-manager 由系统配置内嵌（my.homeManager.enable），
+      # 无需 deploy-rs 独立部署 home 配置；此处仅部署 system 配置
       profilesOrder = [
-        "home-rhencloud"
         "system"
       ];
       magicRollback = true;

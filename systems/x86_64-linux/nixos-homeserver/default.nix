@@ -32,5 +32,11 @@
     router.enable = true;
 
     services.beszel-agent.enable = true;
+    services.baota-probe.enable = true;
+
+    services.pds = {
+      enable = true;
+      role = "server";
+    };
   };
 }

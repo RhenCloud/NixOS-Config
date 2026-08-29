@@ -3,6 +3,7 @@ keys:
   - &desktop age1m83y7m8yx53fdqd2ttm63ncv7nu0reweafufuhfdyc0e927f44fsxx97f0
   - &yc-hk-1 age1h8wlkmqz9p4p5l9m69kzr2k8guqym7jt46j93egvum7fvmswy3tsu80agu
   - &homeserver age1kyv5cxytwjs4xuklrpwq6n4xf5vjln29ur0pjy4mkdkh9qdfe57qy5s9pw
+  - &homeserver-user age1r7t0tp2dvu68ushlfg7v654mm7reez4wdxgx0tcrlfevxvg6rvzqe3ueav
   - &rhencloud age16lwtmhhseeet0pu7v5hzle8tph99zyv2856rxcw58dw9gdjqvptspd2at0
 
 creation_rules:
@@ -14,6 +15,7 @@ creation_rules:
           - *desktop
           - *yc-hk-1
           - *homeserver
+          - *homeserver-user
           - *rhencloud
   - path_regex: secrets/hosts/nixos-desktop\.yaml$
     key_groups:
@@ -21,6 +23,7 @@ creation_rules:
           - *admin
         age:
           - *desktop
+          - *homeserver-user
           - *rhencloud
   - path_regex: secrets/hosts/yc-hk-1\.yaml$
     key_groups:

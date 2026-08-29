@@ -14,7 +14,10 @@ in
   config = mkIf cfg.enable {
     networking.useNetworkd = true;
 
-    networking.firewall.allowedUDPPorts = [ 67 53 ];
+    networking.firewall.allowedUDPPorts = [
+      67
+      53
+    ];
 
     systemd.network = {
       netdevs."10-br0" = {

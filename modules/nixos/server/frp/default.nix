@@ -29,6 +29,7 @@ in
 
       settings = {
         bindPort = 7000;
+        proxyBindAddr = "127.0.0.1";
         webServer.addr = "0.0.0.0";
         webServer.port = 8080;
         subdomainHost = "rhen.cloud";

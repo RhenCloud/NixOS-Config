@@ -176,7 +176,6 @@ mkIf cfg.enable {
     plugins.fidget = {
       enable = true;
       settings = {
-        progress.polling_rate = 0;
         notification.override_vim_notify = true;
       };
     };

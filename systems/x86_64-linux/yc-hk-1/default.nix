@@ -35,6 +35,11 @@ in
     wyf9s-bot.enable = true;
     gost.enable = true;
     rustdesk.enable = true;
+
+    pds = {
+      enable = true;
+      role = "proxy";
+    };
   };
 
   boot.loader.grub = {

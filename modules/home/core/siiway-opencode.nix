@@ -118,6 +118,7 @@ let
           "claude-opus-4-8" = { };
           "glm-4.7-flash-cf" = { };
           "deepseek-v4-pro" = { };
+          "deepseek-v4-flash" = { };
           "codex-gpt-5.5" = { };
           "gpt-5.5" = { };
           "claude-sonnet-4-5" = { };

@@ -77,16 +77,19 @@ mkIf config.rhencloud.nixvim.enable {
     };
 
     extraConfigLua = ''
-      require('lspconfig').typos_lsp.setup({
+      vim.lsp.config('typos_lsp', {
         cmd = { "${lib.getExe pkgs.typos-lsp}" },
         filetypes = { "python", "rust", "nix", "go", "javascript", "typescript", "lua", "yaml", "json", "markdown", "bash", "html", "css" },
-        root_dir = require('lspconfig').util.root_pattern(".git", "pyproject.toml", "Cargo.toml", "flake.nix", "go.mod", "package.json"),
+        root_dir = function(bufnr)
+          return vim.fs.root(bufnr, { ".git", "pyproject.toml", "Cargo.toml", "flake.nix", "go.mod", "package.json" })
+        end,
         settings = {
           typos_lsp = {
             diagnosticSeverity = "Hint",
           },
         },
       })
+      vim.lsp.enable('typos_lsp')
     '';
   };
 

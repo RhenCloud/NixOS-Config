@@ -73,14 +73,20 @@ let
         url = "https://api.githubcopilot.com/mcp/";
       };
       nixos = {
-        command = [ "uvx" "mcp-nixos" ];
+        command = [
+          "uvx"
+          "mcp-nixos"
+        ];
         enabled = true;
         type = "local";
       };
       playwright = {
         command = [
-          "npx" "-y" "@playwright/mcp@latest"
-          "--browser" "chromium"
+          "npx"
+          "-y"
+          "@playwright/mcp@latest"
+          "--browser"
+          "chromium"
           "--headless"
         ];
         enabled = true;

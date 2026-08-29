@@ -1,11 +1,14 @@
 _: {
-  perSystem = { pkgs, ... }: {
+  perSystem = { pkgs, config, ... }: {
     formatter = pkgs.nixfmt;
 
     devShells.default = pkgs.mkShell {
       packages = with pkgs; [
         nixfmt
         statix
+        nixos-shell
+        bubblewrap
+        config.packages.sandbox
       ];
     };
 

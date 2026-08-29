@@ -166,8 +166,64 @@ in
 
     security.rtkit.enable = true;
 
+    environment.systemPackages = [
+      (pkgs.writeShellScriptBin "surround-sync" ''
+        WPCTL="${pkgs.wireplumber}/bin/wpctl"
+        GREP="${pkgs.gnugrep}/bin/grep"
+        AWK="${pkgs.gawk}/bin/awk"
+        CUT="${pkgs.coreutils}/bin/cut"
+
+        get_node_id() {
+          $WPCTL status 2>/dev/null | $GREP "$1" | $AWK '{print $2}' | $CUT -d. -f1
+        }
+
+        VOLUME="''${1:-}"
+
+        USB_NODE=$(get_node_id "alsa_output.usb-EDIFIER")
+        REAR_NODE=$(get_node_id "alsa_output.pci-0000_00_1b.0")
+
+        if [ -z "$USB_NODE" ] && [ -z "$REAR_NODE" ]; then
+          echo "未找到物理输出设备"
+          exit 1
+        fi
+
+        if [ -n "$VOLUME" ]; then
+          [ -n "$USB_NODE" ] && $WPCTL set-volume "$USB_NODE" "$VOLUME"
+          [ -n "$REAR_NODE" ] && $WPCTL set-volume "$REAR_NODE" "$VOLUME"
+          echo "已设置音量: $VOLUME"
+        else
+          if [ -n "$USB_NODE" ]; then
+            VOL=$($WPCTL get-volume "$USB_NODE" | $AWK '{print $2}')
+            [ -n "$REAR_NODE" ] && $WPCTL set-volume "$REAR_NODE" "$VOL"
+            echo "已同步音量: $VOL"
+          fi
+        fi
+      '')
+    ];
+
     systemd.user.services.pipewire-pulse = {
       serviceConfig.LimitNOFILE = 65536;
+    };
+
+    systemd.user.services.surround-sync = {
+      enable = true;
+      description = "Sync surround speaker volumes";
+      after = [
+        "pipewire.service"
+        "wireplumber.service"
+      ];
+      wantedBy = [ "default.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        for i in $(seq 1 20); do
+          ${pkgs.wireplumber}/bin/wpctl status >/dev/null 2>&1 && break
+          sleep 1
+        done
+        ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_SINK@ 0.3 2>/dev/null || true
+      '';
     };
 
     systemd.user.services.virtual-mic = {

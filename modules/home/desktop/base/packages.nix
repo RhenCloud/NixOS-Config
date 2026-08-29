@@ -30,6 +30,8 @@ in
       kdePackages.dolphin
       kdePackages.dolphin-plugins
       kdePackages.kservice
+      # 提供 KDE webp 图像格式插件，让 dolphin 能生成 webp 缩略图
+      kdePackages.kimageformats
       shared-mime-info
       xdg-utils
 

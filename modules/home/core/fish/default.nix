@@ -16,11 +16,16 @@ in
       NIX_BUILD_SHELL = "${pkgs.fish}/bin/fish";
       SHELL = "${pkgs.fish}/bin/fish";
       PKG_CONFIG_PATH = "${pkgs.libffi.dev}/lib/pkgconfig:${pkgs.zlib.dev}/lib/pkgconfig:${pkgs.libpng.dev}/lib/pkgconfig:${
-        pkgs.lib.concatStringsSep ":" (map (p: "${p.dev or p}/lib/pkgconfig") (with pkgs; [
-          libjpeg_turbo
-          openssl
-          libxml2
-        ]))
+        pkgs.lib.concatStringsSep ":" (
+          map (p: "${p.dev or p}/lib/pkgconfig") (
+            with pkgs;
+            [
+              libjpeg_turbo
+              openssl
+              libxml2
+            ]
+          )
+        )
       }:$PKG_CONFIG_PATH";
     };
 
@@ -54,6 +59,24 @@ in
                   return 1
               end
               nix run nixpkgs#$argv[1]
+            '';
+          };
+          vm = {
+            description = "用 nixos-shell 启动 tmpfs 测试 VM";
+            body = ''
+              set -l flake /home/rhencloud/Project/NixOS-Config
+              if test (count $argv) -gt 0
+                nix run $flake#vm -- $argv
+              else
+                nix run $flake#vm
+              end
+            '';
+          };
+          sandbox = {
+            description = "在 bubblewrap + tmpfs 沙箱中运行命令，测试不落盘";
+            body = ''
+              set -l flake /home/rhencloud/Project/NixOS-Config
+              nix run $flake#sandbox -- $argv
             '';
           };
         };

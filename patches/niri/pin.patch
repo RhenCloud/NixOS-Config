@@ -1,19 +1,41 @@
-diff -ruN a/niri-config/src/window_rule.rs b/niri-config/src/window_rule.rs
---- a/niri-config/src/window_rule.rs	2026-07-27 20:45:43.059830995 +0800
-+++ b/niri-config/src/window_rule.rs	2026-07-27 20:46:09.205072145 +0800
-@@ -77,6 +77,8 @@
-     pub tiled_state: Option<bool>,
+diff --git a/niri-config/src/window_rule.rs b/niri-config/src/window_rule.rs
+index f2bc2ad..087a6fb 100644
+--- a/niri-config/src/window_rule.rs
++++ b/niri-config/src/window_rule.rs
+@@ -75,6 +75,10 @@ pub struct WindowRule {
+     pub scroll_factor: Option<FloatOrInt<0, 100>>,
      #[knuffel(child, unwrap(argument))]
-     pub mouse_passthrough: Option<bool>,
+     pub tiled_state: Option<bool>,
++    #[knuffel(child, unwrap(argument))]
++    pub mouse_passthrough: Option<bool>,
 +    #[knuffel(child, unwrap(argument))]
 +    pub pin: Option<bool>,
      #[knuffel(child, default)]
      pub background_effect: BackgroundEffectRule,
      #[knuffel(child, default)]
-diff -ruN a/src/layout/monitor.rs b/src/layout/monitor.rs
---- a/src/layout/monitor.rs	2026-07-27 20:45:42.290822061 +0800
-+++ b/src/layout/monitor.rs	2026-07-27 20:46:34.358197709 +0800
-@@ -13,6 +13,7 @@
+diff --git a/src/layout/floating.rs b/src/layout/floating.rs
+index fd1b5af..62dfce8 100644
+--- a/src/layout/floating.rs
++++ b/src/layout/floating.rs
+@@ -1090,6 +1090,13 @@ impl<W: LayoutElement> FloatingSpace<W> {
+                 continue;
+             }
+ 
++            // Pinned tiles are rendered globally by the monitor on top of every
++            // workspace, so skip them here to avoid a duplicate that would slide
++            // along with the workspace during a switch.
++            if tile.window().rules().pin == Some(true) {
++                continue;
++            }
++
+             // For the active tile, draw the focus ring.
+             let focus_ring = focus_ring && Some(tile.window().id()) == active.as_ref();
+ 
+diff --git a/src/layout/monitor.rs b/src/layout/monitor.rs
+index f119e61..3760601 100644
+--- a/src/layout/monitor.rs
++++ b/src/layout/monitor.rs
+@@ -13,6 +13,7 @@ use smithay::utils::{Logical, Point, Rectangle, Size};
  use super::insert_hint_element::{InsertHintElement, InsertHintRenderElement};
  use super::scrolling::{Column, ColumnWidth};
  use super::tile::Tile;
@@ -21,11 +43,11 @@ diff -ruN a/src/layout/monitor.rs b/src/layout/monitor.rs
  use super::workspace::{
      compute_working_area, OutputId, Workspace, WorkspaceAddWindowTarget, WorkspaceId,
      WorkspaceRenderElement,
-@@ -1570,6 +1571,15 @@
+@@ -1578,6 +1579,15 @@ impl<W: LayoutElement> Monitor<W> {
              // represent scaled windows properly.
              Some((win, hit.to_activate()))
          } else {
-+            // Check pinned floating tiles from all workspaces first (always on top).
++            // Check pinned tiles from all workspaces first (always on top).
 +            for other_ws in &self.workspaces {
 +                if let Some((win, hit)) =
 +                    other_ws.pinned_window_under(pos_within_output - geo.loc)
@@ -37,26 +59,28 @@ diff -ruN a/src/layout/monitor.rs b/src/layout/monitor.rs
              let (win, hit) = ws.window_under(pos_within_output - geo.loc)?;
              Some((win, hit.offset_win_pos(geo.loc)))
          }
-@@ -1747,6 +1757,30 @@
-
-             ws.render_scrolling(ctx.r(), xray_pos, focus_ring, push!());
+@@ -1811,6 +1821,32 @@ impl<W: LayoutElement> Monitor<W> {
+                 }
+             }
          }
 +
-+        // Render pinned floating tiles from all workspaces on top of everything.
++        // Render pinned tiles from all workspaces on top of everything, at a fixed
++        // screen position so they stay put when switching workspaces.
 +        let crop_bounds = Rectangle::new(
 +            Point::from((-i32::MAX / 2, -i32::MAX / 2)),
 +            Size::from((i32::MAX, i32::MAX)),
 +        );
-+        let active_geo = self.workspaces_render_geo()
++        let active_geo = self
++            .workspaces_render_geo()
 +            .nth(self.active_workspace_idx)
 +            .unwrap_or_default();
 +        let active_xray_pos = XrayPos::new(active_geo.loc, zoom);
 +        for other_ws in &self.workspaces {
 +            for (tile, tile_pos) in other_ws.pinned_tiles_with_render_positions() {
 +                tile.render(ctx.r(), tile_pos, active_xray_pos, false, &mut |elem| {
-+                    let elem = WorkspaceRenderElement::Floating(
-+                        FloatingSpaceRenderElement::Tile(elem),
-+                    );
++                    let elem = WorkspaceRenderElement::Floating(FloatingSpaceRenderElement::Tile(
++                        elem,
++                    ));
 +                    let elem = CropRenderElement::from_element(elem, scale, crop_bounds);
 +                    if let Some(elem) = elem {
 +                        let elem = MonitorInnerRenderElement::from(elem);
@@ -66,18 +90,52 @@ diff -ruN a/src/layout/monitor.rs b/src/layout/monitor.rs
 +            }
 +        }
      }
-
+ 
      pub fn render_workspace_shadows<R: NiriRenderer>(
-diff -ruN a/src/layout/workspace.rs b/src/layout/workspace.rs
---- a/src/layout/workspace.rs	2026-07-27 20:45:42.290822061 +0800
-+++ b/src/layout/workspace.rs	2026-07-27 20:46:20.097138727 +0800
-@@ -1768,6 +1768,27 @@
+diff --git a/src/layout/scrolling.rs b/src/layout/scrolling.rs
+index c7d94c5..dfd7920 100644
+--- a/src/layout/scrolling.rs
++++ b/src/layout/scrolling.rs
+@@ -2990,6 +2990,12 @@ impl<W: LayoutElement> ScrollingSpace<W> {
+ 
+                 // And now the drawing logic.
+ 
++                // Pinned tiles are rendered globally by the monitor on top of every
++                // workspace, so skip them here to avoid a duplicate.
++                if tile.window().rules().pin == Some(true) {
++                    continue;
++                }
++
+                 // For the active tile (which comes first), draw the focus ring.
+                 let focus_ring = focus_ring && first;
+                 first = false;
+diff --git a/src/layout/tile.rs b/src/layout/tile.rs
+index db8ce67..ba2cba8 100644
+--- a/src/layout/tile.rs
++++ b/src/layout/tile.rs
+@@ -923,6 +923,10 @@ impl<W: LayoutElement> Tile<W> {
+         let offset = self.bob_offset();
+         let point = point - offset;
+ 
++        if self.window.rules().mouse_passthrough == Some(true) {
++            return None;
++        }
++
+         if self.is_in_input_region(point) {
+             let win_pos = self.buf_loc() + offset;
+             Some(HitType::Input { win_pos })
+diff --git a/src/layout/workspace.rs b/src/layout/workspace.rs
+index 5e786dd..65d5528 100644
+--- a/src/layout/workspace.rs
++++ b/src/layout/workspace.rs
+@@ -1776,6 +1776,28 @@ impl<W: LayoutElement> Workspace<W> {
          self.scrolling.window_under(pos)
      }
-
-+    /// Check pinned floating tiles in this workspace at the given position.
+ 
++    /// Check pinned tiles in this workspace at the given position, regardless of
++    /// whether they are floating or tiled.
 +    pub(super) fn pinned_window_under(&self, pos: Point<f64, Logical>) -> Option<(&W, HitType)> {
-+        for (tile, tile_pos) in self.floating.tiles_with_render_positions() {
++        for (tile, tile_pos, _visible) in self.tiles_with_render_positions() {
 +            if tile.window().rules().pin == Some(true) {
 +                if let Some(rv) = HitType::hit_tile(tile, tile_pos, pos) {
 +                    return Some(rv);
@@ -87,38 +145,46 @@ diff -ruN a/src/layout/workspace.rs b/src/layout/workspace.rs
 +        None
 +    }
 +
-+    /// Iterate pinned floating tiles with their render positions.
++    /// Iterate pinned tiles in this workspace with their render positions.
 +    pub(super) fn pinned_tiles_with_render_positions(
 +        &self,
 +    ) -> impl Iterator<Item = (&Tile<W>, Point<f64, Logical>)> {
-+        self.floating
-+            .tiles_with_render_positions()
-+            .filter(|(tile, _)| tile.window().rules().pin == Some(true))
++        self.tiles_with_render_positions()
++            .filter(|(tile, _, _)| tile.window().rules().pin == Some(true))
++            .map(|(tile, pos, _)| (tile, pos))
 +    }
 +
      pub fn resize_edges_under(&self, pos: Point<f64, Logical>) -> Option<ResizeEdge> {
          self.tiles_with_render_positions()
              .find_map(|(tile, tile_pos, visible)| {
-diff -ruN a/src/window/mod.rs b/src/window/mod.rs
---- a/src/window/mod.rs	2026-07-27 20:45:43.063615241 +0800
-+++ b/src/window/mod.rs	2026-07-27 20:46:13.976103673 +0800
-@@ -123,6 +123,9 @@
-     /// Whether mouse events should pass through this window.
-     pub mouse_passthrough: Option<bool>,
-
+diff --git a/src/window/mod.rs b/src/window/mod.rs
+index 14527cd..9243408 100644
+--- a/src/window/mod.rs
++++ b/src/window/mod.rs
+@@ -120,6 +120,12 @@ pub struct ResolvedWindowRules {
+     /// Override whether to set the Tiled xdg-toplevel state on the window.
+     pub tiled_state: Option<bool>,
+ 
++    /// Whether mouse events should pass through this window.
++    pub mouse_passthrough: Option<bool>,
++
 +    /// Whether this window should be rendered on all workspaces (pinned).
 +    pub pin: Option<bool>,
 +
      /// Background effect configuration.
      pub background_effect: BackgroundEffect,
-
-@@ -309,6 +312,9 @@
-                 if let Some(x) = rule.mouse_passthrough {
-                     resolved.mouse_passthrough = Some(x);
+ 
+@@ -303,6 +309,13 @@ impl ResolvedWindowRules {
+                     resolved.tiled_state = Some(x);
                  }
+ 
++                if let Some(x) = rule.mouse_passthrough {
++                    resolved.mouse_passthrough = Some(x);
++                }
 +                if let Some(x) = rule.pin {
 +                    resolved.pin = Some(x);
 +                }
-
++
                  resolved
                      .background_effect
+                     .merge_with(&rule.background_effect);

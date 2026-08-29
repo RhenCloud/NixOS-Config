@@ -8,18 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.hm-niri;
-
-  mousePassthroughPatch = ../../../../patches/niri/mouse-passthrough.patch;
-  pinPatch = ../../../../patches/niri/pin.patch;
-
-  niri-patched =
-    inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable.overrideAttrs
-      (old: {
-        patches = (old.patches or [ ]) ++ [
-          mousePassthroughPatch
-          pinPatch
-        ];
-      });
 in
 {
   options.rhencloud.hm-niri.enable = mkEnableOption "Niri (HM)";
@@ -27,7 +15,8 @@ in
   config = mkIf cfg.enable {
     programs.niri = {
       enable = true;
-      package = niri-patched;
+      # pkgs.niri 已被 overlays/niri 替换为 niri-flake 的 niri-unstable（含 pin 补丁）
+      package = pkgs.niri;
     };
 
     home.packages = [

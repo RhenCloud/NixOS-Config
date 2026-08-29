@@ -6,7 +6,7 @@ let
 in
 {
   perSystem =
-    { pkgs, system, ... }:
+    { pkgs, system, config, ... }:
     let
       deployRs = inputs.deploy-rs.packages.${system}.deploy-rs;
       mkApp = name: drv: {
@@ -32,6 +32,15 @@ in
         build = mkApp "build" (mkRebuild "build");
         test = mkApp "test" (mkRebuild "test");
         switch = mkApp "switch" (mkRebuild "switch");
+        # nixos-shell 测试 VM：根文件系统为 tmpfs，重启即失
+        vm = mkApp "vm" (
+          pkgs.writeShellScriptBin "vm" ''
+            config="''${1:-${toString ../../vm.nix}}"
+            exec ${pkgs.nixos-shell}/bin/nixos-shell "''${config}"
+          ''
+        );
+        # bubblewrap + tmpfs 临时沙箱，测试不落盘
+        sandbox = mkApp "sandbox" config.packages.sandbox;
         deploy = mkApp "deploy" (
           pkgs.writeShellScriptBin "deploy" ''
             node="''${1:-${defaultNode}}"

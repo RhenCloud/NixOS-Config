@@ -48,4 +48,4 @@ shell_mode = "auto"
 [experimental]
 switch_ascii_input_source_in_prefix = true
 kitty_graphics = true
-pane_history = true
+pane_history = false

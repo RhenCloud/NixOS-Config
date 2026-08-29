@@ -13,7 +13,7 @@ let
   overlays = [
     (import "${root}/overlays/mexkey3-ccid/default.nix" { })
     (import "${root}/overlays/musicfox/default.nix" { })
-    (import "${root}/overlays/niri/default.nix" { })
+    (import "${root}/overlays/niri/default.nix" { inherit inputs; root = root; })
     (import "${root}/overlays/portal-gtk/default.nix" { })
     (import "${root}/overlays/waylyrics/default.nix" { })
     (import "${root}/overlays/wechat/default.nix" { })
