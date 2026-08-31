@@ -1,13 +1,17 @@
-name: Build Home Manager Configuration
+name: 构建 Home Manager 配置
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - "modules/home/**"
+      - "modules/**"
+      - "hosts/**"
       - "homes/**"
-      - "modules/nixos/**"
-      - "systems/**"
+      - "overlays/**"
+      - "packages/**"
+      - "secrets/**"
+      - "flake/**"
+      - "lib/**"
       - "flake.nix"
       - "flake.lock"
       - ".github/workflows/build-home-manager.yml"
@@ -20,8 +24,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  discover:
+    name: 发现 Home Manager 配置
     runs-on: ubuntu-latest
+    outputs:
+      homes: ${{ steps.homes.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: 读取自动发现的 homes
+        id: homes
+        run: |
+          set -euo pipefail
+          homes=$(nix eval --json \
+            '.#homeConfigurations' \
+            --apply 'configs: builtins.attrNames configs')
+          echo "发现 Home Manager 配置: $homes"
+          echo "value=$homes" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: 构建 ${{ matrix.home }}
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        home: ${{ fromJSON(needs.discover.outputs.homes) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -37,17 +71,24 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           skipPush: true
 
-      - name: Build Home Manager activation package
+      - name: 构建 Home Manager activation package
         run: |
-          nix build '.#homeConfigurations."rhencloud@nixos-desktop".activationPackage'
+          set -euo pipefail
+          if [ "${{ matrix.home }}" = "rhencloud@nixos-desktop" ]; then
+            nix build ".#homeConfigurations.\"${{ matrix.home }}\".activationPackage"
+          else
+            nix build --no-link ".#homeConfigurations.\"${{ matrix.home }}\".activationPackage"
+          fi
 
-      - name: Archive generation
+      - name: 归档桌面 generation
+        if: matrix.home == 'rhencloud@nixos-desktop'
         run: |
           # copy 到 output/ 避免 result/ 符号链接问题
           mkdir -p output/home-manager-generation
           cp -rL result/* output/home-manager-generation/
 
       - uses: actions/upload-artifact@v4
+        if: matrix.home == 'rhencloud@nixos-desktop'
         with:
           name: home-manager-generation
           path: output/home-manager-generation/

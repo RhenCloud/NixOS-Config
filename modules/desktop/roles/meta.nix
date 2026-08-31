@@ -1,0 +1,37 @@
+{
+  # 角色模块会设置这些模块声明的选项；若主机覆盖禁用了其中任意模块，
+  # 应在进入 NixOS 深层求值前由框架直接报告依赖缺失。
+  requires = [
+    "_common.bluetooth"
+    "_common.boot"
+    "_common.display-managers"
+    "_common.docker"
+    "_common.easytier"
+    "_common.env"
+    "_common.fcitx5"
+    "_common.fonts"
+    "_common.identity"
+    "_common.locale"
+    "_common.nix"
+    "_common.nvidia"
+    "_common.options"
+    "_common.packages"
+    "_common.podman"
+    "_common.qemu"
+    "_common.selector4nix"
+    "_common.services"
+    "_common.shells"
+    "_common.sound"
+    "_common.xdg"
+    "desktop.avahi"
+    "desktop.games"
+    "desktop.gnome"
+    "desktop.hyprland"
+    "desktop.mangowm"
+    "desktop.packages"
+    "desktop.steam"
+    "desktop.sunshine"
+    "desktop.thunar"
+    "desktop.zen"
+  ];
+}

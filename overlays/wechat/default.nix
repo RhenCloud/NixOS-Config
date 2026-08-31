@@ -1,4 +1,4 @@
-{ }:
+{ ... }:
 _final: prev:
 let
   version = "4.1.1.4";

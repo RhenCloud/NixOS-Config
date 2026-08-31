@@ -12,7 +12,10 @@
   ];
 
   # VM 内启用 nix 命令（如需联网构建 / 测试）
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   virtualisation.writableStore = true;
   virtualisation.memorySize = 2048;

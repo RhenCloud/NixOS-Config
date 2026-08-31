@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 仅远程节点；hostname / sshOpts / profiles 全部来自 flake/deploy.nix
+        # 仅远程节点；hostname / sshOpts / profiles 全部来自 deploy/default.nix
         node:
           - yc-hk-1
           # - nixos-homeserver
@@ -96,7 +96,7 @@ jobs:
           printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           # 不写死 IP/端口：全部由 flake deploy.nodes.*.hostname / sshOpts 决定
-          # SSH 仅注入私钥，避免 --ssh-opts 覆盖 deploy.nix 里的 -p 等选项
+          # SSH 仅注入私钥，避免 --ssh-opts 覆盖 deploy.nodes 中的 -p 等选项
           cat > ~/.ssh/config <<'EOF'
           Host *
             IdentityFile ~/.ssh/deploy_key
@@ -106,12 +106,18 @@ jobs:
           EOF
           chmod 600 ~/.ssh/config
 
+      - name: 校验 deploy 节点结构
+        if: steps.filter.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          system=$(nix eval --raw \
+            ".#nixosConfigurations.${{ matrix.node }}.pkgs.stdenv.hostPlatform.system")
+          nix build --no-link ".#checks.${system}.deploy-nodes-schema"
+
       - name: Deploy ${{ matrix.node }} via deploy-rs
         if: steps.filter.outputs.skip != 'true'
         run: |
           set -euo pipefail
-          # hostname、sshOpts（含端口）、profiles、magicRollback 均来自 flake/deploy.nix
-          # deploy-rs 用 flake 输出 packages.deploy-rs（跟随 flake.lock 固定版本），避免运行时抓取最新
-          nix run ".#deploy-rs" -- \
-            ".#${{ matrix.node }}" \
-            --auto-rollback true
+          # 使用 CNF 自动发现的 apps.deploy；hostname、sshOpts（含端口）、
+          # profiles、magicRollback 仍全部来自 deploy/default.nix。
+          nix run ".#deploy" -- "${{ matrix.node }}"

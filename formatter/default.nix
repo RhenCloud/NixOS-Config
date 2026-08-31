@@ -1,0 +1,2 @@
+{ nixfmt, ... }:
+nixfmt

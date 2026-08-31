@@ -6,25 +6,39 @@ on:
     paths:
       - "flake.nix"
       - "flake.lock"
-      - "systems/**"
+      - "hosts/**"
       - "modules/**"
       - "overlays/**"
       - "homes/**"
       - "packages/**"
+      - "apps/**"
+      - "checks/**"
+      - "shells/**"
+      - "formatter/**"
+      - "deploy/**"
       - "secrets/**"
       - "flake/**"
+      - "lib/**"
+      - "*.nix"
       - ".github/workflows/build.yml"
   pull_request:
     paths:
       - "flake.nix"
       - "flake.lock"
-      - "systems/**"
+      - "hosts/**"
       - "modules/**"
       - "overlays/**"
       - "homes/**"
       - "packages/**"
+      - "apps/**"
+      - "checks/**"
+      - "shells/**"
+      - "formatter/**"
+      - "deploy/**"
       - "secrets/**"
       - "flake/**"
+      - "lib/**"
+      - "*.nix"
       - ".github/workflows/build.yml"
   workflow_dispatch:
 
@@ -89,29 +103,22 @@ jobs:
           set -euo pipefail
           # 一次 nix build 统一调度整个依赖图（toplevel + flake 包 + overlay 包），
           # 非 PR 时用 cachix watch-exec 边构建边推送，自动收集全部新建路径（含闭包）
+          # GitHub Actions 会在 shell 执行前展开 matrix 表达式。
+          # shellcheck disable=SC2016
           expr='
             let
               flake = builtins.getFlake (toString ./.);
-              system = "x86_64-linux";
               lib = flake.inputs.nixpkgs.lib;
-              helpers = import ./flake/helpers.nix {
-                inherit lib;
-                inputs = flake.inputs // { self = flake; };
-              };
-              pkgs0 = import flake.inputs.nixpkgs {
-                inherit system;
-                config.allowUnfree = true;
-              };
-              overlays = helpers.overlays;
+              host = flake.nixosConfigurations.${{ matrix.host }};
+              # 直接复用 CNF 为主机构造的 pkgs，确保架构、nixpkgs.config
+              # 与所有自动发现的 overlays 和本地求值保持一致。
+              pkgs = host.pkgs;
+              system = pkgs.stdenv.hostPlatform.system;
+              overlays = builtins.attrValues flake.overlays;
               overlayAttrNames = lib.unique (
-                lib.concatMap (ov: builtins.attrNames (ov pkgs0 pkgs0)) overlays
+                lib.concatMap (ov: builtins.attrNames (ov pkgs pkgs)) overlays
               );
-              pkgs = import flake.inputs.nixpkgs {
-                inherit system;
-                config.allowUnfree = true;
-                inherit overlays;
-              };
-              toplevel = flake.nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel;
+              toplevel = host.config.system.build.toplevel;
               flakePkgs = lib.attrValues flake.packages.${system};
               overlayPkgs = map (name: pkgs.${name}) overlayAttrNames;
             in

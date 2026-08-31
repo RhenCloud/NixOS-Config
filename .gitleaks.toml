@@ -5,11 +5,16 @@ title = "gitleaks config"
 
 [allowlist]
 paths = [
+  # path flake 会把本地 Git 元数据和大型壁纸目录复制到 source；它们既不是
+  # 配置源码，也会让 no-git 扫描耗时数分钟。
+  '^\.git/',
+  "^wallpapers/",
+  "^result$",
   # transcrypt 管理的密钥目录（git 中已加密）
   "^secrets/",
   # gitleaks 自身报告（不含明文密钥）
   "^gitleaks-report",
   # GPG 公钥（设计上公开）
-  "modules/home/core/git.nix",
-  "modules/home/dev/opencode/AGENTS.md",
+  "modules/_common/git/home.nix",
+  "modules/desktop/dev/opencode/AGENTS.md",
 ]

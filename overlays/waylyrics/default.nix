@@ -1,4 +1,4 @@
-{ }:
+{ ... }:
 _final: prev:
 let
   src = prev.fetchFromGitHub {

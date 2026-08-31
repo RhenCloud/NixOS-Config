@@ -171,7 +171,7 @@
 | `marksman`      | Markdown                |
 | `typos_lsp`     | 拼写检查                |
 
-如需添加新的 LSP 服务器，编辑 `modules/home/dev/nvf/languages.nix` 中的 `vim.lsp.servers`。
+如需添加新的 LSP 服务器，编辑 `modules/desktop/dev/nixvim/languages.nix` 中的 `vim.lsp.servers`。
 
 ---
 
@@ -203,7 +203,7 @@
 ## 配置结构
 
 ```
-modules/home/dev/nvf/
+modules/desktop/dev/nixvim/
 ├── default.nix        # 入口，导入所有子模块
 ├── core.nix           # 核心设置：enable、globals、options、theme、autocmds
 ├── keymaps.nix        # 所有快捷键绑定
@@ -215,13 +215,13 @@ modules/home/dev/nvf/
 
 ### 如何添加新插件
 
-如果 nvf 已内置该插件的模块支持，直接在 `plugins.nix` 中添加对应的 `enable = true` 配置即可。
+如果 Nixvim 已内置该插件的模块支持，直接在 `plugins.nix` 中添加对应的 `enable = true` 配置即可。
 
-如果插件不在 nvf 内置模块中，使用 `vim.extraPlugins`：
+如果插件不在 Nixvim 内置模块中，使用 `vim.extraPlugins`：
 
 ```nix
 {
-  programs.nvf.settings.vim.extraPlugins."my-plugin" = {
+  programs.nixvim.extraPlugins."my-plugin" = {
     package = pkgs.vimPlugins.my-plugin;
     setup = "require('my-plugin').setup {}";
   };
@@ -230,7 +230,7 @@ modules/home/dev/nvf/
 
 ### 如何添加新快捷键
 
-在 `keymaps.nix` 的 `programs.nvf.settings.vim.keymaps` 列表中添加：
+在 `keymaps.nix` 的 `programs.nixvim.keymaps` 列表中添加：
 
 ```nix
 {
@@ -276,7 +276,7 @@ nix build .#homeConfigurations."rhencloud@nixos-desktop".activationPackage
 
 ### Q: 字体怎么修改？
 
-编辑 `modules/home/dev/nvf/neovide.nix` 中的 `font` 配置，以及系统的字体配置。
+编辑 `modules/desktop/dev/nixvim/neovide.nix` 中的 `font` 配置，以及系统的字体配置。
 
 ### Q: 某些 LSP 服务器没生效？
 

@@ -42,20 +42,21 @@ jobs:
       - name: nixfmt check
         run: |
           set -euo pipefail
-          nix shell nixpkgs#nixfmt-rfc-style -c bash -c '
-            mapfile -t files < <(git ls-files "*.nix")
-            if [ ${#files[@]} -eq 0 ]; then
-              echo "No .nix files"
-              exit 0
-            fi
-            if ! nixfmt --check "${files[@]}"; then
-              echo
-              echo "::error::部分 .nix 未按 nixfmt-rfc-style 格式化。"
-              echo "本地修复: nix shell nixpkgs#nixfmt-rfc-style -c nixfmt \$(git ls-files \'*.nix\')"
-              echo "或在 main 上触发 Format & Lint 的 Autofix（会直接提交）。"
-              exit 1
-            fi
-          '
+          nix shell nixpkgs#nixfmt-rfc-style -c bash -s <<'EOF'
+          set -euo pipefail
+          mapfile -t files < <(git ls-files '*.nix')
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "没有 Nix 文件"
+            exit 0
+          fi
+          if ! nixfmt --check "${files[@]}"; then
+            echo
+            echo "::error::部分 .nix 未按 nixfmt-rfc-style 格式化。"
+            echo '本地修复: nix shell nixpkgs#nixfmt-rfc-style -c nixfmt $(git ls-files "*.nix")'
+            echo "或在 main 上触发 Format & Lint 的 Autofix（会直接提交）。"
+            exit 1
+          fi
+          EOF
 
       - name: statix check
         run: |
@@ -79,7 +80,10 @@ jobs:
       - name: nix flake check
         run: |
           set -euo pipefail
-          nix flake check --all-systems
+          # 这里只做完整求值；静态检查已由上方独立步骤执行，系统闭包由
+          # Build workflow 构建，避免 PR 重复构建大型桌面依赖。
+          nix flake check --all-systems --no-build \
+            --option allow-import-from-derivation true
 
   # main / 手动：nixfmt 后有变更则直接提交到当前分支
   autofix:
@@ -110,14 +114,15 @@ jobs:
       - name: Run nixfmt
         run: |
           set -euo pipefail
-          nix shell nixpkgs#nixfmt-rfc-style -c bash -c '
-            mapfile -t files < <(git ls-files "*.nix")
-            if [ ${#files[@]} -eq 0 ]; then
-              echo "No .nix files"
-              exit 0
-            fi
-            nixfmt "${files[@]}"
-          '
+          nix shell nixpkgs#nixfmt-rfc-style -c bash -s <<'EOF'
+          set -euo pipefail
+          mapfile -t files < <(git ls-files '*.nix')
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "没有 Nix 文件"
+            exit 0
+          fi
+          nixfmt "${files[@]}"
+          EOF
 
       - name: statix check (report only)
         continue-on-error: true

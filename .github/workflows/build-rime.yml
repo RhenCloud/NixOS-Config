@@ -3,7 +3,7 @@ name: Build Rime Keytao Config
 on:
   push:
     paths:
-      - "modules/home/desktop/fcitx5/**"
+      - "modules/desktop/fcitx5/**"
       - "flake.nix"
       - "flake.lock"
       - ".github/workflows/build-rime.yml"
@@ -49,11 +49,11 @@ jobs:
           chmod -R +w output/rime/
 
           # 2. 自定义 Lua 脚本
-          cp modules/home/desktop/fcitx5/rime/lua/*.lua output/rime/lua/
+          cp modules/desktop/fcitx5/rime/lua/*.lua output/rime/lua/
 
           # 3. 自定义 YAML 配置
-          cp modules/home/desktop/fcitx5/default.custom.yaml output/rime/
-          cp modules/home/desktop/fcitx5/keytao.custom.yaml output/rime/
+          cp modules/desktop/fcitx5/default.custom.yaml output/rime/
+          cp modules/desktop/fcitx5/keytao.custom.yaml output/rime/
 
           # 4. 创建空的 custom_phrase.txt（用户自行编辑）
           touch output/rime/custom_phrase.txt
@@ -76,8 +76,8 @@ jobs:
       - name: Package fcitx5 themes
         run: |
           mkdir -p output/themes
-          cp -r modules/home/desktop/fcitx5/fcitx5/themes/* output/themes/
-          cp -r modules/home/desktop/fcitx5/themes/* output/themes/ 2>/dev/null || true
+          cp -r modules/desktop/fcitx5/fcitx5/themes/* output/themes/
+          cp -r modules/desktop/fcitx5/themes/* output/themes/ 2>/dev/null || true
           cd output && zip -r ../fcitx5-themes.zip themes/
 
       - uses: actions/upload-artifact@v4

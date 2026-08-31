@@ -1,125 +1,255 @@
 # AGENTS.md
 
-RhenCloud 的 NixOS 系统配置，基于 **flake-parts** 以 Nix flake 方式管理。
+RhenCloud 的 NixOS 系统配置，使用 **Cloud Nix Framework** 以 Nix flake 管理。
 
 ## 仓库结构
 
-```
-flake.nix                      # 入口点：inputs、flake-parts 配置、子模块导入
-flake/pkgs.nix                 # perSystem pkgs（allowUnfree + overlays）
-flake/nixos.nix                # NixOS 配置（自动发现 systems/<arch>/<host>/）
-flake/home-manager.nix         # Home Manager 配置（自动发现 homes/<arch>/<user>@<host>/）
-flake/packages.nix             # 自定义包（herdr-tab-rename、aicommits、deploy-rs 等）
-flake/devshells.nix            # devShells（default + python）+ formatter（nixfmt）
-flake/checks.nix               # flake checks（formatting/statix/deadnix/eval/secrets）
-flake/deploy.nix               # deploy-rs 节点定义
-flake/helpers.nix              # 内部辅助（overlay 发现、home 模块分组、import-tree 模块收集）
-systems/x86_64-linux/{nixos-desktop,yc-hk-1,nixos-homeserver}/
-                               # 每主机入口（default.nix + hardware-configuration.nix）
-roles/{desktop,server}/         # 角色层（聚合模块启用，host 通过 rhencloud.roles.<name>.enable 选择）
-homes/x86_64-linux/{rhencloud@nixos-desktop,rhencloud@yc-hk-1,rhencloud@nixos-homeserver,wyf9@yc-hk-1}/
-                               # 每用户每主机的 Home Manager 入口
-modules/nixos/{core,desktop,service}/  # 系统级模块（import-tree 自动收集 default.nix）
-modules/home/{core,desktop,dev,service}/  # Home Manager 模块（import-tree 自动收集）
-modules/options.nix            # 全局选项（my.*，如 my.user / my.host / my.stateVersion）
-secrets/                       # sops 加密的密钥（common.yaml + hosts/<host>.yaml）
-overlays/                      # 自定义包 overlay（niri、portal-gtk、mexkey3-ccid、go-musicfox 等）
-packages/                      # 自定义包（packages.nix 的 discoverPackages 自动发现）
-patches/                       # niri 的补丁
+```text
+flake.nix                              # inputs + cloud.lib.mkFlake 入口
+flake/extra-outputs.nix                # 仅保留 ISO 等非约定 outputs
+apps/<name>/default.nix                # 自动发现的 flake app
+checks/<name>/default.nix              # 自动发现的 flake check
+shells/<name>/default.nix              # 自动发现的 devShell
+formatter/default.nix                  # flake formatter
+deploy/default.nix                     # deploy-rs 节点配置
+hosts/<host>/                           # NixOS 主机入口；meta.nix 必须声明 system
+homes/<user>/<host>.nix                # 每用户、每主机的 Home Manager 入口
+modules/_common/                       # 所有角色共享模块
+modules/desktop/                       # desktop 角色模块
+modules/server/                        # server 角色模块
+modules/desktop/roles/nixos.nix        # 桌面角色能力聚合
+modules/server/roles/nixos.nix         # 服务器角色能力聚合
+packages/<name>/default.nix            # 自动发现的自定义包
+packages/<system>/<name>/default.nix   # 明确限定架构的推荐包布局
+overlays/<name>/default.nix            # 自动发现的 overlay
+secrets/                               # sops 加密密钥
+patches/                               # 本地补丁
 ```
 
-## 架构说明
+## Cloud Nix Framework 约定
 
-- **框架**：flake-parts 取代 Snowfall Lib。
-- **分层**：host → role → module。`systems/<arch>/<host>/default.nix` 只负责机器身份（hostname）、硬件、网络/存储等宿主信息；`roles/<name>/default.nix` 通过 `rhencloud.roles.<name>.enable` 聚合一类机器的能力（如 desktop、server），host 只需一行启用；具体实现在 `modules/nixos/`。
-- **主机**：`nixos-desktop`（桌面）、`yc-hk-1`（服务器）、`nixos-homeserver`（未使用）。主机名在 `systems/<arch>/<host>/default.nix` 中设置。
-- **主用户**：`rhencloud`，选项定义于 `modules/options.nix`（`my.*`）。NixOS 配置通过 `flake/nixos.nix` 的 `specialArgs`（`{ inherit inputs; }`）与 HM 的 `extraSpecialArgs`（`primaryUser`）传入。
-- **频道**：`nixos-unstable`（另有 `nixpkgs-stable` = 25.11 输入）。
-- **stateVersion**：`26.11`。
-- **窗口管理器**：Hyprland 和 Niri 均已配置。
-- **密钥**：由 [sops-nix](https://github.com/Mic92/sops-nix) 管理。加密文件位于 `secrets/`。加密密钥：GPG 管理子密钥 `CE243917D8877F3AFE5814335850468557847C77`（编辑）+ 每主机 SSH host key → age（运行时解密）。每主机配置 `sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ]`。
-- **模块中的密钥**：使用 `config.sops.secrets."<name>".path`（运行时解密到 `/run/secrets/<name>`）和 `sops.templates`（占位符 `${config.sops.placeholder."<key>"}` 在 activation 时渲染）。**绝不**使用 `builtins.readFile` 读取密钥。
-- **HM 密钥**：NixOS 层通过 `sops.templates`（`/run/secrets/templates/`）渲染完整配置文件；HM 用 `config.lib.file.mkOutOfStoreSymlink "/run/secrets/templates/<file>"` 引用。
-- **主题**：Stylix 提供系统级主题（Dracula）。
-- **Overlays**：定义于 `overlays/<name>/default.nix`，在 NixOS（`flake/nixos.nix`）与 home-manager（`flake/helpers.nix` 的 `essentialHomeModules`）中均通过 `nixpkgs.overlays` 应用。
-- **模块自动发现**：`flake/helpers.nix` 通过 [import-tree](https://github.com/denful/import-tree)（`inputs.import-tree`）按目录收集模块，取代手写模块列表。两个过滤器：`collectDefaultNix`（收集根目录及直接子目录的 `default.nix`，供 `core`、`dev`、`desktop` 等父级 default.nix 不聚合子目录的组使用）、`collectTopDefault`（仅收集根目录自身的 `default.nix`，供父级 default.nix 以目录路径聚合子模块的组使用，如 `server/`、`herdr/`，避免目录键与文件键重复声明选项）。注意 import-tree 过滤器回调收到的是带前导 `/` 的相对路径（如 `/default.nix`）。Snowfall 风格的 `rhencloud.*` 选项是普通 NixOS 模块选项，而非命名空间魔法。
-- **主机/home 自动发现**：`flake/nixos.nix` 扫描 `systems/<arch>/`，`flake/home-manager.nix` 扫描 `homes/<arch>/`，无需手动注册。
-- **checks**：`flake/checks.nix` 定义 formatting/statix/deadnix/eval/secrets 检查，由 `nix flake check` 统一执行。
+入口使用嵌套命名空间，不使用已弃用的扁平参数：
+
+```nix
+inputs.cloud.lib.mkFlake {
+  inherit inputs systems;
+
+  nixpkgs.config = {
+    allowUnfree = true;
+  };
+
+  outputs = {
+    extra = import ./flake/extra-outputs.nix { inherit inputs; };
+    expected = {
+      hosts = [ "nixos-desktop" ];
+      homes = [ "rhencloud@nixos-desktop" ];
+    };
+  };
+}
+```
+
+自动发现映射：
+
+- `hosts/<host>/default.nix` + `hosts/<host>/meta.nix` → `nixosConfigurations.<host>`
+- `homes/<user>/<host>.nix` → `homeConfigurations."<user>@<host>"`
+- `packages/<name>/default.nix` → `packages.<system>.<name>`
+- `packages/<system>/<name>/default.nix` → 指定架构的 `packages.<system>.<name>`
+- `overlays/<name>/default.nix` → `overlays.<name>`
+- `apps/<name>/default.nix` → `apps.<system>.<name>`
+- `checks/<name>/default.nix` → `checks.<system>.<name>`
+- `shells/<name>/default.nix` → `devShells.<system>.<name>`
+- `formatter/default.nix` → `formatter.<system>`
+- `deploy/default.nix` → `deploy`
+
+主机元数据：
+
+```nix
+# hosts/<host>/meta.nix
+{
+  system = "x86_64-linux";
+  roles = [ "desktop" ];
+  home.embed = true;
+}
+```
+
+- `system` 必须在 `meta.nix` 显式声明，不再写入目录后缀。
+- `roles`、`home.embed`、`home.useGlobalPkgs` 只写在 `meta.nix`。
+- `default.nix` 只由 NixOS module system 求值，不要在其中写框架元数据。
+
+模块 magic 文件：
+
+- `default.nix`：NixOS 与 Home Manager 两侧加载，只放共享 options / 中性接口。
+- `nixos.nix`：仅 NixOS。
+- `home.nix`：仅 Home Manager。
+- `mod.nix` 和其他普通 `.nix` 文件不会自动加载，必须由 magic 文件显式 import。
+- 模块目录可通过 `meta.nix` 声明 `requires`、`after`、`before`、`wants`、`conflicts`；只有存在明确依赖时才添加。
+- 角色聚合器的 `meta.nix` 应 `requires` 它实际设置选项的模块；读取 `config.my.*` 的模块应依赖 `_common.options`，避免主机覆盖禁用后出现延迟的 option 缺失。
+
+角色规则：
+
+- `modules/_common/` 始终注入。
+- `modules/<role>/` 的 `nixos.nix` / `home.nix` 只注入 `meta.nix` 中匹配该角色的主机和 home。
+- `modules/**/default.nix` 是共享接口，始终注入。
+- 角色能力仍由 `rhencloud.roles.<role>.enable` 聚合启用。
+
+## 当前主机和用户
+
+- `nixos-desktop`：desktop，用户 `rhencloud`
+- `yc-hk-1`：server，用户 `rhencloud`、`wyf9`、`advan10`
+- `nixos-homeserver`：server，用户 `rhencloud`
+
+`yc-hk-1` 的 Home Manager profiles 通过 deploy-rs 独立部署。`hosts/yc-hk-1/meta.nix` 使用 `home.embed = false`，框架仍生成独立 `homeConfigurations`，但不向 NixOS 嵌入 Home Manager。
+
+## 配置要点
+
+- 主用户：`rhencloud`。系统 shell 的自动 fish 切换仅作用于主用户，其他用户保持其显式 shell。
+- 频道：`nixos-unstable`。
+- `stateVersion`：`26.11`。
+- 窗口管理器：Hyprland、Niri、Mango。
+- 主题：Stylix + Dracula。
+- Nix 格式化：nixfmt-rfc-style（`nixfmt`）。
+- `modules/_common/externals/nixos.nix` 通过 `cloud.homeManager.backupFileExtension = "backup"` 安全配置嵌入式 HM 备份策略。
+- `allowUnfree` 与 `permittedInsecurePackages` 由 `flake.nix` 的 `nixpkgs.config` 统一控制。
+- `outputs.expected` 用于防止关键 hosts、homes、packages、apps 在重构中静默丢失。
+- `hardware-configuration.nix` 不要手动修改；使用 `nixos-generate-config` 重新生成。
+
+## 外部模块与 overlays
+
+外部模块按目标拆分：
+
+```text
+modules/_common/externals/home.nix
+modules/_common/externals/nixos.nix
+modules/desktop/externals/home.nix
+modules/desktop/externals/nixos.nix
+```
+
+不要把 NixOS-only 模块导入 Home Manager，反之亦然。
+
+框架自动导出并应用 `self.overlays`。自动发现的 overlays 与 `nixpkgs.config` 统一用于 NixOS、独立/嵌入式 Home Manager、packages、checks、devShells、apps 和 formatter。不要在模块中重复配置 `nixpkgs.overlays` 或 `nixpkgs.config`。
+
+## 模块聚合注意事项
+
+`modules/desktop/dev/home.nix` 会：
+
+- 导入子目录中的 `mod.nix`。
+- 导入同目录 flat `.nix`。
+- 排除 `home.nix`、`nixos.nix`、`default.nix` 和当前禁用的 `lucy.nix`。
+
+在假定模块生效前，先确认它是 magic 文件，或已被相应聚合器 import。
+
+## Secrets
+
+由 sops-nix 管理：
+
+```text
+secrets/common.yaml
+secrets/hosts/<host>.yaml
+```
+
+编辑密钥：
+
+```bash
+sops secrets/common.yaml
+sops secrets/hosts/nixos-desktop.yaml
+```
+
+模块规则：
+
+- 使用 `config.sops.secrets."<name>".path`。
+- 使用 `sops.templates` 渲染含秘密的完整配置。
+- 使用 `cloud.sops.secret` helper 指定密钥来源，**不要**手写 `self.outPath + "/secrets/..."`：
+
+  ```nix
+  sops.secrets."password-hash" =
+    cloud.sops.secret { source = "common"; }
+    // { neededForUsers = true; };
+
+  sops.secrets."mihomo-proxies" =
+    cloud.sops.secret {
+      source = "host";
+      host = "nixos-desktop";
+    }
+    // { owner = "root"; };
+  ```
+
+- `cloud.sops.secret { source = "host"; }` 省略 host 时返回动态 NixOS module；只有适合放入 `imports` 且不需要条件声明或追加 owner/mode 时才使用。独立 Home Manager 配置继续显式指定 host。
+- Home Manager 通过 `mkOutOfStoreSymlink "/run/secrets/templates/<file>"` 引用 NixOS 渲染结果。
+- 绝不使用 `builtins.readFile` 读取密钥。
 
 ## 常用命令
 
 ```bash
-# 统一入口（flake apps，见 README「构建 / 测试 / 部署」）
-nix run .#build -- nixos-desktop        # 仅构建
-nix run .#test -- nixos-desktop         # 测试但不创建引导项
-nix run .#switch -- nixos-desktop       # 构建并切换
-nix run .#deploy -- yc-hk-1             # 部署到远程服务器
+nix run .#build -- nixos-desktop
+nix run .#test -- nixos-desktop
+nix run .#switch -- nixos-desktop
+nix run .#deploy -- yc-hk-1
 
-# 等价的原生命令
 nixos-rebuild build --flake .#nixos-desktop
+nix build '.#homeConfigurations."rhencloud@nixos-desktop".activationPackage'
 
-# 对比当前与新建闭包的包差异
-nix diff-closures /run/current-system result
-
-# 回滚到上一个 generation
-sudo nixos-rebuild switch --rollback
-
-# 更新所有 flake inputs
 nix flake update
-
-# 清理旧 generation 并回收磁盘空间
-sudo nix-collect-garbage -d
-
-# 进入 Python dev shell
-nix develop .#python
-
-# 统一质量检查（formatting + statix + deadnix + eval + secrets）
+nix flake update <input-name>
 nix flake check --all-systems
+nix diff-closures /run/current-system result
+sudo nixos-rebuild switch --rollback
+sudo nix-collect-garbage -d
+nix develop .#python
 ```
 
-## 注意事项
+求值尚未加入 Git index 的迁移文件时使用 path flake：
 
-- 部分模块在其父级 `default.nix` 中被注释掉（例如 `modules/nixos/core/` 和 `modules/nixos/desktop/` 中的 `./proxy.nix`）。在假定某模块生效前先检查父级 `default.nix`。
-- `home-manager.backupFileExtension = "backup"` — HM 会将冲突文件备份为 `.backup` 后缀。
-- `flake.nix` 的 `nixConfig.substituters` 配置了中国镜像（USTC、SJTU）与上游缓存。rhencloud/hyprland/noctalia/niri 等 Cachix 缓存已启用。
-- `permittedInsecurePackages` 包含 `electron-39.8.10` 等 — QQ 相关包所需。
-- `hardware-configuration.nix` **不要**手动编辑；用 `nixos-generate-config` 重新生成。
-- 路径名中的 `@`（如 `rhencloud@nixos-desktop`）是合法 Nix 语法，但可能触发 LSP 误报。
-- `format-lint.yml` 使用 `nixfmt-rfc-style`，与 `formatter`（nixfmt）同一工具。
+```bash
+nix eval "path:$PWD#nixosConfigurations.nixos-desktop.config.system.build.toplevel.drvPath" \
+  --raw --option allow-import-from-derivation true
+```
 
 ## 常见修改模式
 
-**新增 Home Manager 模块**：创建 `modules/home/<category>/<name>/default.nix`。若该分类的父级 `default.nix` 以目录路径 import 子目录（如 `herdr/`），自动包含；否则需在分类父级 `default.nix` 的 `imports` 中显式添加（如 `core/`、`dev/`、`desktop/`、`service/` 的 flat 文件）。
+### 新增 Home Manager 模块
 
-**新增 NixOS 模块**：创建 `modules/nixos/<category>/<name>/default.nix`。若该分类的父级 `default.nix` 以目录路径 import 子目录（如 `server/`），自动包含；否则需在分类父级 `default.nix` 的 `imports` 中显式添加（如 `core/`、`desktop/`、`service/` 的 flat 文件）。
+创建 `modules/<scope>/<name>/home.nix`。如果需要共享 option，再创建 `default.nix`。普通辅助文件必须从 `home.nix` 导入。
 
-**新增角色**：创建 `roles/<name>/default.nix`，定义 `rhencloud.roles.<name>.enable` 选项并在启用时聚合相关 `rhencloud.*` 模块。自动收集，host 只需 `rhencloud.roles.<name>.enable = true;`。
+### 新增 NixOS 模块
 
-**新增主机**：1) 创建 `systems/x86_64-linux/<hostname>/default.nix`（仅身份/硬件/网络/存储 + `rhencloud.roles.<name>.enable`）+ `hardware-configuration.nix`。2) 创建对应的 `homes/x86_64-linux/<user>@<hostname>/default.nix`。两者由 `flake/nixos.nix` 和 `flake/home-manager.nix` 自动发现。
+创建 `modules/<scope>/<name>/nixos.nix`。如果需要共享 option，再创建 `default.nix`。普通辅助文件必须从 `nixos.nix` 导入。
 
-**新增 flake input**：添加到 `flake.nix` 的 `inputs`。若提供 NixOS 模块，加入 `flake/nixos.nix` 的 `modules` 列表；若提供 Home Manager 模块，加入 `flake/helpers.nix` 的 `essentialHomeModules` / `desktopExtraHomeModules`。
+### 新增角色
 
-**更新单个 flake input**：`nix flake update <input-name>`（如 `nix flake update home-manager`）。
+1. 创建 `modules/<role>/roles/nixos.nix`，定义 `rhencloud.roles.<role>.enable`。
+2. 在主机的 `meta.nix` 中加入 `roles = [ "<role>" ];`。
+3. 在主机配置中启用 `rhencloud.roles.<role>.enable = true;`。
 
-## 密钥工作流
+### 新增主机
+
+1. 创建 `hosts/<host>/meta.nix`，至少声明 `system` 与 `roles`。
+2. 创建 `hosts/<host>/default.nix`，放入 hostname、hostPlatform 和机器专属配置。
+3. 放入 `hardware-configuration.nix` 或 disko 配置。
+4. 按需创建 `homes/<user>/<host>.nix`。
+5. 将关键 output 名加入 `flake.nix` 的 `outputs.expected`。
+
+### 新增 flake input
+
+1. 在 `flake.nix` 添加 input。
+2. 外部模块加入对应 `externals/home.nix` 或 `externals/nixos.nix`。
+3. app/check/package/shell/deploy 配置放入对应约定目录；只有非约定 output 才加入 `flake/extra-outputs.nix`。
+
+## 检查流程
 
 ```bash
-# 编辑加密文件（GPG 管理密钥解密；保存时重新加密）
-sops secrets/common.yaml
-sops secrets/hosts/nixos-desktop.yaml
-
-# 新增密钥：编辑文件后，在模块中声明
-sops.secrets."my-key" = { sopsFile = ./secrets/hosts/nixos-desktop.yaml; owner = "root"; mode = "0400"; };
-
-# 新增主机：将其 SSH host 公钥转为 age，添加到 .sops.yaml，重新加密
-ssh-keyscan <host> | nix shell nixpkgs#ssh-to-age -c ssh-to-age
-sops updatekeys secrets/common.yaml
-sops updatekeys secrets/hosts/<host>.yaml
+find . -path './.git' -prune -o -path './result' -prune -o -name '*.nix' -type f -print0 \
+  | xargs -0 -n1 nix-instantiate --parse
+nixfmt --check $(find . -path './.git' -prune -o -path './result' -prune -o -name '*.nix' -type f -print)
+statix check .
+deadnix --fail -L .
+nix flake check --all-systems --option allow-import-from-derivation true
 ```
 
-## 风格
+## 风格与安全
 
-- 代码注释与面向用户的字符串使用**中文（简体）**。
-- Nix 格式化工具：`nixfmt`（= nixfmt-rfc-style，在 `home.packages` 与 `formatter` 中）。
-- 静态检查：`statix check .`（配置见 `statix.toml`）。
-- Secrets 扫描：`gitleaks`（配置见 `.gitleaks.toml`，排除 `secrets/` 加密目录）。
+- 代码注释和面向用户的字符串使用简体中文。
+- 不主动 commit / push，除非用户明确要求。
+- 不回滚已有迁移改动。
+- 不修改 `wallpapers` 特殊条目。
+- 不修改 `hardware-configuration.nix`。
+- 不把密钥或运行时明文放入 Nix store。

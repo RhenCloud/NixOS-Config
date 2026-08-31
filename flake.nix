@@ -39,8 +39,11 @@
 
   inputs = {
     # ── 框架 ────────────────────────────────────────────
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    import-tree.url = "github:denful/import-tree";
+    cloud = {
+      url = "github:RhenCloud/Cloud-Nix-Framework";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
 
     # ── 频道 / 基础 ────────────────────────────────────
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -187,27 +190,76 @@
 
   outputs =
     inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+    let
       systems = [ "x86_64-linux" ];
+      contextualSops = import ./flake/sops.nix { projectRoot = ./.; };
+      moduleCloud = inputs.cloud.lib.mkLib { inherit inputs; } // {
+        sops = contextualSops;
+        sops' = contextualSops;
+      };
+    in
+    inputs.cloud.lib.mkFlake {
+      inherit inputs systems;
 
-      imports = [
-        ./flake/pkgs.nix
-        ./flake/nixos.nix
-        ./flake/home-manager.nix
-        ./flake/packages.nix
-        ./flake/devshells.nix
-        ./flake/deploy.nix
-        ./flake/checks.nix
-        ./flake/apps.nix
-      ];
+      # 框架自动发现仍使用无 context 的 root；仅为模块替换 context-safe SOPS helper。
+      nixos.specialArgs = {
+        cloud = moduleCloud;
+      };
+      home.specialArgs = {
+        cloud = moduleCloud;
+      };
 
-      # Live CD 配置
-      flake.nixosConfigurations.iso = inputs.nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./iso.nix
-          inputs.impermanence.nixosModules.impermanence
+      nixpkgs.config = {
+        allowUnfree = true;
+        permittedInsecurePackages = [
+          "electron-39.8.10"
+          "pnpm-9.15.9"
+          "pnpm-10.29.2"
         ];
+      };
+
+      outputs = {
+        extra = import ./flake/extra-outputs.nix { inherit inputs; };
+
+        # 防止目录重构或过滤规则变化时静默丢失关键 outputs。
+        expected = {
+          hosts = [
+            "nixos-desktop"
+            "nixos-homeserver"
+            "yc-hk-1"
+          ];
+          homes = [
+            "advan10@yc-hk-1"
+            "rhencloud@nixos-desktop"
+            "rhencloud@nixos-homeserver"
+            "rhencloud@yc-hk-1"
+            "wyf9@yc-hk-1"
+          ];
+          packages = [
+            "aicommits"
+            "bt-iso-enable"
+            "deploy-rs"
+            "herdr-mobile-relay"
+            "herdr-plus"
+            "herdr-reviewr"
+            "herdr-sidebar"
+            "herdr-spreader"
+            "herdr-tab-rename"
+            "herdr-window-title-sync"
+            "opencode-zh-cn"
+            "rime-keytao"
+            "sandbox"
+            "zed-globalization"
+          ];
+          apps = [
+            "build"
+            "deploy"
+            "sandbox"
+            "switch"
+            "test"
+            "vm"
+          ];
+        };
       };
     };
 }

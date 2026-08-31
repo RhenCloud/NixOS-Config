@@ -2,16 +2,14 @@
 # 版本源码编写；仅当源码尚未内置该特性时才应用，避免把补丁误用到 nixpkgs 的
 # niri 上。系统 niri（`sessionPackages`/`xdg.configPackages`）与 home-manager
 # 的 niri 都经此统一为同一个 niri-unstable，不再构建 nixpkgs 26.04 的 niri。
-{ inputs, root }:
+{ inputs, self, ... }:
 _final: prev: {
-  niri = (inputs.niri.packages.${prev.stdenv.hostPlatform.system}.niri-unstable).overrideAttrs (
-    old: {
-      prePatch = ''
-        ${old.prePatch or ""}
-        if ! grep -q "pub pin" niri-config/src/window_rule.rs; then
-          patch -p1 -N --no-backup-if-mismatch -i ${root}/patches/niri/pin.patch
-        fi
-      '';
-    }
-  );
+  niri = inputs.niri.packages.${prev.stdenv.hostPlatform.system}.niri-unstable.overrideAttrs (old: {
+    prePatch = ''
+      ${old.prePatch or ""}
+      if ! grep -q "pub pin" niri-config/src/window_rule.rs; then
+        patch -p1 -N --no-backup-if-mismatch -i ${self}/patches/niri/pin.patch
+      fi
+    '';
+  });
 }
