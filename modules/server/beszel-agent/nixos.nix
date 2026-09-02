@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -51,7 +51,7 @@ in
 
   config = mkIf cfg.enable {
     sops.secrets."beszel-agent-token" =
-      cloud.sops.secret {
+      snowveil.sops.secret {
         source = "host";
         host = "nixos-homeserver";
       }

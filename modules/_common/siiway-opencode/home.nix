@@ -3,7 +3,7 @@
   lib,
   pkgs,
   inputs,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -151,24 +151,24 @@ in
     };
 
     sops.secrets = {
-      "github-token" = cloud.sops.secret { source = "common"; };
-      "opencode-frimodel-api-key" = cloud.sops.secret {
+      "github-token" = snowveil.sops.secret { source = "common"; };
+      "opencode-frimodel-api-key" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       };
-      "opencode-local-api-key" = cloud.sops.secret {
+      "opencode-local-api-key" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       };
-      "opencode-sub2api-key" = cloud.sops.secret {
+      "opencode-sub2api-key" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       };
-      "opencode-voidswitch-api-key" = cloud.sops.secret {
+      "opencode-voidswitch-api-key" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       };
-      "opencode-zhi-api-key" = cloud.sops.secret {
+      "opencode-zhi-api-key" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       };

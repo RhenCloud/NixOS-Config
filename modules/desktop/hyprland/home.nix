@@ -3,7 +3,7 @@
   lib,
   pkgs,
   inputs,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -16,7 +16,7 @@ in
   options.rhencloud.hm-hyprland.enable = mkEnableOption "Hyprland (HM)";
 
   config = mkIf cfg.enable {
-    sops.secrets."sleepy-token" = cloud.sops.secret { source = "common"; };
+    sops.secrets."sleepy-token" = snowveil.sops.secret { source = "common"; };
 
     sops.templates."pyprland.toml" = {
       mode = "0400";

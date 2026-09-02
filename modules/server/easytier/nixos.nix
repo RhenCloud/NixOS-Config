@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -14,7 +14,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    sops.secrets."easytier-network-secret" = cloud.sops.secret { source = "common"; } // {
+    sops.secrets."easytier-network-secret" = snowveil.sops.secret { source = "common"; } // {
       owner = "easytier";
       group = "easytier";
       mode = "0400";

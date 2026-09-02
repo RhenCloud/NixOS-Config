@@ -2,7 +2,7 @@
   pkgs,
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -16,7 +16,7 @@ in
   config = mkIf cfg.enable {
     _module.args.primaryUser = user;
 
-    sops.secrets."password-hash" = cloud.sops.secret { source = "common"; } // {
+    sops.secrets."password-hash" = snowveil.sops.secret { source = "common"; } // {
       neededForUsers = true;
     };
 

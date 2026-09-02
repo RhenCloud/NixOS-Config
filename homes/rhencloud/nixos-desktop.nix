@@ -7,6 +7,8 @@
   my.isDesktop = true;
 
   rhencloud = {
+    roles.dev.enable = true;
+
     fcitx5 = {
       enable = true;
       keytaoUserDict = ''
@@ -50,25 +52,6 @@
     noctalia.enable = true;
     vicinae.enable = true;
     hmStylix.enable = true;
-
-    # dev
-    c.enable = true;
-    android.enable = true;
-    golang.enable = true;
-    java.enable = true;
-    # lucy.enable = true;
-    node.enable = true;
-    python.enable = true;
-    rust.enable = true;
-    hmDevPackages.enable = true;
-    certs.enable = true;
-    opencode.enable = true;
-    opencode-podman.enable = true;
-    emacs.enable = false;
-    nixvim.enable = true;
-    helix.enable = true;
-    hmOpenAgent.enable = true;
-    aider.enable = true;
 
     # service
     mpd.enable = true;

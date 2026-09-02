@@ -1,5 +1,5 @@
 {
-  cloud,
+  snowveil,
   config,
   lib,
   ...
@@ -16,7 +16,7 @@
 
   # 此主机使用独立密码哈希；覆盖 identity 模块默认的 common 密钥来源。
   sops.secrets."password-hash" = lib.mkForce (
-    cloud.sops.secret {
+    snowveil.sops.secret {
       source = "host";
       host = "nixos-homeserver";
     }

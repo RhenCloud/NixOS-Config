@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 let
@@ -13,7 +13,7 @@ in
 {
   config = lib.mkIf cfg.enable {
     sops.secrets."mihomo-proxies" =
-      cloud.sops.secret {
+      snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       }

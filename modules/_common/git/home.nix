@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -69,11 +69,11 @@ in
     };
 
     sops.secrets = lib.mkIf cfg.sshHostBlocks {
-      "ssh-tc-discourse" = cloud.sops.secret {
+      "ssh-tc-discourse" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       };
-      "ssh-bee-hk-1" = cloud.sops.secret {
+      "ssh-bee-hk-1" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       };

@@ -1,4 +1,4 @@
-# Cloud Nix Framework 的 context-safe SOPS helper。
+# Snowveil 的 context-safe SOPS helper。
 # projectRoot 必须保持为 Nix path，不能提前转换成普通字符串。
 { projectRoot }:
 
@@ -23,7 +23,7 @@ rec {
         else if builtins.isString name && name != "" then
           { sops.secrets.${name} = options; }
         else
-          throw "cloud.sops.secret.name 必须是非空字符串";
+          throw "snowveil.sops.secret.name 必须是非空字符串";
 
       staticOptions =
         if source == "common" then
@@ -45,7 +45,7 @@ rec {
     else if source == "host" then
       dynamicModule
     else
-      throw "cloud.sops.secret.source 必须是 \"common\" 或 \"host\"";
+      throw "snowveil.sops.secret.source 必须是 \"common\" 或 \"host\"";
 
   mkModule =
     {

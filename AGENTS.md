@@ -1,11 +1,11 @@
 # AGENTS.md
 
-RhenCloud 的 NixOS 系统配置，使用 **Cloud Nix Framework** 以 Nix flake 管理。
+RhenCloud 的 NixOS 系统配置，使用 **Snowveil** 以 Nix flake 管理。
 
 ## 仓库结构
 
 ```text
-flake.nix                              # inputs + cloud.lib.mkFlake 入口
+flake.nix                              # inputs + snowveil.lib.mkFlake 入口
 flake/extra-outputs.nix                # 仅保留 ISO 等非约定 outputs
 apps/<name>/default.nix                # 自动发现的 flake app
 checks/<name>/default.nix              # 自动发现的 flake check
@@ -16,8 +16,12 @@ hosts/<host>/                           # NixOS 主机入口；meta.nix 必须�
 homes/<user>/<host>.nix                # 每用户、每主机的 Home Manager 入口
 modules/_common/                       # 所有角色共享模块
 modules/desktop/                       # desktop 角色模块
+modules/dev/                           # dev 角色的 Home Manager 开发环境
 modules/server/                        # server 角色模块
 modules/desktop/roles/nixos.nix        # 桌面角色能力聚合
+modules/dev/options.nix                # 开发角色共享 option
+modules/dev/home.nix                   # 开发角色 Home Manager 聚合
+modules/dev/<name>/{options,home}.nix  # 独立开发能力模块
 modules/server/roles/nixos.nix         # 服务器角色能力聚合
 packages/<name>/default.nix            # 自动发现的自定义包
 packages/<system>/<name>/default.nix   # 明确限定架构的推荐包布局
@@ -26,12 +30,12 @@ secrets/                               # sops 加密密钥
 patches/                               # 本地补丁
 ```
 
-## Cloud Nix Framework 约定
+## Snowveil 约定
 
 入口使用嵌套命名空间，不使用已弃用的扁平参数：
 
 ```nix
-inputs.cloud.lib.mkFlake {
+inputs.snowveil.lib.mkFlake {
   inherit inputs systems;
 
   nixpkgs.config = {
@@ -67,7 +71,10 @@ inputs.cloud.lib.mkFlake {
 # hosts/<host>/meta.nix
 {
   system = "x86_64-linux";
-  roles = [ "desktop" ];
+  roles = [
+    "desktop"
+    "dev"
+  ];
   home.embed = true;
 }
 ```
@@ -78,7 +85,8 @@ inputs.cloud.lib.mkFlake {
 
 模块 magic 文件：
 
-- `default.nix`：NixOS 与 Home Manager 两侧加载，只放共享 options / 中性接口。
+- `options.nix`：NixOS 与 Home Manager 两侧优先加载，只声明共享 option 接口。
+- `default.nix`：NixOS 与 Home Manager 两侧加载，只放平台中性的共享实现。
 - `nixos.nix`：仅 NixOS。
 - `home.nix`：仅 Home Manager。
 - `mod.nix` 和其他普通 `.nix` 文件不会自动加载，必须由 magic 文件显式 import。
@@ -89,12 +97,12 @@ inputs.cloud.lib.mkFlake {
 
 - `modules/_common/` 始终注入。
 - `modules/<role>/` 的 `nixos.nix` / `home.nix` 只注入 `meta.nix` 中匹配该角色的主机和 home。
-- `modules/**/default.nix` 是共享接口，始终注入。
+- `modules/**/options.nix` 与 `modules/**/default.nix` 始终注入。
 - 角色能力仍由 `rhencloud.roles.<role>.enable` 聚合启用。
 
 ## 当前主机和用户
 
-- `nixos-desktop`：desktop，用户 `rhencloud`
+- `nixos-desktop`：desktop + dev，用户 `rhencloud`
 - `yc-hk-1`：server，用户 `rhencloud`、`wyf9`、`advan10`
 - `nixos-homeserver`：server，用户 `rhencloud`
 
@@ -108,7 +116,7 @@ inputs.cloud.lib.mkFlake {
 - 窗口管理器：Hyprland、Niri、Mango。
 - 主题：Stylix + Dracula。
 - Nix 格式化：nixfmt-rfc-style（`nixfmt`）。
-- `modules/_common/externals/nixos.nix` 通过 `cloud.homeManager.backupFileExtension = "backup"` 安全配置嵌入式 HM 备份策略。
+- `modules/_common/externals/nixos.nix` 通过 `snowveil.homeManager.backupFileExtension = "backup"` 安全配置嵌入式 HM 备份策略。
 - `allowUnfree` 与 `permittedInsecurePackages` 由 `flake.nix` 的 `nixpkgs.config` 统一控制。
 - `outputs.expected` 用于防止关键 hosts、homes、packages、apps 在重构中静默丢失。
 - `hardware-configuration.nix` 不要手动修改；使用 `nixos-generate-config` 重新生成。
@@ -130,11 +138,13 @@ modules/desktop/externals/nixos.nix
 
 ## 模块聚合注意事项
 
-`modules/desktop/dev/home.nix` 会：
+`modules/dev/` 的组织规则：
 
-- 导入子目录中的 `mod.nix`。
-- 导入同目录 flat `.nix`。
-- 排除 `home.nix`、`nixos.nix`、`default.nix` 和当前禁用的 `lucy.nix`。
+- 根目录只保留 `options.nix`、`home.nix` 和依赖图 `meta.nix`。
+- `options.nix` 声明 `rhencloud.roles.dev.enable`。
+- `home.nix` 只在 role 启用时聚合各开发能力，不直接 import 实现文件。
+- 每项能力放在独立子目录，通过 `options.nix` / `home.nix` magic 文件自动发现。
+- `lucy/mod.nix` 作为当前禁用的非 magic 实现保留，不会被框架自动发现。
 
 在假定模块生效前，先确认它是 magic 文件，或已被相应聚合器 import。
 
@@ -158,22 +168,22 @@ sops secrets/hosts/nixos-desktop.yaml
 
 - 使用 `config.sops.secrets."<name>".path`。
 - 使用 `sops.templates` 渲染含秘密的完整配置。
-- 使用 `cloud.sops.secret` helper 指定密钥来源，**不要**手写 `self.outPath + "/secrets/..."`：
+- 使用 `snowveil.sops.secret` helper 指定密钥来源，**不要**手写 `self.outPath + "/secrets/..."`：
 
   ```nix
   sops.secrets."password-hash" =
-    cloud.sops.secret { source = "common"; }
+    snowveil.sops.secret { source = "common"; }
     // { neededForUsers = true; };
 
   sops.secrets."mihomo-proxies" =
-    cloud.sops.secret {
+    snowveil.sops.secret {
       source = "host";
       host = "nixos-desktop";
     }
     // { owner = "root"; };
   ```
 
-- `cloud.sops.secret { source = "host"; }` 省略 host 时返回动态 NixOS module；只有适合放入 `imports` 且不需要条件声明或追加 owner/mode 时才使用。独立 Home Manager 配置继续显式指定 host。
+- `snowveil.sops.secret { source = "host"; }` 省略 host 时返回动态 NixOS module；只有适合放入 `imports` 且不需要条件声明或追加 owner/mode 时才使用。独立 Home Manager 配置继续显式指定 host。
 - Home Manager 通过 `mkOutOfStoreSymlink "/run/secrets/templates/<file>"` 引用 NixOS 渲染结果。
 - 绝不使用 `builtins.readFile` 读取密钥。
 
@@ -208,17 +218,18 @@ nix eval "path:$PWD#nixosConfigurations.nixos-desktop.config.system.build.toplev
 
 ### 新增 Home Manager 模块
 
-创建 `modules/<scope>/<name>/home.nix`。如果需要共享 option，再创建 `default.nix`。普通辅助文件必须从 `home.nix` 导入。
+创建 `modules/<scope>/<name>/home.nix`。如果需要共享 option，再创建 `options.nix`。普通辅助文件必须从 `home.nix` 导入。
 
 ### 新增 NixOS 模块
 
-创建 `modules/<scope>/<name>/nixos.nix`。如果需要共享 option，再创建 `default.nix`。普通辅助文件必须从 `nixos.nix` 导入。
+创建 `modules/<scope>/<name>/nixos.nix`。如果需要共享 option，再创建 `options.nix`。普通辅助文件必须从 `nixos.nix` 导入。
 
 ### 新增角色
 
-1. 创建 `modules/<role>/roles/nixos.nix`，定义 `rhencloud.roles.<role>.enable`。
-2. 在主机的 `meta.nix` 中加入 `roles = [ "<role>" ];`。
-3. 在主机配置中启用 `rhencloud.roles.<role>.enable = true;`。
+1. 创建 `modules/<role>/options.nix`，定义 `rhencloud.roles.<role>.enable`。
+2. 按目标创建 `modules/<role>/nixos.nix` 或 `modules/<role>/home.nix`，聚合角色能力。
+3. 在主机的 `meta.nix` 中加入 `roles = [ "<role>" ];`。
+4. 在对应的 NixOS 主机或 Home Manager 入口中启用 `rhencloud.roles.<role>.enable = true;`。
 
 ### 新增主机
 

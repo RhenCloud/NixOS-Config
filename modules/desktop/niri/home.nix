@@ -3,7 +3,7 @@
   lib,
   pkgs,
   inputs,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -25,7 +25,7 @@ in
       pkgs.nirius
     ];
 
-    sops.secrets."sleepy-token" = cloud.sops.secret { source = "common"; };
+    sops.secrets."sleepy-token" = snowveil.sops.secret { source = "common"; };
 
     sops.templates."piri.toml" = {
       mode = "0400";

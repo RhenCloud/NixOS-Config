@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -14,7 +14,7 @@ in
 
   config = mkIf cfg.enable {
     sops.secrets."cloudflared-yc-hk-1-credentials" =
-      cloud.sops.secret {
+      snowveil.sops.secret {
         source = "host";
         host = "yc-hk-1";
       }

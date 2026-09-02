@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -15,7 +15,7 @@ in
 
   config = mkIf cfg.enable {
     sops.secrets."frp-auth-token" =
-      cloud.sops.secret {
+      snowveil.sops.secret {
         source = "host";
         host = "yc-hk-1";
       }

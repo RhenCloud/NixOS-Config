@@ -171,7 +171,7 @@
 | `marksman`      | Markdown                |
 | `typos_lsp`     | 拼写检查                |
 
-如需添加新的 LSP 服务器，编辑 `modules/desktop/dev/nixvim/languages.nix` 中的 `vim.lsp.servers`。
+如需添加新的 LSP 服务器，编辑 `modules/dev/nixvim/languages.nix` 中的 `vim.lsp.servers`。
 
 ---
 
@@ -203,8 +203,9 @@
 ## 配置结构
 
 ```
-modules/desktop/dev/nixvim/
-├── default.nix        # 入口，导入所有子模块
+modules/dev/nixvim/
+├── options.nix        # 声明 rhencloud.nixvim.enable
+├── home.nix           # Home Manager 实现并导入内部配置
 ├── core.nix           # 核心设置：enable、globals、options、theme、autocmds
 ├── keymaps.nix        # 所有快捷键绑定
 ├── languages.nix      # LSP 服务器 + Treesitter + 格式化器配置
@@ -276,7 +277,7 @@ nix build .#homeConfigurations."rhencloud@nixos-desktop".activationPackage
 
 ### Q: 字体怎么修改？
 
-编辑 `modules/desktop/dev/nixvim/neovide.nix` 中的 `font` 配置，以及系统的字体配置。
+编辑 `modules/dev/nixvim/neovide.nix` 中的 `font` 配置，以及系统的字体配置。
 
 ### Q: 某些 LSP 服务器没生效？
 

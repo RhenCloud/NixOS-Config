@@ -39,8 +39,8 @@
 
   inputs = {
     # ── 框架 ────────────────────────────────────────────
-    cloud = {
-      url = "github:RhenCloud/Cloud-Nix-Framework";
+    snowveil = {
+      url = "github:SnowveilOrg/Snowveil";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
@@ -193,20 +193,20 @@
     let
       systems = [ "x86_64-linux" ];
       contextualSops = import ./flake/sops.nix { projectRoot = ./.; };
-      moduleCloud = inputs.cloud.lib.mkLib { inherit inputs; } // {
+      moduleSnowveil = inputs.snowveil.lib.mkLib { inherit inputs; } // {
         sops = contextualSops;
         sops' = contextualSops;
       };
     in
-    inputs.cloud.lib.mkFlake {
+    inputs.snowveil.lib.mkFlake {
       inherit inputs systems;
 
       # 框架自动发现仍使用无 context 的 root；仅为模块替换 context-safe SOPS helper。
       nixos.specialArgs = {
-        cloud = moduleCloud;
+        snowveil = moduleSnowveil;
       };
       home.specialArgs = {
-        cloud = moduleCloud;
+        snowveil = moduleSnowveil;
       };
 
       nixpkgs.config = {

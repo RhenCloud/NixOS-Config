@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -41,13 +41,13 @@ in
       gid = 10001;
     };
 
-    sops.secrets."github-token" = cloud.sops.secret { source = "common"; } // {
+    sops.secrets."github-token" = snowveil.sops.secret { source = "common"; } // {
       owner = "root";
       mode = "0400";
     };
 
     sops.secrets."mailer-config" =
-      cloud.sops.secret {
+      snowveil.sops.secret {
         source = "host";
         host = "yc-hk-1";
       }

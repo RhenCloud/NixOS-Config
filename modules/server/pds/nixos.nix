@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -67,7 +67,7 @@ in
     (mkIf (cfg.role == "server") {
       sops.secrets = {
         "frp-auth-token" =
-          cloud.sops.secret {
+          snowveil.sops.secret {
             source = "host";
             host = "nixos-homeserver";
           }
@@ -75,7 +75,7 @@ in
             mode = "0644";
           };
         "pds-jwt-secret" =
-          cloud.sops.secret {
+          snowveil.sops.secret {
             source = "host";
             host = "nixos-homeserver";
           }
@@ -83,7 +83,7 @@ in
             mode = "0400";
           };
         "pds-admin-password" =
-          cloud.sops.secret {
+          snowveil.sops.secret {
             source = "host";
             host = "nixos-homeserver";
           }
@@ -91,7 +91,7 @@ in
             mode = "0400";
           };
         "pds-plc-rotation-key" =
-          cloud.sops.secret {
+          snowveil.sops.secret {
             source = "host";
             host = "nixos-homeserver";
           }

@@ -2,7 +2,7 @@
   config,
   lib,
   inputs,
-  cloud,
+  snowveil,
   ...
 }:
 {
@@ -15,7 +15,7 @@
   ];
 
   # 仅在框架实际嵌入 Home Manager 时应用，服务器可安全共享此模块。
-  cloud.homeManager.backupFileExtension = "backup";
+  snowveil.homeManager.backupFileExtension = "backup";
 
   system.stateVersion = lib.mkDefault config.my.stateVersion;
 }

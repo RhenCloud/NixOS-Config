@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -30,7 +30,7 @@ in
 
   config = mkIf cfg.enable {
     sops.secrets."wyf9s-bot-token" =
-      cloud.sops.secret {
+      snowveil.sops.secret {
         source = "host";
         host = "yc-hk-1";
       }

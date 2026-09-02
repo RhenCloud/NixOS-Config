@@ -36,10 +36,10 @@
 
 ## 架构
 
-本仓库使用 [Cloud Nix Framework](https://github.com/RhenCloud/Cloud-Nix-Framework) 按目录约定生成 Nix flake 输出。`flake.nix` 负责声明 inputs，并通过：
+本仓库使用 [Snowveil](https://github.com/SnowveilOrg/Snowveil) 按目录约定生成 Nix flake 输出。`flake.nix` 负责声明 inputs，并通过：
 
 ```nix
-inputs.cloud.lib.mkFlake {
+inputs.snowveil.lib.mkFlake {
   inherit inputs systems;
   nixpkgs.config.allowUnfree = true;
   outputs.extra = import ./flake/extra-outputs.nix { inherit inputs; };
@@ -51,7 +51,7 @@ inputs.cloud.lib.mkFlake {
 ```text
 flake.nix
     │
-    ├── Cloud Nix Framework
+    ├── Snowveil
     │   ├── nixosConfigurations  ← hosts/<host>/
     │   ├── homeConfigurations   ← homes/<user>/<host>.nix
     │   ├── nixosModules         ← modules/**/{default,nixos}.nix
@@ -88,9 +88,9 @@ patches/    本地补丁
 分层关系仍为 `host → role → module`：
 
 - 主机在 `hosts/<host>/meta.nix` 中声明 `system` 与 `roles = [ ... ]`，`default.nix` 只保留 NixOS 配置。
-- `modules/desktop/`、`modules/server/` 只注入对应角色。
+- `modules/desktop/`、`modules/dev/`、`modules/server/` 只注入对应角色。
 - `modules/_common/` 始终注入所有主机和 home。
-- `modules/<role>/roles/nixos.nix` 定义并聚合 `rhencloud.roles.<role>` 所启用的能力。
+- `modules/<role>/options.nix` 声明角色 option，`nixos.nix` / `home.nix` 按目标聚合角色能力。
 - 主机入口只保留身份、硬件、网络、存储及该主机独有的服务开关。
 
 ## 主机
@@ -120,13 +120,14 @@ homes/rhencloud/nixos-desktop.nix
 
 框架按 magic 文件名分拣模块：
 
-- `default.nix`：NixOS 与 Home Manager 两侧都会加载，适合声明共享选项。
+- `options.nix`：NixOS 与 Home Manager 两侧优先加载，用于声明共享 option 接口。
+- `default.nix`：NixOS 与 Home Manager 两侧都会加载，用于平台中性的共享实现。
 - `nixos.nix`：仅加载到 NixOS。
 - `home.nix`：仅加载到 Home Manager。
 
 模块目录可任意嵌套。非 magic 文件（例如 `mod.nix`）不会由框架直接发现，需要由相邻的 `home.nix` 或 `nixos.nix` 显式导入。
 
-模块目录还可通过 `meta.nix` 声明 `requires`、`after`、`before`、`wants` 和 `conflicts`。本仓库已为读取 `config.my.*` 的模块以及 desktop/server 角色聚合器声明硬依赖，使主机级模块覆盖造成的缺失能在框架组合阶段直接报错。
+模块目录还可通过 `meta.nix` 声明 `requires`、`after`、`before`、`wants` 和 `conflicts`。本仓库已为读取 `config.my.*` 的模块以及 desktop/dev/server 角色聚合器声明硬依赖，使主机级模块覆盖造成的缺失能在框架组合阶段直接报错。
 
 ### 约定式 outputs
 
@@ -210,12 +211,12 @@ sops secrets/hosts/nixos-desktop.yaml
 ```nix
 {
   config,
-  cloud,
+  snowveil,
   ...
 }:
 {
   sops.secrets."example" =
-    cloud.sops.secret {
+    snowveil.sops.secret {
       source = "host";
       host = "nixos-desktop";
     }

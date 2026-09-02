@@ -123,29 +123,6 @@
         "type": "github"
       }
     },
-    "cloud": {
-      "inputs": {
-        "home-manager": [
-          "home-manager"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1788147230,
-        "narHash": "sha256-+P+yi41kGcoopy/rkx0sv66FCrgSnNMpcSsQBLjj5YA=",
-        "owner": "RhenCloud",
-        "repo": "Cloud-Nix-Framework",
-        "rev": "8a3f0631485ca883da6a2455eff4e2db28411322",
-        "type": "github"
-      },
-      "original": {
-        "owner": "RhenCloud",
-        "repo": "Cloud-Nix-Framework",
-        "type": "github"
-      }
-    },
     "cloud-pyprland": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -1495,7 +1472,6 @@
     "root": {
       "inputs": {
         "aagl": "aagl",
-        "cloud": "cloud",
         "cloud-pyprland": "cloud-pyprland",
         "deploy-rs": "deploy-rs",
         "disko": "disko",
@@ -1521,6 +1497,7 @@
         "selector4nix": "selector4nix",
         "siiway-oc-plugin": "siiway-oc-plugin",
         "sleepy": "sleepy",
+        "snowveil": "snowveil",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
         "vicinae": "vicinae",
@@ -1690,6 +1667,29 @@
         "owner": "sleepy-project",
         "ref": "6babc99",
         "repo": "sleepy",
+        "type": "github"
+      }
+    },
+    "snowveil": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788360333,
+        "narHash": "sha256-wEx4Y4tTkb/Lst/vri68aTrKpwSRTgtcKXmDJ1XjFvA=",
+        "owner": "SnowveilOrg",
+        "repo": "Snowveil",
+        "rev": "ca8af74a61fdfb7cd6cb4f612bcda093b4c1c11a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SnowveilOrg",
+        "repo": "Snowveil",
         "type": "github"
       }
     },

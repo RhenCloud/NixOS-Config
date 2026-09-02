@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
@@ -44,12 +44,12 @@ in
   };
 
   config = mkIf cfg.enable {
-    sops.secrets."github-token" = cloud.sops.secret { source = "common"; } // {
+    sops.secrets."github-token" = snowveil.sops.secret { source = "common"; } // {
       owner = "root";
       mode = "0400";
     };
 
-    sops.secrets."sleepy-token" = cloud.sops.secret { source = "common"; } // {
+    sops.secrets."sleepy-token" = snowveil.sops.secret { source = "common"; } // {
       owner = "root";
       mode = "0400";
     };

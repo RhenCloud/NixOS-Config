@@ -1,14 +1,14 @@
 {
   config,
   lib,
-  cloud,
+  snowveil,
   ...
 }:
 with lib;
 let
   cfg = config.rhencloud.services.postgresql;
   secretOptions =
-    cloud.sops.secret {
+    snowveil.sops.secret {
       source = "host";
       host = "yc-hk-1";
     }
