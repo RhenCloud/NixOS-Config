@@ -1,9 +1,7 @@
 { config, lib, ... }:
 {
-  home.stateVersion = lib.mkDefault "26.11";
-  programs.home-manager.enable = true;
-  programs.man.enable = false;
-
+  # 此配置生成 homeConfigurations."rhencloud@nixos-desktop"
+  # 继承 homes/rhencloud/default.nix 的基础配置
   my.isDesktop = true;
 
   rhencloud = {

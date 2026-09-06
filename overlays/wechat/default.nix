@@ -1,4 +1,3 @@
-{ ... }:
 _final: prev:
 let
   version = "4.1.1.4";
@@ -20,13 +19,11 @@ in
     inherit version;
     meta = prev.wechat.meta;
     src = appimageContents;
-
     extraInstallCommands = ''
       mkdir -p $out/share/applications
       cp ${appimageContents}/wechat.desktop $out/share/applications/
       mkdir -p $out/share/icons/hicolor/256x256/apps
       cp ${appimageContents}/wechat.png $out/share/icons/hicolor/256x256/apps/
-
       substituteInPlace $out/share/applications/wechat.desktop --replace-fail AppRun wechat
     '';
   };

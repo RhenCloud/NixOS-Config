@@ -7,9 +7,8 @@ let
   hostName = "yc-hk-1";
 in
 {
+  # 框架会自动导入 disk.nix（包含 disko 模块和配置）
   imports = [
-    inputs.disko.nixosModules.disko
-    ./disko-config.nix
     ({ config, ... }: {
       services.openssh.ports = [ config.rhencloud.server.ssh.port ];
     })

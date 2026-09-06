@@ -1,9 +1,13 @@
-{ config, lib, ... }:
+{ config, lib, inputs, ... }:
 with lib;
 let
   cfg = config.rhencloud.server.install;
 in
 {
+  imports = [
+    inputs.disko.nixosModules.disko
+  ];
+
   options.rhencloud.server = {
     install = {
       enable = mkEnableOption "nixos-anywhere 安装模式（启用 disko 磁盘布局）";

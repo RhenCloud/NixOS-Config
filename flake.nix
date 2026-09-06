@@ -25,6 +25,8 @@
     trusted-substituters = [
       "https://mirror.sjtu.edu.cn"
       "https://mirrors.ustc.edu.cn"
+      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
     ];
     trusted-public-keys = [
       "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
@@ -194,7 +196,9 @@
     let
       systems = [ "x86_64-linux" ];
       contextualSops = import ./flake/sops.nix { projectRoot = ./.; };
-      moduleSnowveil = inputs.snowveil.lib.mkLib { inherit inputs; } // {
+      # 创建绑定的 snowveil 库，用于注入 context-safe SOPS helper
+      snowveilLib = inputs.snowveil.lib.mkLib { inherit inputs; };
+      moduleSnowveil = snowveilLib // {
         sops = contextualSops;
         sops' = contextualSops;
       };
@@ -202,7 +206,7 @@
     inputs.snowveil.lib.mkFlake {
       inherit inputs systems;
 
-      # 框架自动发现仍使用无 context 的 root；仅为模块替换 context-safe SOPS helper。
+      # 使用新的嵌套命名空间参数格式
       nixos.specialArgs = {
         snowveil = moduleSnowveil;
       };

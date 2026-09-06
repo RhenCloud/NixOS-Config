@@ -5,14 +5,10 @@
   ...
 }:
 {
-  imports = [
-    ./hardware-configuration.nix
-    {
-      networking.hostName = "nixos-homeserver";
-      my.host.name = "nixos-homeserver";
-      nixpkgs.hostPlatform = "x86_64-linux";
-    }
-  ];
+  # 框架会自动导入 hardware.nix（如果存在）
+  networking.hostName = "nixos-homeserver";
+  my.host.name = "nixos-homeserver";
+  nixpkgs.hostPlatform = "x86_64-linux";
 
   # 此主机使用独立密码哈希；覆盖 identity 模块默认的 common 密钥来源。
   sops.secrets."password-hash" = lib.mkForce (

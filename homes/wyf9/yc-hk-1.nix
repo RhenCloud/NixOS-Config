@@ -1,6 +1,4 @@
 { lib, ... }: {
-  my.user.name = "wyf9";
-  home.stateVersion = lib.mkDefault "26.11";
-  programs.home-manager.enable = true;
-  programs.man.enable = false;
+  # 此配置生成 homeConfigurations."wyf9@yc-hk-1"
+  # 继承 homes/wyf9/default.nix 的基础配置
 }

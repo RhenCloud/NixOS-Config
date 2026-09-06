@@ -8,24 +8,11 @@
 with lib;
 let
   cfg = config.rhencloud.services.yysong;
-  pgPasswordSecret = "postgres-yysong-password";
-  prismaConfig = pkgs.writeText "prisma.config.ts" ''
-    import { defineConfig } from 'prisma/config';
-
-    export default defineConfig({
-      schema: 'prisma/schema.prisma',
-      migrations: {
-        path: 'prisma/migrations',
-        seed: 'tsx prisma/seed.ts',
-      },
-      datasource: {
-        url: process.env.DATABASE_URL ?? 'file:./data/app.db',
-      },
-    });
-  '';
-
+  # 临时修补：Dockerfile 没有复制 server/scripts 到生产镜像
+  # 所以我们需要提供一个替代的启动脚本
   startupScript = pkgs.writeShellScript "yysong-start.sh" ''
     cd /app
+    # 尝试运行标准启动命令
     exec npm run start:prod
   '';
 in
@@ -90,7 +77,7 @@ in
     virtualisation.oci-containers.containers.yysong = {
       image = "ghcr.io/wemsur/yangyisongrequest:latest";
       autoStart = true;
-      user = "0:0";
+      user = "1001:1001";
       cmd = [
         "sh"
         "/app/yysong-start.sh"
@@ -100,10 +87,10 @@ in
         PORT = toString cfg.port;
         HOST = "0.0.0.0";
         PUBLIC_BASE_URL = "https://${cfg.domain}";
+        NODE_ENV = "production";
       };
 
       volumes = [
-        "${prismaConfig}:/app/server/prisma.config.ts:ro"
         "${startupScript}:/app/yysong-start.sh:ro"
         "/var/lib/yysong/data:/data"
       ];
