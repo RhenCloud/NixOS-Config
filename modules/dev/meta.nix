@@ -13,6 +13,7 @@
     "dev.node"
     "dev.opencode"
     "dev.packages"
+    "dev.pi"
     "dev.python"
     "dev.rust"
   ];

@@ -20,6 +20,7 @@ in
       opencode-podman.enable = true;
       hmOpenAgent.enable = true;
       aider.enable = true;
+      pi.enable = true;
 
       emacs.enable = false;
       nixvim.enable = true;

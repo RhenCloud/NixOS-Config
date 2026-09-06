@@ -48,7 +48,8 @@ in
           ff = "fastfetch";
           vim = "nvim";
           tree = "tree --gitignore -I '.git'";
-          oc = "opencode";
+          oc = "opencode --auto";
+          opencode = "opencode --auto";
         };
         shellInit = "set -g fish_greeting ''";
         functions = {

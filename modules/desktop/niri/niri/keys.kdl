@@ -25,7 +25,7 @@ binds {
 
     Mod+Space { toggle-window-floating; }
 
-    Mod+E { spawn "dolphin"; }
+    Mod+E { spawn "nemo"; }
     // noctalia v5 has no dedicated emoji-launcher IPC command yet; re-enable
     // once/if it lands. (v4 used: noctalia-shell ipc call launcher emoji)
     Mod+Shift+E { spawn-sh "noctalia msg panel-toggle launcher /emo"; }

@@ -38,6 +38,7 @@ in
     wyf9s-bot.enable = true;
     gost.enable = true;
     rustdesk.enable = true;
+    yysong.enable = true;
 
     pds = {
       enable = true;
@@ -100,6 +101,11 @@ in
         name = "nextbridge";
         user = "nextbridge";
         passwordSecret = "postgres-nextbridge-password";
+      }
+      {
+        name = "yysong";
+        user = "yysong";
+        passwordSecret = "postgres-yysong-password";
       }
     ];
   };

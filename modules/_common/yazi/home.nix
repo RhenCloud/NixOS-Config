@@ -12,9 +12,51 @@ let
   dracula-flavor = "${inputs.yazi-flavors}/dracula.yazi";
 in
 {
-  options.rhencloud.yazi.enable = mkEnableOption "Yazi file manager";
+  options.rhencloud.yazi = {
+    enable = mkEnableOption "Yazi file manager";
+    enableNemo = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Also enable Nemo file manager (Cinnamon desktop)";
+    };
+  };
 
   config = mkIf cfg.enable {
+    # Nemo preferences via dconf
+    dconf.settings = mkIf cfg.enableNemo {
+      "org/nemo/preferences" = {
+        default-folder-viewer = "icon-view";
+        show-hidden-files = false;
+        show-sidebar = true;
+        use-iec-units = true;
+        thumbnail-view = "local-only";
+        enable-single-click = false;
+        date-format = "iso";
+        preferences-open-modal = false;
+      };
+
+      "org/nemo/window-state" = {
+        start-with-sidebar = true;
+        side-pane-width = 200;
+        geometry = "1024x768+50+50";
+      };
+
+      "org/nemo/list-view" = {
+        default-visible-columns = [
+          "name"
+          "size"
+          "type"
+          "date_modified"
+        ];
+        default-column-order = [
+          "name"
+          "size"
+          "type"
+          "date_modified"
+        ];
+      };
+    };
+
     programs.yazi = {
       enable = true;
       enableFishIntegration = true;
@@ -123,6 +165,6 @@ in
       jq
       ripgrep
       fd
-    ];
+    ] ++ (optional cfg.enableNemo nemo);
   };
 }
