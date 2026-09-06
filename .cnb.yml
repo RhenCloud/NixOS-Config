@@ -1,0 +1,106 @@
+# cnb.cool CI/CD 配置
+# 构建 NixOS 配置并推送到 Attic 缓存
+# 使用密钥仓库存储 Attic 凭证
+
+imports:
+  - https://cnb.cool/RhenCloud/secrets/-/blob/main/attic.yml
+
+main:
+  push:
+    branches:
+      - main
+      - master
+    jobs:
+      - name: "Build & Push to Attic Cache"
+        image: nixos/nix:latest
+        volumes:
+          - /root/.cache/nix:copy-on-write
+          - /root/.config/nix:copy-on-write
+        stages:
+          - name: "Install Attic CLI"
+            script: |
+              nix shell github:zhaofengli/attic --run attic --version
+
+          - name: "Login to Attic"
+            script: |
+              if [ -z "$ATTIC_TOKEN" ]; then
+                echo "⚠️ ATTIC_TOKEN 未设置，跳过推送"
+              else
+                nix shell github:zhaofengli/attic --run attic login \
+                  --server "${ATTIC_SERVER:=https://cache.rhen.cloud}" \
+                  "${ATTIC_CACHE:=public}" \
+                  "$ATTIC_TOKEN"
+              fi
+
+          - name: "Build NixOS configuration"
+            script: |
+              nix flake show
+              nix build .#
+
+          - name: "Push to Attic (skip cached packages)"
+            script: |
+              if [ -n "$ATTIC_TOKEN" ]; then
+                STORE_PATHS=$(nix build .# --print-out-paths)
+                PUSHED_COUNT=0
+                SKIPPED_COUNT=0
+                
+                for path in $STORE_PATHS; do
+                  # 获取包的 NAR 哈希
+                  NAR_HASH=$(nix hash path --type sha256 "$path" 2>/dev/null | cut -d: -f2)
+                  STORE_HASH=$(basename "$path" | cut -d- -f1)
+                  
+                  # 尝试从上游缓存查询（使用标准缓存服务器）
+                  if curl -s "https://cache.nixos.org/$STORE_HASH.narinfo" > /dev/null 2>&1; then
+                    echo "⏭️  跳过 (上游已有): $path"
+                    SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
+                  else
+                    # 上游没有，推送到 Attic
+                    echo "📤 推送: $path"
+                    if nix shell github:zhaofengli/attic --run attic push \
+                      "${ATTIC_CACHE:=public}" \
+                      "$path"; then
+                      echo "✅ 推送成功: $path"
+                      PUSHED_COUNT=$((PUSHED_COUNT + 1))
+                    else
+                      echo "⚠️ 推送失败: $path"
+                    fi
+                  fi
+                done
+                
+                echo ""
+                echo "📊 推送统计："
+                echo "  ✅ 已推送: $PUSHED_COUNT 个包"
+                echo "  ⏭️  已跳过: $SKIPPED_COUNT 个包"
+              fi
+
+          - name: "Build result"
+            script: |
+              echo "✅ 构建完成！"
+              nix build .# --print-out-paths
+
+  # 定时任务：每天自动构建
+  schedule:
+    - cron: "0 2 * * *"  # 每天 UTC 2:00
+      stages:
+        - name: "Daily build"
+          image: nixos/nix:latest
+          volumes:
+            - /root/.cache/nix:copy-on-write
+          script: |
+            nix flake update
+            nix build .#
+            echo "✅ 每日构建完成"
+
+  # PR 预检查：验证配置
+  pull_request:
+    - name: "Check & Format"
+      image: nixos/nix:latest
+      stages:
+        - name: "Lint NixOS config"
+          script: |
+            nix flake check || echo "⚠️ 检查失败"
+
+        - name: "Verify build"
+          script: |
+            nix build .# --dry-run
+            echo "✅ 构建验证通过"

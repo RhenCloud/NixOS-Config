@@ -11,6 +11,7 @@
     #   "https://yazi.cachix.org"
     # ];
     substituters = [
+      "https://cache.rhen.cloud"
       "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
