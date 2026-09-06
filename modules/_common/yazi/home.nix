@@ -154,17 +154,20 @@ in
 
     xdg.configFile."yazi/flavors/dracula.yazi".source = dracula-flavor;
 
-    home.packages = with pkgs; [
-      bat
-      chafa
-      ffmpegthumbnailer
-      poppler-utils
-      glow
-      ouch
-      unar
-      jq
-      ripgrep
-      fd
-    ] ++ (optional cfg.enableNemo nemo);
+    home.packages =
+      with pkgs;
+      [
+        bat
+        chafa
+        ffmpegthumbnailer
+        poppler-utils
+        glow
+        ouch
+        unar
+        jq
+        ripgrep
+        fd
+      ]
+      ++ (optional cfg.enableNemo nemo);
   };
 }

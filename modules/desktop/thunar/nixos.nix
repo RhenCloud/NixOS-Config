@@ -19,16 +19,21 @@ in
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = (with pkgs; [
-      ffmpegthumbnailer
-    ]) ++ (optionals cfg.enableNemo (with pkgs; [
-      nemo
-      nemo-fileroller
-      nemo-preview
-      nemo-seahorse
-      nemo-python
-      nemo-emblems
-    ]));
+    environment.systemPackages =
+      (with pkgs; [
+        ffmpegthumbnailer
+      ])
+      ++ (optionals cfg.enableNemo (
+        with pkgs;
+        [
+          nemo
+          nemo-fileroller
+          nemo-preview
+          nemo-seahorse
+          nemo-python
+          nemo-emblems
+        ]
+      ));
 
     programs = {
       thunar = {
