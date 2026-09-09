@@ -9,7 +9,4 @@
   extraGroups = [
     "wheel"
   ];
-
-  # 密码文件来源
-  hashedPasswordSecret = "advan10-password";
 }

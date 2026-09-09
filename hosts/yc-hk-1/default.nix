@@ -28,6 +28,7 @@ in
 
   rhencloud.services = {
     beszel.enable = true;
+    baota-probe.enable = true;
     nextbridge.enable = true;
     frp.enable = true;
     easytier.enable = true;

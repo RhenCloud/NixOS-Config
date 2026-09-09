@@ -17,7 +17,6 @@ in
       certs.enable = true;
 
       opencode.enable = true;
-      opencode-podman.enable = true;
       hmOpenAgent.enable = true;
       aider.enable = true;
       pi.enable = true;

@@ -32,6 +32,7 @@ in
       hyprland.enable = true;
       mangowm.enable = true;
       thunar.enable = true;
+      nemo.enable = true;
       games.enable = true;
       steam.enable = true;
       zen.enable = true;

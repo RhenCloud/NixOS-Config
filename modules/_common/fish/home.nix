@@ -50,6 +50,7 @@ in
           tree = "tree --gitignore -I '.git'";
           oc = "opencode --auto";
           opencode = "opencode --auto";
+          zen = "zen-beta"
         };
         shellInit = "set -g fish_greeting ''";
         functions = {

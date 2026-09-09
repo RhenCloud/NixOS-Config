@@ -2,6 +2,7 @@
   config,
   lib,
   inputs,
+  snowveil,
   ...
 }:
 {
@@ -9,6 +10,8 @@
     inputs.sops-nix.homeManagerModules.sops
     inputs.nix-index-database.homeModules.nix-index
   ];
+
+  sops.defaultSopsFile = snowveil.sops.commonFile;
 
   home = {
     username = config.my.user.name;

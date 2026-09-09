@@ -14,26 +14,12 @@ in
     home.packages = with pkgs; [
       pi-coding-agent
       rtk
+      bubblewrap
+      socat
     ];
 
     sops.secrets = {
       "opencode-voidswitch-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "opencode-frimodel-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "opencode-local-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "opencode-sub2api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "opencode-zhi-api-key" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";
       };
@@ -159,6 +145,69 @@ in
 
     home.file.".pi/agent/themes/dracula.json".source = ./themes/dracula.json;
 
+    home.file.".pi/agent/permission-mode/permission-mode.json".text = builtins.toJSON {
+      "$schema" = "https://raw.githubusercontent.com/wynainfo/pi-permission-modes/main/schemas/permission-mode.schema.json";
+      defaultMode = "default";
+      cycleOrder = [ "default" "plan" "build" "yolo" ];
+      modes = {
+        default = {
+          label = "Default";
+          color = "muted";
+          sandbox = {
+            enabled = true;
+            writable = true;
+            allowWrite = [ "." "/tmp" ];
+            denyRead = [ "~/.ssh" "~/.aws" "~/.gnupg" ];
+            denyWrite = [];
+            network = {
+              allowedDomains = [ "github.com" "*.github.com" "npmjs.org" "*.npmjs.org" ];
+              deniedDomains = [];
+            };
+            askOnBlockedHost = true;
+          };
+          permission = {
+            path = {
+              "*" = "allow";
+              "*.env" = "deny";
+              "*.env.*" = "deny";
+              "*.md" = "ask";
+              "*.markdown" = "ask";
+              "QUICK_REFERENCE.md" = "deny";
+              "REFACTORING_STATUS.md" = "deny";
+              "TODO.md" = "deny";
+              "NOTES.md" = "deny";
+            };
+            external_directory = "ask";
+            read = "allow";
+            grep = "allow";
+            find = "allow";
+            ls = "allow";
+            write = "ask";
+            edit = "ask";
+            bash = {
+              "*" = "ask";
+              "cat*" = "deny";
+              "grep*" = "deny";
+              "echo*" = "deny";
+              "head*" = "deny";
+              "tail*" = "deny";
+              "wc*" = "deny";
+              "sed*" = "deny";
+              "awk*" = "deny";
+              "git commit*" = "ask";
+              "git add*" = "ask";
+              "git push*" = "ask";
+              "sudo*" = "deny";
+            };
+            web_search = "ask";
+            tool = "allow";
+            skill = "allow";
+          };
+          hideTools = [];
+        };
+      };
+    };
+
     home.file.".pi/agent/settings.json".text = builtins.toJSON {
       defaultProvider = cfg.defaultProvider;
       defaultModel = "deepseek-v4-pro";
@@ -167,9 +216,11 @@ in
         "npm:pi-mcp-adapter"
         "npm:pi-subagents"
         "npm:pi-web-access"
+        "npm:pi-zentui"
+        "npm:pi-permission-modes"
         "npm:@plannotator/pi-extension"
         "npm:@juicesharp/rpiv-todo"
-        "git:github.com/dafei1288/pi-agent-hud"
+        # "git:github.com/dafei1288/pi-agent-hud"
         "git:github.com/MasuRii/pi-rtk-optimizer"
         "npm:@ogulcancelik/pi-herdr"
         "npm:@ff-labs/pi-fff"

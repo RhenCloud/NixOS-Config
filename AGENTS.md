@@ -52,6 +52,14 @@ inputs.snowveil.lib.mkFlake {
 }
 ```
 
+必须声明 `flake-schemas` input 以启用 `schemas` output，让 `nix flake show` 正确识别自定义 outputs：
+
+```nix
+flake-schemas = {
+  url = "github:DeterminateSystems/flake-schemas";
+};
+```
+
 自动发现映射：
 
 - `hosts/<host>/default.nix` + `hosts/<host>/meta.nix` → `nixosConfigurations.<host>`
@@ -82,6 +90,21 @@ inputs.snowveil.lib.mkFlake {
 - `system` 必须在 `meta.nix` 显式声明，不再写入目录后缀。
 - `roles`、`home.embed`、`home.useGlobalPkgs` 只写在 `meta.nix`。
 - `default.nix` 只由 NixOS module system 求值，不要在其中写框架元数据。
+
+`meta.nix` 还支持 `snowveil` 属性集，在模块系统求值前选择模块、overlay 与 package：
+
+```nix
+{
+  snowveil = {
+    modules.desktop.gaming.enable = false;
+    overlays.unstable.enable = false;
+    packages.helix = {
+      enable = true;
+      scope = "system"; # 或 "home"
+    };
+  };
+}
+```
 
 模块 magic 文件：
 

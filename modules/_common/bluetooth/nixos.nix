@@ -31,16 +31,16 @@ in
     boot.extraModulePackages = [ btIsoEnable ];
 
     systemd.services = {
-      bt-iso-enable = {
-        description = "Load bt-iso-enable kernel module for Bluetooth ISO socket support";
-        before = [ "bluetooth.service" ];
-        wantedBy = [ "bluetooth.target" ];
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStart = "${pkgs.kmod}/bin/modprobe bt-iso-enable";
-        };
-      };
+      #   bt-iso-enable = {
+      #     description = "Load bt-iso-enable kernel module for Bluetooth ISO socket support";
+      #     before = [ "bluetooth.service" ];
+      #     wantedBy = [ "bluetooth.target" ];
+      #     serviceConfig = {
+      #       Type = "oneshot";
+      #       RemainAfterExit = true;
+      #       ExecStart = "${pkgs.kmod}/bin/modprobe bt-iso-enable";
+      #     };
+      #   };
       bluetooth-unblock = {
         description = "Unblock and power on Bluetooth adapter";
         after = [ "bluetooth.service" ];

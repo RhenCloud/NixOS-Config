@@ -9,7 +9,4 @@
   extraGroups = [
     "wheel"
   ];
-
-  # 密码文件来源
-  hashedPasswordSecret = "wyf9-password";
 }

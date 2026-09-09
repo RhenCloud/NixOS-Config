@@ -11,30 +11,9 @@ in
 {
   options.rhencloud.thunar = {
     enable = mkEnableOption "Thunar file manager";
-    enableNemo = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Also enable Nemo file manager (Cinnamon desktop)";
-    };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages =
-      (with pkgs; [
-        ffmpegthumbnailer
-      ])
-      ++ (optionals cfg.enableNemo (
-        with pkgs;
-        [
-          nemo
-          nemo-fileroller
-          nemo-preview
-          nemo-seahorse
-          nemo-python
-          nemo-emblems
-        ]
-      ));
-
     programs = {
       thunar = {
         plugins = with pkgs; [

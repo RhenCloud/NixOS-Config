@@ -39,6 +39,7 @@ in
       "opencode/skills/frontend-design/SKILL.md".source = ./skills/frontend-design/SKILL.md;
       "opencode/skills/frontend-design/LICENSE.txt".source = ./skills/frontend-design/LICENSE.txt;
       "opencode/skills/nix-flakes-env/SKILL.md".source = ./skills/nix-flakes-env/SKILL.md;
+      "opencode/skills/nixos".source = inputs.nixos-ai-skill;
 
       "opencode/plugins/worktree.ts".source = "${inputs.opencode-worktree}/src/plugin/worktree.ts";
       "opencode/plugins/worktree".source = "${inputs.opencode-worktree}/src/plugin/worktree";

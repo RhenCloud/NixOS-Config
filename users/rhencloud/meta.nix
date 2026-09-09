@@ -18,7 +18,4 @@
     "podman"
   ];
 
-  # 密码文件来源
-  # 以 "/" 开头时视为字面文件路径；否则当作 sops 密钥名
-  hashedPasswordSecret = "rhencloud-password";
 }

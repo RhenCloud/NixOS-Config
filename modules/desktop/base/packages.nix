@@ -65,7 +65,7 @@ in
       localsend
       # moonlight-qt
 
-      splayer
+      splayer-next
 
       mission-center
       wayfreeze

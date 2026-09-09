@@ -11,6 +11,5 @@
       sshHostBlocks = false;
     };
     opencode.enable = true;
-    opencode-podman.enable = true;
   };
 }

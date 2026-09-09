@@ -32,6 +32,7 @@
     "desktop.steam"
     "desktop.sunshine"
     "desktop.thunar"
+    "desktop.nemo"
     "desktop.zen"
   ];
 }

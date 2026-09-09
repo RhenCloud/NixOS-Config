@@ -35,6 +35,7 @@
       "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
       "vicinae.cachix.org-1:1kDrfienkGHPYbkpNj1mWTr7Fm1+zcenzgTizIcI3oc="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "cache.nixos.org-1:6NCHdD59X431o0gWypQtVrp8bzFM4q3kncrKNSStQ5s="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "yazi.cachix.org-1:Dcdz63NZ5HpCDB+C1i3W6S3Gx2JBHaVNYh5MmiEXZo4="
     ];
@@ -46,6 +47,9 @@
       url = "github:SnowveilOrg/Snowveil";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+    };
+    flake-schemas = {
+      url = "github:DeterminateSystems/flake-schemas";
     };
 
     # ── 频道 / 基础 ────────────────────────────────────
@@ -110,7 +114,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     zen-browser = {
-      url = "github:youwen5/zen-browser-flake";
+      url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim = {
@@ -161,6 +165,10 @@
       url = "github:kdcokenny/opencode-worktree";
       flake = false;
     };
+    nixos-ai-skill = {
+      url = "github:marceloeatworld/nixos-ai-skill";
+      flake = false;
+    };
     yazi-flavors = {
       url = "github:yazi-rs/flavors";
       flake = false;
@@ -195,24 +203,9 @@
     inputs:
     let
       systems = [ "x86_64-linux" ];
-      contextualSops = import ./flake/sops.nix { projectRoot = ./.; };
-      # 创建绑定的 snowveil 库，用于注入 context-safe SOPS helper
-      snowveilLib = inputs.snowveil.lib.mkLib { inherit inputs; };
-      moduleSnowveil = snowveilLib // {
-        sops = contextualSops;
-        sops' = contextualSops;
-      };
     in
     inputs.snowveil.lib.mkFlake {
       inherit inputs systems;
-
-      # 使用新的嵌套命名空间参数格式
-      nixos.specialArgs = {
-        snowveil = moduleSnowveil;
-      };
-      home.specialArgs = {
-        snowveil = moduleSnowveil;
-      };
 
       nixpkgs.config = {
         allowUnfree = true;
@@ -242,7 +235,7 @@
           ];
           packages = [
             "aicommits"
-            "bt-iso-enable"
+            # "bt-iso-enable"
             "deploy-rs"
             "herdr-mobile-relay"
             "herdr-plus"
