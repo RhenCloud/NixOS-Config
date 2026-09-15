@@ -11,7 +11,7 @@
     #   "https://yazi.cachix.org"
     # ];
     substituters = [
-      "https://cache.rhen.cloud"
+      # "https://cache.rhen.cloud"
       "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
@@ -23,10 +23,16 @@
       "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
     trusted-substituters = [
-      "https://mirror.sjtu.edu.cn"
-      "https://mirrors.ustc.edu.cn"
-      "https://cache.nixos.org"
+      # "https://cache.rhen.cloud"
+      "https://rhencloud.cachix.org"
+      "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
+      "https://cache.nixos.org"
+      "https://noctalia.cachix.org"
+      "https://niri.cachix.org"
+      "https://vicinae.cachix.org"
+      "https://mirrors.ustc.edu.cn/nix-channels/store"
+      "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
     trusted-public-keys = [
       "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
@@ -69,6 +75,10 @@
     };
     noctalia-latest = {
       url = "github:noctalia-dev/noctalia-shell/v5.0.0-beta.3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    umbriel = {
+      url = "github:noctalia-dev/umbriel";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # lucy = {
@@ -127,6 +137,10 @@
     };
     vicinae = {
       url = "github:vicinaehq/vicinae";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    jailed-agents = {
+      url = "github:andersonjoseph/jailed-agents";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     rime-keytao = {
@@ -203,9 +217,17 @@
     inputs:
     let
       systems = [ "x86_64-linux" ];
+      # myPkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
     in
     inputs.snowveil.lib.mkFlake {
       inherit inputs systems;
+
+      # nixpkgs.overlays = [
+      #   (final: prev: {
+      #     gcc = prev.gcc14;
+      #     gcc_latest = prev.gcc14;
+      #   })
+      # ];
 
       nixpkgs.config = {
         allowUnfree = true;
@@ -245,6 +267,7 @@
             "herdr-tab-rename"
             "herdr-window-title-sync"
             "herdr-worktrunk"
+            "jailed-pi"
             "opencode-zh-cn"
             "rime-keytao"
             "sandbox"

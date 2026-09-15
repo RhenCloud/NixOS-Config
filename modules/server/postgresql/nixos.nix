@@ -131,7 +131,7 @@ in
     virtualisation.oci-containers.containers.postgresql = {
       image = cfg.image;
       autoStart = true;
-      pull = "always";
+      pull = "newer";
 
       volumes = [
         "${cfg.dataDir}:/var/lib/postgresql/data"

@@ -1,0 +1,159 @@
+# Umbriel 的配置会在修改后自动重新加载。
+# 完整选项说明见 https://docs.noctalia.dev/umbriel/
+
+[general]
+autostart = [
+  "noctalia",
+  "udiskie",
+  "waypaper --restore",
+  "clipse -listen",
+  "kitty --class musicfox sh -c musicfox",
+  "fcitx5 -d",
+  "flameshot",
+  "wl-paste --type text --watch cliphist store",
+  "wl-paste --type image --watch cliphist store",
+  "systemctl --user start hyprpolkitagent.service",
+]
+xwayland = true
+show_cheatsheet = true
+focus_on_activate = false
+
+[environment]
+NIXOS_OZONE_WL = "1"
+
+[workspaces]
+back_and_forth = true
+empty_above = true
+
+[appearance]
+prefer_no_csd = true
+border_width = 3
+corner_radius = 10
+
+[appearance.blur]
+enabled = true
+optimized = true
+passes = 3
+radius = 5
+noise = 0.02
+brightness = 0.9
+contrast = 0.9
+saturation = 1.1
+
+[appearance.shadow]
+enabled = true
+softness = 15
+offset_x = 2
+offset_y = 2
+
+[input.keyboard]
+layout = "us"
+repeat_rate = 25
+repeat_delay = 600
+numlock_toggle = true
+
+[input.touchpad]
+tap = true
+disable_while_typing = true
+
+[input.cursor]
+size = 24
+
+[keybinds]
+"Mod" = "spawn:noctalia msg panel-toggle launcher"
+"Mod+Return" = "spawn:kitty"
+"Mod+Q" = "window-close"
+"Mod+Escape" = "session-quit"
+"Mod+F1" = "window-focus-next"
+"Mod+H" = "window-focus-left"
+"Mod+J" = "window-focus-down"
+"Mod+K" = "window-focus-up"
+"Mod+L" = "window-focus-right"
+"Mod+Shift+H" = "column-move-left"
+"Mod+Shift+J" = "window-move-down"
+"Mod+Shift+K" = "window-move-up"
+"Mod+Shift+L" = "column-move-right"
+"Mod+F" = "window-toggle-fullscreen"
+"Mod+T" = "window-toggle-floating"
+"Mod+P" = "window-toggle-pinned"
+"Mod+R" = "window-cycle-width"
+"Mod+O" = { action = "overview-toggle", repeat = false }
+"Mod+1" = "workspace-switch:1"
+"Mod+2" = "workspace-switch:2"
+"Mod+3" = "workspace-switch:3"
+"Mod+4" = "workspace-switch:4"
+"Mod+5" = "workspace-switch:5"
+"Mod+6" = "workspace-switch:6"
+"Mod+7" = "workspace-switch:7"
+"Mod+8" = "workspace-switch:8"
+"Mod+9" = "workspace-switch:9"
+"Mod+Shift+1" = "window-move-to-workspace:1"
+"Mod+Shift+2" = "window-move-to-workspace:2"
+"Mod+Shift+3" = "window-move-to-workspace:3"
+"Mod+Shift+4" = "window-move-to-workspace:4"
+"Mod+Shift+5" = "window-move-to-workspace:5"
+"Mod+Shift+6" = "window-move-to-workspace:6"
+"Mod+Shift+7" = "window-move-to-workspace:7"
+"Mod+Shift+8" = "window-move-to-workspace:8"
+"Mod+Shift+9" = "window-move-to-workspace:9"
+"Mod+Space" = "scratchpad-toggle"
+"Mod+Shift+Space" = "window-move-to-scratchpad"
+"Mod+Ctrl+Space" = "window-restore-from-scratchpad"
+
+[layout]
+mode = "scrolling"
+gap = 8
+width_presets = [0.333, 0.5, 0.667]
+
+[layout.scrolling]
+default_width_fraction = 0.5
+center_underfull_strip = true
+center_focused = "on_overflow"
+
+[[window_rule]]
+blur = true
+blur_optimized = false
+
+[[window_rule]]
+match.app_id = "^dev.noctalia.Noctalia$"
+default_floating = true
+default_size = [1020, 900]
+
+[[window_rule]]
+match.app_id = "^dev.noctalia.UmbrielSharePicker$"
+default_floating = true
+default_size = [800, 600]
+
+[[window_rule]]
+match.title = "^(Picture-in-Picture|Picture in picture)$"
+default_floating = true
+default_position = { x = 20, y = 20, anchor = "bottom_right" }
+
+[[layer_rule]]
+match.namespace = "^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd|desktop-widget-[^\"]*)$"
+blur = true
+blur_ignore_alpha = 0.5
+blur_popups = true
+blur_optimized = false
+
+[animation]
+enabled = true
+duration_ms = 250
+curve = "easeout"
+
+[animation.windows_in]
+style = "popin"
+duration_ms = 150
+scale = 0.85
+
+[animation.windows_out]
+style = "fade"
+duration_ms = 150
+
+[overview]
+zoom = 0.5
+
+[hot_corners.top_left]
+enabled = true
+delay_ms = 500
+action = "overview-open"

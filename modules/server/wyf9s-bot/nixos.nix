@@ -57,7 +57,7 @@ in
     virtualisation.oci-containers.containers.wyf9s-bot = {
       image = cfg.image;
       autoStart = true;
-      pull = "always";
+      pull = "newer";
       user = "0:0";
 
       volumes = [

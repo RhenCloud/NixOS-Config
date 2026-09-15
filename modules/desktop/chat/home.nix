@@ -111,6 +111,7 @@ in
             --prefix PATH : ${lib.makeBinPath [ xclip ]}
         '';
       })
+
       (symlinkJoin {
         name = "qq-wayland";
         paths = [ qqWithLiteLoader ];
@@ -122,10 +123,33 @@ in
         '';
       })
 
+      (symlinkJoin {
+        name = "legcord-wayland";
+        paths = [ legcord ];
+        nativeBuildInputs = [ makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/legcord \
+            --set NIXOS_OZONE_WL 1 \
+            --set ELECTRON_OZONE_PLATFORM_HINT wayland \
+            --add-flags "--enable-features=WebRTCPipeWireCapturer,UseOzonePlatform,WaylandWindowDecorations" \
+            --add-flags "--ozone-platform=wayland"
+        '';
+      })
+
+      (symlinkJoin {
+        name = "dorion-wayland";
+        paths = [ dorion ];
+        nativeBuildInputs = [ makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/Dorion \
+            --set GDK_BACKEND wayland,x11
+        '';
+      })
+
       feishu
       # telegram-desktop
       ayugram-desktop
-      zoom-us
+      # zoom-us
       thunderbird
       slack
     ];

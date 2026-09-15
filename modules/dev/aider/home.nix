@@ -15,10 +15,7 @@ in
     home.packages = with pkgs; [ aider-chat ];
 
     sops.secrets = {
-      "opencode-voidswitch-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
+      "opencode-voidswitch-api-key" = snowveil.sops.secret { source = "common"; };
       "opencode-frimodel-api-key" = snowveil.sops.secret {
         source = "host";
         host = "nixos-desktop";

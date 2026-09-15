@@ -76,7 +76,7 @@ in
     virtualisation.oci-containers.containers.mailer = {
       image = cfg.image;
       autoStart = true;
-      pull = "always";
+      pull = "newer";
 
       volumes = [
         "${config.sops.templates."mailer-config.yaml".path}:/app/config.yaml:ro"

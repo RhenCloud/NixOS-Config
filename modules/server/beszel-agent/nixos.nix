@@ -78,7 +78,7 @@ in
     virtualisation.oci-containers.containers.beszel-agent = {
       image = cfg.image;
       autoStart = true;
-      pull = "always";
+      pull = "newer";
 
       extraOptions = [ "--network=host" ];
 

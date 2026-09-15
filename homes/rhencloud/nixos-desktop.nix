@@ -32,6 +32,7 @@
 
     # desktop
     hm-hyprland.enable = true;
+    hm-umbriel.enable = true;
     hm-niri.enable = true;
     hm-mango.enable = true;
     theme.enable = true;

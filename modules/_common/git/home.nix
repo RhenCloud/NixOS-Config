@@ -194,23 +194,26 @@ in
     };
 
     sops.secrets = lib.mkIf cfg.sshHostBlocks {
-      "ssh-tc-discourse" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "ssh-bee-hk-1" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
+      "ssh-tc-discourse" = snowveil.sops.secret { source = "common"; };
+      "ssh-bee-hk-1" = snowveil.sops.secret { source = "common"; };
     };
 
     sops.templates."ssh-host-blocks" = lib.mkIf cfg.sshHostBlocks {
       mode = "0644";
-      content =
-        config.sops.placeholder."ssh-tc-discourse" + "\n\n" + config.sops.placeholder."ssh-bee-hk-1" + "\n";
+      content = ''
+        Host tc-discourse
+            HostName 83.229.127.169
+            Port 45855
+            User rhencloud
+
+        Host bee-hk-1
+            HostName 83.229.127.169
+            Port 45855
+            User rhencloud
+      '';
     };
 
-    home.packages = [ pkgs.gcr ];
+    home.packages = [ pkgs.gcr_3 ];
 
     # Global git hooks (see hook derivations above). Symlinked into $HOME so
     # core.hooksPath can point at a stable path outside the Nix store.

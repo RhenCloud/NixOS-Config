@@ -102,6 +102,10 @@ in
         [[fcitx5]]
         app_id = "dev.zed.Zed"
         input_mode = "english"
+
+        [[fcitx5]]
+        app_id = ".Dorion-wrapped"
+        input_mode = "chinese"
       '';
     };
 

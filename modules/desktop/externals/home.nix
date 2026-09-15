@@ -2,6 +2,7 @@
 {
   imports = [
     inputs.noctalia-v4.homeModules.default
+    inputs.umbriel.homeModules.default
     inputs.mangowm.hmModules.mango
     inputs.niri.homeModules.niri
     inputs.piri.homeManagerModules.default

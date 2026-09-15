@@ -1,4 +1,7 @@
 { inputs, ... }:
 {
-  imports = [ inputs.mangowm.nixosModules.mango ];
+  imports = [
+    inputs.umbriel.nixosModules.default
+    inputs.mangowm.nixosModules.mango
+  ];
 }

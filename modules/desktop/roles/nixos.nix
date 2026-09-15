@@ -30,6 +30,7 @@ in
       desktopPackages.enable = true;
       gnome.enable = false;
       hyprland.enable = true;
+      umbriel.enable = true;
       mangowm.enable = true;
       thunar.enable = true;
       nemo.enable = true;

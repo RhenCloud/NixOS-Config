@@ -118,6 +118,13 @@ window-rule {
 }
 
 window-rule {
+    match app-id="legcord"
+    // block-out-from "screencast"
+    open-maximized true
+    tiled-state true
+}
+
+window-rule {
     match app-id="thunar" title="重命名 .*"
     open-floating true
 }

@@ -55,10 +55,17 @@ in
       "d ${cfg.runDir} 0755 root root -"
     ];
 
+    systemd.services.podman-bt-probe-agent = {
+      serviceConfig = {
+        Restart = lib.mkForce "always";
+        RestartSec = 5;
+      };
+    };
+
     virtualisation.oci-containers.containers.bt-probe-agent = {
       image = cfg.image;
       autoStart = true;
-      pull = "always";
+      pull = "newer";
 
       extraOptions = [
         "--cap-add=NET_RAW"

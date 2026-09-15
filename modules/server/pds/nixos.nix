@@ -133,7 +133,7 @@ in
       virtualisation.oci-containers.containers.bsky-pds = {
         image = cfg.image;
         autoStart = true;
-        pull = "missing";
+        pull = "newer";
         volumes = [
           "${cfg.dataDir}:/pds"
         ];

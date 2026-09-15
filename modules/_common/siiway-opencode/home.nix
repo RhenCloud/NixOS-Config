@@ -24,7 +24,7 @@ let
     lsp = true;
     mcp = {
       chrome-devtools = {
-        enabled = false;
+        enabled = true;
         command = [
           "npx"
           "-y"
@@ -68,36 +68,17 @@ let
     };
     plugin = [
       "${voidswitchPlugin}"
+      "opencode-antigravity-auth@latest"
       "opencode-chrome-devtools"
       "@tarquinen/opencode-dcp@latest"
       "@nick-vi/opencode-type-inject"
+      "opencode-pty"
       "remote-code"
     ];
     provider = {
-      # voidswitch = {
-      #   npm = "@ai-sdk/anthropic";
-      #   name = "VoidSwitch";
-      #   options = {
-      #     apiKey = config.sops.placeholder."opencode-voidswitch-api-key";
-      #     baseURL = "https://voidswitch.siiway.org/v1";
-      #   };
-      #   models = {
-      #     "claude-opus-4-8" = { };
-      #     "glm-4.7-flash-cf" = { };
-      #     "deepseek-v4-pro" = { };
-      #     "deepseek-v4-flash" = { };
-      #     "qwen-3.8-max" = { };
-      #     "codex-gpt-5.5" = { };
-      #     "gpt-5.5" = { };
-      #     "claude-sonnet-4-5" = { };
-      #     "grok-4.3-beta" = { };
-      #     "doghubx-gpt-5.5" = { };
-      #     "gpt-5.6-luna" = { };
-      #   };
-      # };
-      voidswitch-openai = {
+      voidswitch = {
         npm = "@ai-sdk/openai-compatible";
-        name = "VoidSwitch (OpenAI)";
+        name = "VoidSwitch";
         options = {
           apiKey = config.sops.placeholder."opencode-voidswitch-api-key";
           baseURL = "https://voidswitch.siiway.org/v1";
@@ -115,27 +96,28 @@ let
           "cc/claude-sonnet-4-6" = { };
           "cc/claude-haiku-4-5" = { };
           "cc/claude-fable-5" = { };
+          "codex/gpt-5.6-terra" = { };
           "glm-4.7-flash-cf" = { };
-          "glm-4.7" = { };
-          "glm-4.5-air" = { };
-          "grok-4.5" = { };
-          "grok-code-fast-1" = { };
+          # "glm-4.7" = { };
+          # "glm-4.5-air" = { };
+          # "grok-4.5" = { };
+          # "grok-code-fast-1" = { };
           "kimi-k2.5" = { };
           "mimo-v2.5-pro" = { };
-          "minimaxai/minimax-m3" = { };
-          "google/gemma-4-31b-it" = { };
-          "gpt-5.6-sol" = { };
-          "gpt-5.6-terra" = { };
+          # "minimaxai/minimax-m3" = { };
+          # "google/gemma-4-31b-it" = { };
+          # "gpt-5.6-sol" = { };
+          # "gpt-5.6-terra" = { };
         };
       };
       chibang-codex = {
         models = {
-          "gpt-5.3-codex" = { };
-          "gpt-5.3-codex-spark" = { };
-          "gpt-5.4" = { };
-          "gpt-5.4-mini" = { };
-          "gpt-5.2" = { };
-          "gpt-5.5" = { };
+          # "gpt-5.3-codex" = { };
+          # "gpt-5.3-codex-spark" = { };
+          # "gpt-5.4" = { };
+          # "gpt-5.4-mini" = { };
+          # "gpt-5.2" = { };
+          # "gpt-5.5" = { };
           "gpt-5.6-sol" = { };
           "gpt-5.6-terra" = { };
         };
@@ -162,6 +144,218 @@ let
           baseURL = "https://chatapi.transmtf.com/v1";
         };
       };
+      google = {
+        npm = "@ai-sdk/google";
+        models = {
+          "antigravity-gemini-3-pro" = {
+            name = "Gemini 3 Pro (Antigravity)";
+            limit = {
+              context = 1048576;
+              output = 65535;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+            variants = {
+              low = {
+                thinkingLevel = "low";
+              };
+              high = {
+                thinkingLevel = "high";
+              };
+            };
+          };
+          "antigravity-gemini-3.1-pro" = {
+            name = "Gemini 3.1 Pro (Antigravity)";
+            limit = {
+              context = 1048576;
+              output = 65535;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+            variants = {
+              low = {
+                thinkingLevel = "low";
+              };
+              high = {
+                thinkingLevel = "high";
+              };
+            };
+          };
+          "antigravity-gemini-3-flash" = {
+            name = "Gemini 3 Flash (Antigravity)";
+            limit = {
+              context = 1048576;
+              output = 65536;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+            variants = {
+              minimal = {
+                thinkingLevel = "minimal";
+              };
+              low = {
+                thinkingLevel = "low";
+              };
+              medium = {
+                thinkingLevel = "medium";
+              };
+              high = {
+                thinkingLevel = "high";
+              };
+            };
+          };
+          "antigravity-claude-sonnet-4-6" = {
+            name = "Claude Sonnet 4.6 (Antigravity)";
+            limit = {
+              context = 200000;
+              output = 64000;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+          };
+          "antigravity-claude-opus-4-6-thinking" = {
+            name = "Claude Opus 4.6 Thinking (Antigravity)";
+            limit = {
+              context = 200000;
+              output = 64000;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+            variants = {
+              low = {
+                thinkingConfig = {
+                  thinkingBudget = 8192;
+                };
+              };
+              max = {
+                thinkingConfig = {
+                  thinkingBudget = 32768;
+                };
+              };
+            };
+          };
+          "gemini-2.5-flash" = {
+            name = "Gemini 2.5 Flash (Gemini CLI)";
+            limit = {
+              context = 1048576;
+              output = 65536;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+          };
+          "gemini-2.5-pro" = {
+            name = "Gemini 2.5 Pro (Gemini CLI)";
+            limit = {
+              context = 1048576;
+              output = 65536;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+          };
+          "gemini-3-flash-preview" = {
+            name = "Gemini 3 Flash Preview (Gemini CLI)";
+            limit = {
+              context = 1048576;
+              output = 65536;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+          };
+          "gemini-3-pro-preview" = {
+            name = "Gemini 3 Pro Preview (Gemini CLI)";
+            limit = {
+              context = 1048576;
+              output = 65535;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+          };
+          "gemini-3.1-pro-preview" = {
+            name = "Gemini 3.1 Pro Preview (Gemini CLI)";
+            limit = {
+              context = 1048576;
+              output = 65535;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+          };
+          "gemini-3.1-pro-preview-customtools" = {
+            name = "Gemini 3.1 Pro Preview Custom Tools (Gemini CLI)";
+            limit = {
+              context = 1048576;
+              output = 65535;
+            };
+            modalities = {
+              input = [
+                "text"
+                "image"
+                "pdf"
+              ];
+              output = [ "text" ];
+            };
+          };
+        };
+      };
     };
   };
 in
@@ -175,167 +369,12 @@ in
 
     sops.secrets = {
       "github-token" = snowveil.sops.secret { source = "common"; };
-      "opencode-voidswitch-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "chibang-codex-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "chibang-claude-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
+      "opencode-voidswitch-api-key" = snowveil.sops.secret { source = "common"; };
+      "chibang-codex-api-key" = snowveil.sops.secret { source = "common"; };
+      "chibang-claude-api-key" = snowveil.sops.secret { source = "common"; };
     };
 
-    sops.templates."opencode.json" = {
-      content =
-        assert opencodeConfig != null;
-        builtins.toJSON {
-          "$schema" = "https://opencode.ai/config.json";
-          model = "voidswitch/deepseek-v4-pro";
-          small_model = "voidswitch/glm-4.7-flash-cf";
-          lsp = true;
-          mcp = {
-            chrome-devtools = {
-              enabled = false;
-              command = [
-                "npx"
-                "-y"
-                "chrome-devtools-mcp@latest"
-                "--executablePath=${pkgs.google-chrome}/bin/google-chrome-stable"
-                "--headless=true"
-              ];
-              type = "local";
-            };
-            github = {
-              enabled = true;
-              headers.Authorization = "Bearer ${config.sops.placeholder."github-token"}";
-              oauth = false;
-              type = "remote";
-              url = "https://api.githubcopilot.com/mcp/";
-            };
-            nixos = {
-              command = [
-                "uvx"
-                "mcp-nixos"
-              ];
-              enabled = true;
-              type = "local";
-            };
-            playwright = {
-              command = [
-                "npx"
-                "-y"
-                "@playwright/mcp@latest"
-                "--browser"
-                "chromium"
-                "--executable-path"
-                "${pkgs.chromium}/bin/chromium"
-                "--headless"
-              ];
-              enabled = true;
-              type = "local";
-            };
-          };
-          plugin = [
-            "${voidswitchPlugin}"
-            "opencode-chrome-devtools"
-            "@tarquinen/opencode-dcp@latest"
-            "@nick-vi/opencode-type-inject"
-            "remote-code"
-          ];
-          provider = {
-            voidswitch = {
-              npm = "@ai-sdk/anthropic";
-              name = "VoidSwitch";
-              options = {
-                apiKey = config.sops.placeholder."opencode-voidswitch-api-key";
-                baseURL = "https://voidswitch.siiway.org/v1";
-              };
-              models = {
-                "claude-opus-4-8" = { };
-                "glm-4.7-flash-cf" = { };
-                "deepseek-v4-pro" = { };
-                "deepseek-v4-flash" = { };
-                "qwen-3.8-max" = { };
-                "codex-gpt-5.5" = { };
-                "gpt-5.5" = { };
-                "claude-sonnet-4-5" = { };
-                "grok-4.3-beta" = { };
-                "doghubx-gpt-5.5" = { };
-                "gpt-5.6-luna" = { };
-              };
-            };
-            voidswitch-openai = {
-              npm = "@ai-sdk/openai-compatible";
-              name = "VoidSwitch (OpenAI)";
-              options = {
-                apiKey = config.sops.placeholder."opencode-voidswitch-api-key";
-                baseURL = "https://voidswitch.siiway.org/v1";
-              };
-              models = {
-                "deepseek-v4-pro" = { };
-                "deepseek-v4-flash" = { };
-                "deepseek-v4-flash-0731" = { };
-                "qwen-3.8-max" = { };
-                "cc/claude-opus-4-8" = { };
-                "cc/claude-opus-4-7" = { };
-                "cc/claude-opus-4-6" = { };
-                "cc/claude-opus-5" = { };
-                "cc/claude-sonnet-5" = { };
-                "cc/claude-sonnet-4-6" = { };
-                "cc/claude-haiku-4-5" = { };
-                "cc/claude-fable-5" = { };
-                "glm-4.7-flash-cf" = { };
-                "glm-4.7" = { };
-                "glm-4.5-air" = { };
-                "grok-4.5" = { };
-                "grok-code-fast-1" = { };
-                "kimi-k2.5" = { };
-                "mimo-v2.5-pro" = { };
-                "minimaxai/minimax-m3" = { };
-                "google/gemma-4-31b-it" = { };
-              };
-            };
-            chibang-codex = {
-              models = {
-                "gpt-5.3-codex" = { };
-                "gpt-5.3-codex-spark" = { };
-                "gpt-5.4" = { };
-                "gpt-5.4-mini" = { };
-                "gpt-5.2" = { };
-                "gpt-5.5" = { };
-                "gpt-5.6-sol" = { };
-                "gpt-5.6-terra" = { };
-              };
-              npm = "@ai-sdk/openai-compatible";
-              options = {
-                apiKey = config.sops.placeholder."chibang-codex-api-key";
-                baseURL = "https://chatapi.transmtf.com/v1";
-                setCacheKey = true;
-              };
-            };
-            chibang-claude = {
-              models = {
-                "claude-opus-4-8" = { };
-                "claude-opus-4-7" = { };
-                "claude-opus-4-6" = { };
-                "claude-sonnet-5" = { };
-                "claude-sonnet-4-6" = { };
-                "claude-sonnet-4-5-20250929" = { };
-                "claude-haiku-4-5-20251001" = { };
-              };
-              npm = "@ai-sdk/openai-compatible";
-              options = {
-                apiKey = config.sops.placeholder."chibang-claude-api-key";
-                baseURL = "https://chatapi.transmtf.com/v1";
-              };
-            };
-          };
-        };
-    };
+    sops.templates."opencode.json".content = builtins.toJSON opencodeConfig;
 
     xdg.configFile."opencode/opencode.json".source =
       config.lib.file.mkOutOfStoreSymlink

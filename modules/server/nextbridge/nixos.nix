@@ -61,7 +61,7 @@ in
     virtualisation.oci-containers.containers.nextbridge = {
       image = cfg.image;
       autoStart = true;
-      pull = "always";
+      pull = "newer";
 
       volumes = [
         "${cfg.dataDir}:/app/data"

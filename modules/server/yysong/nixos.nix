@@ -8,13 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.services.yysong;
-  # 临时修补：Dockerfile 没有复制 server/scripts 到生产镜像
-  # 所以我们需要提供一个替代的启动脚本
-  startupScript = pkgs.writeShellScript "yysong-start.sh" ''
-    cd /app
-    # 尝试运行标准启动命令
-    exec npm run start:prod
-  '';
 in
 {
   options.rhencloud.services.yysong = {
@@ -52,6 +45,56 @@ in
         mode = "0400";
       };
 
+    sops.secrets."yysong-admin-username" =
+      snowveil.sops.secret {
+        source = "host";
+        host = "yc-hk-1";
+      }
+      // {
+        owner = "root";
+        mode = "0400";
+      };
+
+    sops.secrets."yysong-admin-password" =
+      snowveil.sops.secret {
+        source = "host";
+        host = "yc-hk-1";
+      }
+      // {
+        owner = "root";
+        mode = "0400";
+      };
+
+    sops.secrets."yysong-s3-access-key" =
+      snowveil.sops.secret {
+        source = "host";
+        host = "yc-hk-1";
+      }
+      // {
+        owner = "root";
+        mode = "0400";
+      };
+
+    sops.secrets."yysong-s3-secret-key" =
+      snowveil.sops.secret {
+        source = "host";
+        host = "yc-hk-1";
+      }
+      // {
+        owner = "root";
+        mode = "0400";
+      };
+
+    sops.secrets."yysong-smtp-pass" =
+      snowveil.sops.secret {
+        source = "host";
+        host = "yc-hk-1";
+      }
+      // {
+        owner = "root";
+        mode = "0400";
+      };
+
     sops.templates."yysong-env" = {
       owner = "root";
       mode = "0400";
@@ -59,7 +102,20 @@ in
         JWT_SECRET=${config.sops.placeholder."yysong-jwt-secret"}
         CREDENTIAL_KEY=${config.sops.placeholder."yysong-credential-key"}
         DATABASE_PROVIDER=sqlite
-        DATABASE_URL=file:/data/app.db
+        DATABASE_URL=/data/app.db
+        INITIAL_ADMIN_USERNAME=${config.sops.placeholder."yysong-admin-username"}
+        INITIAL_ADMIN_PASSWORD=${config.sops.placeholder."yysong-admin-password"}
+        S3_ENDPOINT=https://s3.bitiful.net
+        S3_REGION=cn-east-1
+        S3_BUCKET=yysong
+        S3_ACCESS_KEY_ID=${config.sops.placeholder."yysong-s3-access-key"}
+        S3_SECRET_ACCESS_KEY=${config.sops.placeholder."yysong-s3-secret-key"}
+        SMTP_HOST=mail.rhen.cloud
+        SMTP_PORT=465
+        SMTP_USER=noreply@rhen.cloud
+        SMTP_PASS=${config.sops.placeholder."yysong-smtp-pass"}
+        SMTP_FROM=杨村一中校园广电 <noreply@rhen.cloud>
+        TRUSTED_PROXY_IPS=127.0.0.1
       '';
     };
 
@@ -75,13 +131,8 @@ in
     };
 
     virtualisation.oci-containers.containers.yysong = {
-      image = "ghcr.io/wemsur/yangyisongrequest:latest";
+      image = "ghcr.io/onionschool/yangyisongrequest:latest";
       autoStart = true;
-      user = "1001:1001";
-      cmd = [
-        "sh"
-        "/app/yysong-start.sh"
-      ];
 
       environment = {
         PORT = toString cfg.port;
@@ -91,12 +142,14 @@ in
       };
 
       volumes = [
-        "${startupScript}:/app/yysong-start.sh:ro"
         "/var/lib/yysong/data:/data"
       ];
 
+      user = "0:0";
+
+      pull = "newer";
+
       extraOptions = [
-        "--pull=always"
         "--network=host"
       ];
 

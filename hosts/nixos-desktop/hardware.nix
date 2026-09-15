@@ -35,6 +35,8 @@
       "defaults"
       "compress=zstd"
       "noatime"
+      "space_cache=v2"
+      "subvolid=5"
     ];
   };
 
@@ -47,6 +49,7 @@
       "compress=zstd"
       "noatime"
       "subvol=@home"
+      # "noquota"  # 已弃用：当前内核/工具链不支持此参数
     ];
   };
 

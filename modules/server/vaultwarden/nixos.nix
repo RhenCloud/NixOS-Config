@@ -49,7 +49,7 @@ in
 
       ports = [ "1880:80" ];
 
-      extraOptions = [ "--pull=always" ];
+      pull = "newer";
 
       environmentFiles = [
         config.sops.templates."vaultwarden-env".path

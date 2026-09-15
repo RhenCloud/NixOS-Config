@@ -19,20 +19,13 @@ in
     ];
 
     sops.secrets = {
-      "opencode-voidswitch-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "chibang-codex-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
-      "chibang-claude-api-key" = snowveil.sops.secret {
-        source = "host";
-        host = "nixos-desktop";
-      };
+      "opencode-voidswitch-api-key" = snowveil.sops.secret { source = "common"; };
+      "chibang-codex-api-key" = snowveil.sops.secret { source = "common"; };
+      "chibang-claude-api-key" = snowveil.sops.secret { source = "common"; };
       "github-token" = snowveil.sops.secret { source = "common"; };
     };
+
+    home.file.".pi/agent/APPEND_SYSTEM.md".source = ./APPEND_SYSTEM.md;
 
     sops.templates."pi/models.json" = {
       mode = "0400";
@@ -50,7 +43,11 @@ in
                 { "id": "deepseek-v4-flash", "name": "DeepSeek V4 Flash", "reasoning": true },
                 { "id": "cc/claude-opus-4-7", "name": "Claude Opus 4.7", "reasoning": true },
                 { "id": "cc/claude-sonnet-4-6", "name": "Claude Sonnet 4.6", "reasoning": true },
-                { "id": "cc/claude-haiku-4.5", "name": "Claude Haiku 4.5", "reasoning": true },
+                { "id": "cc/claude-haiku-4-5", "name": "Claude Haiku 4.5", "reasoning": true },
+                { "id": "codex/gpt-5.6-sol", "name": "GPT 5.6 Sol" },
+                { "id": "codex/gpt-5.6-terra", "name": "GPT 5.6 Terra" },
+                { "id": "codex/gpt-5.6-luna", "name": "GPT 5.6 Luna" },
+                { "id": "codex/gpt-6-astra", "name": "GPT 6 Astra" },
                 { "id": "glm-4.7-flash-cf", "name": "GLM 4.7 Flash CF" },
                 { "id": "codex-gpt-5.5", "name": "Codex GPT-5.5" },
                 { "id": "gpt-5.5", "name": "GPT-5.5" },
@@ -146,25 +143,20 @@ in
     home.file.".pi/agent/themes/dracula.json".source = ./themes/dracula.json;
 
     home.file.".pi/agent/permission-mode/permission-mode.json".text = builtins.toJSON {
-      "$schema" = "https://raw.githubusercontent.com/wynainfo/pi-permission-modes/main/schemas/permission-mode.schema.json";
+      "$schema" =
+        "https://raw.githubusercontent.com/wynainfo/pi-permission-modes/main/schemas/permission-mode.schema.json";
       defaultMode = "default";
-      cycleOrder = [ "default" "plan" "build" "yolo" ];
+      cycleOrder = [
+        "default"
+        "plan"
+        "build"
+        "yolo"
+        "docs"
+      ];
       modes = {
         default = {
           label = "Default";
           color = "muted";
-          sandbox = {
-            enabled = true;
-            writable = true;
-            allowWrite = [ "." "/tmp" ];
-            denyRead = [ "~/.ssh" "~/.aws" "~/.gnupg" ];
-            denyWrite = [];
-            network = {
-              allowedDomains = [ "github.com" "*.github.com" "npmjs.org" "*.npmjs.org" ];
-              deniedDomains = [];
-            };
-            askOnBlockedHost = true;
-          };
           permission = {
             path = {
               "*" = "allow";
@@ -176,34 +168,92 @@ in
               "REFACTORING_STATUS.md" = "deny";
               "TODO.md" = "deny";
               "NOTES.md" = "deny";
+              "README.md" = "allow";
+              "AGENTS.md" = "allow";
+              "CHANGELOG.md" = "allow";
+              "*.mdx" = "allow";
             };
-            external_directory = "ask";
+            external_directory = "allow";
             read = "allow";
             grep = "allow";
             find = "allow";
             ls = "allow";
-            write = "ask";
-            edit = "ask";
+            write = "deny";
+            edit = "deny";
             bash = {
-              "*" = "ask";
-              "cat*" = "deny";
-              "grep*" = "deny";
-              "echo*" = "deny";
-              "head*" = "deny";
-              "tail*" = "deny";
-              "wc*" = "deny";
-              "sed*" = "deny";
-              "awk*" = "deny";
-              "git commit*" = "ask";
-              "git add*" = "ask";
-              "git push*" = "ask";
-              "sudo*" = "deny";
+              "*" = "deny";
             };
-            web_search = "ask";
+            web_search = "allow";
             tool = "allow";
             skill = "allow";
           };
-          hideTools = [];
+          hideTools = [ ];
+        };
+        build = {
+          label = "Build";
+          color = "blue";
+          path = {
+            "*" = "allow";
+          };
+          external_directory = "allow";
+          read = "allow";
+          grep = "allow";
+          find = "allow";
+          ls = "allow";
+          write = "allow";
+          edit = "allow";
+          bash = {
+            "*" = "allow";
+          };
+          web_search = "allow";
+          tool = "allow";
+          skill = "allow";
+        };
+        plan = {
+          label = "Plan";
+          color = "yellow";
+          path = {
+            "*" = "allow";
+          };
+          external_directory = "allow";
+          read = "allow";
+          grep = "allow";
+          find = "allow";
+          ls = "allow";
+          write = "deny";
+          edit = "deny";
+          bash = {
+            "*" = "deny";
+          };
+          web_search = "allow";
+          tool = "allow";
+          skill = "allow";
+        };
+        docs = {
+          label = "Docs";
+          color = "green";
+          path = {
+            "docs/*" = "allow";
+            "*.md" = "allow";
+            "*.markdown" = "allow";
+            "README.md" = "allow";
+            "AGENTS.md" = "allow";
+            "CHANGELOG.md" = "allow";
+            "*.mdx" = "allow";
+          };
+          external_directory = "allow";
+          read = "allow";
+          grep = "allow";
+          find = "allow";
+          ls = "allow";
+          write = "deny";
+          edit = "deny";
+          bash = {
+            "*" = "deny";
+          };
+          web_search = "allow";
+          tool = "allow";
+          skill = "allow";
         };
       };
     };

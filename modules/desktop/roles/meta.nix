@@ -27,6 +27,7 @@
     "desktop.games"
     "desktop.gnome"
     "desktop.hyprland"
+    "desktop.umbriel"
     "desktop.mangowm"
     "desktop.packages"
     "desktop.steam"

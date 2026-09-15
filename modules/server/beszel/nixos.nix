@@ -44,7 +44,7 @@ in
     virtualisation.oci-containers.containers.beszel = {
       image = cfg.image;
       autoStart = true;
-      pull = "always";
+      pull = "newer";
 
       volumes = [
         "${cfg.dataDir}:/beszel_data"

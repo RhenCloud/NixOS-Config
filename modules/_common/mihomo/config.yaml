@@ -264,6 +264,9 @@ proxy-groups:
   - name: Twitch
     <<: *proxy_groups
 
+  - name: Nix
+    <<: *proxy_groups
+
   - name: YouTube
     <<: *proxy_groups
 
@@ -436,6 +439,11 @@ rules:
   # - PROCESS-NAME,PrismLauncher,DIRECT
   # - PROCESS-NAME,HMCL,DIRECT
   - PROCESS-NAME,java,DIRECT
+
+  - PROCESS-NAME,nix,Nix
+  - PROCESS-NAME,nix-daemon,Nix
+  - PROCESS-NAME,nix-*,Nix
+  - DOMAIN-SUFFIX,nixos.org,Nix
 
   - PROCESS-NAME,easytier-core,DIRECT,no-resolve
   - DOMAIN-SUFFIX,sh.vomiku.com,DIRECT,no-resolve
