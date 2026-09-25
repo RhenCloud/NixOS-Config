@@ -1,9 +1,6 @@
-{ config, lib, ... }:
-let
-  cfg = config.rhencloud.roles.dev;
-in
+{ lib, ... }:
 {
-  config = lib.mkIf cfg.enable {
+  config = {
     rhencloud = {
       c.enable = true;
       android.enable = true;

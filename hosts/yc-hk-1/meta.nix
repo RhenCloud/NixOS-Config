@@ -3,6 +3,7 @@
 {
   system = "x86_64-linux";
   roles = [ "server" ];
+  profiles = [ "server" ];
 
   # yc-hk-1 的 Home Manager 通过 deploy-rs 独立部署，
   # 不需要嵌入到 NixOS 系统中。

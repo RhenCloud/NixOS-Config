@@ -12,6 +12,8 @@ in
   options.rhencloud.services.enable = mkEnableOption "system services";
 
   config = mkIf cfg.enable {
+    rhencloud.services.mihomo.enable = true;
+
     zramSwap.enable = true;
 
     hardware.gpgSmartcards.enable = true;

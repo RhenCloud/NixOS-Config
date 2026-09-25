@@ -2,13 +2,18 @@
   gitleaks,
   lib,
   runCommand,
-  self,
+  snowveil,
   ...
 }:
 let
   # path flake 会包含本地 .git 与大型 wallpapers 工作树。先在 Nix 层过滤，
   # 避免 gitleaks --no-git 为无关二进制内容消耗数分钟和大量 CPU。
-  source = import ../source.nix { inherit lib self; };
+  source = snowveil.source.clean {
+    excludes = [
+      "secrets"
+      "wallpapers"
+    ];
+  };
 in
 runCommand "check-secrets" { } ''
   ${gitleaks}/bin/gitleaks detect \

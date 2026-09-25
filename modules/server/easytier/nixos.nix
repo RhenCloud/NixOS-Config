@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   snowveil,
   ...
 }:
@@ -85,11 +86,67 @@ in
       '';
     };
 
+    sops.templates."easytier-cn.toml" = {
+      owner = "easytier";
+      group = "easytier";
+      mode = "0400";
+      content = ''
+        instance_name = "cn"
+        hostname = "rhencloud-hksrv-cn"
+        ipv4 = "10.114.0.10/16"
+        dhcp = false
+        listeners = [
+          "tcp://0.0.0.0:11011",
+          "udp://0.0.0.0:11011",
+        ]
+        peer = [
+          { uri = "tcp://xpve-dual.dns.wyf9.top:31210" },
+          { uri = "udp://xpve-dual.dns.wyf9.top:31210" },
+          { uri = "tcp://gc2.yuholt.cn:11010" },
+          { uri = "udp://gc2.yuholt.cn:11010" },
+        ]
+        ipv6 = "fd00:fdfd:0::10/32"
+        exit_nodes = []
+        manual_routes = [
+          "10.114.0.0/16",
+          "10.114.0.5/32",
+          "fd00:fdfd::/32",
+        ]
+
+        [network_identity]
+        network_name = "siiway-server-network-cn"
+        network_secret = "${config.sops.placeholder."easytier-network-secret"}"
+
+        [flags]
+        enable_private_mode = true
+        default_protocol = "tcp"
+        dev_name = "swnet-cn"
+        enable_encryption = true
+        enable_ipv6 = true
+        mtu = 1300
+        latency_first = false
+        enable_exit_node = false
+        no_tun = false
+        use_smoltcp = true
+        disable_p2p = false
+        p2p_only = false
+        relay_all_peer_rpc = true
+        disable_tcp_hole_punching = false
+        disable_udp_hole_punching = false
+        multi_thread_count = 3
+        relay_network_whitelist = "siiway-server-network-cn"
+      '';
+    };
+
     services.easytier = {
       enable = true;
 
       instances.hk = {
         configFile = config.sops.templates."easytier-hk.toml".path;
+      };
+
+      instances.cn = {
+        configFile = config.sops.templates."easytier-cn.toml".path;
       };
     };
 
@@ -108,6 +165,40 @@ in
         Group = "easytier";
         AmbientCapabilities = [ "CAP_NET_ADMIN" ];
         CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
+      };
+    };
+
+    systemd.services."easytier-cn" = {
+      after = [ "sops-install-secrets.service" ];
+      requires = [ "sops-install-secrets.service" ];
+      serviceConfig = {
+        User = "easytier";
+        Group = "easytier";
+        AmbientCapabilities = [ "CAP_NET_ADMIN" ];
+        CapabilityBoundingSet = [ "CAP_NET_ADMIN" ];
+      };
+    };
+
+    systemd.services."easytier-cn-route" = {
+      description = "为 CN EasyTier 实例安装目标主机路由";
+      after = [ "easytier-cn.service" ];
+      requires = [ "easytier-cn.service" ];
+      wantedBy = [ "easytier-cn.service" ];
+      partOf = [ "easytier-cn.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = pkgs.writeShellScript "easytier-cn-route" ''
+          for _ in $(seq 1 60); do
+            if ${pkgs.iproute2}/bin/ip link show dev swnet-cn >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+          ${pkgs.iproute2}/bin/ip link show dev swnet-cn >/dev/null 2>&1
+          ${pkgs.iproute2}/bin/ip route replace 10.114.0.5/32 dev swnet-cn src 10.114.0.10
+          ${pkgs.iproute2}/bin/ip route replace 10.114.1.2/32 dev swnet-cn src 10.114.0.10
+        '';
       };
     };
   };

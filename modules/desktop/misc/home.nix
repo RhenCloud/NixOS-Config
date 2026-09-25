@@ -22,7 +22,7 @@ in
 
     home.packages = with pkgs; [
       chameleon-cli
-      libreoffice
+      # libreoffice
       wpsoffice-cn
       easytier
       audacity
@@ -30,6 +30,8 @@ in
       heroic
       # rustdesk
       rustdesk-flutter
+      inkscape
+      figma-linux
     ];
   };
 }

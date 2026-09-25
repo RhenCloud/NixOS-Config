@@ -9,8 +9,7 @@ let
   cfg = config.rhencloud.services.postgresql;
   secretOptions =
     snowveil.sops.secret {
-      source = "host";
-      host = "yc-hk-1";
+      source = "common";
     }
     // {
       owner = "postgres";

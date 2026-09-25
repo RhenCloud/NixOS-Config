@@ -1,14 +1,6 @@
-{ config, lib, ... }:
-with lib;
-let
-  cfg = config.rhencloud.roles.desktop;
-in
+{ lib, ... }:
 {
-  options.rhencloud.roles.desktop = {
-    enable = mkEnableOption "桌面角色（图形环境、桌面应用与游戏）";
-  };
-
-  config = mkIf cfg.enable {
+  config = {
     my.isDesktop = true;
 
     rhencloud = {

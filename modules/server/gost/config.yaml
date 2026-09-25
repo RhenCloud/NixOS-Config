@@ -53,10 +53,10 @@ chains:
       - name: hop-0
         nodes:
           - name: node-0
-            addr: 216.23.110.166:35278
+            addr: 218.252.243.113:35717
             connector:
               type: tcp
             dialer:
               type: tcp
               tls:
-                serverName: hk-aether-1.rhen.cloud
+                serverName: www.bing.com

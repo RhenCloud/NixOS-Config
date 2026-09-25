@@ -57,7 +57,7 @@ tls:
     - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
 
 tun:
-  enable: true
+  enable: __TUN_ENABLED__
   stack: mixed # 推荐使用 mixed 或 gvisor，性能优于 system
   device: utun
   mtu: 1500 # 恢复为标准值，避免部分网站无法访问 (MTU 9000 仅限纯内网环境)
@@ -294,6 +294,17 @@ proxy-groups:
   - name: Pixiv
     <<: *proxy_groups
 
+  - name: Oracle
+    type: select
+    proxies:
+      - SiiWay-JP
+      - SiiWay-HK
+      - SiiWay-US
+      - SiiWay-KR
+      - 总模式
+      - ⛔️ 拒绝连接
+      - 🇨🇳 本地直连
+
   - name: TransCircle
     <<: *proxy_groups
 
@@ -355,34 +366,18 @@ proxy-groups:
 
   - name: SiiWay-HK
     type: select
-    url: https://www.gstatic.com/generate_204
-    interval: 86400
-    filter: "^(?=.*(港|HK|hk|Hong Kong|HongKong|hongkong|🇭🇰)).*$"
     proxies:
-      - hk-wap-1.rhen.cloud-anytls
-      - hk-wap-1.rhen.cloud-tuic
-      - hk-wap-1.rhen.cloud-anytls-forward
-      - vl-reality-hk-wap-1.rhen.cloud
-      - anytls-vm-vgvrb
-      - vm-vgvrb-anytls-fd
-      - tu5-vm-vgvrb
-      # - mifeng-hk2-vless
-      # - mifeng-hk3-vless
+      - anytls-bc31f61c-2b91-46d0-9b66-c5cbfbea075b
+      - tu5-bc31f61c-2b91-46d0-9b66-c5cbfbea075b
 
   - name: SiiWay-JP
     type: select
-    url: https://www.gstatic.com/generate_204
-    interval: 86400
-    filter: "^(?=.*(日本|东京|大阪|JP|Japan|🇵)).*$"
     proxies:
       - wyf9-acjpsb-reality
       - killjsj-jp-reality
 
   - name: SiiWay-US
     type: select
-    url: https://www.gstatic.com/generate_204
-    interval: 86400
-    filter: "^(?=.*(美|US|United States|America|Phoenix|San José|San Jose|🇺🇸)).*$"
     proxies:
       - us-rn-1.rhen.cloud
       - anytls-racknerd-fd48c40
@@ -417,7 +412,7 @@ rules:
   - DST-PORT,53,🌐 DNS_Hijack
   - DST-PORT,853,DNS连接
 
-  - GEOSITE,oracle,DIRECT
+  - GEOSITE,oracle,Oracle
   - DOMAIN-SUFFIX,rhen.cloud,DIRECT
   - DOMAIN-SUFFIX,invite.linuxdo.org,DIRECT
   # - DOMAIN-SUFFIX,prism.siiway.org,总模式

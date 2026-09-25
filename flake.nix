@@ -34,7 +34,7 @@
       "https://mirrors.ustc.edu.cn/nix-channels/store"
       "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
-    trusted-public-keys = [
+    extra-trusted-public-keys = [
       "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
@@ -69,12 +69,12 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    noctalia-v4 = {
-      url = "github:noctalia-dev/noctalia-shell/v4.7.7";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     noctalia-latest = {
       url = "github:noctalia-dev/noctalia-shell/v5.0.0-beta.3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     umbriel = {
@@ -241,8 +241,26 @@
       outputs = {
         extra = import ./flake/extra-outputs.nix { inherit inputs; };
 
+        # 自动生成所有主机和 Home Manager 的求值检查
+        eval = {
+          hosts = true;
+          homes = true;
+        };
+
+        diagnostics = {
+          discovery = true;
+          moduleGraph = true;
+          perHostModuleGraph = false;
+          doctor = true;
+          expectedScaffold = true;
+          moduleCoverage = true;
+        };
+
+        homes.standalone = false;
+
         # 防止目录重构或过滤规则变化时静默丢失关键 outputs。
         expected = {
+          mode = "exact";
           hosts = [
             "nixos-desktop"
             "nixos-homeserver"
@@ -257,12 +275,12 @@
           ];
           packages = [
             "aicommits"
-            # "bt-iso-enable"
+            "bt-iso-enable"
             "deploy-rs"
             "herdr-mobile-relay"
             "herdr-plus"
             "herdr-reviewr"
-            # "herdr-sidebar"
+            "herdr-sidebar"
             "herdr-spreader"
             "herdr-tab-rename"
             "herdr-window-title-sync"
@@ -281,6 +299,170 @@
             "test"
             "vm"
           ];
+          checks = [
+            "deadnix"
+            "deploy-nodes-schema"
+            "formatting"
+            "secrets"
+            "statix"
+          ];
+          devShells = [
+            "default"
+            "python"
+          ];
+          formatter = [ "x86_64-linux" ];
+          overlays = [
+            "mexkey3-ccid"
+            "musicfox"
+            "niri"
+            "portal-gtk"
+            "waylyrics"
+            "wechat"
+          ];
+          nixosModules = [
+            "_common.bluetooth"
+            "_common.boot"
+            "_common.cloudflared"
+            "_common.display-managers"
+            "_common.docker"
+            "_common.easytier"
+            "_common.env"
+            "_common.externals"
+            "_common.fcitx5"
+            "_common.fonts"
+            "_common.identity"
+            "_common.impermanence"
+            "_common.kernel"
+            "_common.locale"
+            "_common.mihomo"
+            "_common.nix"
+            "_common.nvidia"
+            "_common.options"
+            "_common.packages"
+            "_common.podman"
+            "_common.qemu"
+            "_common.router"
+            "_common.selector4nix"
+            "_common.services"
+            "_common.shells"
+            "_common.sound"
+            "_common.xdg"
+            "desktop.avahi"
+            "desktop.externals"
+            "desktop.games"
+            "desktop.gnome"
+            "desktop.hyprland"
+            "desktop.mangowm"
+            "desktop.nemo"
+            "desktop.packages"
+            "desktop.roles"
+            "desktop.steam"
+            "desktop.sunshine"
+            "desktop.thunar"
+            "desktop.umbriel"
+            "desktop.zen"
+            "dev"
+            "dev.aider"
+            "dev.android"
+            "dev.c"
+            "dev.certs"
+            "dev.emacs"
+            "dev.golang"
+            "dev.helix"
+            "dev.java"
+            "dev.nixvim"
+            "dev.node"
+            "dev.opencode"
+            "dev.packages"
+            "dev.pi"
+            "dev.python"
+            "dev.rust"
+            "server.baota-probe"
+            "server.beszel"
+            "server.beszel-agent"
+            "server.easytier"
+            "server.frp"
+            "server.gost"
+            "server.mailer"
+            "server.nextbridge"
+            "server.oci-helper"
+            "server.openlist"
+            "server.pds"
+            "server.postgresql"
+            "server.roles"
+            "server.rustdesk"
+            "server.sleepy"
+            "server.vaultwarden"
+            "server.wyf9s-bot"
+            "server.yysong"
+            "system"
+          ];
+          homeModules = [
+            "_common.browser"
+            "_common.clipse"
+            "_common.externals"
+            "_common.fastfetch"
+            "_common.fish"
+            "_common.ghostty"
+            "_common.git"
+            "_common.herdr"
+            "_common.hm-packages"
+            "_common.hm-xdg"
+            "_common.mpd"
+            "_common.mprisence"
+            "_common.options"
+            "_common.siiway-opencode"
+            "_common.sops"
+            "_common.wallpapers"
+            "_common.yazi"
+            "desktop.base"
+            "desktop.caelestia"
+            "desktop.chat"
+            "desktop.externals"
+            "desktop.fcitx5"
+            "desktop.foot"
+            "desktop.hyprland"
+            "desktop.kitty"
+            "desktop.mango"
+            "desktop.misc"
+            "desktop.musicfox"
+            "desktop.nemo"
+            "desktop.niri"
+            "desktop.noctalia"
+            "desktop.obs"
+            "desktop.prismlauncher"
+            "desktop.stylix"
+            "desktop.theme"
+            "desktop.tofi"
+            "desktop.umbriel"
+            "desktop.vicinae"
+            "dev"
+            "dev.aider"
+            "dev.android"
+            "dev.c"
+            "dev.certs"
+            "dev.emacs"
+            "dev.golang"
+            "dev.helix"
+            "dev.java"
+            "dev.nixvim"
+            "dev.node"
+            "dev.opencode"
+            "dev.packages"
+            "dev.pi"
+            "dev.python"
+            "dev.rust"
+            "system"
+          ];
+          deploy = {
+            present = true;
+            nodes = [
+              "nixos-desktop"
+              "nixos-homeserver"
+              "yc-hk-1"
+            ];
+          };
+          images = { };
         };
       };
     };

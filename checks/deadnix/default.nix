@@ -2,11 +2,16 @@
   deadnix,
   lib,
   runCommand,
-  self,
+  snowveil,
   ...
 }:
 let
-  source = import ../source.nix { inherit lib self; };
+  source = snowveil.source.clean {
+    excludes = [
+      "secrets"
+      "wallpapers"
+    ];
+  };
 in
 runCommand "check-deadnix" { } ''
   ${deadnix}/bin/deadnix --fail -L ${source}

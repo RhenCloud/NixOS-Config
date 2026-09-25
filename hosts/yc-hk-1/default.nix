@@ -1,5 +1,7 @@
 {
   pkgs,
+  lib,
+  config,
   inputs,
   ...
 }:
@@ -22,13 +24,20 @@ in
 
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
-  rhencloud.roles.server.enable = true;
-
   rhencloud.server.install.enable = true;
 
   rhencloud.services = {
+    mihomo = {
+      enable = false;
+      host = "yc-hk-1";
+      enableTun = false;
+    };
     beszel.enable = true;
-    baota-probe.enable = true;
+    beszel-agent = {
+      enable = true;
+      dockerSocket = "/run/podman/podman.sock";
+    };
+    baota-probe.enable = false;
     nextbridge.enable = true;
     frp.enable = true;
     easytier.enable = true;
@@ -39,6 +48,8 @@ in
     gost.enable = true;
     rustdesk.enable = true;
     yysong.enable = true;
+    openlist.enable = true;
+    oci-helper.enable = false;
 
     pds = {
       enable = true;

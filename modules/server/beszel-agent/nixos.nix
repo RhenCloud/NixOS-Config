@@ -32,8 +32,14 @@ in
 
     key = mkOption {
       type = types.str;
-      default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAxZ7wvnk1ycVMLveoDM+O0uC1nfukOe57EmhIB4EHSX";
+      default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOHL/S4dbKQVxJovkiUIsQ3YCNeCkOcU2he4g+hyRFTB";
       description = "Beszel Hub 公钥（用于建立连接）";
+    };
+
+    sopsHost = mkOption {
+      type = types.str;
+      default = config.my.host.name;
+      description = "sops host secrets 文件对应的主机名";
     };
 
     hubUrl = mkOption {
@@ -53,7 +59,7 @@ in
     sops.secrets."beszel-agent-token" =
       snowveil.sops.secret {
         source = "host";
-        host = "nixos-homeserver";
+        host = cfg.sopsHost;
       }
       // {
         owner = "root";

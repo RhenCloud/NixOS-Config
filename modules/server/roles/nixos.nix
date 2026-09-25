@@ -1,14 +1,6 @@
-{ config, lib, ... }:
-with lib;
-let
-  cfg = config.rhencloud.roles.server;
-in
+{ lib, ... }:
 {
-  options.rhencloud.roles.server = {
-    enable = mkEnableOption "服务器角色（容器、隧道与自托管服务）";
-  };
-
-  config = mkIf cfg.enable {
+  config = {
     rhencloud = {
       identity.enable = true;
       locale.enable = true;

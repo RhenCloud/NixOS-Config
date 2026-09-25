@@ -19,7 +19,7 @@ in
     };
     domain = mkOption {
       type = types.str;
-      default = "music.100328.xyz";
+      default = "ycyztv.cn";
       description = "站点域名";
     };
   };
@@ -105,8 +105,8 @@ in
         DATABASE_URL=/data/app.db
         INITIAL_ADMIN_USERNAME=${config.sops.placeholder."yysong-admin-username"}
         INITIAL_ADMIN_PASSWORD=${config.sops.placeholder."yysong-admin-password"}
-        S3_ENDPOINT=https://s3.bitiful.net
-        S3_REGION=cn-east-1
+        S3_ENDPOINT=https://731b927733dccabbd9210b33c3ee513e.r2.cloudflarestorage.com
+        S3_REGION=auto
         S3_BUCKET=yysong
         S3_ACCESS_KEY_ID=${config.sops.placeholder."yysong-s3-access-key"}
         S3_SECRET_ACCESS_KEY=${config.sops.placeholder."yysong-s3-secret-key"}
@@ -115,7 +115,8 @@ in
         SMTP_USER=noreply@rhen.cloud
         SMTP_PASS=${config.sops.placeholder."yysong-smtp-pass"}
         SMTP_FROM=杨村一中校园广电 <noreply@rhen.cloud>
-        TRUSTED_PROXY_IPS=127.0.0.1
+        TRUSTED_PROXY_IPS=127.0.0.1,47.243.223.74
+        INTERNAL_RATE_LIMIT_ENABLED=true
       '';
     };
 
@@ -158,10 +159,19 @@ in
       ];
     };
 
-    services.caddy.virtualHosts.${cfg.domain} = {
-      extraConfig = ''
-        reverse_proxy 127.0.0.1:${toString cfg.port}
+    services.caddy = {
+      globalConfig = ''
+        servers {
+          trusted_proxies static {
+            ranges 47.243.223.74
+          }
+        }
       '';
+      virtualHosts.${cfg.domain} = {
+        extraConfig = ''
+          reverse_proxy 127.0.0.1:${toString cfg.port}
+        '';
+      };
     };
   };
 }

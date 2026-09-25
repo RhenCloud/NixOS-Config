@@ -27,6 +27,15 @@
 
   services.dbus.implementation = lib.mkForce "broker";
 
+  environment.etc."containers/registries.conf.d/50-mirrors.conf".text = ''
+    [[registry]]
+    location = "docker.io"
+    [[registry.mirror]]
+    location = "https://docker.1ms.run"
+    [[registry.mirror]]
+    location = "https://docker.cattt.net"
+  '';
+
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   rhencloud = {

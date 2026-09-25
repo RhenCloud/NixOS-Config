@@ -49,6 +49,7 @@
     obsStudio.enable = true;
     prismlauncher.enable = true;
     noctalia.enable = true;
+    caelestia.enable = true;
     vicinae.enable = true;
     hmStylix.enable = true;
 

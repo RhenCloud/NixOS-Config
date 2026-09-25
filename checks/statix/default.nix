@@ -1,12 +1,17 @@
 {
   lib,
   runCommand,
-  self,
+  snowveil,
   statix,
   ...
 }:
 let
-  source = import ../source.nix { inherit lib self; };
+  source = snowveil.source.clean {
+    excludes = [
+      "secrets"
+      "wallpapers"
+    ];
+  };
 in
 runCommand "check-statix" { } ''
   cd ${source}

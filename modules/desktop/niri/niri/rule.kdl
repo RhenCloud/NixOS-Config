@@ -130,6 +130,11 @@ window-rule {
 }
 
 window-rule {
+    match app-id="nemo"
+    open-maximized true
+}
+
+window-rule {
   match app-id="dev.zed.Zed"
   open-maximized true
 }

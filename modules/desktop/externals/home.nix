@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   imports = [
-    inputs.noctalia-v4.homeModules.default
+    inputs.caelestia-shell.homeManagerModules.default
     inputs.umbriel.homeModules.default
     inputs.mangowm.hmModules.mango
     inputs.niri.homeModules.niri

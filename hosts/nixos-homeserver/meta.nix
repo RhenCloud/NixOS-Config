@@ -3,4 +3,5 @@
 {
   system = "x86_64-linux";
   roles = [ "server" ];
+  profiles = [ "server" ];
 }

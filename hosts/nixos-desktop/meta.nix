@@ -6,6 +6,10 @@
     "desktop"
     "dev"
   ];
+  profiles = [
+    "desktop"
+    "dev"
+  ];
 
   # Stylix 的 Home Manager 模块需要向 HM 自己的 nixpkgs 追加 overlays。
   home.useGlobalPkgs = false;
