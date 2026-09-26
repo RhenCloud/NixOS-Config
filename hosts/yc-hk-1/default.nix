@@ -3,6 +3,7 @@
   lib,
   config,
   inputs,
+  snowveil,
   ...
 }:
 let
@@ -26,11 +27,52 @@ in
 
   rhencloud.server.install.enable = true;
 
+  services.caddy = {
+    enable = true;
+    package = pkgs.caddy.withPlugins {
+      plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
+      hash = "sha256-dQvk6ezY6TQ1J7PjhCXnThF/SqVgPwBO8/RXzHCY+js=";
+    };
+    environmentFile = config.sops.templates."caddy-env".path;
+    globalConfig = ''
+      servers {
+        trusted_proxies_strict
+      }
+    '';
+    virtualHosts."zen.rhen.cloud" = {
+      extraConfig = ''
+        tls {
+          dns cloudflare {$CLOUDFLARE_API_TOKEN}
+        }
+        reverse_proxy 127.0.0.1:13339
+      '';
+    };
+  };
+
+  sops.secrets."cloudflare-api-token" =
+    snowveil.sops.secret {
+      source = "host";
+      host = "yc-hk-1";
+    }
+    // {
+      owner = "root";
+      mode = "0400";
+    };
+
+  sops.templates."caddy-env" = {
+    owner = "root";
+    mode = "0400";
+    content = "CLOUDFLARE_API_TOKEN=${config.sops.placeholder."cloudflare-api-token"}\n";
+  };
+
+  systemd.services.caddy = {
+    after = [ "sops-install-secrets.service" ];
+    requires = [ "sops-install-secrets.service" ];
+  };
+
   rhencloud.services = {
     mihomo = {
       enable = false;
-      host = "yc-hk-1";
-      enableTun = false;
     };
     beszel.enable = true;
     beszel-agent = {

@@ -1935,11 +1935,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790323551,
-        "narHash": "sha256-ujB2MkAqgrUOopYFFfriAcMJCOkrfs9Y0uyC3xfobpA=",
+        "lastModified": 1790445837,
+        "narHash": "sha256-IqZp3e997nHB4ODAouEl/aF2VnrX/EUm7WifLad+1i8=",
         "owner": "SnowveilOrg",
         "repo": "Snowveil",
-        "rev": "e656d49f7997dc389d653e6541f093b60d8e41ba",
+        "rev": "5ea7fb643fe28ba24e95c5e1be9230fc116d2ac5",
         "type": "github"
       },
       "original": {

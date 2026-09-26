@@ -21,7 +21,7 @@ in
       accept-flake-config = true;
       max-jobs = "auto";
       builders-use-substitutes = true;
-      auto-optimise-store = true;
+      auto-optimise-store = false;
       trusted-users = [ "@wheel" ];
       substituters = [
         # "https://cache.rhen.cloud"

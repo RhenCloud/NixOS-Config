@@ -53,6 +53,11 @@
     vicinae.enable = true;
     hmStylix.enable = true;
 
+    # dev
+    meli.enable = true;
+    tokens.enable = true;
+    opencode.wakatime.enable = true;
+
     # service
     mpd.enable = true;
     clipse.enable = true;

@@ -65,6 +65,15 @@ let
         enabled = true;
         type = "local";
       };
+      logoloom = {
+        command = [
+          "npx"
+          "-y"
+          "@mcpware/logoloom"
+        ];
+        enabled = true;
+        type = "local";
+      };
     };
     plugin = [
       "${voidswitchPlugin}"
@@ -74,7 +83,8 @@ let
       "@nick-vi/opencode-type-inject"
       "opencode-pty"
       "remote-code"
-    ];
+    ]
+    ++ optional cfg.wakatime.enable "opencode-wakatime";
     provider = {
       voidswitch = {
         npm = "@ai-sdk/openai-compatible";
@@ -98,6 +108,7 @@ let
           "cc/claude-fable-5" = { };
           "codex/gpt-5.6-terra" = { };
           "glm-4.7-flash-cf" = { };
+          "murasame-vip/gemini-3.8-flash-high" = { };
           # "glm-4.7" = { };
           # "glm-4.5-air" = { };
           # "grok-4.5" = { };
@@ -360,95 +371,116 @@ let
   };
 in
 {
-  options.rhencloud.opencode.enable = mkEnableOption "opencode AI assistant";
-  config = mkIf cfg.enable {
-    programs.opencode = {
-      enable = true;
-      # package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.opencode-zh-cn;
-    };
+  options = {
+    rhencloud.opencode.enable = mkEnableOption "opencode AI assistant";
+    rhencloud.opencode.wakatime.enable = mkEnableOption "opencode WakaTime/HackaTime 时间追踪";
+  };
+  config = mkMerge [
+    (mkIf cfg.enable {
+      programs.opencode = {
+        enable = true;
+        # package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.opencode-zh-cn;
+      };
 
-    sops.secrets = {
-      "github-token" = snowveil.sops.secret { source = "common"; };
-      "opencode-voidswitch-api-key" = snowveil.sops.secret { source = "common"; };
-      "chibang-codex-api-key" = snowveil.sops.secret { source = "common"; };
-      "chibang-claude-api-key" = snowveil.sops.secret { source = "common"; };
-    };
+      sops.secrets = {
+        "github-token" = snowveil.sops.secret { source = "common"; };
+        "opencode-voidswitch-api-key" = snowveil.sops.secret { source = "common"; };
+        "chibang-codex-api-key" = snowveil.sops.secret { source = "common"; };
+        "chibang-claude-api-key" = snowveil.sops.secret { source = "common"; };
+      };
 
-    sops.templates."opencode.json".content = builtins.toJSON opencodeConfig;
+      sops.templates."opencode.json".content = builtins.toJSON opencodeConfig;
 
-    xdg.configFile."opencode/opencode.json".source =
-      config.lib.file.mkOutOfStoreSymlink
-        config.sops.templates."opencode.json".path;
+      xdg.configFile."opencode/opencode.json".source =
+        config.lib.file.mkOutOfStoreSymlink
+          config.sops.templates."opencode.json".path;
 
-    xdg.configFile."opencode/plugins/chibang-claude.ts".text = ''
-      const clean = (value) => {
-        if (Array.isArray(value)) return value.map(clean)
-        if (!value || typeof value !== "object") return value
+      xdg.configFile."opencode/plugins/chibang-claude.ts".text = ''
+        const clean = (value) => {
+          if (Array.isArray(value)) return value.map(clean)
+          if (!value || typeof value !== "object") return value
 
-        return Object.fromEntries(
-          Object.entries(value)
-            .filter(([key]) => key !== "cache_control")
-            .map(([key, item]) => [key, clean(item)]),
-        )
-      }
+          return Object.fromEntries(
+            Object.entries(value)
+              .filter(([key]) => key !== "cache_control")
+              .map(([key, item]) => [key, clean(item)]),
+          )
+        }
 
-      export default async () => ({
-        config(config) {
-          const provider = config.provider?.["chibang-claude"]
-          if (!provider) return
+        export default async () => ({
+          config(config) {
+            const provider = config.provider?.["chibang-claude"]
+            if (!provider) return
 
-          provider.options ??= {}
-          provider.options.fetch = async (input, init) => {
-            if (typeof init?.body === "string") {
-              try {
-                const body = clean(JSON.parse(init.body))
-                delete body.stream_options
-                if (Array.isArray(body.messages)) {
-                  const system = body.messages.filter((message) => message.role === "system")
-                  body.messages = body.messages.filter((message) => message.role !== "system")
-                  if (system.length > 0) {
-                    body.system = system.flatMap((message) =>
-                      typeof message.content === "string"
-                        ? [{ type: "text", text: message.content }]
-                        : message.content,
-                    )
-                  }
-                }
-                if (Array.isArray(body.tools)) {
-                  body.tools = body.tools.map((tool) =>
-                    tool.type === "function"
-                      ? {
-                          type: "custom",
-                          name: tool.function.name,
-                          description: tool.function.description,
-                          input_schema: tool.function.parameters,
-                        }
-                      : tool,
-                  )
-                }
-                if (typeof body.tool_choice === "string") {
-                  if (body.tool_choice === "none") {
-                    delete body.tool_choice
-                    delete body.tools
-                  } else {
-                    body.tool_choice = {
-                      type: body.tool_choice === "required" ? "any" : body.tool_choice,
+            provider.options ??= {}
+            provider.options.fetch = async (input, init) => {
+              if (typeof init?.body === "string") {
+                try {
+                  const body = clean(JSON.parse(init.body))
+                  delete body.stream_options
+                  if (Array.isArray(body.messages)) {
+                    const system = body.messages.filter((message) => message.role === "system")
+                    body.messages = body.messages.filter((message) => message.role !== "system")
+                    if (system.length > 0) {
+                      body.system = system.flatMap((message) =>
+                        typeof message.content === "string"
+                          ? [{ type: "text", text: message.content }]
+                          : message.content,
+                      )
                     }
                   }
-                } else if (body.tool_choice?.type === "function") {
-                  body.tool_choice = {
-                    type: "tool",
-                    name: body.tool_choice.function.name,
+                  if (Array.isArray(body.tools)) {
+                    body.tools = body.tools.map((tool) =>
+                      tool.type === "function"
+                        ? {
+                            type: "custom",
+                            name: tool.function.name,
+                            description: tool.function.description,
+                            input_schema: tool.function.parameters,
+                          }
+                        : tool,
+                    )
                   }
-                }
-                init = { ...init, body: JSON.stringify(body) }
-              } catch {}
-            }
+                  if (typeof body.tool_choice === "string") {
+                    if (body.tool_choice === "none") {
+                      delete body.tool_choice
+                      delete body.tools
+                    } else {
+                      body.tool_choice = {
+                        type: body.tool_choice === "required" ? "any" : body.tool_choice,
+                      }
+                    }
+                  } else if (body.tool_choice?.type === "function") {
+                    body.tool_choice = {
+                      type: "tool",
+                      name: body.tool_choice.function.name,
+                    }
+                  }
+                  init = { ...init, body: JSON.stringify(body) }
+                } catch {}
+              }
 
-            return fetch(input, init)
-          }
-        },
-      })
-    '';
-  };
+              return fetch(input, init)
+            }
+          },
+        })
+      '';
+    })
+    (mkIf cfg.wakatime.enable {
+      sops.secrets."wakatime-api-key" = snowveil.sops.secret { source = "common"; };
+
+      # HackaTime（WakaTime 兼容），通过 opencode-wakatime 插件上报
+      sops.templates."wakatime.cfg".content = ''
+        [settings]
+        api_key = ${config.sops.placeholder."wakatime-api-key"}
+        api_url = https://hackatime.hackclub.com/api/hackatime/v1
+      '';
+
+      home.file.".wakatime.cfg".source =
+        config.lib.file.mkOutOfStoreSymlink
+          config.sops.templates."wakatime.cfg".path;
+
+      home.packages = [ pkgs.wakatime-cli ];
+    })
+  ];
 }

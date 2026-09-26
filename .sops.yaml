@@ -40,3 +40,15 @@ creation_rules:
           - *admin
         age:
           - *homeserver
+  - path_regex: secrets/mihomo\.yaml$
+    encrypted_regex: '(^url$|password|uuid|secret|token|key|auth|servername|sni$|(^|[-_])server$)'
+    key_groups:
+      - pgp:
+          - *admin
+        age:
+          - *desktop
+          - *yc-hk-1
+          - *yc-hk-1-host
+          - *homeserver
+          - *homeserver-user
+          - *rhencloud
