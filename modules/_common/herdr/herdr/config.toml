@@ -1,8 +1,5 @@
 onboarding = false
 
-[theme]
-name = "dracula"
-
 [keys]
 previous_tab = "alt+h"
 next_tab = "alt+l"

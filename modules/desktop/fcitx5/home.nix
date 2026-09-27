@@ -101,6 +101,45 @@ in
   config = mkIf cfg.enable {
     programs.rime-keytao.enable = true;
 
+    # 主题由 noctalia 从壁纸取色生成；深浅两套都指向 noctalia，
+    # 否则跟随系统深色时会回退到 DarkTheme 指定的旧主题。
+    xdg.configFile."fcitx5/conf/classicui.conf".text = ''
+      # 垂直候选列表
+      Vertical Candidate List=False
+      # 使用鼠标滚轮翻页
+      WheelForPaging=True
+      # 字体
+      Font="Maple Mono NF CN 11"
+      # 菜单字体
+      MenuFont="Maple Mono NF CN 10"
+      # 托盘字体
+      TrayFont="Maple Mono NF CN 10"
+      # 托盘标签轮廓颜色
+      TrayOutlineColor=#000000
+      # 托盘标签文本颜色
+      TrayTextColor=#ffffff
+      # 优先使用文字图标
+      PreferTextIcon=True
+      # 在图标中显示布局名称
+      ShowLayoutNameInIcon=True
+      # 使用输入法的语言来显示文字
+      UseInputMethodLanguageToDisplayText=True
+      # 主题
+      Theme=dracula
+      # 深色主题
+      DarkTheme=dracula
+      # 跟随系统浅色/深色设置
+      UseDarkTheme=True
+      # 当被主题和桌面支持时使用系统的重点色
+      UseAccentColor=False
+      # 在 X11 上针对不同屏幕使用单独的 DPI
+      PerScreenDPI=False
+      # 固定 Wayland 的字体 DPI
+      ForceWaylandDPI=0
+      # 在 Wayland 下启用分数缩放
+      EnableFractionalScale=True
+    '';
+
     xdg.dataFile = {
       "fcitx5/themes/dracula" = {
         source = ./fcitx5/themes/dracula;

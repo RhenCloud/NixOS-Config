@@ -51,7 +51,6 @@
     noctalia.enable = true;
     caelestia.enable = true;
     vicinae.enable = true;
-    hmStylix.enable = true;
 
     # dev
     meli.enable = true;

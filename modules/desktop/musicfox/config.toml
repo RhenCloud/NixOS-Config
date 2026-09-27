@@ -85,7 +85,7 @@ neteaseCookie = ""
 
 # 主题设置
 [theme]
-activeTheme = "dracula"
+activeTheme = "noctalia"
 # 是否在界面顶部显示标题
 showTitle = true
 # 菜单加载时显示的提示文字

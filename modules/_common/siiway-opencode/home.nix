@@ -21,6 +21,7 @@ let
     "$schema" = "https://opencode.ai/config.json";
     model = "voidswitch/deepseek-v4-pro";
     small_model = "voidswitch/glm-4.7-flash-cf";
+    theme = "matugen";
     lsp = true;
     mcp = {
       chrome-devtools = {

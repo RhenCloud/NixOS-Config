@@ -112,7 +112,6 @@ in
     xdg.configFile = {
       "niri/autostart.kdl".source = ./niri/autostart.kdl;
       "niri/config.kdl".source = ./niri/config.kdl;
-      "niri/dracula.kdl".source = ./niri/dracula.kdl;
       "niri/env.kdl".source = ./niri/env.kdl;
       "niri/input.kdl".source = ./niri/input.kdl;
       "niri/keys.kdl".source = ./niri/keys.kdl;

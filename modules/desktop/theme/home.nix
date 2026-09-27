@@ -21,6 +21,7 @@ in
     home = {
       packages = with pkgs; [
         catppuccin-kvantum
+        adw-gtk3
         papirus-icon-theme
         libsForQt5.qtstyleplugin-kvantum
         libsForQt5.qt5ct
@@ -52,9 +53,27 @@ in
 
     gtk = {
       enable = true;
+      # 全局界面字体（gtk2/gtk3/gtk4 继承）
+      font = {
+        name = "Maple Mono NF CN";
+        size = 11;
+      };
+      theme = {
+        name = "adw-gtk3-dark";
+        package = pkgs.adw-gtk3;
+      };
       iconTheme = {
         name = "Papirus-Dark";
         package = pkgs.papirus-icon-theme;
+      };
+      # noctalia 生成的调色板，换壁纸时自动重写同目录下的 noctalia.css
+      gtk3.extraCss = ''@import url("noctalia.css");'';
+      gtk4 = {
+        theme = {
+          name = "adw-gtk3-dark";
+          package = pkgs.adw-gtk3;
+        };
+        extraCss = ''@import url("noctalia.css");'';
       };
     };
 

@@ -8,8 +8,6 @@
 with lib;
 let
   cfg = config.rhencloud.yazi;
-
-  dracula-flavor = "${inputs.yazi-flavors}/dracula.yazi";
 in
 {
   options.rhencloud.yazi = {
@@ -89,8 +87,8 @@ in
       };
 
       theme = {
-        flavor.dark = "dracula";
-        flavor.light = "dracula";
+        flavor.dark = "noctalia";
+        flavor.light = "noctalia";
       };
 
       keymap = {
@@ -112,7 +110,14 @@ in
       };
     };
 
-    xdg.configFile."yazi/flavors/dracula.yazi".source = dracula-flavor;
+    # glow 的配色由 noctalia 从壁纸生成，指向生成的 JSON 样式文件
+    xdg.configFile."glow/glow.yml".text = ''
+      style: "${config.xdg.configHome}/glow/noctalia.json"
+      mouse: false
+      pager: false
+      width: 80
+      all: false
+    '';
 
     home.packages = with pkgs; [
       bat

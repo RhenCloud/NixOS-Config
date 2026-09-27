@@ -1,0 +1,57 @@
+/**
+ * @name Noctalia Material
+ * @description 原版 Material Discord 主题，仅将颜色替换为 noctalia 从壁纸取色得到的结果
+ * @author CapnKitten
+ * @website https://github.com/CapnKitten/Material-Discord
+ * @source https://github.com/CapnKitten/BetterDiscord/blob/master/Themes/Material-Discord/css/source.css
+ */
+
+/* 上游原版主题，结构与布局不在此处做任何改动 */
+@import url("https://capnkitten.github.io/BetterDiscord/Themes/Material-Discord/css/source.css");
+@import url("https://capnkitten.github.io/BetterDiscord/Themes/Material-Discord/css/addons/material-you/source.css");
+
+:root,
+.theme-dark,
+.theme-light {
+  /* 强调色：Material You 依赖 HSL 三元组推导整套色彩层次 */
+  --accent-hue: {{colors.primary.default.hue}};
+  --accent-saturation: {{colors.primary.default.saturation}}%;
+  --accent-lightness: {{colors.primary.default.lightness}}%;
+  --accent-text-color: {{colors.on_primary.default.hex}};
+
+  /* 界面背景 */
+  --app-bg: {{colors.surface.default.hex}};
+  --main-color: {{colors.surface.default.hex}};
+  --main-alt: {{colors.surface.default.hex}};
+  --server-color: {{colors.surface.default.hex}};
+  --status-picker-color: {{colors.surface_container.default.hex}};
+  --sidebar-panel-color: {{colors.surface_container.default.hex}};
+  --chat-color: {{colors.surface.default.hex}};
+  --tooltip-color: {{colors.surface.default.hex}};
+  --tooltip-text-color: {{colors.on_surface.default.hex}};
+
+  /* 消息 */
+  --message-color: {{colors.surface_container.default.hex}};
+  --message-color-alt: {{colors.on_secondary.default.hex}};
+  --attachment-color: {{colors.on_primary.default.hex}};
+  --main-textarea-color: {{colors.primary.default.hex}};
+  --main-textarea-button-color: {{colors.on_primary.default.hex}};
+  --main-textarea-color-alt: {{colors.secondary.default.hex}};
+  --main-textarea-border: {{colors.surface_container.default.hex}};
+
+  /* 卡片 */
+  --card-color-filled: {{colors.surface_container.default.hex}};
+  --card-color-hover: {{colors.inverse_primary.default.hex}};
+  --card-color-active: {{colors.inverse_primary.default.hex}};
+  --card-color-alt: {{colors.secondary_container.default.hex}};
+  --card-color-alt-hover: {{colors.secondary.default.hex}};
+  --card-border-color: {{colors.surface_container.default.hex}};
+  --card-header-text-color: {{colors.on_surface.default.hex}};
+
+  /* 滑块与开关 */
+  --switch-knob-color: {{colors.surface_container.default.hex}};
+  --switch-slider-color: {{colors.surface.default.hex}};
+
+  /* 输入框 */
+  --input-text-color: {{colors.on_surface.default.hex}};
+}

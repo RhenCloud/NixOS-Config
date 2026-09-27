@@ -89,10 +89,6 @@
       url = "github:RhenCloud/piri";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    stylix = {
-      url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     aagl = {
       url = "github:ezKEa/aagl-gtk-on-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -181,10 +177,6 @@
     };
     nixos-ai-skill = {
       url = "github:marceloeatworld/nixos-ai-skill";
-      flake = false;
-    };
-    yazi-flavors = {
-      url = "github:yazi-rs/flavors";
       flake = false;
     };
     selector4nix = {
@@ -431,7 +423,6 @@
             "desktop.noctalia"
             "desktop.obs"
             "desktop.prismlauncher"
-            "desktop.stylix"
             "desktop.theme"
             "desktop.tofi"
             "desktop.umbriel"

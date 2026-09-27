@@ -2,6 +2,11 @@ set -g fish_greeting ''
 
 set -gx NH_OS_FLAKE $HOME/Project/NixOS-Config
 
+# noctalia 从壁纸生成的 fzf 配色（缺失时为空占位文件，source 无副作用）
+if test -f $HOME/.config/fzf/themes/noctalia.fish
+    source $HOME/.config/fzf/themes/noctalia.fish
+end
+
 fish_config theme choose Dracula
 
 # Tide prompt in Dracula palette

@@ -24,7 +24,7 @@ in
       settings = {
         Language = "zh_CN";
         InstanceDir = "/home/${username}/Prism/instances/";
-        ApplicationTheme = "dark";
+        ApplicationTheme = "Matugen";
       };
     };
   };

@@ -20,33 +20,12 @@ in
           font = "Maple Mono NF CN:size=11:fontfeatures=calt=1:fontfeatures=cv03=1:fontfeatures=cv32=1:fontfeatures=cv34=1:fontfeatures=cv35=1:fontfeatures=cv36=1:fontfeatures=cv37=1:fontfeatures=cv96=1:fontfeatures=cv97=1:fontfeatures=cv98=1:fontfeatures=cv99=1:fontfeatures=ss03=1:fontfeatures=ss05=1:fontfeatures=zero=1";
           dpi-aware = "yes";
           pad = "8x8 center";
+          alpha = "0.75";
           shell = "${pkgs.fish}/bin/fish";
           selection-target = "clipboard";
-        };
 
-        colors-dark = {
-          alpha = "0.75";
-          background = "282a36";
-          foreground = "f8f8f2";
-          regular0 = "44475a";
-          regular1 = "ff5555";
-          regular2 = "50fa7b";
-          regular3 = "f1fa8c";
-          regular4 = "bd93f9";
-          regular5 = "ff79c6";
-          regular6 = "8be9fd";
-          regular7 = "f8f8f2";
-          bright0 = "6272a4";
-          bright1 = "ff6e6e";
-          bright2 = "69ff94";
-          bright3 = "ffffa5";
-          bright4 = "d6acff";
-          bright5 = "ff92df";
-          bright6 = "a4ffff";
-          bright7 = "ffffff";
-          cursor = "f8f8f2 44475a";
-          selection-foreground = "f8f8f2";
-          selection-background = "44475a";
+          # noctalia 换壁纸时生成的配色（apply.sh 检测到该行已存在便不会再改动本文件）
+          include = "${config.xdg.configHome}/foot/themes/noctalia";
         };
 
         cursor = {

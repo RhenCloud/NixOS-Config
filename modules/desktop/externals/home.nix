@@ -9,6 +9,5 @@
     inputs.nixvim.homeModules.nixvim
     inputs.rime-keytao.homeManagerModules.default
     inputs.vicinae.homeManagerModules.default
-    inputs.stylix.homeModules.stylix
   ];
 }

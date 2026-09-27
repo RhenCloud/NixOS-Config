@@ -7,13 +7,16 @@ in
   options.rhencloud.kitty.enable = mkEnableOption "Kitty terminal";
 
   config = mkIf cfg.enable {
-    xdg.configFile."kitty/Dracula.conf".source = ./Dracula.conf;
-
     programs.kitty = {
       enable = true;
       shellIntegration.enableBashIntegration = true;
       enableGitIntegration = true;
-      themeFile = "Dracula";
+
+      # noctalia 在换壁纸时生成的配色，放在末尾覆盖下方兜底色
+      extraConfig = ''
+        include themes/noctalia.conf
+      '';
+
       settings = {
         cursor_shape = "beam";
         strip_trailing_spaces = "always";
@@ -23,6 +26,8 @@ in
         confirm_os_window_close = 0;
         cursor_trail = 3;
         cursor_trail_decay = "0.1 0.4";
+        background = "#282a36";
+        foreground = "#f8f8f2";
       };
       keybindings = {
         "ctrl + v" = "paste_from_clipboard";
