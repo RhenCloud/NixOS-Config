@@ -1,0 +1,49 @@
+name: Publish Nix Cache to GHCR
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "flake/**"
+      - "hosts/**"
+      - "homes/**"
+      - "modules/**"
+      - "overlays/**"
+      - "packages/**"
+      - "apps/**"
+      - "checks/**"
+      - "shells/**"
+      - "formatter/**"
+      - "deploy/**"
+      - ".github/workflows/publish-cache.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Build & Publish Cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+
+      - name: Publish to GHCR
+        uses: shaogme/nixcache-oci@main
+        with:
+          mode: "flake"
+          flake-path: "."
+          signing-key: ${{ secrets.NIX_SIGNING_KEY }}
+          strict: "true"
+          github-token: ${{ secrets.GITHUB_TOKEN }}

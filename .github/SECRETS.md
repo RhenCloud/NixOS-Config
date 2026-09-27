@@ -11,7 +11,44 @@
 | `S3_PREFIX` | S3 路径前缀（可选） | `nix-cache` |
 | `AWS_ACCESS_KEY_ID` | S3 访问密钥 ID | `UA7PXLVPABCTYEO92K6A` |
 | `AWS_SECRET_ACCESS_KEY` | S3 访问密钥 | `cTs2DWCaJ6sTYZfiFImrXB3S536zNmdIfOZXs9Ly` |
+| `CACHIX_AUTH_TOKEN` | Cachix 认证 token（`build.yml` 使用） | `cachix_auth_token` 形式 |
 | `SOPS_AGE_KEY` | sops age 私钥（如需 CI 解密 secrets） | （可选，用于 `secrets/` 目录解密） |
+| `NIX_SIGNING_KEY` | nixcache-oci 缓存签名私钥（`publish-cache.yml` 使用） | `RhenCloud-NixOS-Config-1:Base64...=` |
+
+## nixcache-oci（GHCR 二进制缓存）
+
+`.github/workflows/publish-cache.yml` 使用 [nixcache-oci](https://github.com/shaogme/nixcache-oci)
+构建 flake 闭包并把 NAR 作为 OCI blob 推送到 `ghcr.io/rhencloud/nixos-config`，
+索引 tag 为 `cache-index`。GITHUB_TOKEN 的 `packages: write` 权限即可推送，
+无需额外凭据。
+
+### 配置签名密钥
+
+```bash
+# 生成密钥对（本地执行一次）
+nix-store --generate-binary-cache-key RhenCloud-NixOS-Config-1 secret.key public.key
+
+# 私钥内容 -> GitHub Secret: NIX_SIGNING_KEY
+cat secret.key
+```
+
+生成后把公钥写入 `flake.nix` 的 `nixConfig.extra-trusted-public-keys`，
+或使用下面的 NixOS 模块；也可在构建成功后从仓库根目录 `public-key.txt` 读取。
+
+### 客户端消费（NixOS 模块）
+
+```nix
+{
+  inputs.nixcache.url = "github:shaogme/nixcache-oci";
+  # ... hosts/<host>/default.nix 或模块中：
+  imports = [ inputs.nixcache.nixosModules.default ];
+  services.nixcache-proxy = {
+    enable = true;
+    repo = "rhencloud/nixos-config";
+    publicKey = "RhenCloud-NixOS-Config-1:...=";
+  };
+}
+```
 
 ## Cloudflare R2 配置示例
 

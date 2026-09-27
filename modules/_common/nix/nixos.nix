@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  inputs,
   ...
 }:
 with lib;
@@ -10,7 +11,16 @@ let
 in
 {
   options.rhencloud.nix.enable = mkEnableOption "Nix daemon settings";
+  # 本地 nixcache 代理：把 GHCR 上的 OCI 二进制缓存（CI 构建产物）暴露为本地 substituter，
+  # 并自动注册 substituters 与公钥。
+  imports = [ inputs.nixcache.nixosModules.default ];
   config = mkIf cfg.enable {
+    services.nixcache-proxy = {
+      enable = true;
+      repo = "rhencloud/nixos-config";
+      publicKey = "RhenCloud-NixOS-Config-1:N+sDXsxJE6wzn//Hw7ScFANjOPucZKmIsX012iJCJPo=";
+    };
+
     nix.package = pkgs.lixPackageSets.stable.lix;
 
     nix.settings = {

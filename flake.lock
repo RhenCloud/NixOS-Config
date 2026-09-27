@@ -1255,6 +1255,21 @@
         "type": "github"
       }
     },
+    "nixcache": {
+      "locked": {
+        "lastModified": 1790455588,
+        "narHash": "sha256-xr+VHf3hs0M4k4OOFKhy0QUxj8jSdyz+kD/mvXkf1SM=",
+        "owner": "shaogme",
+        "repo": "nixcache-oci",
+        "rev": "ec25b2d66c7534d1b3f43d9c99160a507cb850a8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "shaogme",
+        "repo": "nixcache-oci",
+        "type": "github"
+      }
+    },
     "nixos-ai-skill": {
       "flake": false,
       "locked": {
@@ -1574,6 +1589,7 @@
         "niri-shot": "niri-shot",
         "niri_tweaks": "niri_tweaks",
         "nix-index-database": "nix-index-database",
+        "nixcache": "nixcache",
         "nixos-ai-skill": "nixos-ai-skill",
         "nixpkgs": "nixpkgs_2",
         "nixvim": "nixvim",

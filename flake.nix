@@ -203,6 +203,11 @@
       url = "github:sleepy-project/sleepy/6babc99";
       flake = false;
     };
+    # 把本仓库的构建产物作为 GHCR OCI 二进制缓存分发给各主机
+    # （nixcache-oci 用 npins 管理依赖，无 nixpkgs input，不能 follows）
+    nixcache = {
+      url = "github:shaogme/nixcache-oci";
+    };
   };
 
   outputs =
