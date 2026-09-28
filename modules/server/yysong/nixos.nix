@@ -160,13 +160,6 @@ in
     };
 
     services.caddy = {
-      globalConfig = ''
-        servers {
-          trusted_proxies static {
-            ranges 47.243.223.74
-          }
-        }
-      '';
       virtualHosts.${cfg.domain} = {
         extraConfig = ''
           reverse_proxy 127.0.0.1:${toString cfg.port}

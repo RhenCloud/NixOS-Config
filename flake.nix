@@ -286,6 +286,7 @@
             "opencode-zh-cn"
             "rime-keytao"
             "sandbox"
+            "tokens"
             "zed-globalization"
           ];
           apps = [
@@ -367,6 +368,7 @@
             "dev.golang"
             "dev.helix"
             "dev.java"
+            "dev.meli"
             "dev.nixvim"
             "dev.node"
             "dev.opencode"
@@ -374,6 +376,7 @@
             "dev.pi"
             "dev.python"
             "dev.rust"
+            "dev.tokens"
             "server.baota-probe"
             "server.beszel"
             "server.beszel-agent"
@@ -441,6 +444,7 @@
             "dev.golang"
             "dev.helix"
             "dev.java"
+            "dev.meli"
             "dev.nixvim"
             "dev.node"
             "dev.opencode"
@@ -448,6 +452,7 @@
             "dev.pi"
             "dev.python"
             "dev.rust"
+            "dev.tokens"
             "system"
           ];
           deploy = {

@@ -104,7 +104,8 @@ in
       autoStart = true;
       pull = "newer";
 
-      environment = {
+      # 仅在启用 mihomo 时走本地代理，否则直连
+      environment = optionalAttrs config.rhencloud.services.mihomo.enable {
         JAVA_TOOL_OPTIONS = "-Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=7890 -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=7890 -Dhttp.nonProxyHosts=localhost|127.0.0.1";
       };
 

@@ -49,6 +49,8 @@ in
         "system"
       ];
       magicRollback = true;
+      # oci-helper/websockify 首次启动需要拉取镜像，放宽激活等待时间避免误判超时
+      activationTimeout = 900;
     };
 
     nixos-homeserver = {

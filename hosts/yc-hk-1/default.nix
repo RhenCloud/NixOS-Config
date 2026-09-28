@@ -37,6 +37,9 @@ in
     globalConfig = ''
       servers {
         trusted_proxies_strict
+        trusted_proxies static {
+          ranges 47.243.223.74
+        }
       }
     '';
     virtualHosts."zen.rhen.cloud" = {
@@ -91,7 +94,7 @@ in
     rustdesk.enable = true;
     yysong.enable = true;
     openlist.enable = true;
-    oci-helper.enable = false;
+    oci-helper.enable = true;
 
     pds = {
       enable = true;
