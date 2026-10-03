@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.android;
+  cfg = config.rhen.android;
 in
 {
   config = mkIf cfg.enable {

@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.mprisence;
+  cfg = config.rhen.mprisence;
 in
 {
-  options.rhencloud.mprisence.enable = mkEnableOption "MPRIS Discord Rich Presence";
+  options.rhen.mprisence.enable = mkEnableOption "MPRIS Discord Rich Presence";
   config = mkIf cfg.enable {
     home.packages = with pkgs; [ mprisence ];
 

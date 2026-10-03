@@ -5,7 +5,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.selector4nix;
+  cfg = config.rhen.selector4nix;
 
   substituters = [
     {
@@ -47,7 +47,7 @@ let
   ];
 in
 {
-  options.rhencloud.selector4nix.enable = mkEnableOption "selector4nix substituter";
+  options.rhen.selector4nix.enable = mkEnableOption "selector4nix substituter";
 
   config = mkIf cfg.enable {
     services.selector4nix = {

@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.caelestia;
+  cfg = config.rhen.caelestia;
 in
 {
-  options.rhencloud.caelestia.enable = mkEnableOption "Caelestia shell（手动启动，与 noctalia v5 共存）";
+  options.rhen.caelestia.enable = mkEnableOption "Caelestia shell（手动启动，与 noctalia v5 共存）";
 
   config = mkIf cfg.enable {
     programs.caelestia = {

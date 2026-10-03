@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.nextbridge;
+  cfg = config.rhen.services.nextbridge;
 in
 {
-  options.rhencloud.services.nextbridge = {
+  options.rhen.services.nextbridge = {
     enable = mkEnableOption "NextBridge 多平台聊天桥接";
 
     image = mkOption {

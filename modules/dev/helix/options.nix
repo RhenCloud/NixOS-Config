@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.helix.enable = lib.mkEnableOption "Helix editor";
+  options.rhen.helix.enable = lib.mkEnableOption "Helix editor";
 }

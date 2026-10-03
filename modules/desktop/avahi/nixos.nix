@@ -1,7 +1,7 @@
 { config, lib, ... }:
 {
-  options.rhencloud.avahi.enable = lib.mkEnableOption "Avahi mDNS";
-  config = lib.mkIf config.rhencloud.avahi.enable {
+  options.rhen.avahi.enable = lib.mkEnableOption "Avahi mDNS";
+  config = lib.mkIf config.rhen.avahi.enable {
     services.avahi = {
       enable = true;
       nssmdns4 = true;

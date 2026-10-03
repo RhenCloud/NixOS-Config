@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.node;
+  cfg = config.rhen.node;
 in
 {
   config = mkIf cfg.enable {

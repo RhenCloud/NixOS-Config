@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.steam;
+  cfg = config.rhen.steam;
 in
 {
-  options.rhencloud.steam.enable = mkEnableOption "Steam";
+  options.rhen.steam.enable = mkEnableOption "Steam";
 
   config = mkIf cfg.enable {
     programs.steam = {

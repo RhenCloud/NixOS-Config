@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.misc;
+  cfg = config.rhen.misc;
 in
 {
-  options.rhencloud.misc.enable = mkEnableOption "miscellaneous desktop apps";
+  options.rhen.misc.enable = mkEnableOption "miscellaneous desktop apps";
 
   config = mkIf cfg.enable {
     programs.fish.functions.rustdesk = {

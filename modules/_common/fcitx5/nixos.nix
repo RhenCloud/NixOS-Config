@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.fcitx5;
+  cfg = config.rhen.fcitx5;
 in
 {
-  options.rhencloud.fcitx5.enable = mkEnableOption "Fcitx5 input method";
+  options.rhen.fcitx5.enable = mkEnableOption "Fcitx5 input method";
 
   config = mkIf cfg.enable {
     i18n.inputMethod = {

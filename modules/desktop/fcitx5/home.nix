@@ -7,11 +7,11 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.fcitx5;
+  cfg = config.rhen.fcitx5;
   rimeKeytaoPkg = inputs.rime-keytao.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
-  options.rhencloud.fcitx5 = {
+  options.rhen.fcitx5 = {
     extraRimeConfig = lib.mkOption {
       type = lib.types.attrs;
       default = { };
@@ -96,7 +96,7 @@ in
     };
   };
 
-  options.rhencloud.fcitx5.enable = mkEnableOption "Fcitx5 RIME (HM)";
+  options.rhen.fcitx5.enable = mkEnableOption "Fcitx5 RIME (HM)";
 
   config = mkIf cfg.enable {
     programs.rime-keytao.enable = true;

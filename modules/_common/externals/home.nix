@@ -14,7 +14,7 @@
   sops.defaultSopsFile = snowveil.sops.commonFile;
 
   home = {
-    username = config.my.user.name;
-    homeDirectory = "/home/${config.my.user.name}";
+    username = config.rhen.user.name;
+    homeDirectory = "/home/${config.rhen.user.name}";
   };
 }

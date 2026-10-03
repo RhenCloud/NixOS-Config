@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.browser;
+  cfg = config.rhen.browser;
 in
 {
-  options.rhencloud.browser.enable = mkEnableOption "browser and editor";
+  options.rhen.browser.enable = mkEnableOption "browser and editor";
 
   config = mkIf cfg.enable {
     programs.chromium = {

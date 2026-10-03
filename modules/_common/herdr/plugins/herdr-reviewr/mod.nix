@@ -8,7 +8,7 @@ let
   pkg = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-reviewr;
 in
 {
-  rhencloud.herdrPlugins."persiyanov.reviewr" = {
+  rhen.herdrPlugins."persiyanov.reviewr" = {
     id = "persiyanov.reviewr";
     package = pkg;
   };

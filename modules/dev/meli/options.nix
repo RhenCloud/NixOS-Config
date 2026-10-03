@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.meli.enable = lib.mkEnableOption "meli 终端邮件客户端";
+  options.rhen.meli.enable = lib.mkEnableOption "meli 终端邮件客户端";
 }

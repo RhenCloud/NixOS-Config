@@ -36,4 +36,6 @@ packages/**/target
 
 archive.tar.gz
 
+.pi/
+
 **/__pycache__/

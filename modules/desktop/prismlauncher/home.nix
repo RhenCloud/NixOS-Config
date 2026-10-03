@@ -6,11 +6,11 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.prismlauncher;
+  cfg = config.rhen.prismlauncher;
   username = config.home.username;
 in
 {
-  options.rhencloud.prismlauncher.enable = mkEnableOption "Prism Launcher";
+  options.rhen.prismlauncher.enable = mkEnableOption "Prism Launcher";
   config = mkIf cfg.enable {
     programs.prismlauncher = {
       enable = true;

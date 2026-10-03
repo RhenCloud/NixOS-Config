@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.postgresql;
+  cfg = config.rhen.services.postgresql;
   secretOptions =
     snowveil.sops.secret {
       source = "common";
@@ -32,7 +32,7 @@ let
   + "\n";
 in
 {
-  options.rhencloud.services.postgresql = {
+  options.rhen.services.postgresql = {
     enable = mkEnableOption "PostgreSQL 数据库";
 
     image = mkOption {

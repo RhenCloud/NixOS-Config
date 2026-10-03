@@ -1,6 +1,6 @@
 { config, lib, ... }:
 with lib;
-mkIf config.rhencloud.nixvim.enable {
+mkIf config.rhen.nixvim.enable {
   programs.nixvim.keymaps = [
     {
       mode = "n";

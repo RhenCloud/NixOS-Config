@@ -5,7 +5,7 @@
 }:
 
 {
-  rhencloud.herdrPlugins.mobile-relay = {
+  rhen.herdrPlugins.mobile-relay = {
     id = "herdr-mobile-relay.events";
     package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-mobile-relay;
   };

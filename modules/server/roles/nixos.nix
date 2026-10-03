@@ -1,7 +1,7 @@
 { lib, ... }:
 {
   config = {
-    rhencloud = {
+    rhen = {
       identity.enable = true;
       locale.enable = true;
       nix.enable = true;

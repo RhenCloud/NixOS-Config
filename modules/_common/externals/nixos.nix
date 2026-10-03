@@ -19,5 +19,5 @@
   # 仅在框架实际嵌入 Home Manager 时应用，服务器可安全共享此模块。
   snowveil.homeManager.backupFileExtension = "backup";
 
-  system.stateVersion = lib.mkDefault config.my.stateVersion;
+  system.stateVersion = lib.mkDefault config.rhen.stateVersion;
 }

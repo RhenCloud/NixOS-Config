@@ -6,12 +6,12 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.shells;
+  cfg = config.rhen.shells;
   # 仅主用户自动切换到 fish，其他用户保持 bash
-  primaryUser = config.my.user.name;
+  primaryUser = config.rhen.user.name;
 in
 {
-  options.rhencloud.shells.enable = mkEnableOption "shells configuration";
+  options.rhen.shells.enable = mkEnableOption "shells configuration";
 
   config = mkIf cfg.enable {
     programs = {

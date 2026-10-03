@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.nixvim;
+  cfg = config.rhen.nixvim;
 in
 mkIf cfg.enable {
   programs.nixvim = {

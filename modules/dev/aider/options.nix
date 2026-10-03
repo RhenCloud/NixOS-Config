@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  options.rhencloud.aider = {
+  options.rhen.aider = {
     enable = lib.mkEnableOption "aider AI coding assistant";
     defaultProvider = lib.mkOption {
       type = lib.types.enum [

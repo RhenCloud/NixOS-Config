@@ -6,13 +6,13 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services;
+  cfg = config.rhen.services;
 in
 {
-  options.rhencloud.services.enable = mkEnableOption "system services";
+  options.rhen.services.enable = mkEnableOption "system services";
 
   config = mkIf cfg.enable {
-    rhencloud.services.mihomo = {
+    rhen.services.mihomo = {
       enable = true;
       ebpf = true;
     };

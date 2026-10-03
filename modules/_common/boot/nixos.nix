@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.boot;
+  cfg = config.rhen.boot;
 in
 {
-  options.rhencloud.boot.enable = mkEnableOption "boot configuration";
+  options.rhen.boot.enable = mkEnableOption "boot configuration";
   config = mkIf cfg.enable {
     boot.kernel.sysctl = {
       "fs.inotify.max_user_watches" = 1048576;

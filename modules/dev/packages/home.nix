@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hmDevPackages;
+  cfg = config.rhen.hmDevPackages;
 in
 {
   config = mkIf cfg.enable {

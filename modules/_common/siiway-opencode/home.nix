@@ -8,13 +8,13 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.opencode;
+  cfg = config.rhen.opencode;
   system = pkgs.stdenv.hostPlatform.system;
   voidswitchPlugin =
     inputs.siiway-oc-plugin.packages.${system}.opencode-voidswitch.overrideAttrs
       (old: {
         patches = (old.patches or [ ]) ++ [
-          ../../../patches/opencode-voidswitch/plugin-default-export.patch
+          (snowveil.patches.local ../../../patches/opencode-voidswitch/plugin-default-export.patch)
         ];
       });
   opencodeConfig = {
@@ -381,8 +381,8 @@ let
 in
 {
   options = {
-    rhencloud.opencode.enable = mkEnableOption "opencode AI assistant";
-    rhencloud.opencode.wakatime.enable = mkEnableOption "opencode WakaTime/HackaTime 时间追踪";
+    rhen.opencode.enable = mkEnableOption "opencode AI assistant";
+    rhen.opencode.wakatime.enable = mkEnableOption "opencode WakaTime/HackaTime 时间追踪";
   };
   config = mkMerge [
     (mkIf cfg.enable {

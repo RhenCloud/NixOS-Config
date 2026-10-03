@@ -1,2 +1,3 @@
 {
+  requires = [ "_common.options" ];
 }

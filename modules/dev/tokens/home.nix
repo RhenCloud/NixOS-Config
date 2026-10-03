@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.tokens;
+  cfg = config.rhen.tokens;
   tokensPkg = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.tokens;
 in
 {

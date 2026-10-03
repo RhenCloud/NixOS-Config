@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hyprland;
+  cfg = config.rhen.hyprland;
 in
 {
-  options.rhencloud.hyprland.enable = mkEnableOption "Hyprland";
+  options.rhen.hyprland.enable = mkEnableOption "Hyprland";
 
   config = mkIf cfg.enable {
     programs.hyprland = {

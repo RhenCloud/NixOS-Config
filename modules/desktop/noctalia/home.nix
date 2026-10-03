@@ -18,10 +18,10 @@ let
 in
 with lib;
 let
-  cfg = config.rhencloud.noctalia;
+  cfg = config.rhen.noctalia;
 in
 {
-  options.rhencloud.noctalia.enable = mkEnableOption "Noctalia shell";
+  options.rhen.noctalia.enable = mkEnableOption "Noctalia shell";
 
   config = mkIf cfg.enable {
     home.packages = [

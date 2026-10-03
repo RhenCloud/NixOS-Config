@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.emacs.enable = lib.mkEnableOption "Emacs editor";
+  options.rhen.emacs.enable = lib.mkEnableOption "Emacs editor";
 }

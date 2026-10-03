@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.vaultwarden;
+  cfg = config.rhen.services.vaultwarden;
 in
 {
-  options.rhencloud.services.vaultwarden = {
+  options.rhen.services.vaultwarden = {
     enable = mkEnableOption "Vaultwarden 密码管理器";
   };
 

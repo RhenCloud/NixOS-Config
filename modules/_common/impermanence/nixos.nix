@@ -1,10 +1,10 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rhencloud.impermanence;
+  cfg = config.rhen.impermanence;
 in
 {
-  options.rhencloud.impermanence.enable = mkEnableOption "Impermanence";
+  options.rhen.impermanence.enable = mkEnableOption "Impermanence";
   config = mkIf cfg.enable {
     environment.persistence."/persistent" = {
       hideMounts = true;

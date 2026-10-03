@@ -8,12 +8,12 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hm-hyprland;
+  cfg = config.rhen.hm-hyprland;
 
   cloudPyprland = inputs.cloud-pyprland.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
-  options.rhencloud.hm-hyprland.enable = mkEnableOption "Hyprland (HM)";
+  options.rhen.hm-hyprland.enable = mkEnableOption "Hyprland (HM)";
 
   config = mkIf cfg.enable {
     sops.secrets."sleepy-token" = snowveil.sops.secret { source = "common"; };

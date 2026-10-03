@@ -1,10 +1,10 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rhencloud.vicinae;
+  cfg = config.rhen.vicinae;
 in
 {
-  options.rhencloud.vicinae.enable = mkEnableOption "Vicinae app launcher";
+  options.rhen.vicinae.enable = mkEnableOption "Vicinae app launcher";
   config = mkIf cfg.enable {
     programs.vicinae = {
       enable = false;

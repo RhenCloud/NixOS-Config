@@ -1,10 +1,10 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rhencloud.mpd;
+  cfg = config.rhen.mpd;
 in
 {
-  options.rhencloud.mpd.enable = mkEnableOption "MPD music daemon";
+  options.rhen.mpd.enable = mkEnableOption "MPD music daemon";
   config = mkIf cfg.enable {
     services.mpd = {
       enable = true;

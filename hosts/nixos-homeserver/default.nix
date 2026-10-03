@@ -7,20 +7,18 @@
 {
   # 框架会自动导入 hardware.nix（如果存在）
   networking.hostName = "nixos-homeserver";
-  my.host.name = "nixos-homeserver";
+  rhen.host.name = "nixos-homeserver";
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # 此主机使用独立密码哈希；覆盖 identity 模块默认的 common 密钥来源。
-  sops.secrets."password-hash" = lib.mkForce (
+  sops.secrets."password-hash" =
     snowveil.sops.secret {
       source = "host";
       host = "nixos-homeserver";
     }
     // {
       neededForUsers = true;
-    }
-  );
-  users.users.rhencloud.hashedPasswordFile = lib.mkForce config.sops.secrets."password-hash".path;
+    };
 
   boot.loader.efi.efiSysMountPoint = lib.mkForce "/boot";
   boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
@@ -38,7 +36,7 @@
 
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
-  rhencloud = {
+  rhen = {
     boot.enable = true;
     identity.enable = true;
     env.enable = true;

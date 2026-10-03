@@ -1,10 +1,10 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rhencloud.env;
+  cfg = config.rhen.env;
 in
 {
-  options.rhencloud.env.enable = mkEnableOption "system environment variables";
+  options.rhen.env.enable = mkEnableOption "system environment variables";
 
   config = mkIf cfg.enable {
     environment.sessionVariables = {

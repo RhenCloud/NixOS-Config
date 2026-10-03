@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.thunar;
+  cfg = config.rhen.thunar;
 in
 {
-  options.rhencloud.thunar = {
+  options.rhen.thunar = {
     enable = mkEnableOption "Thunar file manager";
   };
 

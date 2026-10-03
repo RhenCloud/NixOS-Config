@@ -5,7 +5,7 @@
 }:
 
 {
-  rhencloud.herdrPlugins.herdr-plus = {
+  rhen.herdrPlugins.herdr-plus = {
     id = "cloudmanic.herdr-plus";
     package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-plus;
   };

@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.rustdesk;
+  cfg = config.rhen.services.rustdesk;
 in
 {
-  options.rhencloud.services.rustdesk = {
+  options.rhen.services.rustdesk = {
     enable = mkEnableOption "RustDesk 远程桌面服务端（hbbs + hbbr）";
 
     relayHost = mkOption {

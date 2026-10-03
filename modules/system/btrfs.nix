@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.btrfs;
+  cfg = config.rhen.btrfs;
 in
 {
-  options.rhencloud.btrfs = {
+  options.rhen.btrfs = {
     enable = mkEnableOption "启用 Btrfs 配额和配置" // {
       default = true;
     };
@@ -21,8 +21,11 @@ in
     # 执行 Btrfs 配额设置的服务
     systemd.services."btrfs-quota-enable" = {
       description = "启用 Btrfs 配额";
-      wantedBy = [ "multi-user.target" ];
-      wantedBy = [ "local-fs.target" ];
+      wantedBy = [
+        "multi-user.target"
+        "local-fs.target"
+        "btrfs-quota-setup.service"
+      ];
       after = [ "local-fs.target" ];
       serviceConfig = {
         Type = "oneshot";
@@ -34,8 +37,10 @@ in
     # 服务确保配额和子卷配置
     systemd.services."btrfs-quota-setup" = {
       description = "配置 Btrfs 子卷配额";
-      wantedBy = [ "multi-user.target" ];
-      wantedBy = [ "local-fs.target" ];
+      wantedBy = [
+        "multi-user.target"
+        "local-fs.target"
+      ];
       after = [ "btrfs-quota-enable.service" ];
       serviceConfig = {
         Type = "oneshot";
@@ -77,11 +82,6 @@ in
         '';
       };
     };
-
-    # 群组依赖：quota-enable 在 quota-setup 之后执行
-    systemd.services."btrfs-quota-enable".wantedBy = [
-      "btrfs-quota-setup.service"
-    ];
 
     # 文档和工具
     environment.systemPackages = with pkgs; [

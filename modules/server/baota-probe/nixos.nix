@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.baota-probe;
+  cfg = config.rhen.services.baota-probe;
 in
 {
-  options.rhencloud.services.baota-probe = {
+  options.rhen.services.baota-probe = {
     enable = mkEnableOption "宝塔拨测探针（bt-probe-agent）";
 
     image = mkOption {

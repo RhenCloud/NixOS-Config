@@ -1,9 +1,9 @@
-{ lib, ... }:
+{ lib, options, ... }:
 let
   inherit (lib) mkOption types;
 in
 {
-  options.my = {
+  options.rhen = {
     user = {
       name = mkOption {
         type = types.str;
@@ -75,4 +75,7 @@ in
       };
     };
   };
+
+  # 向后兼容别名，保留 my 作为 rhen 的别名
+  options.my = options.rhen;
 }

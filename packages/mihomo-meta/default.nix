@@ -2,6 +2,7 @@
   lib,
   fetchFromGitHub,
   buildGoModule,
+  snowveil,
 }:
 
 buildGoModule rec {
@@ -17,7 +18,7 @@ buildGoModule rec {
 
   vendorHash = "sha256-KyJD/0EP+DEQlKlB6o9OGZwLDTjTfVrpn73/Jc8loP8=";
 
-  patches = [ ../../patches/mihomo/tc-legacy-tcp-fallback.patch ];
+  patches = [ (snowveil.patches.local ../../patches/mihomo/tc-legacy-tcp-fallback.patch) ];
 
   excludedPackages = [ "./test" ];
 

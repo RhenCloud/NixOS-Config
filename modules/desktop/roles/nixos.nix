@@ -1,9 +1,9 @@
 { lib, ... }:
 {
   config = {
-    my.isDesktop = true;
+    rhen.isDesktop = true;
 
-    rhencloud = {
+    rhen = {
       # core
       boot.enable = true;
       identity.enable = true;

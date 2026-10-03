@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.ttt;
+  cfg = config.rhen.ttt;
 
   pluginFiles = mapAttrsToList (name: plugin: {
     name = "ttt/plugins/${name}";
@@ -22,7 +22,7 @@ let
   }) cfg.plugins;
 in
 {
-  options.rhencloud.ttt = {
+  options.rhen.ttt = {
     enable = mkEnableOption "TTT editor";
 
     settings = mkOption {

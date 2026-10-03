@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.fish;
+  cfg = config.rhen.fish;
 in
 {
-  options.rhencloud.fish.enable = mkEnableOption "Fish shell";
+  options.rhen.fish.enable = mkEnableOption "Fish shell";
 
   config = mkIf cfg.enable {
     home.sessionVariables = {

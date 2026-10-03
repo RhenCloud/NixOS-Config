@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.golang;
+  cfg = config.rhen.golang;
 in
 {
   config = mkIf cfg.enable {

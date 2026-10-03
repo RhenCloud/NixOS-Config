@@ -7,10 +7,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.docker;
+  cfg = config.rhen.docker;
 in
 {
-  options.rhencloud.docker.enable = mkEnableOption "Docker";
+  options.rhen.docker.enable = mkEnableOption "Docker";
 
   config = mkIf cfg.enable {
     virtualisation.docker = {

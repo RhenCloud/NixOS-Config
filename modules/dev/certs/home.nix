@@ -1,7 +1,7 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rhencloud.certs;
+  cfg = config.rhen.certs;
 in
 {
   config = mkIf cfg.enable {

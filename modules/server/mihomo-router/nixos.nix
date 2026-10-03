@@ -3,10 +3,11 @@
   inputs,
   lib,
   pkgs,
+  snowveil,
   ...
 }:
 let
-  cfg = config.rhencloud.services.mihomo-router;
+  cfg = config.rhen.services.mihomo-router;
   package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.mihomo-meta;
   overrideFile = pkgs.writeText "mihomo-router-override.yaml" (builtins.readFile ./override.yaml);
   mergeScript = pkgs.writeShellScript "mihomo-router-merge" ''
@@ -16,13 +17,13 @@ let
   '';
 in
 {
-  options.rhencloud.services.mihomo-router = {
+  options.rhen.services.mihomo-router = {
     enable = lib.mkEnableOption "mihomo eBPF 透明软路由";
   };
 
   config = lib.mkIf cfg.enable {
     sops.secrets."mihomo-config" = {
-      sopsFile = ../../../secrets/mihomo.yaml;
+      sopsFile = snowveil.projectSource + "/secrets/mihomo.yaml";
       key = "";
       owner = "root";
       mode = "0400";

@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.emacs;
+  cfg = config.rhen.emacs;
 in
 {
   config = mkIf cfg.enable {

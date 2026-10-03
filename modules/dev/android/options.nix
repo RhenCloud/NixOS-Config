@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.android.enable = lib.mkEnableOption "Android development tools";
+  options.rhen.android.enable = lib.mkEnableOption "Android development tools";
 }

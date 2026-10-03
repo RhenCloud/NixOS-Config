@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.node.enable = lib.mkEnableOption "Node.js development tools";
+  options.rhen.node.enable = lib.mkEnableOption "Node.js development tools";
 }

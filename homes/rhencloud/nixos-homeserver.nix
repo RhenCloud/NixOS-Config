@@ -2,7 +2,7 @@
   # 此配置生成 homeConfigurations."rhencloud@nixos-homeserver"
   # 继承 homes/rhencloud/default.nix 的基础配置
 
-  rhencloud = {
+  rhen = {
     # 覆盖默认值
     herdr.enable = false;
 

@@ -8,10 +8,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hm-niri;
+  cfg = config.rhen.hm-niri;
 in
 {
-  options.rhencloud.hm-niri.enable = mkEnableOption "Niri (HM)";
+  options.rhen.hm-niri.enable = mkEnableOption "Niri (HM)";
 
   config = mkIf cfg.enable {
     programs.niri = {

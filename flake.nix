@@ -272,6 +272,7 @@
         expected = {
           mode = "exact";
           hosts = [
+            "iso"
             "nixos-desktop"
             "nixos-homeserver"
             "yc-hk-1"
@@ -480,7 +481,9 @@
               "yc-hk-1"
             ];
           };
-          images = { };
+          images = {
+            iso = [ "iso" ];
+          };
         };
       };
     };

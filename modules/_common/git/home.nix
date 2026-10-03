@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.git;
+  cfg = config.rhen.git;
 
   # Global git hooks that refuse unsigned commits. `pre-commit` cannot verify
   # a signature (the commit object does not exist yet) and cannot reliably
@@ -103,9 +103,9 @@ let
         [[ "$local_sha" == "$zero" ]] && continue
 
         if [[ "$remote_sha" == "$zero" ]]; then
-          commits=$(git rev-list --author="${config.my.user.email}" "$local_sha" --not --remotes)
+          commits=$(git rev-list --author="${config.rhen.user.email}" "$local_sha" --not --remotes)
         else
-          commits=$(git rev-list --author="${config.my.user.email}" "$remote_sha".."$local_sha")
+          commits=$(git rev-list --author="${config.rhen.user.email}" "$remote_sha".."$local_sha")
         fi
 
         for c in $commits; do
@@ -134,7 +134,7 @@ let
   gitHooksDir = "${config.home.homeDirectory}/.git-hooks";
 in
 {
-  options.rhencloud.git = {
+  options.rhen.git = {
     enable = mkEnableOption "git, SSH, and GPG";
     sshHostBlocks = mkOption {
       type = types.bool;
@@ -160,9 +160,9 @@ in
           init.defaultBranch = "main";
           push.autoSetupRemote = true;
           user = {
-            name = config.my.user.fullName;
-            email = config.my.user.email;
-            signingKey = config.my.user.signingKey;
+            name = config.rhen.user.fullName;
+            email = config.rhen.user.email;
+            signingKey = config.rhen.user.signingKey;
           };
         };
       };

@@ -7,10 +7,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.games;
+  cfg = config.rhen.games;
 in
 {
-  options.rhencloud.games.enable = mkEnableOption "gaming support (AAGL)";
+  options.rhen.games.enable = mkEnableOption "gaming support (AAGL)";
 
   imports = [ inputs.aagl.nixosModules.default ];
 

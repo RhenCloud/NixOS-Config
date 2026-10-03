@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.sound;
+  cfg = config.rhen.sound;
 in
 {
-  options.rhencloud.sound.enable = mkEnableOption "sound (PipeWire)";
+  options.rhen.sound.enable = mkEnableOption "sound (PipeWire)";
 
   config = mkIf cfg.enable {
     services = {

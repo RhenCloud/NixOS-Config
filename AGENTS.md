@@ -114,14 +114,14 @@ flake-schemas = {
 - `home.nix`：仅 Home Manager。
 - `mod.nix` 和其他普通 `.nix` 文件不会自动加载，必须由 magic 文件显式 import。
 - 模块目录可通过 `meta.nix` 声明 `requires`、`after`、`before`、`wants`、`conflicts`；只有存在明确依赖时才添加。
-- 角色聚合器的 `meta.nix` 应 `requires` 它实际设置选项的模块；读取 `config.my.*` 的模块应依赖 `_common.options`，避免主机覆盖禁用后出现延迟的 option 缺失。
+- 角色聚合器的 `meta.nix` 应 `requires` 它实际设置选项的模块；读取 `config.rhen.*` 的模块应依赖 `_common.options`，避免主机覆盖禁用后出现延迟的 option 缺失。
 
 角色规则：
 
 - `modules/_common/` 始终注入。
 - `modules/<role>/` 的 `nixos.nix` / `home.nix` 只注入 `meta.nix` 中匹配该角色的主机和 home。
 - `modules/**/options.nix` 与 `modules/**/default.nix` 始终注入。
-- 角色能力仍由 `rhencloud.roles.<role>.enable` 聚合启用。
+- 角色能力仍由 `rhen.roles.<role>.enable` 聚合启用。
 
 ## 当前主机和用户
 
@@ -164,7 +164,7 @@ modules/desktop/externals/nixos.nix
 `modules/dev/` 的组织规则：
 
 - 根目录只保留 `options.nix`、`home.nix` 和依赖图 `meta.nix`。
-- `options.nix` 声明 `rhencloud.roles.dev.enable`。
+- `options.nix` 声明 `rhen.roles.dev.enable`。
 - `home.nix` 只在 role 启用时聚合各开发能力，不直接 import 实现文件。
 - 每项能力放在独立子目录，通过 `options.nix` / `home.nix` magic 文件自动发现。
 - `lucy/mod.nix` 作为当前禁用的非 magic 实现保留，不会被框架自动发现。
@@ -249,10 +249,10 @@ nix eval "path:$PWD#nixosConfigurations.nixos-desktop.config.system.build.toplev
 
 ### 新增角色
 
-1. 创建 `modules/<role>/options.nix`，定义 `rhencloud.roles.<role>.enable`。
+1. 创建 `modules/<role>/options.nix`，定义 `rhen.roles.<role>.enable`。
 2. 按目标创建 `modules/<role>/nixos.nix` 或 `modules/<role>/home.nix`，聚合角色能力。
 3. 在主机的 `meta.nix` 中加入 `roles = [ "<role>" ];`。
-4. 在对应的 NixOS 主机或 Home Manager 入口中启用 `rhencloud.roles.<role>.enable = true;`。
+4. 在对应的 NixOS 主机或 Home Manager 入口中启用 `rhen.roles.<role>.enable = true;`。
 
 ### 新增主机
 

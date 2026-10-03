@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.xdg;
+  cfg = config.rhen.xdg;
 in
 {
-  options.rhencloud.xdg.enable = mkEnableOption "XDG portals configuration";
+  options.rhen.xdg.enable = mkEnableOption "XDG portals configuration";
 
   config = mkIf cfg.enable {
     xdg = {

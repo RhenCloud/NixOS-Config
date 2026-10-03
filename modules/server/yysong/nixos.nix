@@ -7,10 +7,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.yysong;
+  cfg = config.rhen.services.yysong;
 in
 {
-  options.rhencloud.services.yysong = {
+  options.rhen.services.yysong = {
     enable = mkEnableOption "杨一之声在线点歌系统";
     port = mkOption {
       type = types.port;

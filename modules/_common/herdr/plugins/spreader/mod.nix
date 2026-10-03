@@ -5,7 +5,7 @@
 }:
 
 {
-  rhencloud.herdrPlugins.spreader = {
+  rhen.herdrPlugins.spreader = {
     id = "herdr-spreader";
     package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-spreader;
   };

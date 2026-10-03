@@ -5,7 +5,7 @@
 }:
 
 let
-  plugins = lib.attrValues config.rhencloud.herdrPlugins;
+  plugins = lib.attrValues config.rhen.herdrPlugins;
 in
 
 {

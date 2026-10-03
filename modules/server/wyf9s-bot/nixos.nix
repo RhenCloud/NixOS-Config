@@ -6,13 +6,13 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.wyf9s-bot;
+  cfg = config.rhen.services.wyf9s-bot;
   # 相对路径：只把单个文件进 store，避免 inputs.self 整仓复制导致
   # "store path was hashed … contents have changed" 评估失败
   configFile = ./config.yaml;
 in
 {
-  options.rhencloud.services.wyf9s-bot = {
+  options.rhen.services.wyf9s-bot = {
     enable = mkEnableOption "wyf9s Discord 多功能机器人";
 
     image = mkOption {

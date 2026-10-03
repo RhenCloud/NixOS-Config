@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.hmOpenAgent.enable = lib.mkEnableOption "opencode agent config";
+  options.rhen.hmOpenAgent.enable = lib.mkEnableOption "opencode agent config";
 }

@@ -16,6 +16,9 @@
     "networkmanager"
     "docker"
     "podman"
+    "video"
+    "audio"
+    "input"
+    "kvm"
   ];
-
 }

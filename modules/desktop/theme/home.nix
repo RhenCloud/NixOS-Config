@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.theme;
+  cfg = config.rhen.theme;
 
   # Dracula 统一主题：
   #   GTK  -> dracula-theme (share/themes/Dracula, Ant 系变体)
@@ -98,7 +98,7 @@ let
   };
 in
 {
-  options.rhencloud.theme.enable = mkEnableOption "desktop theme (GTK/Qt)";
+  options.rhen.theme.enable = mkEnableOption "desktop theme (GTK/Qt)";
 
   config = mkIf cfg.enable {
     home = {

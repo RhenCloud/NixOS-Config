@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.nemo;
+  cfg = config.rhen.nemo;
 in
 {
-  options.rhencloud.nemo = {
+  options.rhen.nemo = {
     enable = mkEnableOption "Nemo file manager";
   };
 

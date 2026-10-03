@@ -8,7 +8,7 @@
 
   # 共享的模块启用配置
   # 不同主机可在各自的 nixos-desktop.nix 等文件中覆盖或补充
-  rhencloud = {
+  rhen = {
     # 所有主机都启用的基础模块
     git.enable = true;
     fish.enable = true;

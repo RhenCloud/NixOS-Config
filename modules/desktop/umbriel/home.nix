@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hm-umbriel;
+  cfg = config.rhen.hm-umbriel;
 in
 {
-  options.rhencloud.hm-umbriel.enable = mkEnableOption "Umbriel (Home Manager)";
+  options.rhen.hm-umbriel.enable = mkEnableOption "Umbriel (Home Manager)";
 
   config = mkIf cfg.enable {
     programs.umbriel = {

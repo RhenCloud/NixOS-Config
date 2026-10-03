@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hmPolkit;
+  cfg = config.rhen.hmPolkit;
 in
 {
-  options.rhencloud.hmPolkit.enable = mkEnableOption "Hyprland Polkit agent";
+  options.rhen.hmPolkit.enable = mkEnableOption "Hyprland Polkit agent";
   config = mkIf cfg.enable {
     systemd.user.services.hyprpolkitagent = {
       Unit = {

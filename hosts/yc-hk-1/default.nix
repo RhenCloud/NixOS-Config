@@ -13,24 +13,24 @@ in
   # 框架会自动导入 disk.nix（包含 disko 模块和配置）
   imports = [
     ({ config, ... }: {
-      services.openssh.ports = [ config.rhencloud.server.ssh.port ];
+      services.openssh.ports = [ config.rhen.server.ssh.port ];
     })
   ];
 
   networking.hostName = hostName;
-  my.host.name = hostName;
-  my.homeManager.enable = false;
+  rhen.host.name = hostName;
+  rhen.homeManager.enable = false;
 
   nixpkgs.hostPlatform = "x86_64-linux";
 
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
-  rhencloud.server.install = {
+  rhen.server.install = {
     enable = true;
     disk = "/dev/sda";
   };
 
-  rhencloud.server.ssh.port = 22222;
+  rhen.server.ssh.port = 22222;
 
   zramSwap.enable = true;
 
@@ -96,7 +96,7 @@ in
     requires = [ "sops-install-secrets.service" ];
   };
 
-  rhencloud.services = {
+  rhen.services = {
     mihomo = {
       enable = false;
     };
@@ -132,24 +132,6 @@ in
     "sd_mod"
   ];
 
-  networking = {
-    useNetworkd = true;
-    firewall.enable = false;
-  };
-
-  systemd.network.wait-online.enable = false;
-
-  systemd.network.networks."50-eth" = {
-    matchConfig.MACAddress = "bc:24:11:50:dd:92";
-    address = [ "207.57.127.54/24" ];
-    gateway = [ "207.57.127.254" ];
-    dns = [
-      "172.16.36.100"
-      "172.16.36.101"
-    ];
-    networkConfig.DHCP = "no";
-  };
-
   environment.systemPackages = with pkgs; [
     python3
     uv
@@ -171,7 +153,7 @@ in
 
   virtualisation.podman.dockerCompat = true;
 
-  rhencloud.services.postgresql = {
+  rhen.services.postgresql = {
     databases = [
       {
         name = "nextbridge";
@@ -191,24 +173,6 @@ in
       # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+/7cpkWShU8aEDBq2StSJRSeVbFvj8BSEP85HEEtYZ i@rhen.cloud"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPuthZJ1ELm9QFDDUWBfzdfRZk5JE9iHOLWjU+QQTQbE cardno:FFFE_E046F201"
     ];
-    wyf9 = {
-      isNormalUser = true;
-      group = "wyf9";
-      shell = pkgs.bash;
-      extraGroups = [ "wheel" ];
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFIma5iDdPnEdjYbj7epS/ogQaJmWAvWm8jnXgvU10x wyf9@wyf9Desktop"
-      ];
-    };
-    advan10 = {
-      isNormalUser = true;
-      group = "advan10";
-      shell = pkgs.bash;
-      extraGroups = [ "wheel" ];
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPr3U8DY69/23U+j7Y8/BdPJsGBdgufymLzZEER0/2AA advan10@siiway.org"
-      ];
-    };
     root = {
       initialPassword = "nixos";
       openssh.authorizedKeys.keys = [
@@ -216,10 +180,5 @@ in
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPuthZJ1ELm9QFDDUWBfzdfRZk5JE9iHOLWjU+QQTQbE cardno:FFFE_E046F201"
       ];
     };
-  };
-
-  users.groups = {
-    wyf9 = { };
-    advan10 = { };
   };
 }

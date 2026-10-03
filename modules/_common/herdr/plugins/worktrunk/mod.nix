@@ -18,7 +18,7 @@ let
   ];
 in
 {
-  rhencloud.herdrPlugins.worktrunk = {
+  rhen.herdrPlugins.worktrunk = {
     id = "worktrunk";
     package = pkg;
   };

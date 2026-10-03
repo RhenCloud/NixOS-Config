@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.gost;
+  cfg = config.rhen.services.gost;
 in
 {
-  options.rhencloud.services.gost = {
+  options.rhen.services.gost = {
     enable = mkEnableOption "gost 隧道转发";
   };
 

@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.frp;
+  cfg = config.rhen.services.frp;
 in
 {
-  options.rhencloud.services.frp = {
+  options.rhen.services.frp = {
     enable = mkEnableOption "frp 服务端";
   };
 

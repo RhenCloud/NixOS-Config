@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.packages;
+  cfg = config.rhen.packages;
 in
 {
-  options.rhencloud.packages.enable = mkEnableOption "system packages";
+  options.rhen.packages.enable = mkEnableOption "system packages";
 
   config = mkIf cfg.enable {
     programs.nix-ld.enable = true;

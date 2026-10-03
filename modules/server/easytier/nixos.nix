@@ -7,10 +7,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.easytier;
+  cfg = config.rhen.services.easytier;
 in
 {
-  options.rhencloud.services.easytier = {
+  options.rhen.services.easytier = {
     enable = mkEnableOption "EasyTier 全局 VPN 网络";
   };
 

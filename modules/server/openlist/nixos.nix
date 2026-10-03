@@ -5,10 +5,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.openlist;
+  cfg = config.rhen.services.openlist;
 in
 {
-  options.rhencloud.services.openlist = {
+  options.rhen.services.openlist = {
     enable = mkEnableOption "OpenList 文件列表程序";
 
     image = mkOption {

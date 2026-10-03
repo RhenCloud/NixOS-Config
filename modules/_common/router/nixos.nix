@@ -7,10 +7,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.router;
+  cfg = config.rhen.router;
 in
 {
-  options.rhencloud.router.enable = mkEnableOption "soft router (bridge, hostapd, dhcpd, NAT)";
+  options.rhen.router.enable = mkEnableOption "soft router (bridge, hostapd, dhcpd, NAT)";
 
   config = mkIf cfg.enable {
     sops.secrets."frp-auth-token" = snowveil.sops.secret {

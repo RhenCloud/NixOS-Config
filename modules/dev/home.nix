@@ -1,7 +1,7 @@
 { lib, ... }:
 {
   config = {
-    rhencloud = {
+    rhen = {
       c.enable = true;
       android.enable = true;
       golang.enable = true;

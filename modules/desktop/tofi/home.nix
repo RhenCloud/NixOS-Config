@@ -1,10 +1,10 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rhencloud.tofi;
+  cfg = config.rhen.tofi;
 in
 {
-  options.rhencloud.tofi.enable = mkEnableOption "Tofi launcher";
+  options.rhen.tofi.enable = mkEnableOption "Tofi launcher";
   config = mkIf cfg.enable {
     xdg.configFile = {
       "tofi/config" = {

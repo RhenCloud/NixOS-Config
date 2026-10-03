@@ -1,10 +1,10 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rhencloud.clipse;
+  cfg = config.rhen.clipse;
 in
 {
-  options.rhencloud.clipse.enable = mkEnableOption "Clipse clipboard manager";
+  options.rhen.clipse.enable = mkEnableOption "Clipse clipboard manager";
   config = mkIf cfg.enable {
     services.clipse = {
       enable = true;

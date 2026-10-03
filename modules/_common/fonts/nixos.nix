@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.fonts;
+  cfg = config.rhen.fonts;
 in
 {
-  options.rhencloud.fonts.enable = mkEnableOption "fonts configuration";
+  options.rhen.fonts.enable = mkEnableOption "fonts configuration";
 
   config = mkIf cfg.enable {
     fonts = {

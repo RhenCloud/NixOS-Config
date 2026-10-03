@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hmBasePackages;
+  cfg = config.rhen.hmBasePackages;
 
   # emote 退出时 GDK 写剪贴板会触发断管道警告，压制无影响的 stderr
   emote-wrapped = pkgs.writeShellApplication {
@@ -17,7 +17,7 @@ let
   };
 in
 {
-  options.rhencloud.hmBasePackages.enable = mkEnableOption "base desktop packages";
+  options.rhen.hmBasePackages.enable = mkEnableOption "base desktop packages";
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       awww

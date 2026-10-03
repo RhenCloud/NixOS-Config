@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.sleepy;
+  cfg = config.rhen.services.sleepy;
 in
 {
-  options.rhencloud.services.sleepy = {
+  options.rhen.services.sleepy = {
     enable = mkEnableOption "Sleepy 个人主页/状态页";
 
     image = mkOption {

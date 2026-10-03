@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.musicfox;
+  cfg = config.rhen.musicfox;
 in
 {
-  options.rhencloud.musicfox.enable = mkEnableOption "Go Musicfox music player";
+  options.rhen.musicfox.enable = mkEnableOption "Go Musicfox music player";
   config = mkIf cfg.enable {
     xdg.configFile = {
       "go-musicfox/config.toml" = {

@@ -7,7 +7,20 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.pi;
+  cfg = config.rhen.pi;
+
+  # 各 provider 对应的推荐默认模型
+  providerDefaultModels = {
+    "voidswitch" = "deepseek-v4-flash-0731";
+    "chibang-claude" = "claude-opus-5-5";
+    "chibang-codex" = "gpt-5.6-terra";
+  };
+
+  effectiveDefaultModel =
+    if cfg.defaultModel != null then
+      cfg.defaultModel
+    else
+      providerDefaultModels.${cfg.defaultProvider} or "ds-7031";
 in
 {
   config = mkIf cfg.enable {
@@ -37,9 +50,10 @@ in
               "baseUrl": "https://voidswitch.siiway.org/v1",
               "api": "openai-completions",
               "apiKey": "${config.sops.placeholder."opencode-voidswitch-api-key"}",
-              "headers": { "User-Agent": "pi/0.84.2" },
+              "headers": { "User-Agent": "pi/${pkgs.pi-coding-agent.version}" },
               "models": [
                 { "id": "deepseek-v4-pro", "name": "DeepSeek V4 Pro", "reasoning": true },
+                { "id": "deepseek-v4-flash-0731", "name": "DeepSeek V4 Flash 0731", "reasoning": true },
                 { "id": "qwen-3.8-max", "name": "Qwen 3.8 Max", "reasoning": true },
                 { "id": "deepseek-v4-flash", "name": "DeepSeek V4 Flash", "reasoning": true },
                 { "id": "cc/claude-opus-4-7", "name": "Claude Opus 4.7", "reasoning": true },
@@ -79,14 +93,51 @@ in
               "api": "anthropic-messages",
               "apiKey": "${config.sops.placeholder."chibang-claude-api-key"}",
               "models": [
-                { "id": "claude-opus-4-8", "name": "Claude Opus 4.8", "reasoning": true },
-                { "id": "claude-opus-4-7", "name": "Claude Opus 4.7", "reasoning": true },
-                { "id": "claude-opus-4-6", "name": "Claude Opus 4.6", "reasoning": true },
-                { "id": "claude-opus-5-5", "name": "Claude Opus 5.5", "reasoning": true },
-                { "id": "claude-sonnet-5", "name": "Claude Sonnet 5", "reasoning": true },
-                { "id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6" },
-                { "id": "claude-sonnet-4-5-20250929", "name": "Claude Sonnet 4.5" },
-                { "id": "claude-haiku-4-5-20251001", "name": "Claude Haiku 4.5" }
+                {
+                  "id": "claude-opus-4-8",
+                  "name": "Claude Opus 4.8",
+                  "reasoning": true,
+                  "promptCache": { "short": 300, "long": 3600 }
+                },
+                {
+                  "id": "claude-opus-4-7",
+                  "name": "Claude Opus 4.7",
+                  "reasoning": true,
+                  "promptCache": { "short": 300, "long": 3600 }
+                },
+                {
+                  "id": "claude-opus-4-6",
+                  "name": "Claude Opus 4.6",
+                  "reasoning": true,
+                  "promptCache": { "short": 300, "long": 3600 }
+                },
+                {
+                  "id": "claude-opus-5-5",
+                  "name": "Claude Opus 5.5",
+                  "reasoning": true,
+                  "promptCache": { "short": 300, "long": 3600 }
+                },
+                {
+                  "id": "claude-sonnet-5",
+                  "name": "Claude Sonnet 5",
+                  "reasoning": true,
+                  "promptCache": { "short": 300, "long": 3600 }
+                },
+                {
+                  "id": "claude-sonnet-4-6",
+                  "name": "Claude Sonnet 4.6",
+                  "promptCache": { "short": 300, "long": 3600 }
+                },
+                {
+                  "id": "claude-sonnet-4-5-20250929",
+                  "name": "Claude Sonnet 4.5",
+                  "promptCache": { "short": 300, "long": 3600 }
+                },
+                {
+                  "id": "claude-haiku-4-5-20251001",
+                  "name": "Claude Haiku 4.5",
+                  "promptCache": { "short": 300, "long": 3600 }
+                }
               ]
             }
           }
@@ -155,6 +206,14 @@ in
         config.sops.templates."pi/mcp.json".path;
 
     home.file.".pi/agent/themes/dracula.json".source = ./themes/dracula.json;
+
+    home.file.".pi/agent/pi-btw.json".text = builtins.toJSON {
+      layout = "left-pane";
+      sidePaneRatio = 0.4;
+      thinkingLevel = "low";
+      rememberThinkingLevelChanges = true;
+      fullscreenCopyOnSelect = true;
+    };
 
     home.file.".pi/agent/permission-mode/permission-mode.json".text = builtins.toJSON {
       "$schema" =
@@ -250,8 +309,17 @@ in
 
     home.file.".pi/agent/settings.json".text = builtins.toJSON {
       defaultProvider = cfg.defaultProvider;
-      defaultModel = "deepseek-v4-pro";
+      defaultModel = effectiveDefaultModel;
       theme = cfg.theme;
+      enableInstallTelemetry = false;
+      enableAnalytics = false;
+      modelThinkingLevels = {
+        "voidswitch/deepseek-v4-flash" = "low";
+        "voidswitch/glm-4.7-flash-cf" = "low";
+        "voidswitch/cc/claude-haiku-4-5" = "low";
+        "chibang-codex/gpt-5.4-mini" = "low";
+        "chibang-claude/claude-haiku-4-5-20251001" = "low";
+      };
       packages = [
         "npm:pi-mcp-adapter"
         "npm:pi-subagents"
@@ -265,6 +333,9 @@ in
         "npm:@ogulcancelik/pi-herdr"
         "npm:@ff-labs/pi-fff"
         "git:github.com/tianrendong/pi-loadout"
+        "npm:pi-lens@^4.3.0"
+        "npm:@juicesharp/rpiv-ask-user-question@^2.12.0"
+        "npm:@narumitw/pi-btw@^0.61.1"
       ];
     };
 
@@ -278,10 +349,6 @@ in
           modelLabel = "id";
           viewportIndicators = true;
           styles = {
-            opencode = {
-              metadataFormat = "$model  $provider(  $thinking)";
-              completionMenu = "palette";
-            };
             opencode-copy-friendly = {
               metadataFormat = "$model  $provider(  $thinking)";
               completionMenu = "palette";
@@ -290,19 +357,6 @@ in
               rail = "▎";
               asciiRail = "|";
               transparent = false;
-            };
-            minimalist = {
-              pathDisplay = "compact";
-              contextFormat = "percent";
-              contextGauge = false;
-              showSessionName = true;
-              showTimer = true;
-              showCost = true;
-              showGit = true;
-              contextThresholds = {
-                warning = 70;
-                error = 90;
-              };
             };
           };
         };
@@ -366,10 +420,7 @@ in
           style = "framed-copy-friendly";
           colorSource = "theme";
           styles = {
-            framed = { };
             framed-copy-friendly = { };
-            compact = { };
-            labeled = { };
           };
         };
         thinkingSteps = {
@@ -419,7 +470,7 @@ in
           colorSource = "terminal";
         };
       };
-      icons.mode = "auto";
+      icons.mode = "nerd";
     };
   };
 }

@@ -1,10 +1,10 @@
 { lib, config, ... }:
 with lib;
 let
-  cfg = config.rhencloud.locale;
+  cfg = config.rhen.locale;
 in
 {
-  options.rhencloud.locale.enable = mkEnableOption "locale configuration";
+  options.rhen.locale.enable = mkEnableOption "locale configuration";
   config = mkIf cfg.enable {
     time.timeZone = "Asia/Shanghai";
     i18n.supportedLocales = [

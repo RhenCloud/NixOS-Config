@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.desktopPackages;
+  cfg = config.rhen.desktopPackages;
 
   kleopatra-wrapped = pkgs.symlinkJoin {
     name = "kleopatra-wrapped";
@@ -21,7 +21,7 @@ let
   };
 in
 {
-  options.rhencloud.desktopPackages.enable = mkEnableOption "desktop system packages";
+  options.rhen.desktopPackages.enable = mkEnableOption "desktop system packages";
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [

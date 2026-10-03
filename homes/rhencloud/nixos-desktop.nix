@@ -7,9 +7,9 @@
 {
   # 此配置生成 homeConfigurations."rhencloud@nixos-desktop"
   # 继承 homes/rhencloud/default.nix 的基础配置
-  my.isDesktop = true;
+  rhen.isDesktop = true;
 
-  rhencloud = {
+  rhen = {
     roles.dev.enable = true;
 
     fcitx5 = {

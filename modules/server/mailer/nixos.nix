@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.mailer;
+  cfg = config.rhen.services.mailer;
 in
 {
-  options.rhencloud.services.mailer = {
+  options.rhen.services.mailer = {
     enable = mkEnableOption "Mailer 邮件监控通知服务";
 
     image = mkOption {

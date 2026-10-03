@@ -1,11 +1,11 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rhencloud.easytier;
+  cfg = config.rhen.easytier;
   etUser = "easytier";
 in
 {
-  options.rhencloud.easytier.enable = mkEnableOption "EasyTier VPN";
+  options.rhen.easytier.enable = mkEnableOption "EasyTier VPN";
 
   config = mkIf cfg.enable {
     users.users.${etUser} = {

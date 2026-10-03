@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.pds;
+  cfg = config.rhen.services.pds;
 in
 {
-  options.rhencloud.services.pds = {
+  options.rhen.services.pds = {
     enable = mkEnableOption "Bluesky PDS 个人数据服务器";
 
     role = mkOption {

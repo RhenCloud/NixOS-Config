@@ -3,10 +3,11 @@
   inputs,
   lib,
   pkgs,
+  snowveil,
   ...
 }:
 let
-  cfg = config.rhencloud.services.mihomo;
+  cfg = config.rhen.services.mihomo;
   package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.mihomo-meta;
   overrideFile = pkgs.writeText "mihomo-ebpf-override.yaml" (builtins.readFile ./override.yaml);
   mergeScript = pkgs.writeShellScript "mihomo-merge" ''
@@ -16,14 +17,14 @@ let
   '';
 in
 {
-  options.rhencloud.services.mihomo = {
+  options.rhen.services.mihomo = {
     enable = lib.mkEnableOption "mihomo proxy";
     ebpf = lib.mkEnableOption "mihomo eBPF local 入站与 CN-IP 内核绕过";
   };
 
   config = lib.mkIf cfg.enable {
     sops.secrets."mihomo-config" = {
-      sopsFile = ../../../secrets/mihomo.yaml;
+      sopsFile = snowveil.projectSource + "/secrets/mihomo.yaml";
       key = "";
       owner = "root";
       mode = "0400";

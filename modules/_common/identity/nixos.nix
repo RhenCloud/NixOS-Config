@@ -7,35 +7,26 @@
 }:
 with lib;
 let
-  user = config.my.user.name;
-  cfg = config.rhencloud.identity;
+  user = config.rhen.user.name;
+  cfg = config.rhen.identity;
 in
 {
-  options.rhencloud.identity.enable = mkEnableOption "user identity configuration";
+  options.rhen.identity.enable = mkEnableOption "user identity configuration";
 
   config = mkIf cfg.enable {
     _module.args.primaryUser = user;
 
-    sops.secrets."password-hash" = snowveil.sops.secret { source = "common"; } // {
-      neededForUsers = true;
-    };
+    sops.secrets."password-hash" = mkDefault (
+      snowveil.sops.secret { source = "common"; }
+      // {
+        neededForUsers = true;
+      }
+    );
 
     users.users.${user} = {
-      isNormalUser = true;
-      group = user;
-      hashedPasswordFile = config.sops.secrets."password-hash".path;
-      shell = pkgs.bash;
-      extraGroups = [
-        "networkmanager"
-        "video"
-        "audio"
-        "input"
-        "kvm"
-        "wheel"
-      ];
+      hashedPasswordFile = mkDefault config.sops.secrets."password-hash".path;
+      shell = mkDefault pkgs.bash;
     };
-
-    users.groups.${user} = { };
 
     security.sudo = {
       enable = true;

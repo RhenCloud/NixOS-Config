@@ -85,7 +85,7 @@ let
   };
 in
 with lib;
-mkIf config.rhencloud.nixvim.enable {
+mkIf config.rhen.nixvim.enable {
   programs.nixvim = {
     extraPlugins = [ rime-nvim ];
     extraConfigLua = ''

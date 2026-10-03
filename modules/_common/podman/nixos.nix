@@ -7,10 +7,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.podman;
+  cfg = config.rhen.podman;
 in
 {
-  options.rhencloud.podman.enable = mkEnableOption "Podman (rootless)";
+  options.rhen.podman.enable = mkEnableOption "Podman (rootless)";
 
   config = mkIf cfg.enable {
     virtualisation.podman = {

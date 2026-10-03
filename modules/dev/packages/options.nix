@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.hmDevPackages.enable = lib.mkEnableOption "development packages";
+  options.rhen.hmDevPackages.enable = lib.mkEnableOption "development packages";
 }

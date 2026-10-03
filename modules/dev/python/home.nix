@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.python;
+  cfg = config.rhen.python;
 in
 {
   config = mkIf cfg.enable {

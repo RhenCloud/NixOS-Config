@@ -1,10 +1,10 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rhencloud.hm-mango;
+  cfg = config.rhen.hm-mango;
 in
 {
-  options.rhencloud.hm-mango.enable = mkEnableOption "Mango WM (HM)";
+  options.rhen.hm-mango.enable = mkEnableOption "Mango WM (HM)";
 
   config = mkIf cfg.enable {
     wayland.windowManager.mango = {

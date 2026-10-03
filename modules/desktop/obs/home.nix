@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.obsStudio;
+  cfg = config.rhen.obsStudio;
 in
 {
-  options.rhencloud.obsStudio.enable = mkEnableOption "OBS Studio";
+  options.rhen.obsStudio.enable = mkEnableOption "OBS Studio";
   config = mkIf cfg.enable {
     programs.obs-studio = {
       enable = true;

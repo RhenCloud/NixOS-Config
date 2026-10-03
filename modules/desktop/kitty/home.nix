@@ -1,10 +1,10 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rhencloud.kitty;
+  cfg = config.rhen.kitty;
 in
 {
-  options.rhencloud.kitty.enable = mkEnableOption "Kitty terminal";
+  options.rhen.kitty.enable = mkEnableOption "Kitty terminal";
 
   config = mkIf cfg.enable {
     programs.kitty = {

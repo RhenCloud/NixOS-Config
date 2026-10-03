@@ -8,7 +8,7 @@ let
   pkg = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-sidebar;
 in
 {
-  rhencloud.herdrPlugins.herdr-sidebar = {
+  rhen.herdrPlugins.herdr-sidebar = {
     id = "herdr-sidebar";
     package = pkg;
   };

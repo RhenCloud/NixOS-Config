@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.nixvim.enable = lib.mkEnableOption "Neovim (nixvim)";
+  options.rhen.nixvim.enable = lib.mkEnableOption "Neovim (nixvim)";
 }

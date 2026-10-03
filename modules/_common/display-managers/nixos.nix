@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.displayManagers;
+  cfg = config.rhen.displayManagers;
 
   sddm-astronaut = pkgs.sddm-astronaut.override {
     embeddedTheme = "astronaut";
@@ -64,7 +64,7 @@ let
   };
 in
 {
-  options.rhencloud.displayManagers.enable = mkEnableOption "display manager";
+  options.rhen.displayManagers.enable = mkEnableOption "display manager";
 
   config = mkIf cfg.enable {
     services.xserver.enable = true;

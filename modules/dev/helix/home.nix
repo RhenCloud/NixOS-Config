@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.helix;
+  cfg = config.rhen.helix;
 in
 {
 

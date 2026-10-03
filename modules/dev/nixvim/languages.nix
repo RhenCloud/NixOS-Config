@@ -5,7 +5,7 @@
   ...
 }:
 with lib;
-mkIf config.rhencloud.nixvim.enable {
+mkIf config.rhen.nixvim.enable {
   programs.nixvim = {
     extraConfigLuaPre = ''
       if vim.fn.has("nvim-0.11") == 1 then

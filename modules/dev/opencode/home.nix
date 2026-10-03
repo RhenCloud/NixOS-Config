@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hmOpenAgent;
+  cfg = config.rhen.hmOpenAgent;
 in
 {
   config = mkIf cfg.enable {

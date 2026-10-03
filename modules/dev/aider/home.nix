@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.aider;
+  cfg = config.rhen.aider;
   envFile = config.sops.templates."aider.env".path;
 in
 {

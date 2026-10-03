@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.qemu;
+  cfg = config.rhen.qemu;
 in
 {
-  options.rhencloud.qemu.enable = mkEnableOption "QEMU virtualization";
+  options.rhen.qemu.enable = mkEnableOption "QEMU virtualization";
 
   config = mkIf cfg.enable {
     environment = {

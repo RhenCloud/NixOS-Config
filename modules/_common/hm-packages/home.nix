@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hm-packages;
+  cfg = config.rhen.hm-packages;
 in
 {
-  options.rhencloud.hm-packages.enable = mkEnableOption "home packages";
+  options.rhen.hm-packages.enable = mkEnableOption "home packages";
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [

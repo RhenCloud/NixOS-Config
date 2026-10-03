@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.gnome;
+  cfg = config.rhen.gnome;
   extensions = with pkgs.gnomeExtensions; [
     appindicator
     blur-my-shell
@@ -29,7 +29,7 @@ let
   ];
 in
 {
-  options.rhencloud.gnome.enable = mkEnableOption "GNOME 桌面环境";
+  options.rhen.gnome.enable = mkEnableOption "GNOME 桌面环境";
 
   config = mkIf cfg.enable {
     services.desktopManager.gnome.enable = true;

@@ -3,17 +3,18 @@
   lib,
   pkgs,
   inputs,
+  snowveil,
   ...
 }:
 with lib;
 let
-  cfg = config.rhencloud.chat;
+  cfg = config.rhen.chat;
 
   qqPackage = pkgs.qq;
   liteLoaderQQNT = pkgs.applyPatches {
     name = "LiteLoaderQQNT-directpath";
     src = inputs.liteloaderqqnt;
-    patches = [ ../../../patches/liteloaderqqnt/dirent-path.patch ];
+    patches = [ (snowveil.patches.local ../../../patches/liteloaderqqnt/dirent-path.patch) ];
   };
 
   effectiveQqPackage = if cfg.enableLiteLoaderQQNT then qqWithLiteLoaderPackage else qqPackage;
@@ -59,8 +60,8 @@ let
   };
 in
 {
-  options.rhencloud.chat.enable = mkEnableOption "chat apps (QQ, WeChat, Discord)";
-  options.rhencloud.chat.enableLiteLoaderQQNT = mkOption {
+  options.rhen.chat.enable = mkEnableOption "chat apps (QQ, WeChat, Discord)";
+  options.rhen.chat.enableLiteLoaderQQNT = mkOption {
     type = types.bool;
     default = false;
     description = "启用 LiteLoaderQQNT 插件注入（默认禁用）";

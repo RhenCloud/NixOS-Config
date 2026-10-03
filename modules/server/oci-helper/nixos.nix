@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.oci-helper;
+  cfg = config.rhen.services.oci-helper;
 in
 {
-  options.rhencloud.services.oci-helper = {
+  options.rhen.services.oci-helper = {
     enable = mkEnableOption "oci-helper 甲骨文云管理面板";
     port = mkOption {
       type = types.port;
@@ -107,7 +107,7 @@ in
       # mihomo 启用时走本地代理；始终限制 JVM 堆避免吃满小内存
       environment = {
         JAVA_TOOL_OPTIONS =
-          optionalString config.rhencloud.services.mihomo.enable "-Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=7890 -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=7890 -Dhttp.nonProxyHosts=localhost|127.0.0.1"
+          optionalString config.rhen.services.mihomo.enable "-Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=7890 -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=7890 -Dhttp.nonProxyHosts=localhost|127.0.0.1"
           + " -Xmx384m";
       };
 

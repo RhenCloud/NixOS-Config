@@ -7,10 +7,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.nix;
+  cfg = config.rhen.nix;
 in
 {
-  options.rhencloud.nix.enable = mkEnableOption "Nix daemon settings";
+  options.rhen.nix.enable = mkEnableOption "Nix daemon settings";
   # 本地 nixcache 代理：把 GHCR 上的 OCI 二进制缓存（CI 构建产物）暴露为本地 substituter，
   # 并自动注册 substituters 与公钥。
   imports = [ inputs.nixcache.nixosModules.default ];

@@ -6,11 +6,11 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.cloudflared;
+  cfg = config.rhen.cloudflared;
   tunnelId = "eb4440a4-a4a8-4c22-8595-060df067653b";
 in
 {
-  options.rhencloud.cloudflared.enable = mkEnableOption "Cloudflare Tunnel";
+  options.rhen.cloudflared.enable = mkEnableOption "Cloudflare Tunnel";
 
   config = mkIf cfg.enable {
     sops.secrets."cloudflared-yc-hk-1-credentials" =

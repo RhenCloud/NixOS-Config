@@ -5,7 +5,7 @@
 }:
 
 {
-  rhencloud.herdrPlugins.tab-rename = {
+  rhen.herdrPlugins.tab-rename = {
     id = "rhencloud.tab-rename";
     package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-tab-rename;
   };

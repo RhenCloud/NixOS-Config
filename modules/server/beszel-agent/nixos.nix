@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.services.beszel-agent;
+  cfg = config.rhen.services.beszel-agent;
 in
 {
-  options.rhencloud.services.beszel-agent = {
+  options.rhen.services.beszel-agent = {
     enable = mkEnableOption "Beszel Agent 监控客户端";
 
     image = mkOption {
@@ -38,7 +38,7 @@ in
 
     sopsHost = mkOption {
       type = types.str;
-      default = config.my.host.name;
+      default = config.rhen.host.name;
       description = "sops host secrets 文件对应的主机名";
     };
 

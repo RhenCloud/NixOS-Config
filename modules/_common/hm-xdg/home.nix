@@ -1,10 +1,10 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rhencloud.hm-xdg;
+  cfg = config.rhen.hm-xdg;
 in
 {
-  options.rhencloud.hm-xdg.enable = mkEnableOption "XDG user directories";
+  options.rhen.hm-xdg.enable = mkEnableOption "XDG user directories";
 
   config = mkIf cfg.enable {
     xdg.userDirs = {

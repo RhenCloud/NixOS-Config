@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.zen;
+  cfg = config.rhen.zen;
 
   extension = shortId: guid: {
     name = guid;
@@ -24,7 +24,7 @@ let
   ];
 in
 {
-  options.rhencloud.zen.enable = mkEnableOption "Zen browser";
+  options.rhen.zen.enable = mkEnableOption "Zen browser";
 
   config = mkIf cfg.enable {
     environment.systemPackages = [

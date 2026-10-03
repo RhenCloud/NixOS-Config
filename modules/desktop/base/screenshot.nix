@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.hmScreenshot;
+  cfg = config.rhen.hmScreenshot;
 in
 {
-  options.rhencloud.hmScreenshot.enable = mkEnableOption "screenshot tools";
+  options.rhen.hmScreenshot.enable = mkEnableOption "screenshot tools";
   config = mkIf cfg.enable {
     services.flameshot = {
       enable = true;

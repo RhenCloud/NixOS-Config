@@ -1,10 +1,10 @@
 { config, lib, ... }:
 with lib;
 let
-  cfg = config.rhencloud.fastfetch;
+  cfg = config.rhen.fastfetch;
 in
 {
-  options.rhencloud.fastfetch.enable = mkEnableOption "fastfetch";
+  options.rhen.fastfetch.enable = mkEnableOption "fastfetch";
 
   config = mkIf cfg.enable {
     # fastfetch 配置需可写：noctalia 的 fastfetch 模板会把取色后的 logo/display 合并写回该文件。

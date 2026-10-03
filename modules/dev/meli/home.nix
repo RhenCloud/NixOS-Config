@@ -7,7 +7,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.meli;
+  cfg = config.rhen.meli;
 
   accounts = [
     {

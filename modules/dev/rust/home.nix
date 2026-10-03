@@ -6,7 +6,7 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.rust;
+  cfg = config.rhen.rust;
 in
 {
   config = mkIf cfg.enable {

@@ -6,10 +6,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.foot;
+  cfg = config.rhen.foot;
 in
 {
-  options.rhencloud.foot.enable = mkEnableOption "Foot terminal";
+  options.rhen.foot.enable = mkEnableOption "Foot terminal";
   config = mkIf cfg.enable {
     programs.foot = {
       enable = true;

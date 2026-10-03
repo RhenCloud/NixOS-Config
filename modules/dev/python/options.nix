@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.python.enable = lib.mkEnableOption "Python development tools";
+  options.rhen.python.enable = lib.mkEnableOption "Python development tools";
 }

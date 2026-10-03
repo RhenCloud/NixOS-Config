@@ -11,7 +11,7 @@
     ./plugins/mod.nix
   ];
 
-  options.rhencloud.herdrPlugins = lib.mkOption {
+  options.rhen.herdrPlugins = lib.mkOption {
     type = lib.types.attrsOf (
       lib.types.submodule {
         options = {
@@ -30,21 +30,21 @@
     description = "Plugins register themselves here";
   };
 
-  options.rhencloud.herdr.enable = lib.mkEnableOption "Herdr terminal multiplexer";
+  options.rhen.herdr.enable = lib.mkEnableOption "Herdr terminal multiplexer";
 
-  config = lib.mkIf config.rhencloud.herdr.enable {
-    rhencloud.ttt.enable = lib.mkDefault true;
+  config = lib.mkIf config.rhen.herdr.enable {
+    rhen.ttt.enable = lib.mkDefault true;
 
     home.packages = [
       inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
-    ++ (map (p: p.package) (lib.attrValues config.rhencloud.herdrPlugins));
+    ++ (map (p: p.package) (lib.attrValues config.rhen.herdrPlugins));
 
     xdg.configFile = lib.listToAttrs (
       map (plugin: {
         name = "herdr/plugins/${plugin.id}/herdr-plugin.toml";
         value.source = "${plugin.package}/share/${plugin.id}/herdr-plugin.toml";
-      }) (lib.attrValues config.rhencloud.herdrPlugins)
+      }) (lib.attrValues config.rhen.herdrPlugins)
     );
   };
 }

@@ -5,7 +5,7 @@
   ...
 }:
 with lib;
-mkIf config.rhencloud.nixvim.enable {
+mkIf config.rhen.nixvim.enable {
 
   home.packages = with pkgs; [ neovide ];
 

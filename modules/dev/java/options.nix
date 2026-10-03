@@ -1,4 +1,4 @@
 { lib, ... }:
 {
-  options.rhencloud.java.enable = lib.mkEnableOption "Java development tools";
+  options.rhen.java.enable = lib.mkEnableOption "Java development tools";
 }

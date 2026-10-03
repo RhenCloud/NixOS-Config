@@ -7,10 +7,10 @@
 }:
 with lib;
 let
-  cfg = config.rhencloud.yazi;
+  cfg = config.rhen.yazi;
 in
 {
-  options.rhencloud.yazi = {
+  options.rhen.yazi = {
     enable = mkEnableOption "Yazi file manager";
   };
 
