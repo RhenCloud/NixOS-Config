@@ -13,7 +13,7 @@ in
 
     relayHost = mkOption {
       type = types.str;
-      default = "83.229.127.169";
+      default = "207.57.127.54";
       description = "Relay 服务器公网 IP 或域名";
     };
 

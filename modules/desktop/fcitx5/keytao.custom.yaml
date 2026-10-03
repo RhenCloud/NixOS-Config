@@ -11,9 +11,24 @@ patch:
 
   "engine/filters/+":
     - lua_filter@*reduce_emoji_filter
-  # "engine/processors/+":
-  #   - lua_processor@*select_character
-  #
+    - lua_filter@*promote_custom_phrase
+  "engine/processors":
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - lua_processor@topup_processor
+    - lua_processor@smart_2
+    - speller
+    - lua_processor@*add_phrase
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  "engine/translators/+":
+    - lua_translator@custom_phrase_live
+
+  custom_phrase:
+    initial_quality: 1000000
   ascii_composer:
     good_old_caps_lock: false
     switch_key:
@@ -25,7 +40,7 @@ patch:
 
   switches:
     - name: sbb_disable_full
-      reset: 1
+      reset: 0
       states: ["开₆₃₀全码", "关₆₃₀全码"]
 
   punctuator:

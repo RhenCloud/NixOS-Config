@@ -1,0 +1,29 @@
+--- a/internal/plugin/manager.go
++++ b/internal/plugin/manager.go
+@@ -68,14 +68,23 @@
+ 			continue
+ 		}
+ 		for _, entry := range entries {
+-			if !entry.IsDir() {
++			// entry.IsDir() is false for symlinked directories; accept
++			// symlinks that resolve to directories so plugin trees can be
++			// deployed read-only (e.g. Nix home-manager symlinks).
++			name := entry.Name()
++			if entry.Type()&os.ModeSymlink != 0 {
++				st, err := os.Stat(filepath.Join(pluginDir, name))
++				if err != nil || !st.IsDir() {
++					continue
++				}
++			} else if !entry.IsDir() {
+ 				continue
+ 			}
+ 
+-			dir := filepath.Join(pluginDir, entry.Name())
++			dir := filepath.Join(pluginDir, name)
+ 			manifest, err := LoadManifest(dir)
+ 			if err != nil {
+-				slog.Warn("skip plugin", "dir", entry.Name(), "error", err)
++				slog.Warn("skip plugin", "dir", name, "error", err)
+ 				continue
+ 			}
+ 

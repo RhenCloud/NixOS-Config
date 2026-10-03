@@ -15,7 +15,7 @@
 
       opencode.enable = true;
       hmOpenAgent.enable = true;
-      aider.enable = true;
+      aider.enable = false;
       pi.enable = true;
 
       emacs.enable = false;

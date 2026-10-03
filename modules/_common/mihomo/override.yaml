@@ -1,0 +1,25 @@
+log-level: warning
+sniffer:
+  override-destination: true
+tun:
+  enable: false
+listeners:
+  - name: ebpf-local
+    type: ebpf
+    mode: local
+    bypass-rule-set:
+      - CN-IP
+    local:
+      data-plane: cgroup
+      dns-mode: off
+      bypass-private-address: true
+      exclude-uid:
+        - 991
+rule-providers:
+  CN-IP:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    path: ./rule_provider/cn-ip.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/cn.mrs"

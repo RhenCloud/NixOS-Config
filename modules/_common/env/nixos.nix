@@ -14,7 +14,9 @@ in
       http_proxy = "http://127.0.0.1:7890";
       all_proxy = "http://127.0.0.1:7890";
 
-      QT_QPA_PLATFORMTHEME = "gtk3";
+      # 与 home 层 modules/desktop/theme 保持一致：
+      # qtct 平台主题（读 qt5ct/qt6ct 配置），样式交给 Kvantum（Dracula）
+      QT_QPA_PLATFORMTHEME = "qtct";
       QT_STYLE_OVERRIDE = "kvantum";
 
       NIXOS_OZONE_WL = "1";

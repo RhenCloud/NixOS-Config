@@ -1,0 +1,102 @@
+diff --git a/internal/markdown/markdown.go b/internal/markdown/markdown.go
+--- a/internal/markdown/markdown.go
++++ b/internal/markdown/markdown.go
+@@ -5,6 +5,7 @@ import (
+ 	"strings"
+ 
+ 	"github.com/eugenioenko/ttt/internal/highlight"
++	"github.com/eugenioenko/ttt/internal/textwidth"
+ 	"github.com/eugenioenko/ttt/internal/term"
+ 	"github.com/yuin/goldmark"
+ 	"github.com/yuin/goldmark/ast"
+@@ -55,16 +56,25 @@ func (l Line) Text() string {
+ }
+ 
+ func WrapLine(line Line, width int) []Line {
+ 	text := line.Text()
+-	if len([]rune(text)) <= width {
++	if textwidth.String(text) <= width {
+ 		return []Line{line}
+ 	}
+ 	styles := FlattenStyles(line)
+ 	runes := []rune(text)
+ 	var result []Line
+ 	for len(runes) > 0 {
+-		end := width
+-		if end > len(runes) {
+-			end = len(runes)
++		end := 0
++		columns := 0
++		for end < len(runes) {
++			charWidth := textwidth.Rune(runes[end])
++			if columns+charWidth > width {
++				break
++			}
++			columns += charWidth
++			end++
++		}
++		if end == 0 {
++			end = 1
+ 		}
+ 		if end < len(runes) {
+ 			bp := -1
+diff --git a/internal/widgets/markdown.go b/internal/widgets/markdown.go
+--- a/internal/widgets/markdown.go
++++ b/internal/widgets/markdown.go
+@@ -5,5 +5,6 @@ import (
+ 	"github.com/eugenioenko/ttt/internal/core/selection"
+ 	"github.com/eugenioenko/ttt/internal/markdown"
+ 	"github.com/eugenioenko/ttt/internal/term"
++	"github.com/eugenioenko/ttt/internal/textwidth"
+ 	"github.com/gdamore/tcell/v3"
+ )
+@@ -72,1 +73,1 @@ func (m *MarkdownWidget) ScrollSize() (int, int) {
+-		if lw := len([]rune(line.Text())); lw > contentW {
++		if lw := textwidth.String(line.Text()); lw > contentW {
+@@ -91,1 +92,1 @@ func (m *MarkdownWidget) rewrap(width int) {
+-		if !line.Kind.Wrappable() || len([]rune(line.Text())) <= width {
++		if !line.Kind.Wrappable() || textwidth.String(line.Text()) <= width {
+@@ -110,1 +111,1 @@ func (m *MarkdownWidget) ContentSize(width int) (maxLineW, lineCount int) {
+-		if w := len([]rune(line.Text())); w > maxLineW {
++		if w := textwidth.String(line.Text()); w > maxLineW {
+@@ -140,1 +141,2 @@ func (m *MarkdownWidget) Render(surface Surface) {
+-				if x >= w {
++				cw := textwidth.Rune(ch)
++				if x+cw > w {
+@@ -143,1 +145,5 @@ func (m *MarkdownWidget) Render(surface Surface) {
+-				if m.sel.Contains(y, x, m.selEnd.Line, m.selEnd.Col) {
++				selected := m.sel.Contains(y, x, m.selEnd.Line, m.selEnd.Col)
++				if cw > 1 && !selected {
++					selected = m.sel.Contains(y, x+1, m.selEnd.Line, m.selEnd.Col)
++				}
++				if selected {
+@@ -147,1 +153,1 @@ func (m *MarkdownWidget) Render(surface Surface) {
+-				x++
++				x += cw
+@@ -150,1 +156,5 @@ func (m *MarkdownWidget) Render(surface Surface) {
+ 		}
++		lineCols := 0
++		for _, ch := range line.Text() {
++			lineCols += textwidth.Rune(ch)
++		}
+ 		if m.sel.Active {
+@@ -152,1 +162,1 @@ func (m *MarkdownWidget) Render(surface Surface) {
+-			for pad := x; pad < w; pad++ {
++			for pad := lineCols; pad < w; pad++ {
+@@ -183,3 +193,12 @@ func (m *MarkdownWidget) mouseToContent(mx, my int) selection.Position {
+-		lineLen := len([]rune(m.wrapped[contentY].Text()))
+-		if contentX > lineLen {
+-			contentX = lineLen
++		runes := []rune(m.wrapped[contentY].Text())
++		visualCol := 0
++		for i, ch := range runes {
++			nextVisualCol := visualCol + textwidth.Rune(ch)
++			if contentX < nextVisualCol {
++				contentX = i
++				return selection.Position{Line: contentY, Col: contentX}
++			}
++			visualCol = nextVisualCol
++		}
++		if contentX > visualCol {
++			contentX = len(runes)
+ 		}

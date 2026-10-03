@@ -1,16 +1,20 @@
 onboarding = false
 
 [keys]
+# Alt+Space：fcitx5 与常用终端应用均不占用；prefix 键可自由组合
+prefix = "alt+space"
 previous_tab = "alt+h"
 next_tab = "alt+l"
 previous_workspace = "alt+k"
 next_workspace = "alt+j"
 previous_agent = "alt+i"
 next_agent = "alt+o"
-focus_pane_left = ["prefix+h", "ctrl+h"]
-focus_pane_down = ["prefix+j", "ctrl+j"]
-focus_pane_up = ["prefix+k", "ctrl+k"]
-focus_pane_right = ["prefix+l", "ctrl+l"]
+# 仅保留 prefix+h/j/k/l：不再直绑 ctrl+h/j/k/l，
+# 避免吞掉 TTT 的 ctrl+k chord 前缀与 shell 的 ctrl+l 清屏
+focus_pane_left = "prefix+h"
+focus_pane_down = "prefix+j"
+focus_pane_up = "prefix+k"
+focus_pane_right = "prefix+l"
 
 [[keys.command]]
 key = "prefix+p"
@@ -31,10 +35,12 @@ description = "herdr-plus: quick actions"
 # description = "herdr-sidebar"
 
 [[keys.command]]
-key = "ctrl+r"
+key = "prefix+r"
 type = "plugin_action"
 command = "persiyanov.reviewr.toggle"
 
+# kitty 默认 ctrl+shift+e = edit_in_kitty，已在 kitty 模块 no_op 掉，
+# 保证按键透传给 Herdr
 [[keys.command]]
 key = "prefix+shift+g"
 type = "plugin_action"
@@ -70,6 +76,14 @@ key = "prefix+shift+n"
 type = "plugin_action"
 command = "worktrunk.merge-no-squash"
 description = "Worktree: merge keeping every commit"
+
+# ctrl+shift+e 打开 TTT；kitty 模块已把 ctrl+shift+e 显式映射为 no_op，
+# 确保该键透传给 Herdr
+[[keys.command]]
+key = "ctrl+shift+e"
+type = "shell"
+command = "herdr plugin pane open --plugin ttt.editor --entrypoint editor"
+description = "打开 TTT 编辑器"
 
 [ui]
 show_agent_labels_on_pane_borders = true

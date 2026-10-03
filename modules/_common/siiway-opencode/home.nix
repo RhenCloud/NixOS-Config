@@ -75,6 +75,12 @@ let
         enabled = true;
         type = "local";
       };
+      idcjk = {
+        enabled = true;
+        type = "remote";
+        url = "https://api.idcjk.com/api/v1/mcp";
+        headers.Authorization = "Bearer ${config.sops.placeholder."idcjk-api-key"}";
+      };
     };
     plugin = [
       "${voidswitchPlugin}"
@@ -109,13 +115,15 @@ let
           "cc/claude-fable-5" = { };
           "codex/gpt-5.6-terra" = { };
           "glm-4.7-flash-cf" = { };
+          "murasame-vip/qwen3.8-flash" = { };
           "murasame-vip/gemini-3.8-flash-high" = { };
+          "oc-zen/mimo-v2.5-free" = { };
           # "glm-4.7" = { };
           # "glm-4.5-air" = { };
           # "grok-4.5" = { };
           # "grok-code-fast-1" = { };
-          "kimi-k2.5" = { };
-          "mimo-v2.5-pro" = { };
+          # "kimi-k2.5" = { };
+          # "mimo-v2.5-pro" = { };
           # "minimaxai/minimax-m3" = { };
           # "google/gemma-4-31b-it" = { };
           # "gpt-5.6-sol" = { };
@@ -388,6 +396,7 @@ in
         "opencode-voidswitch-api-key" = snowveil.sops.secret { source = "common"; };
         "chibang-codex-api-key" = snowveil.sops.secret { source = "common"; };
         "chibang-claude-api-key" = snowveil.sops.secret { source = "common"; };
+        "idcjk-api-key" = snowveil.sops.secret { source = "common"; };
       };
 
       sops.templates."opencode.json".content = builtins.toJSON opencodeConfig;

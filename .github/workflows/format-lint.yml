@@ -39,49 +39,19 @@ jobs:
           name: rhencloud
           skipPush: true
 
-      - name: nixfmt check
+      - name: Build flake checks
         run: |
           set -euo pipefail
-          nix shell nixpkgs#nixfmt-rfc-style -c bash -s <<'EOF'
-          set -euo pipefail
-          mapfile -t files < <(git ls-files '*.nix')
-          if [ ${#files[@]} -eq 0 ]; then
-            echo "没有 Nix 文件"
-            exit 0
-          fi
-          if ! nixfmt --check "${files[@]}"; then
-            echo
-            echo "::error::部分 .nix 未按 nixfmt-rfc-style 格式化。"
-            echo '本地修复: nix shell nixpkgs#nixfmt-rfc-style -c nixfmt $(git ls-files "*.nix")'
-            echo "或在 main 上触发 Format & Lint 的 Autofix（会直接提交）。"
-            exit 1
-          fi
-          EOF
-
-      - name: statix check
-        run: |
-          set -euo pipefail
-          nix shell nixpkgs#statix -c statix check .
-
-      - name: deadnix check
-        run: |
-          set -euo pipefail
-          nix shell nixpkgs#deadnix -c deadnix --fail -L .
-
-      - name: gitleaks detect
-        run: |
-          set -euo pipefail
-          nix shell nixpkgs#gitleaks -c gitleaks detect \
-            --source . \
-            --config .gitleaks.toml \
-            --no-banner \
-            --exit-code 1
+          nix run nixpkgs#nix-fast-build -- \
+            --flake '.#checks.x86_64-linux' \
+            --skip-cached \
+            --option allow-import-from-derivation true
 
       - name: nix flake check
         run: |
           set -euo pipefail
-          # 这里只做完整求值；静态检查已由上方独立步骤执行，系统闭包由
-          # Build workflow 构建，避免 PR 重复构建大型桌面依赖。
+          # 静态检查由 nix-fast-build 并行构建；这里保留所有输出的完整求值。
+          # 系统闭包由 Build workflow 构建，避免 PR 重复构建大型桌面依赖。
           nix flake check --all-systems --no-build \
             --option allow-import-from-derivation true
 

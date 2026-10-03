@@ -22,6 +22,64 @@ mkIf config.rhencloud.nixvim.enable {
 
     plugins.lsp = {
       enable = true;
+      servers = {
+        lua_ls = {
+          enable = true;
+          package = pkgs.lua-language-server;
+          settings.Lua = {
+            diagnostics.globals = [ "vim" ];
+            workspace.checkThirdParty = false;
+            telemetry.enable = false;
+          };
+        };
+        nixd = {
+          enable = true;
+          package = pkgs.nixd;
+          settings.formatting.command = [ (lib.getExe pkgs.nixfmt) ];
+        };
+        bashls = {
+          enable = true;
+          package = pkgs.bash-language-server;
+        };
+        pyright = {
+          enable = true;
+          package = pkgs.pyright;
+          # lint/格式由 ruff + conform 负责，pyright 只做补全与跳转
+          settings.python.analysis = {
+            typeCheckingMode = "off";
+            diagnosticMode = "openFilesOnly";
+          };
+        };
+        ts_ls = {
+          enable = true;
+          package = pkgs.typescript-language-server;
+        };
+        rust_analyzer = {
+          enable = true;
+          package = pkgs.rust-analyzer;
+          # rustup 管理工具链，cargo/rustc/rustfmt 已在 PATH，无需 nixvim 代装
+          installCargo = false;
+          installRustc = false;
+          installRustfmt = false;
+          settings."rust-analyzer".check.command = "clippy";
+        };
+        clangd = {
+          enable = true;
+          package = pkgs.clang-tools;
+        };
+        gopls = {
+          enable = true;
+          package = pkgs.gopls;
+          settings.gopls = {
+            staticcheck = true;
+            completeUnimported = true;
+          };
+        };
+        jdtls = {
+          enable = true;
+          package = pkgs.jdt-language-server;
+        };
+      };
       keymaps.lspBuf = {
         gd = "definition";
         gD = "references";
@@ -51,6 +109,14 @@ mkIf config.rhencloud.nixvim.enable {
     plugins.conform-nvim = {
       enable = true;
       settings = {
+        # 显式绑定 store 路径，不依赖 PATH（rustfmt/gofmt 走 rustup/go 工具链除外）
+        formatters = {
+          nixfmt.command = lib.getExe pkgs.nixfmt;
+          stylua.command = lib.getExe pkgs.stylua;
+          black.command = lib.getExe pkgs.black;
+          isort.command = lib.getExe pkgs.isort;
+          prettierd.command = lib.getExe pkgs.prettierd;
+        };
         formatters_by_ft = {
           nix = [ "nixfmt" ];
           lua = [ "stylua" ];

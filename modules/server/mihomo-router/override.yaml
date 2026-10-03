@@ -1,0 +1,32 @@
+tun:
+  enable: false
+sniffer:
+  override-destination: true
+listeners:
+  - name: ebpf-in
+    type: ebpf
+    mode: shared
+    dns-mode: hijack
+    bypass-rule-set:
+      - CN-IP
+    bypass-private-address: true
+    shared:
+      data-plane: socket_assign
+      interface:
+        - br0
+      bypass-port:
+        - 67
+        - 68
+        - 137
+        - 138
+        - 1900
+        - 5353
+        - 5355
+rule-providers:
+  CN-IP:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    path: ./rule_provider/cn-ip.mrs
+    url: "https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/cn.mrs"

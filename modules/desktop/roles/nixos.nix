@@ -22,7 +22,7 @@
       desktopPackages.enable = true;
       gnome.enable = false;
       hyprland.enable = true;
-      umbriel.enable = true;
+      umbriel.enable = false;
       mangowm.enable = true;
       thunar.enable = true;
       nemo.enable = true;

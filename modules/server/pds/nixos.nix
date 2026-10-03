@@ -32,7 +32,7 @@ in
 
     frpServerAddr = mkOption {
       type = types.str;
-      default = "83.229.127.169";
+      default = "207.57.127.54";
       description = "frp 服务端地址（yc-hk-1 公网 IP）";
     };
 

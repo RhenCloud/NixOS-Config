@@ -1,6 +1,13 @@
-# File Operation Rules
+# System Rules
 
-## Mandatory file tool usage
+## Language
+
+Always respond in the same language as the user's message.
+Default to Chinese (简体中文) unless the user writes in another language.
+
+## File Operation Rules
+
+### Mandatory file tool usage
 
 Pi provides dedicated tools for filesystem operations.
 
@@ -15,19 +22,9 @@ Do NOT use Bash to read file contents.
 
 Never use:
 
-- cat
-- tac
-- head
-- tail
-- less
-- more
-- sed
-- awk
-- grep
-- rg
-- ripgrep
-- find
-- fd
+- cat / tac / head / tail / less / more
+- sed / awk / grep / rg / ripgrep
+- find / fd
 
 to inspect file contents when the built-in tools can do so.
 
@@ -41,15 +38,9 @@ Do NOT modify files through Bash.
 
 Never use:
 
-- sed -i
-- perl -i
-- awk
-- python -c
-- python3 -c
-- node -e
-- echo > file
-- printf > file
-- tee
+- sed -i / perl -i / awk
+- python -c / python3 -c / node -e
+- echo > file / printf > file / tee
 - shell heredocs
 
 to modify files.
@@ -61,13 +52,10 @@ Use Bash only when actual command execution is required.
 Appropriate Bash usage includes:
 
 - git
-- nix
-- bun
-- build commands
-- test commands
-- linters
-- formatters
-- compilers
+- nix / nixos-rebuild / home-manager
+- bun / npm
+- build commands / test commands
+- linters / formatters / compilers
 - package managers
 
 Do NOT use Bash as a replacement for the `read`, `edit`, or `write`

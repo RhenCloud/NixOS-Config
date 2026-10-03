@@ -23,6 +23,7 @@ in
       "chibang-codex-api-key" = snowveil.sops.secret { source = "common"; };
       "chibang-claude-api-key" = snowveil.sops.secret { source = "common"; };
       "github-token" = snowveil.sops.secret { source = "common"; };
+      "idcjk-api-key" = snowveil.sops.secret { source = "common"; };
     };
 
     home.file.".pi/agent/APPEND_SYSTEM.md".source = ./APPEND_SYSTEM.md;
@@ -53,7 +54,9 @@ in
                 { "id": "gpt-5.5", "name": "GPT-5.5" },
                 { "id": "gpt-5.6-luna", "name": "GPT-5.6 Luna" },
                 { "id": "grok-4.3-beta", "name": "Grok 4.3 Beta" },
-                { "id": "doghubx-gpt-5.5", "name": "DogHubX GPT-5.5" }
+                { "id": "doghubx-gpt-5.5", "name": "DogHubX GPT-5.5" },
+                { "id": "murasame-vip/gemini-3.8-flash-high", "name": "Gemini 3.8 Flash High" },
+                { "id": "oc-zen/mimo-v2.5-free", "name": "MiMo v2.5 Free", "reasoning": true }
               ]
             },
             "chibang-codex": {
@@ -79,6 +82,7 @@ in
                 { "id": "claude-opus-4-8", "name": "Claude Opus 4.8", "reasoning": true },
                 { "id": "claude-opus-4-7", "name": "Claude Opus 4.7", "reasoning": true },
                 { "id": "claude-opus-4-6", "name": "Claude Opus 4.6", "reasoning": true },
+                { "id": "claude-opus-5-5", "name": "Claude Opus 5.5", "reasoning": true },
                 { "id": "claude-sonnet-5", "name": "Claude Sonnet 5", "reasoning": true },
                 { "id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6" },
                 { "id": "claude-sonnet-4-5-20250929", "name": "Claude Sonnet 4.5" },
@@ -98,14 +102,13 @@ in
         };
         mcpServers = {
           chrome-devtools = {
-            command = "bunx";
+            command = "npx";
             args = [
               "-y"
               "chrome-devtools-mcp@latest"
               "--executablePath=${pkgs.google-chrome}/bin/google-chrome-stable"
               "--headless=true"
             ];
-            disabled = true;
           };
           github = {
             url = "https://api.githubcopilot.com/mcp/";
@@ -128,6 +131,17 @@ in
               "--headless"
             ];
           };
+          logoloom = {
+            command = "npx";
+            args = [
+              "-y"
+              "@mcpware/logoloom"
+            ];
+          };
+          idcjk = {
+            url = "https://api.idcjk.com/api/v1/mcp";
+            headers.Authorization = "Bearer ${config.sops.placeholder."idcjk-api-key"}";
+          };
         };
       };
     };
@@ -145,33 +159,21 @@ in
     home.file.".pi/agent/permission-mode/permission-mode.json".text = builtins.toJSON {
       "$schema" =
         "https://raw.githubusercontent.com/wynainfo/pi-permission-modes/main/schemas/permission-mode.schema.json";
-      defaultMode = "default";
+      defaultMode = "plan";
       cycleOrder = [
-        "default"
         "plan"
         "build"
-        "yolo"
-        "docs"
+        "auto"
       ];
       modes = {
-        default = {
-          label = "Default";
-          color = "muted";
+        plan = {
+          label = "Plan";
+          color = "mdLink";
           permission = {
             path = {
               "*" = "allow";
               "*.env" = "deny";
               "*.env.*" = "deny";
-              "*.md" = "ask";
-              "*.markdown" = "ask";
-              "QUICK_REFERENCE.md" = "deny";
-              "REFACTORING_STATUS.md" = "deny";
-              "TODO.md" = "deny";
-              "NOTES.md" = "deny";
-              "README.md" = "allow";
-              "AGENTS.md" = "allow";
-              "CHANGELOG.md" = "allow";
-              "*.mdx" = "allow";
             };
             external_directory = "allow";
             read = "allow";
@@ -187,73 +189,61 @@ in
             tool = "allow";
             skill = "allow";
           };
+          sandbox = {
+            writable = false;
+          };
           hideTools = [ ];
         };
         build = {
           label = "Build";
-          color = "blue";
-          path = {
-            "*" = "allow";
+          color = "accent";
+          permission = {
+            path = {
+              "*" = "allow";
+              "*.env" = "deny";
+              "*.env.*" = "deny";
+            };
+            external_directory = "allow";
+            read = "allow";
+            grep = "allow";
+            find = "allow";
+            ls = "allow";
+            write = "allow";
+            edit = "allow";
+            bash = {
+              "*" = "allow";
+            };
+            web_search = "allow";
+            tool = "allow";
+            skill = "allow";
           };
-          external_directory = "allow";
-          read = "allow";
-          grep = "allow";
-          find = "allow";
-          ls = "allow";
-          write = "allow";
-          edit = "allow";
-          bash = {
-            "*" = "allow";
+          sandbox = {
+            writable = true;
           };
-          web_search = "allow";
-          tool = "allow";
-          skill = "allow";
+          hideTools = [ ];
         };
-        plan = {
-          label = "Plan";
-          color = "yellow";
-          path = {
-            "*" = "allow";
+        auto = {
+          label = "Auto";
+          color = "error";
+          bypassProtectedPaths = true;
+          permission = {
+            path = "allow";
+            external_directory = "allow";
+            read = "allow";
+            grep = "allow";
+            find = "allow";
+            ls = "allow";
+            write = "allow";
+            edit = "allow";
+            bash = "allow";
+            web_search = "allow";
+            tool = "allow";
+            skill = "allow";
           };
-          external_directory = "allow";
-          read = "allow";
-          grep = "allow";
-          find = "allow";
-          ls = "allow";
-          write = "deny";
-          edit = "deny";
-          bash = {
-            "*" = "deny";
+          sandbox = {
+            enabled = false;
           };
-          web_search = "allow";
-          tool = "allow";
-          skill = "allow";
-        };
-        docs = {
-          label = "Docs";
-          color = "green";
-          path = {
-            "docs/*" = "allow";
-            "*.md" = "allow";
-            "*.markdown" = "allow";
-            "README.md" = "allow";
-            "AGENTS.md" = "allow";
-            "CHANGELOG.md" = "allow";
-            "*.mdx" = "allow";
-          };
-          external_directory = "allow";
-          read = "allow";
-          grep = "allow";
-          find = "allow";
-          ls = "allow";
-          write = "deny";
-          edit = "deny";
-          bash = {
-            "*" = "deny";
-          };
-          web_search = "allow";
-          tool = "allow";
-          skill = "allow";
+          hideTools = [ ];
         };
       };
     };
@@ -276,6 +266,160 @@ in
         "npm:@ff-labs/pi-fff"
         "git:github.com/tianrendong/pi-loadout"
       ];
+    };
+
+    home.file.".pi/agent/zentui.json".text = builtins.toJSON {
+      components = {
+        editor = {
+          enabled = true;
+          style = "opencode-copy-friendly";
+          colorSource = "theme";
+          borderColorMode = "static";
+          modelLabel = "id";
+          viewportIndicators = true;
+          styles = {
+            opencode = {
+              metadataFormat = "$model  $provider(  $thinking)";
+              completionMenu = "palette";
+            };
+            opencode-copy-friendly = {
+              metadataFormat = "$model  $provider(  $thinking)";
+              completionMenu = "palette";
+            };
+            accent-rail = {
+              rail = "▎";
+              asciiRail = "|";
+              transparent = false;
+            };
+            minimalist = {
+              pathDisplay = "compact";
+              contextFormat = "percent";
+              contextGauge = false;
+              showSessionName = true;
+              showTimer = true;
+              showCost = true;
+              showGit = true;
+              contextThresholds = {
+                warning = 70;
+                error = 90;
+              };
+            };
+          };
+        };
+        footer = {
+          style = "starship";
+          colorSource = "theme";
+          modelLabel = "id";
+          styles.starship = {
+            format = "";
+            responsive = true;
+            compactFormat = "$cwd$wrap(in $session_name)$wrap(on $git_branch) $git_status$wrap$context$wrap_sep$tokens";
+            compactMaxLines = 2;
+            separator = "pipe";
+            contextStyle = "text";
+            contextThresholds = {
+              warning = 70;
+              error = 90;
+            };
+            pathDisplay = {
+              mode = "basename";
+              depth = 0;
+            };
+            segments = {
+              cwd = true;
+              sessionName = true;
+              gitBranch = true;
+              gitStatus = true;
+              gitCounts = false;
+              gitCommit = false;
+              gitMetrics = false;
+              runtime = true;
+              modelInfo = false;
+              context = true;
+              tokens = true;
+              cost = true;
+              sessionDuration = false;
+              username = false;
+              time = false;
+              os = false;
+              packageVersion = false;
+            };
+            gitBranch.maxLength = "full";
+            gitCommit = {
+              hashLength = 7;
+              onlyDetached = true;
+              showTag = true;
+            };
+            gitMetrics = {
+              onlyNonzero = true;
+              ignoreSubmodules = false;
+            };
+            extensionStatuses = {
+              defaultPlacement = "right";
+              placements = { };
+              colorModes = { };
+            };
+          };
+        };
+        userMessages = {
+          enabled = true;
+          style = "framed-copy-friendly";
+          colorSource = "theme";
+          styles = {
+            framed = { };
+            framed-copy-friendly = { };
+            compact = { };
+            labeled = { };
+          };
+        };
+        thinkingSteps = {
+          enabled = true;
+          mode = "summary";
+        };
+        workingLine = {
+          enabled = true;
+          turnSummary = true;
+          spinner = "star-bloom";
+          spinnerIntervalMs = 100;
+          animateSpinnerColor = false;
+          textIntervalMs = 60;
+          textAnimation = "classic";
+          colorSource = "theme";
+          messages = {
+            custom = true;
+            values = [
+              "Sautéing…"
+              "Cooking…"
+              "Ionizing…"
+              "Zigzagging…"
+              "Razzle-dazzling…"
+              "Photosynthesizing…"
+              "Nucleating…"
+              "Brewing…"
+              "Combobulating…"
+              "Boogieing…"
+              "Befuddling…"
+              "Alchemizing…"
+              "Conjuring…"
+              "Baking…"
+              "Simmering…"
+              "Blanching…"
+            ];
+          };
+          segments = {
+            tool = true;
+            elapsed = true;
+            thought = true;
+            tokens = true;
+          };
+        };
+        selectorBorders = {
+          enabled = true;
+          style = "zentui";
+          colorSource = "terminal";
+        };
+      };
+      icons.mode = "auto";
     };
   };
 }

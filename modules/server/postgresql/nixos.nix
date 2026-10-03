@@ -21,7 +21,7 @@ let
     set -e
   ''
   + (lib.concatMapStringsSep "\n" (db: ''
-    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-'EOSQL'
       DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${db.user}') THEN CREATE ROLE ${db.user} LOGIN PASSWORD '${
         config.sops.placeholder."${db.passwordSecret}"
       }'; END IF; END $$;

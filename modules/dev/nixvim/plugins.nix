@@ -10,10 +10,22 @@ let
 in
 mkIf cfg.enable {
   programs.nixvim = {
+    colorscheme = "dracula";
+
+    colorschemes.dracula-nvim.enable = true;
+
+    plugins.luasnip = {
+      enable = true;
+      fromVscode = [ { } ]; # friendly-snippets
+    };
+
+    plugins.friendly-snippets.enable = true;
+
     plugins.cmp = {
       enable = true;
       autoEnableSources = true;
       settings = {
+        snippet.expand = "function(args) require('luasnip').lsp_expand(args.body) end";
         mapping = {
           "<C-n>" = "cmp.mapping.select_next_item()";
           "<C-p>" = "cmp.mapping.select_prev_item()";
@@ -21,7 +33,28 @@ mkIf cfg.enable {
           "<C-f>" = "cmp.mapping.scroll_docs(4)";
           "<C-e>" = "cmp.mapping.abort()";
           "<CR>" = "cmp.mapping.confirm({ select = true })";
-          "<Tab>" = "cmp.mapping.confirm({ select = true })";
+          "<Tab>" =
+            "cmp.mapping(function(fallback)
+            local luasnip = require('luasnip')
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { 'i', 's' })";
+          "<S-Tab>" =
+            "cmp.mapping(function(fallback)
+            local luasnip = require('luasnip')
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' })";
         };
         sources = [
           { name = "nvim_lsp"; }
@@ -54,13 +87,16 @@ mkIf cfg.enable {
     plugins.lualine = {
       enable = true;
       settings = {
-        options.component_separators = {
-          left = "│";
-          right = "│";
-        };
-        options.section_separators = {
-          left = "";
-          right = "";
+        options = {
+          theme = "dracula";
+          component_separators = {
+            left = "│";
+            right = "│";
+          };
+          section_separators = {
+            left = "";
+            right = "";
+          };
         };
       };
     };
@@ -78,45 +114,50 @@ mkIf cfg.enable {
 
     plugins.which-key = {
       enable = true;
-      settings.spec = [
-        {
-          __unkeyed-1 = "<leader>f";
-          group = "查找 / Telescope";
-        }
-        {
-          __unkeyed-1 = "<leader>c";
-          group = "代码 / Code";
-        }
-        {
-          __unkeyed-1 = "<leader>g";
-          group = "Git";
-        }
-        {
-          __unkeyed-1 = "<leader>w";
-          group = "窗口 / Window";
-        }
-        {
-          __unkeyed-1 = "<leader>x";
-          group = "诊断 / Trouble";
-        }
-        {
-          __unkeyed-1 = "<leader>o";
-          group = "Oil 文件";
-        }
-      ];
-    };
-
-    plugins.neo-tree = {
-      enable = true;
       settings = {
-        close_if_last_window = true;
-        filesystem = {
-          filtered_items = {
-            hide_dotfiles = false;
-            hide_gitignored = true;
-            hide_hidden = false;
-          };
-        };
+        delay = 0;
+        spec = [
+          {
+            __unkeyed-1 = "<leader>f";
+            group = "查找 / Telescope";
+          }
+          {
+            __unkeyed-1 = "<leader>c";
+            group = "代码 / Code";
+          }
+          {
+            __unkeyed-1 = "<leader>g";
+            group = "Git";
+          }
+          {
+            __unkeyed-1 = "<leader>w";
+            group = "窗口 / Window";
+          }
+          {
+            __unkeyed-1 = "<leader>x";
+            group = "诊断 / Trouble";
+          }
+          {
+            __unkeyed-1 = "<leader>e";
+            group = "Oil 文件";
+          }
+          {
+            __unkeyed-1 = "<leader>t";
+            group = "终端 / Terminal";
+          }
+          {
+            __unkeyed-1 = "<leader>b";
+            group = "Buffer";
+          }
+          {
+            __unkeyed-1 = "<leader>d";
+            group = "文档 / Docs";
+          }
+          {
+            __unkeyed-1 = "<localleader>";
+            group = "+本地 leader（语言）";
+          }
+        ];
       };
     };
 
@@ -127,32 +168,8 @@ mkIf cfg.enable {
         float_opts.border = "curved";
       };
     };
-
-    plugins.noice = {
-      enable = true;
-      settings = {
-        lsp.override = {
-          "vim.lsp.util.convert_input_to_markdown_lines" = true;
-          "vim.lsp.util.stylize_markdown" = true;
-        };
-        presets = {
-          bottom_search = true;
-          command_palette = true;
-          long_message_to_split = true;
-        };
-      };
-    };
-
     plugins.trouble = {
       enable = true;
-    };
-
-    plugins.aerial = {
-      enable = true;
-      settings.backends = [
-        "treesitter"
-        "lsp"
-      ];
     };
 
     plugins.flash = {
@@ -166,11 +183,13 @@ mkIf cfg.enable {
       };
     };
 
-    plugins.undotree.enable = true;
-
     plugins.mini = {
       enable = true;
-      modules.surround = { };
+      modules = {
+        surround = { };
+        pick = { };
+        tabline = { };
+      };
     };
 
     plugins.fidget = {
@@ -222,6 +241,44 @@ mkIf cfg.enable {
       };
     };
 
+    plugins.dressing = {
+      enable = true;
+      settings = {
+        input = {
+          relative = "win";
+          prefer_width = 40;
+        };
+        select = {
+          backend = [
+            "telescope"
+            "builtin"
+          ];
+        };
+      };
+    };
+
+    plugins.neogen = {
+      enable = true;
+      keymaps.generate = "<leader>dn";
+    };
+
+    plugins.dial.enable = true;
+
+    plugins.lint = {
+      enable = true;
+      # 保存时触发（autoCmd 默认 BufWritePost → try_lint）
+      linters = {
+        ruff.cmd = lib.getExe pkgs.ruff;
+        eslint.cmd = lib.getExe pkgs.eslint_d;
+      };
+      # 整体覆写：nixvim 默认表含未安装的 vale/jsonlint 等
+      lintersByFt = {
+        python = [ "ruff" ];
+        javascript = [ "eslint" ];
+        typescript = [ "eslint" ];
+      };
+    };
+
     plugins.auto-session = {
       enable = true;
       settings = {
@@ -236,121 +293,4 @@ mkIf cfg.enable {
       };
     };
   };
-
-  programs.nixvim.keymaps = [
-    {
-      mode = "n";
-      key = "<leader>o";
-      action = "<cmd>Oil<CR>";
-      options.desc = "Oil 文件浏览器";
-    }
-    {
-      mode = "n";
-      key = "<leader>u";
-      action = "<cmd>UndotreeToggle<CR>";
-      options.desc = "撤销树";
-    }
-    {
-      mode = "n";
-      key = "]h";
-      action = "<cmd>Gitsigns next_hunk<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "[h";
-      action = "<cmd>Gitsigns prev_hunk<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "<leader>gs";
-      action = "<cmd>Gitsigns stage_hunk<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "<leader>gS";
-      action = "<cmd>Gitsigns stage_buffer<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "<leader>gu";
-      action = "<cmd>Gitsigns undo_stage_hunk<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "<leader>gb";
-      action = "<cmd>Gitsigns blame_line<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "<leader>gd";
-      action = "<cmd>Gitsigns diffthis<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "<leader>gD";
-      action = "<cmd>Gitsigns toggle_deleted<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "<leader>gp";
-      action = "<cmd>Gitsigns preview_hunk<CR>";
-
-    }
-    {
-      mode = "n";
-      key = "<leader>xx";
-      action = "<cmd>Trouble diagnostics toggle<CR>";
-      options.desc = "诊断面板";
-    }
-    {
-      mode = "n";
-      key = "<leader>xX";
-      action = "<cmd>Trouble diagnostics toggle filter.buf=0<CR>";
-      options.desc = "当前文件诊断";
-    }
-    {
-      mode = "n";
-      key = "<leader>cs";
-      action = "<cmd>Trouble symbols toggle<CR>";
-      options.desc = "符号列表";
-    }
-    {
-      mode = "n";
-      key = "<leader>a";
-      action = "<cmd>AerialToggle<CR>";
-      options.desc = "代码大纲";
-    }
-    {
-      mode = "n";
-      key = "s";
-      action = {
-        __raw = "function() require('flash').jump() end";
-      };
-      options.desc = "Flash 跳转";
-    }
-    {
-      mode = "n";
-      key = "S";
-      action = {
-        __raw = "function() require('flash').treesitter() end";
-      };
-      options.desc = "Flash Treesitter";
-    }
-    {
-      mode = "n";
-      key = "<leader>r";
-      action = {
-        __raw = "function() require('flash').remote() end";
-      };
-      options.desc = "Flash 远程";
-    }
-  ];
 }

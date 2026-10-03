@@ -18,7 +18,7 @@ in
       package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zed-globalization;
       userSettings.theme = {
         mode = "dark";
-        dark = "Noctalia Dark";
+        dark = "Noctalia Dark Transparent";
       };
     };
 

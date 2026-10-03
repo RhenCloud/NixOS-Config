@@ -174,8 +174,8 @@ in
           AddKeysToAgent no
 
           Host yc-hk-1
-              HostName 83.229.127.169
-              Port 45855
+              HostName 207.57.127.54
+              Port 22222
               User rhencloud
 
           Host nixos-desktop
@@ -202,13 +202,13 @@ in
       mode = "0644";
       content = ''
         Host tc-discourse
-            HostName 83.229.127.169
-            Port 45855
+            HostName 207.57.127.54
+            Port 22222
             User rhencloud
 
         Host bee-hk-1
-            HostName 83.229.127.169
-            Port 45855
+            HostName 207.57.127.54
+            Port 22222
             User rhencloud
       '';
     };

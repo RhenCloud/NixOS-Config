@@ -167,6 +167,15 @@ in
       "fcitx5/rime/lua/select_character.lua" = {
         source = ./rime/lua/select_character.lua;
       };
+      "fcitx5/rime/lua/add_phrase.lua" = {
+        source = ./rime/lua/add_phrase.lua;
+      };
+      "fcitx5/rime/lua/promote_custom_phrase.lua" = {
+        source = ./rime/lua/promote_custom_phrase.lua;
+      };
+      "fcitx5/rime/lua/custom_phrase_live.lua" = {
+        source = ./rime/lua/custom_phrase_live.lua;
+      };
     };
 
     home.activation.installRimeLateConfig = lib.hm.dag.entryAfter [ "installRimeKeytao" ] ''
@@ -186,11 +195,34 @@ in
               if grep -q "Stub for reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
                 sed -i '/-- Stub for reduce_emoji_filter/,/reduce_emoji_processor = reduce_emoji_filter/d' "$rime_dir/rime.lua"
               fi
-              if ! grep -q "select_character" "$rime_dir/rime.lua" 2>/dev/null; then
+              if ! grep -q "reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
                 cat >> "$rime_dir/rime.lua" << 'LUAEOF'
 
       reduce_emoji_filter = require("reduce_emoji_filter")
+      LUAEOF
+              fi
+              if ! grep -q "select_character" "$rime_dir/rime.lua" 2>/dev/null; then
+                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+
       select_character = require("select_character")
+      LUAEOF
+              fi
+              if ! grep -q "add_phrase" "$rime_dir/rime.lua" 2>/dev/null; then
+                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+
+      add_phrase = require("add_phrase")
+      LUAEOF
+              fi
+              if ! grep -q "promote_custom_phrase" "$rime_dir/rime.lua" 2>/dev/null; then
+                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+
+      promote_custom_phrase = require("promote_custom_phrase")
+      LUAEOF
+              fi
+              if ! grep -q "custom_phrase_live" "$rime_dir/rime.lua" 2>/dev/null; then
+                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+
+      custom_phrase_live = require("custom_phrase_live")
       LUAEOF
               fi
             fi
@@ -211,12 +243,17 @@ in
               "${rimeKeytaoPkg}/share/rime-data/keytao.phrase.dict.yaml" \
               "${rimeKeytaoPkg}/share/rime-data/keytao.single.dict.yaml" \
               "$rime_dir/ice2keytao.dict.yaml"
+            rm -f "$rime_dir/keytao.custom.user.dict.yaml"
+            cp ${./keytao.custom.user.dict.yaml} "$rime_dir/keytao.custom.user.dict.yaml"
             if [ -f "$rime_dir/keytao.extended.dict.yaml" ]; then
               if ! grep -q "ice2keytao" "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
                 sed -i '/^\.\.\.$/a\  - ice2keytao' "$rime_dir/keytao.extended.dict.yaml"
               fi
               if awk '/^  - keytao\.user$/{user=NR} /^  - keytao\.phrase$/{phrase=NR} END{exit !(user>0 && phrase>0 && user>phrase)}' "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
                 sed -i '/^  - keytao\.user$/d; /^  - keytao\.phrase$/i\  - keytao.user' "$rime_dir/keytao.extended.dict.yaml"
+              fi
+              if ! grep -q "keytao.custom.user" "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
+                sed -i '/^\.\.\.$/a\  - keytao.custom.user' "$rime_dir/keytao.extended.dict.yaml"
               fi
             fi
 
@@ -251,5 +288,30 @@ in
 
             echo "Rime custom config installed"
     '';
+
+    systemd.user.services.keytao-custom-phrase-sync = {
+      Unit.Description = "固化键道动态造词";
+      Service = {
+        Type = "oneshot";
+        WorkingDirectory = "%h/Project/NixOS-Config";
+        ExecStart = pkgs.writeShellScript "keytao-custom-phrase-sync" ''
+          ${pkgs.python3}/bin/python3 ${../../../scripts/sync-keytao-custom-phrases.py} \
+            "$HOME/.local/share/fcitx5/rime/keytao-custom-phrase.txt" \
+            modules/desktop/fcitx5/keytao.custom.user.dict.yaml
+          rm -f "$HOME/.local/share/fcitx5/rime/keytao.custom.user.dict.yaml"
+          cp modules/desktop/fcitx5/keytao.custom.user.dict.yaml \
+            "$HOME/.local/share/fcitx5/rime/keytao.custom.user.dict.yaml"
+        '';
+      };
+    };
+
+    systemd.user.timers.keytao-custom-phrase-sync = {
+      Unit.Description = "定期固化键道动态造词";
+      Timer = {
+        OnCalendar = "weekly";
+        Persistent = true;
+      };
+      Install.WantedBy = [ "timers.target" ];
+    };
   };
 }

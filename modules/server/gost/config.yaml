@@ -1,6 +1,6 @@
 services:
   - name: service-0
-    addr: 0.0.0.0:22222
+    addr: 0.0.0.0:23222
     handler:
       type: tcp
       chain: chain-0
@@ -8,7 +8,7 @@ services:
       type: tcp
 
   - name: service-1
-    addr: 0.0.0.0:22223
+    addr: 0.0.0.0:23223
     handler:
       type: tcp
       chain: chain-1
@@ -16,7 +16,7 @@ services:
       type: tcp
 
   - name: service-2
-    addr: 0.0.0.0:22224
+    addr: 0.0.0.0:23224
     handler:
       type: tcp
       chain: chain-2

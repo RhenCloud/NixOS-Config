@@ -1,0 +1,55 @@
+diff --git a/common/ebpf/tc.go b/common/ebpf/tc.go
+index 2c5bb9c1..a9d4e70d 100644
+--- a/common/ebpf/tc.go
++++ b/common/ebpf/tc.go
+@@ -156,6 +156,10 @@ func PrepareTC(config TCConfig) (*TCBackend, error) {
+ 	return prepareTC(config, false)
+ }
+ 
++func PrepareTCLegacyTCP(config TCConfig) (*TCBackend, error) {
++	return prepareTC(config, true)
++}
++
+ func prepareTC(config TCConfig, forceLegacyTCP bool) (*TCBackend, error) {
+ 	if config.ListenerPort == 0 {
+ 		return nil, E.New("invalid TC eBPF listener port")
+diff --git a/listener/sing_ebpf/inbound.go b/listener/sing_ebpf/inbound.go
+index 71970868..3d70a0db 100644
+--- a/listener/sing_ebpf/inbound.go
++++ b/listener/sing_ebpf/inbound.go
+@@ -4,6 +4,7 @@ package sing_ebpf
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"net/netip"
+@@ -26,6 +27,7 @@ import (
+ 	E "github.com/metacubex/sing/common/exceptions"
+ 
+ 	"go4.org/netipx"
++	"golang.org/x/sys/unix"
+ )
+ 
+ // Listener is the eBPF inbound listener.
+@@ -560,6 +562,18 @@ func (i *Inbound) start() error {
+ 		if err != nil {
+ 			return err
+ 		}
+-		if err = i.listeners.registerTCTCPListeners(backend); err != nil {
++		if err = i.listeners.registerTCTCPListeners(backend); errors.Is(err, unix.EOPNOTSUPP) {
++			if closeErr := backend.Close(); closeErr != nil {
++				return E.Errors(err, closeErr)
++			}
++			backend, err = ECommon.PrepareTCLegacyTCP(backendConfig)
++			if err != nil {
++				return err
++			}
++			if err = i.listeners.registerTCTCPListeners(backend); err == nil {
++				log.Warnln("[EBPF] TC SockMap listener registration is unavailable; using direct TCP lookup")
++			}
++		}
++		if err != nil {
+ 			return E.Errors(err, backend.Close())
+ 		}

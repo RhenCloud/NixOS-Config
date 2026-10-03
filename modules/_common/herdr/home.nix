@@ -33,6 +33,8 @@
   options.rhencloud.herdr.enable = lib.mkEnableOption "Herdr terminal multiplexer";
 
   config = lib.mkIf config.rhencloud.herdr.enable {
+    rhencloud.ttt.enable = lib.mkDefault true;
+
     home.packages = [
       inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]

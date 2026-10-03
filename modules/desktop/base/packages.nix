@@ -45,8 +45,8 @@ in
 
       wl-clipboard
       cliphist
-      copyq
-      nwg-clipman
+      # copyq
+      # nwg-clipman
 
       krita
       kdePackages.gwenview

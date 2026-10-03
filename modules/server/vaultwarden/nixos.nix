@@ -40,7 +40,7 @@ in
     };
 
     virtualisation.oci-containers.containers.vaultwarden = {
-      image = "vaultwarden/server:latest";
+      image = "docker.io/vaultwarden/server:latest";
       autoStart = true;
 
       volumes = [

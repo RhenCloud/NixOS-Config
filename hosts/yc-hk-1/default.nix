@@ -25,7 +25,14 @@ in
 
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
-  rhencloud.server.install.enable = true;
+  rhencloud.server.install = {
+    enable = true;
+    disk = "/dev/sda";
+  };
+
+  rhencloud.server.ssh.port = 22222;
+
+  zramSwap.enable = true;
 
   services.caddy = {
     enable = true;
@@ -48,6 +55,22 @@ in
           dns cloudflare {$CLOUDFLARE_API_TOKEN}
         }
         reverse_proxy 127.0.0.1:13339
+      '';
+    };
+    virtualHosts."sleepy.rhen.cloud" = {
+      extraConfig = ''
+        tls {
+          dns cloudflare {$CLOUDFLARE_API_TOKEN}
+        }
+        reverse_proxy 127.0.0.1:9010
+      '';
+    };
+    virtualHosts."vw.rhen.cloud" = {
+      extraConfig = ''
+        tls {
+          dns cloudflare {$CLOUDFLARE_API_TOKEN}
+        }
+        reverse_proxy 127.0.0.1:1880
       '';
     };
   };
@@ -77,11 +100,6 @@ in
     mihomo = {
       enable = false;
     };
-    beszel.enable = true;
-    beszel-agent = {
-      enable = true;
-      dockerSocket = "/run/podman/podman.sock";
-    };
     baota-probe.enable = false;
     nextbridge.enable = true;
     frp.enable = true;
@@ -92,12 +110,12 @@ in
     wyf9s-bot.enable = true;
     gost.enable = true;
     rustdesk.enable = true;
-    yysong.enable = true;
+    yysong.enable = false; # migrated to 182.92.242.192 (Tencent Cloud) 2026-10-02
     openlist.enable = true;
     oci-helper.enable = true;
 
     pds = {
-      enable = true;
+      enable = false;
       role = "proxy";
     };
   };
@@ -110,6 +128,8 @@ in
   boot.initrd.kernelModules = [
     "virtio_blk"
     "virtio_pci"
+    "virtio_scsi"
+    "sd_mod"
   ];
 
   networking = {
@@ -119,10 +139,10 @@ in
 
   systemd.network.wait-online.enable = false;
 
-  systemd.network.networks."50-ens17" = {
-    matchConfig.Name = "ens*";
-    address = [ "83.229.127.169/24" ];
-    gateway = [ "83.229.127.254" ];
+  systemd.network.networks."50-eth" = {
+    matchConfig.MACAddress = "bc:24:11:50:dd:92";
+    address = [ "207.57.127.54/24" ];
+    gateway = [ "207.57.127.254" ];
     dns = [
       "172.16.36.100"
       "172.16.36.101"

@@ -16,10 +16,10 @@ in
     };
 
     yc-hk-1 = {
-      hostname = "83.229.127.169";
+      hostname = "207.57.127.54";
       sshOpts = [
         "-p"
-        "45855"
+        "22222"
       ];
       profiles = {
         system = {

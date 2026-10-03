@@ -131,6 +131,19 @@
       url = "github:ogulcancelik/herdr/v0.8.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ttt = {
+      url = "github:eugenioenko/ttt";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    ttt-plugins = {
+      url = "github:eugenioenko/ttt-plugins";
+      flake = false;
+    };
+    # Vim 模式插件（独立仓库，无 flake.nix；manifest name = "vim"）
+    ttt-vim = {
+      url = "github:eugenioenko/ttt-vim";
+      flake = false;
+    };
     vicinae = {
       url = "github:vicinaehq/vicinae";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -283,10 +296,13 @@
             "herdr-window-title-sync"
             "herdr-worktrunk"
             "jailed-pi"
+            "mihomo-meta"
             "opencode-zh-cn"
             "rime-keytao"
             "sandbox"
             "tokens"
+            "ttt"
+            "ttt-herdr-plugin"
             "zed-globalization"
           ];
           apps = [
@@ -378,12 +394,12 @@
             "dev.rust"
             "dev.tokens"
             "server.baota-probe"
-            "server.beszel"
             "server.beszel-agent"
             "server.easytier"
             "server.frp"
             "server.gost"
             "server.mailer"
+            "server.mihomo-router"
             "server.nextbridge"
             "server.oci-helper"
             "server.openlist"
@@ -413,6 +429,7 @@
             "_common.options"
             "_common.siiway-opencode"
             "_common.sops"
+            "_common.ttt"
             "_common.wallpapers"
             "_common.yazi"
             "desktop.base"

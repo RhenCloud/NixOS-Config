@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  snowveil,
   ...
 }:
 with lib;
@@ -12,6 +13,39 @@ in
   options.rhencloud.router.enable = mkEnableOption "soft router (bridge, hostapd, dhcpd, NAT)";
 
   config = mkIf cfg.enable {
+    sops.secrets."frp-auth-token" = snowveil.sops.secret {
+      source = "host";
+      host = "nixos-homeserver";
+    };
+
+    sops.templates."frpc.toml".content = ''
+      serverAddr = "207.57.127.54"
+      serverPort = 7000
+      auth.method = "token"
+      auth.token = "${config.sops.placeholder."frp-auth-token"}"
+
+      [[proxies]]
+      name = "openlist"
+      type = "tcp"
+      localIp = "127.0.0.1"
+      localPort = 5244
+      remotePort = 15244
+
+      [[proxies]]
+      name = "ssh"
+      type = "tcp"
+      localIp = "127.0.0.1"
+      localPort = 22
+      remotePort = 2222
+
+      [[proxies]]
+      name = "napcat"
+      type = "tcp"
+      localIp = "127.0.0.1"
+      localPort = 3001
+      remotePort = 3001
+    '';
+
     networking.useNetworkd = true;
 
     networking.firewall.allowedUDPPorts = [
@@ -187,10 +221,14 @@ in
       // {
         frpc = {
           description = "frp client";
-          after = [ "network.target" ];
+          after = [
+            "network.target"
+            "sops-install-secrets.service"
+          ];
+          requires = [ "sops-install-secrets.service" ];
           wantedBy = [ "multi-user.target" ];
           serviceConfig = {
-            ExecStart = "${pkgs.frp}/bin/frpc -c /Data1/frp/frpc.toml";
+            ExecStart = "${pkgs.frp}/bin/frpc -c ${config.sops.templates."frpc.toml".path}";
             Restart = "on-failure";
             RestartSec = 5;
           };

@@ -1,0 +1,335 @@
+config_version: "3.0"
+name: 键道6 · Dracula
+author: RhenCloud
+description: 面向键道6的二十六键布局与 Dracula 配色
+
+style:
+  color_scheme: dracula
+  keyboards: [.default, number, symbols]
+  candidate_text_size: 22
+  candidate_view_height: 30
+  candidate_padding: 4
+  candidate_spacing: 0.5
+  candidate_use_cursor: true
+  comment_text_size: 12
+  comment_height: 12
+  comment_on_top: true
+  horizontal: true
+  key_height: 52
+  key_text_size: 22
+  label_text_size: 20
+  symbol_text_size: 13
+  text_size: 16
+  key_width: 10.0
+  round_corner: 10
+  horizontal_gap: 2
+  vertical_gap: 4
+  vertical_correction: -10
+  keyboard_padding: 3
+  keyboard_padding_bottom: 3
+  keyboard_padding_land: 48
+  keyboard_padding_land_bottom: 3
+  proximity_correction: true
+  reset_ascii_mode: false
+  auto_caps: false
+  locale: zh_CN
+  latin_locale: en_US
+  shadow_radius: 0
+  preview_text_size: 40
+  preview_height: 60
+  preview_offset: -12
+
+preedit:
+  horizontal_padding: 8
+  alpha: 0.8
+  top_end_radius: 5
+  foreground:
+    font_size: 16
+
+window:
+  insets:
+    vertical: 4
+    horizontal: 4
+  item_padding:
+    vertical: 2
+    horizontal: 4
+  foreground:
+    label_font_size: 18
+    text_font_size: 20
+    comment_font_size: 14
+
+fallback_colors:
+  candidate_text_color: text_color
+  comment_text_color: candidate_text_color
+  border_color: back_color
+  candidate_separator_color: border_color
+  hilited_text_color: text_color
+  hilited_back_color: back_color
+  hilited_candidate_text_color: hilited_text_color
+  hilited_candidate_back_color: hilited_back_color
+  hilited_comment_text_color: comment_text_color
+  text_back_color: back_color
+  hilited_key_back_color: hilited_candidate_back_color
+  hilited_key_text_color: hilited_candidate_text_color
+  hilited_key_symbol_color: hilited_comment_text_color
+  hilited_off_key_back_color: hilited_key_back_color
+  hilited_on_key_back_color: hilited_key_back_color
+  hilited_off_key_text_color: hilited_key_text_color
+  hilited_on_key_text_color: hilited_key_text_color
+  key_back_color: back_color
+  key_border_color: border_color
+  key_text_color: candidate_text_color
+  key_symbol_color: comment_text_color
+  keyboard_back_color: border_color
+  label_color: candidate_text_color
+  off_key_back_color: key_back_color
+  off_key_text_color: key_text_color
+  on_key_back_color: hilited_key_back_color
+  on_key_text_color: hilited_key_text_color
+  preview_back_color: key_back_color
+  preview_text_color: key_text_color
+  shadow_color: border_color
+
+preset_color_schemes:
+  dracula:
+    name: Dracula
+    author: RhenCloud
+    light_scheme: alucard
+    text_color: 0xf8f8f2
+    text_back_color: 0x282a36
+    back_color: 0x282a36
+    border_color: 0x21222c
+    label_color: 0x6272a4
+    candidate_text_color: 0xf8f8f2
+    candidate_separator_color: 0x44475a
+    hilited_text_color: 0x50fa7b
+    hilited_back_color: 0x44475a
+    hilited_candidate_text_color: 0x282a36
+    hilited_candidate_back_color: 0xbd93f9
+    hilited_comment_text_color: 0x282a36
+    comment_text_color: 0x6272a4
+    keyboard_back_color: 0x21222c
+    key_back_color: 0x44475a
+    key_border_color: 0x21222c
+    key_text_color: 0xf8f8f2
+    key_symbol_color: 0x6272a4
+    hilited_key_back_color: 0xbd93f9
+    hilited_key_text_color: 0x282a36
+    hilited_key_symbol_color: 0x282a36
+    off_key_back_color: 0x343746
+    off_key_text_color: 0x6272a4
+    hilited_off_key_back_color: 0xff79c6
+    hilited_off_key_text_color: 0x282a36
+    on_key_back_color: 0x50fa7b
+    on_key_text_color: 0x282a36
+    hilited_on_key_back_color: 0x50fa7b
+    hilited_on_key_text_color: 0x282a36
+    preview_back_color: 0x6272a4
+    preview_text_color: 0x282a36
+    popup_back_color: 0x44475a
+    popup_text_color: 0xf8f8f2
+    shadow_color: 0x000000
+
+  alucard:
+    name: Alucard
+    author: RhenCloud
+    dark_scheme: dracula
+    text_color: 0x1f1f1f
+    text_back_color: 0xfffbeb
+    back_color: 0xfffbeb
+    border_color: 0xe8e2d0
+    label_color: 0x6c664b
+    candidate_text_color: 0x1f1f1f
+    candidate_separator_color: 0xd8d2bf
+    hilited_text_color: 0x14710a
+    hilited_back_color: 0xcfcfde
+    hilited_candidate_text_color: 0xfffbeb
+    hilited_candidate_back_color: 0x644ac9
+    hilited_comment_text_color: 0xfffbeb
+    comment_text_color: 0x6c664b
+    keyboard_back_color: 0xe8e2d0
+    key_back_color: 0xffffff
+    key_border_color: 0xe8e2d0
+    key_text_color: 0x1f1f1f
+    key_symbol_color: 0x6c664b
+    hilited_key_back_color: 0x644ac9
+    hilited_key_text_color: 0xfffbeb
+    hilited_key_symbol_color: 0xfffbeb
+    off_key_back_color: 0xf0ead6
+    off_key_text_color: 0x6c664b
+    hilited_off_key_back_color: 0xa3144d
+    hilited_off_key_text_color: 0xfffbeb
+    on_key_back_color: 0x14710a
+    on_key_text_color: 0xfffbeb
+    hilited_on_key_back_color: 0x14710a
+    hilited_on_key_text_color: 0xfffbeb
+    preview_back_color: 0x644ac9
+    preview_text_color: 0xfffbeb
+    popup_back_color: 0xffffff
+    popup_text_color: 0x1f1f1f
+    shadow_color: 0x000000
+
+preset_keys:
+  Return: {label: 回车, send: Return}
+  space: {label: 空格, repeatable: false, functional: false, send: space}
+  BackSpace: {label: 退格, repeatable: true, send: BackSpace}
+  Shift_L: {label: Shift, send: Shift_L, shift_lock: ascii_long}
+  Escape: {send: Escape}
+  Delete: {send: Delete}
+  Clear: {label: 清空, text: "{Control+a}{BackSpace}"}
+  select_all: {label: 全选, send: Control+a}
+  Mode_switch: {label: 中英, send: Mode_switch, toggle: ascii_mode, states: [中, 英]}
+  Left: {send: Left}
+  Right: {send: Right}
+  Up: {send: Up}
+  Down: {send: Down}
+  Keyboard_number: {label: 123, send: Eisu_toggle, select: number}
+  Keyboard_symbols: {label: 符, send: Eisu_toggle, select: symbols}
+  Keyboard_default: {label: 字母, send: Eisu_toggle, select: .default}
+  Clipboard_window: {label: 剪贴板, send: function, command: clipboard_window}
+  liquid_keyboard_emoji: {label: Emoji, send: function, command: liquid_keyboard, option: emoji}
+
+preset_keyboards:
+  default:
+    ascii_mode: 0
+    reset_ascii_mode: false
+    label_transform: uppercase
+    width: 10
+    keyboard_height: 278
+    keyboard_height_land: 208
+    keys:
+      - {click: "1", long_click: "!"}
+      - {click: "2", long_click: "@"}
+      - {click: "3", long_click: "#"}
+      - {click: "4", long_click: "$"}
+      - {click: "5", long_click: "%"}
+      - {click: "6", long_click: "^"}
+      - {click: "7", long_click: "&"}
+      - {click: "8", long_click: "*"}
+      - {click: "9", long_click: "("}
+      - {click: "0", long_click: ")"}
+      - {click: q, long_click: "~", swipe_up: "「"}
+      - {click: w, long_click: "_", swipe_up: "」"}
+      - {click: e, long_click: "`", swipe_up: "|"}
+      - {click: r, long_click: "=", swipe_up: "="}
+      - {click: t, long_click: "-", swipe_up: "-"}
+      - {click: y, long_click: "/", swipe_up: "/"}
+      - {click: u, long_click: "(", swipe_up: "（"}
+      - {click: i, long_click: ")", swipe_up: "）"}
+      - {click: o, long_click: "[", swipe_up: "「"}
+      - {click: p, long_click: "]", swipe_up: "」"}
+      - {width: 5}
+      - {click: a, long_click: select_all, swipe_down: Clear, swipe_up: "“", width: 9}
+      - {click: s, long_click: "'", swipe_up: "”", width: 9}
+      - {click: d, long_click: '"', swipe_up: "‘", width: 9}
+      - {click: f, long_click: "\\", swipe_up: "’", width: 9}
+      - {click: g, long_click: liquid_keyboard_emoji, swipe_up: "：", width: 9}
+      - {click: h, long_click: "-", swipe_up: "；", width: 9}
+      - {click: j, long_click: Clipboard_window, swipe_up: "、", width: 9}
+      - {click: k, long_click: ":", swipe_up: "|", width: 9}
+      - {click: l, long_click: "*", swipe_up: "=", width: 9}
+      - {click: ";", long_click: "~", swipe_up: "-", width: 9, hint: "~"}
+      - {width: 5}
+      - {width: 15, click: Shift_L, key_text_size: 15}
+      - {click: z}
+      - {click: x}
+      - {click: c}
+      - {click: v}
+      - {click: b}
+      - {click: n}
+      - {click: m}
+      - {width: 15, click: BackSpace, swipe_up: Escape, swipe_down: Delete, key_text_size: 15}
+      - {width: 16, click: Keyboard_number, key_text_size: 15}
+      - {width: 13, click: ",", label: "，", long_click: "/", swipe_up: "！"}
+      - {width: 42, click: space, long_click: Mode_switch, swipe_left: Left, swipe_right: Right}
+      - {width: 13, click: ".", label: "。", long_click: "?", swipe_up: "？"}
+      - {width: 16, click: Return, key_text_size: 15}
+
+  number:
+    ascii_mode: 1
+    width: 10
+    keyboard_height: 172
+    keyboard_height_land: 148
+    keys:
+      - {click: "1", long_click: "!"}
+      - {click: "2", long_click: "@"}
+      - {click: "3", long_click: "#"}
+      - {click: "4", long_click: "$"}
+      - {click: "5", long_click: "%"}
+      - {click: "6", long_click: "^"}
+      - {click: "7", long_click: "&"}
+      - {click: "8", long_click: "*"}
+      - {click: "9", long_click: "("}
+      - {click: "0", long_click: ")"}
+      - {click: "-", long_click: "_"}
+      - {click: "/", long_click: "\\"}
+      - {click: ":", long_click: ";"}
+      - {click: "(", long_click: "["}
+      - {click: ")", long_click: "]"}
+      - {click: "￥", long_click: "$"}
+      - {click: "&", long_click: "@"}
+      - {click: "@", long_click: "*"}
+      - {click: '"', long_click: "'"}
+      - {click: "?", long_click: "~"}
+      - {width: 15, click: Keyboard_symbols, key_text_size: 15}
+      - {width: 10, click: ",", label: "，"}
+      - {width: 50, click: space, long_click: Mode_switch}
+      - {width: 10, click: ".", label: "。"}
+      - {width: 15, click: BackSpace, key_text_size: 15}
+
+  symbols:
+    ascii_mode: 1
+    width: 10
+    keyboard_height: 226
+    keyboard_height_land: 188
+    keys:
+      - {click: "!", long_click: "1"}
+      - {click: "@", long_click: "2"}
+      - {click: "#", long_click: "3"}
+      - {click: "$", long_click: "4"}
+      - {click: "%", long_click: "5"}
+      - {click: "^", long_click: "6"}
+      - {click: "&", long_click: "7"}
+      - {click: "*", long_click: "8"}
+      - {click: "(", long_click: "9"}
+      - {click: ")", long_click: "0"}
+      - {click: "-", long_click: "_"}
+      - {click: "_", long_click: "-"}
+      - {click: "=", long_click: "+"}
+      - {click: "+", long_click: "="}
+      - {click: "[", long_click: "{"}
+      - {click: "]", long_click: "}"}
+      - {click: "{", long_click: "["}
+      - {click: "}", long_click: "]"}
+      - {click: "\\", long_click: "|"}
+      - {click: "|", long_click: "\\"}
+      - {click: ";", long_click: ":"}
+      - {click: ":", long_click: ";"}
+      - {click: "'", long_click: '"'}
+      - {click: '"', long_click: "'"}
+      - {click: ",", long_click: "<"}
+      - {click: ".", long_click: ">"}
+      - {click: "<", long_click: ","}
+      - {click: ">", long_click: "."}
+      - {click: "/", long_click: "?"}
+      - {click: "?", long_click: "/"}
+      - {width: 15, click: Keyboard_number, key_text_size: 15}
+      - {width: 70, click: space, long_click: Mode_switch}
+      - {width: 15, click: Return, key_text_size: 15}
+
+liquid_keyboard:
+  row: 5
+  row_land: 4
+  key_height: 56
+  key_height_land: 48
+  fixed_key_bar:
+    position: right
+    keys: [BackSpace, space, Return]
+  keyboards: [emoji, clipboard]
+  emoji:
+    name: Emoji
+    type: SINGLE
+    keys: "😀😃😄😁😆🥹😂🤣😊😍😘😎🤔😅😭😡👍👎👏🙏🎉❤️🔥✨✅❌"
+  clipboard:
+    name: 剪贴板
+    type: CLIPBOARD

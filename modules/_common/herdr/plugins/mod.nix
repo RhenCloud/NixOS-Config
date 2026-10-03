@@ -8,6 +8,7 @@
     ./herdr-plus/mod.nix
     ./spreader/mod.nix
     ./tab-rename/mod.nix
+    ./ttt/mod.nix
     ./window-title-sync/mod.nix
     ./worktrunk/mod.nix
     # ./mobile-relay/mod.nix

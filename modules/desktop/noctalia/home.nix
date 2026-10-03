@@ -30,13 +30,13 @@ in
       pkgs.evtest
     ];
 
-    # 取色引擎：从壁纸生成调色板，并按内建/社区/用户模板分发到各应用。
+    # 取色引擎：使用内建 Dracula 调色板，并按内建/社区/用户模板分发到各应用。
     # 该层（~/.config/noctalia/*.toml）只读；GUI 改动写在 state 层。
     xdg.configFile."noctalia/config.toml".text = ''
       [theme]
       mode = "dark"
-      source = "wallpaper"
-      wallpaper_scheme = "m3-content"
+      source = "builtin"
+      builtin = "Dracula"
 
       [theme.templates]
       enable_builtin_templates = true
