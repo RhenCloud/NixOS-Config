@@ -24,6 +24,7 @@ in
     nix.package = pkgs.lixPackageSets.stable.lix;
 
     nix.settings = {
+      eval-cache = true;
       experimental-features = [
         "nix-command"
         "flakes"

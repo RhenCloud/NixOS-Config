@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 with lib;
@@ -18,7 +17,7 @@ in
     programs.yazi = {
       enable = true;
       enableFishIntegration = true;
-      package = inputs.yazi.packages.${pkgs.stdenv.hostPlatform.system}.yazi;
+      package = pkgs.yazi;
 
       plugins = {
         ouch = pkgs.yaziPlugins.ouch;

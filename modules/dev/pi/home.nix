@@ -145,7 +145,7 @@ in
       '';
     };
 
-    sops.templates."pi/mcp.json" = {
+    sops.templates."pi/mcp-adapter.json" = {
       mode = "0400";
       content = builtins.toJSON {
         settings = {
@@ -201,9 +201,9 @@ in
       config.lib.file.mkOutOfStoreSymlink
         config.sops.templates."pi/models.json".path;
 
-    home.file.".pi/agent/mcp.json".source =
+    home.file.".pi/agent/mcp-adapter.json".source =
       config.lib.file.mkOutOfStoreSymlink
-        config.sops.templates."pi/mcp.json".path;
+        config.sops.templates."pi/mcp-adapter.json".path;
 
     home.file.".pi/agent/themes/dracula.json".source = ./themes/dracula.json;
 
@@ -301,6 +301,7 @@ in
           };
           sandbox = {
             enabled = false;
+            writable = true;
           };
           hideTools = [ ];
         };
@@ -328,7 +329,6 @@ in
         "npm:pi-permission-modes"
         "npm:@plannotator/pi-extension"
         "npm:@juicesharp/rpiv-todo"
-        # "git:github.com/dafei1288/pi-agent-hud"
         "git:github.com/MasuRii/pi-rtk-optimizer"
         "npm:@ogulcancelik/pi-herdr"
         "npm:@ff-labs/pi-fff"
