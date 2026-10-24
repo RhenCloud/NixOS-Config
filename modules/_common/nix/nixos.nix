@@ -72,8 +72,13 @@ in
       ];
     };
 
-    # 构建沙箱内需要 DNS 解析（VSCode、WeChat 等包需要下载）
-    nix.settings.extra-sandbox-paths = [ "/etc/resolv.conf" ];
+    # 构建沙箱内需要 DNS 解析（VSCode、WeChat 等包需要下载）。
+    # relaxed 允许 fixed-output fetcher（例如 Cargo 的 Git 依赖）联网，
+    # 同时保留普通构建的沙箱隔离；否则无法获取 Smithay 等 Git 依赖。
+    nix.settings = {
+      sandbox = "relaxed";
+      extra-sandbox-paths = [ "/etc/resolv.conf" ];
+    };
 
     systemd.services.nix-daemon.serviceConfig.Environment = [
       "http_proxy=http://127.0.0.1:7890"

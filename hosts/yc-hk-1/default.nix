@@ -18,8 +18,6 @@ in
   ];
 
   networking.hostName = hostName;
-  rhen.host.name = hostName;
-  rhen.homeManager.enable = false;
 
   nixpkgs.hostPlatform = "x86_64-linux";
 
@@ -38,7 +36,7 @@ in
     enable = true;
     package = pkgs.caddy.withPlugins {
       plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
-      hash = "sha256-dQvk6ezY6TQ1J7PjhCXnThF/SqVgPwBO8/RXzHCY+js=";
+      hash = "sha256-xRJ5evsAJ2akg47j3Bt6YDXJOgX88B/rKNP50KSVyNY=";
     };
     environmentFile = config.sops.templates."caddy-env".path;
     globalConfig = ''
@@ -73,6 +71,15 @@ in
         reverse_proxy 127.0.0.1:1880
       '';
     };
+    # 走 Cloudflare CDN（橙云 + Full (strict)），使用 CF Origin 证书，不由 Caddy 申请
+    virtualHosts."nb-recv.siinodes.dpdns.org" = {
+      extraConfig = ''
+        tls ${config.sops.secrets."caddy-nb-origin-cert".path} ${
+          config.sops.secrets."caddy-nb-origin-key".path
+        }
+        reverse_proxy 127.0.0.1:9089
+      '';
+    };
   };
 
   sops.secrets."cloudflare-api-token" =
@@ -83,6 +90,28 @@ in
     // {
       owner = "root";
       mode = "0400";
+    };
+
+  sops.secrets."caddy-nb-origin-cert" =
+    snowveil.sops.secret {
+      source = "host";
+      host = "yc-hk-1";
+    }
+    // {
+      owner = config.services.caddy.user;
+      mode = "0400";
+      restartUnits = [ "caddy.service" ];
+    };
+
+  sops.secrets."caddy-nb-origin-key" =
+    snowveil.sops.secret {
+      source = "host";
+      host = "yc-hk-1";
+    }
+    // {
+      owner = config.services.caddy.user;
+      mode = "0400";
+      restartUnits = [ "caddy.service" ];
     };
 
   sops.templates."caddy-env" = {
@@ -113,6 +142,11 @@ in
     yysong.enable = false; # migrated to 182.92.242.192 (Tencent Cloud) 2026-10-02
     openlist.enable = true;
     oci-helper.enable = true;
+    beszel-agent = {
+      enable = true;
+      hubUrl = "https://monitor.siiway.top";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFBJuAPyEOrgT8HMzEBHNEXXgGAN7JDgUJMBSQqLJZVq";
+    };
 
     pds = {
       enable = false;
@@ -151,7 +185,10 @@ in
     ];
   };
 
-  virtualisation.podman.dockerCompat = true;
+  virtualisation.podman = {
+    dockerCompat = true;
+    dockerSocket.enable = true;
+  };
 
   rhen.services.postgresql = {
     databases = [

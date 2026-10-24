@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Ant Browser
+Comment=多账号隔离、代理绑定和本地环境管理的桌面浏览器工具
+Exec=ant-chrome
+Icon=ant-browser
+Terminal=false
+Categories=Network;WebBrowser;
+StartupNotify=true
+StartupWMClass=Ant-chrome
+Keywords=browser;profile;proxy;

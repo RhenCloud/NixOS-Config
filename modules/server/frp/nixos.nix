@@ -20,12 +20,16 @@ in
         host = "yc-hk-1";
       }
       // {
-        mode = "0644";
+        mode = "0400";
       };
 
+    # frps 以 DynamicUser 运行，无法读取 root:0400 的 secret，改用 systemd credential 传入
     systemd.services."frp-server" = {
       after = [ "sops-install-secrets.service" ];
       requires = [ "sops-install-secrets.service" ];
+      serviceConfig.LoadCredential = [
+        "frp-auth-token:${config.sops.secrets."frp-auth-token".path}"
+      ];
     };
 
     services.frp.instances.server = {
@@ -42,7 +46,7 @@ in
           method = "token";
           tokenSource = {
             type = "file";
-            file.path = config.sops.secrets."frp-auth-token".path;
+            file.path = "/run/credentials/frp-server.service/frp-auth-token";
           };
         };
       };

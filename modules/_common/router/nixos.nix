@@ -63,7 +63,7 @@ in
         "10-br0" = {
           matchConfig.Name = "br0";
           networkConfig = {
-            Address = "10.0.0.1/24";
+            Address = "192.168.1.2/24";
             DHCPServer = true;
             IPMasquerade = "both";
             ConfigureWithoutCarrier = true;
@@ -72,7 +72,7 @@ in
             PoolOffset = 100;
             PoolSize = 151;
             DNS = [
-              "10.0.0.1"
+              "192.168.1.2"
               "8.8.8.8"
             ];
             EmitDNS = true;
@@ -109,7 +109,7 @@ in
           "1.1.1.1"
           "8.8.8.8"
         ];
-        DNSStubListenerExtra = [ "10.0.0.1" ];
+        DNSStubListenerExtra = [ "192.168.1.2" ];
       };
     };
 
@@ -258,8 +258,8 @@ in
     services.openssh = {
       enable = true;
       settings = {
-        PermitRootLogin = "yes";
-        PasswordAuthentication = true;
+        PermitRootLogin = "prohibit-password";
+        PasswordAuthentication = false;
       };
     };
 

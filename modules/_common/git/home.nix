@@ -210,6 +210,15 @@ in
             HostName 207.57.127.54
             Port 22222
             User rhencloud
+
+        Host nixos-homeserver
+            HostName 192.168.1.2
+            User root
+
+        Host yc-hk-1
+            HostName 207.57.127.54
+            User rhencloud
+            Port 22222
       '';
     };
 

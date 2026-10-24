@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 with lib;
@@ -28,13 +29,15 @@ in
       android-tools
       gparted-full
       mpd
-      daed
+      # daed
       neovim
       kleopatra-wrapped
       gsettings-desktop-schemas
       ffmpeg
       geo
 
+      inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.ant-browser
+      
       (
         let
           base = pkgs.appimageTools.defaultFhsEnvArgs;

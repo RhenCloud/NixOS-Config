@@ -15,6 +15,14 @@ in
     rhen.services.mihomo = {
       enable = true;
       ebpf = true;
+      extraListeners = [
+        {
+          name = "browser";
+          type = "mixed";
+          port = 7891;
+          listen = "127.0.0.1";
+        }
+      ];
     };
 
     zramSwap.enable = true;
@@ -37,7 +45,7 @@ in
         enable = true;
         settings = {
           PermitRootLogin = "no";
-          PasswordAuthentication = true;
+          PasswordAuthentication = false;
           KbdInteractiveAuthentication = false;
           MaxAuthTries = 3;
           MaxSessions = 10;

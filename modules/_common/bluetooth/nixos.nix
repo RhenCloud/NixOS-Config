@@ -7,10 +7,6 @@
 with lib;
 let
   cfg = config.rhen.bluetooth;
-
-  btIsoEnable = pkgs.callPackage ../../../packages/bt-iso-enable {
-    kernel = config.boot.kernelPackages.kernel;
-  };
 in
 {
   options.rhen.bluetooth.enable = mkEnableOption "Bluetooth";
@@ -27,8 +23,6 @@ in
       };
     };
     services.blueman.enable = true;
-
-    boot.extraModulePackages = [ btIsoEnable ];
 
     systemd.services = {
       #   bt-iso-enable = {

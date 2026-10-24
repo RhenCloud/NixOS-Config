@@ -2,6 +2,9 @@
 {
   networking = {
     useNetworkd = true;
+    # 暂时关闭防火墙以支持 FRP 动态端口转发（2222, 15244, 3001 等）、
+    # Gost 隧道（23222-23224）、EasyTier Mesh VPN 及 RustDesk（21115-21119）；
+    # SSH 运行于端口 22222 并已强制禁用密码认证（PasswordAuthentication = false）。
     firewall.enable = false;
   };
 

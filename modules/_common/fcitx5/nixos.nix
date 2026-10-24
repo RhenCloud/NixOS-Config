@@ -21,7 +21,7 @@ in
           qt6Packages.fcitx5-configtool
           qt6Packages.fcitx5-chinese-addons
           fcitx5-gtk
-          fcitx5-mozc
+          # 当前使用 Rime/雾凇输入方案；移除 Mozc，避免其 Bazel/Qt 构建失败。
           librime
           librime-octagram
           librime-lua

@@ -1,6 +1,6 @@
-{ lib, ... }:
+{ config, lib, ... }:
 {
-  config = {
+  config = lib.mkIf config.rhen.roles.dev.enable {
     rhen = {
       c.enable = true;
       android.enable = true;

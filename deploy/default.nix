@@ -54,7 +54,7 @@ in
     };
 
     nixos-homeserver = {
-      hostname = "10.0.0.1";
+      hostname = "192.168.1.2";
       sshUser = "rhencloud";
       profiles.system = {
         user = "root";

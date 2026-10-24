@@ -10,7 +10,6 @@
   ];
 
   networking.hostName = "iso";
-  rhen.host.name = "iso";
   nixpkgs.hostPlatform = "x86_64-linux";
 
   # 基础硬件支持

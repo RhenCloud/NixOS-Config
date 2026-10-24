@@ -29,7 +29,7 @@
       games.enable = true;
       steam.enable = true;
       zen.enable = true;
-      sunshine.enable = true;
+      sunshine.enable = false;
       avahi.enable = true;
 
       # service

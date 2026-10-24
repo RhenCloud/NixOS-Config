@@ -127,6 +127,7 @@ in
     programs.piri = {
       enable = true;
       enableFishIntegration = true;
+      enableZshIntegration = false;
       package = inputs.piri.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
   };

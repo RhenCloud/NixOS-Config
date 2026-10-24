@@ -1,19 +1,21 @@
 {
   config,
   lib,
+  pkgs,
   snowveil,
   ...
 }:
 with lib;
 let
   cfg = config.rhen.cloudflared;
-  tunnelId = "eb4440a4-a4a8-4c22-8595-060df067653b";
+  tunnelId = "5e94c131-1a39-4aed-865e-2c3e0e95c8b4";
+  tokenSecret = "cloudflared-yc-hk-1-token";
 in
 {
   options.rhen.cloudflared.enable = mkEnableOption "Cloudflare Tunnel";
 
   config = mkIf cfg.enable {
-    sops.secrets."cloudflared-yc-hk-1-credentials" =
+    sops.secrets.${tokenSecret} =
       snowveil.sops.secret {
         source = "host";
         host = "yc-hk-1";
@@ -24,16 +26,17 @@ in
       };
 
     systemd.services."cloudflared-tunnel-${tunnelId}" = {
-      after = [ "sops-install-secrets.service" ];
+      description = "Cloudflare Tunnel ${tunnelId}";
+      after = [ "network-online.target" "sops-install-secrets.service" ];
+      wants = [ "network-online.target" ];
       requires = [ "sops-install-secrets.service" ];
-    };
-
-    services.cloudflared = {
-      enable = true;
-      tunnels."${tunnelId}" = {
-        credentialsFile = config.sops.secrets."cloudflared-yc-hk-1-credentials".path;
-        default = "http_status:404";
-        ingress = { };
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        LoadCredential = "token:${config.sops.secrets.${tokenSecret}.path}";
+        ExecStart = "${pkgs.cloudflared}/bin/cloudflared tunnel run --token-file %d/token";
+        Restart = "on-failure";
+        RestartSec = "5s";
+        DynamicUser = true;
       };
     };
   };

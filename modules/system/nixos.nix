@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 with lib;
@@ -8,12 +9,6 @@ let
   cfg = config.rhen.btrfs;
 in
 {
-  options.rhen.btrfs = {
-    enable = mkEnableOption "启用 Btrfs 配额和配置" // {
-      default = true;
-    };
-  };
-
   config = mkIf cfg.enable {
     # 启用 Btrfs 配额（防止单路径耗尽系统空间）
     boot.kernelPackages = config.boot.kernelPackages;
@@ -27,10 +22,11 @@ in
         "btrfs-quota-setup.service"
       ];
       after = [ "local-fs.target" ];
+      path = [ pkgs.btrfs-progs ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStart = "+btrfs quota enable /";
+        ExecStart = "+${pkgs.btrfs-progs}/bin/btrfs quota enable /";
       };
     };
 
@@ -42,6 +38,11 @@ in
         "local-fs.target"
       ];
       after = [ "btrfs-quota-enable.service" ];
+      path = [
+        pkgs.btrfs-progs
+        pkgs.util-linux
+        pkgs.coreutils
+      ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;

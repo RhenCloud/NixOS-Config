@@ -25,7 +25,7 @@ in
       # libreoffice
       wpsoffice-cn
       easytier
-      audacity
+      # audacity
       kdePackages.kwave
       heroic
       # rustdesk

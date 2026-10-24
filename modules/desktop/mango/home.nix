@@ -11,9 +11,9 @@ in
       enable = true;
 
       extraConfig = ''
-                source = ~/.config/mango/env.conf
-                source = ~/.config/mango/keybindings.conf
-                source = ~/.config/mango/windowrules.conf
+                source = ${./mango/env.conf}
+                source = ${./mango/keybindings.conf}
+                source = ${./mango/windowrules.conf}
 
                 blur=0
                 blur_layer=0
@@ -32,7 +32,7 @@ in
                 shadows_blur = 15
                 shadows_position_x = 0
                 shadows_position_y = 0
-                shadowscolor= 0x000000ff
+                shadows_color=0x000000ff
 
                 border_radius=10
                 no_radius_when_single=0
@@ -48,8 +48,8 @@ in
                 tag_animation_direction=0
                 zoom_initial_ratio=0.3
                 zoom_end_ratio=0.8
-                fadein_begin_opacity=0.5
-                fadeout_begin_opacity=0.8
+                fade_in_begin_opacity=0.5
+                fade_out_begin_opacity=0.8
                 animation_duration_move=500
                 animation_duration_open=400
                 animation_duration_tag=350
@@ -60,8 +60,8 @@ in
                 animation_curve_tag=0.46,1.0,0.29,1
                 animation_curve_close=0.08,0.92,0,1
                 animation_curve_focus=0.46,1.0,0.29,1
-                animation_curve_opafadeout=0.5,0.5,0.5,0.5
-                animation_curve_opafadein=0.46,1.0,0.29,1
+                animation_curve_opacity_fade_out=0.5,0.5,0.5,0.5
+                animation_curve_opacity_fade_in=0.46,1.0,0.29,1
 
                 scroller_structs=20
                 scroller_default_proportion=0.8
@@ -72,22 +72,22 @@ in
                 scroller_proportion_preset=0.5,0.8,1.0
 
                 new_is_master=1
-                default_mfact=0.55
-                default_nmaster=1
-                smartgaps=0
+                default_master_factor=0.55
+                default_master_count=1
+                smart_gaps=0
 
                 hotarea_size=10
                 enable_hotarea=1
                 hotarea_corner=0
-                overviewgappi=5
-                overviewgappo=30
+                overview_gap_inner=5
+                overview_gap_outer=30
 
                 no_border_when_single=0
                 axis_bind_apply_timeout=100
                 focus_on_activate=1
-                idleinhibit_ignore_visible=0
-                sloppyfocus=1
-                warpcursor=1
+                idle_inhibit_ignore_visible=0
+                sloppy_focus=1
+                warp_cursor=1
                 focus_cross_monitor=0
                 focus_cross_tag=0
                 enable_floating_snap=0
@@ -97,7 +97,7 @@ in
 
                 repeat_rate=25
                 repeat_delay=600
-                numlockon=0
+                numlock_on=0
                 xkb_rules_layout=us
 
         disable_trackpad=0
@@ -112,36 +112,34 @@ in
 
                 mouse_natural_scrolling=0
 
-                gappih=5
-                gappiv=5
-                gappoh=10
-                gappov=10
+                gap_inner_horizontal=5
+                gap_inner_vertical=5
+                gap_outer_horizontal=10
+                gap_outer_vertical=10
                 scratchpad_width_ratio=0.8
                 scratchpad_height_ratio=0.9
-                borderpx=4
-                rootcolor=0x201b14ff
-                bordercolor=0x444444ff
-                focuscolor=0xc9b890ff
-                maximizescreencolor=0x89aa61ff
-                urgentcolor=0xad401fff
-                scratchpadcolor=0x516c93ff
-                globalcolor=0xb153a7ff
-                overlaycolor=0x14a57cff
+                border_px=4
+                root_color=0x201b14ff
+                border_color=0x444444ff
+                focus_color=0xc9b890ff
+                maximized_screen_color=0x89aa61ff
+                urgent_color=0xad401fff
+                scratchpad_color=0x516c93ff
+                global_color=0xb153a7ff
+                overlay_color=0x14a57cff
 
-                tagrule=id:1,layout_name:scroller
-                tagrule=id:2,layout_name:scroller
-                tagrule=id:3,layout_name:scroller
-                tagrule=id:4,layout_name:scroller
-                tagrule=id:5,layout_name:scroller
-                tagrule=id:6,layout_name:scroller
-                tagrule=id:7,layout_name:scroller
-                tagrule=id:8,layout_name:scroller
-                tagrule=id:9,layout_name:scroller
+                tag_rule=id:1,layout_name:scroller
+                tag_rule=id:2,layout_name:scroller
+                tag_rule=id:3,layout_name:scroller
+                tag_rule=id:4,layout_name:scroller
+                tag_rule=id:5,layout_name:scroller
+                tag_rule=id:6,layout_name:scroller
+                tag_rule=id:7,layout_name:scroller
+                tag_rule=id:8,layout_name:scroller
+                tag_rule=id:9,layout_name:scroller
 
-                layerrule=animation_type_open:zoom,layer_name:rofi
-                layerrule=animation_type_close:zoom,layer_name:rofi
-
-                monitorrule=name:^HDMI-A-1$,width:1920,height:1080,refresh:75,x:0,y:0
+                layer_rule=animation_type_open:zoom,layer_name:rofi
+                layer_rule=animation_type_close:zoom,layer_name:rofi
       '';
 
       autostart_sh = ''

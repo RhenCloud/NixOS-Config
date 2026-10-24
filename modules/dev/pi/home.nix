@@ -14,6 +14,7 @@ let
     "voidswitch" = "deepseek-v4-flash-0731";
     "chibang-claude" = "claude-opus-5-5";
     "chibang-codex" = "gpt-5.6-terra";
+    "chibang-cn" = "glm-5.3-flash";
   };
 
   effectiveDefaultModel =
@@ -29,12 +30,14 @@ in
       rtk
       bubblewrap
       socat
+      wakatime-cli
     ];
 
     sops.secrets = {
       "opencode-voidswitch-api-key" = snowveil.sops.secret { source = "common"; };
       "chibang-codex-api-key" = snowveil.sops.secret { source = "common"; };
       "chibang-claude-api-key" = snowveil.sops.secret { source = "common"; };
+      "chibang-cn-api-key" = snowveil.sops.secret { source = "common"; };
       "github-token" = snowveil.sops.secret { source = "common"; };
       "idcjk-api-key" = snowveil.sops.secret { source = "common"; };
     };
@@ -53,24 +56,36 @@ in
               "headers": { "User-Agent": "pi/${pkgs.pi-coding-agent.version}" },
               "models": [
                 { "id": "deepseek-v4-pro", "name": "DeepSeek V4 Pro", "reasoning": true },
-                { "id": "deepseek-v4-flash-0731", "name": "DeepSeek V4 Flash 0731", "reasoning": true },
-                { "id": "qwen-3.8-max", "name": "Qwen 3.8 Max", "reasoning": true },
-                { "id": "deepseek-v4-flash", "name": "DeepSeek V4 Flash", "reasoning": true },
-                { "id": "cc/claude-opus-4-7", "name": "Claude Opus 4.7", "reasoning": true },
-                { "id": "cc/claude-sonnet-4-6", "name": "Claude Sonnet 4.6", "reasoning": true },
-                { "id": "cc/claude-haiku-4-5", "name": "Claude Haiku 4.5", "reasoning": true },
-                { "id": "codex/gpt-5.6-sol", "name": "GPT 5.6 Sol" },
-                { "id": "codex/gpt-5.6-terra", "name": "GPT 5.6 Terra" },
-                { "id": "codex/gpt-5.6-luna", "name": "GPT 5.6 Luna" },
-                { "id": "codex/gpt-6-astra", "name": "GPT 6 Astra" },
-                { "id": "glm-4.7-flash-cf", "name": "GLM 4.7 Flash CF" },
-                { "id": "codex-gpt-5.5", "name": "Codex GPT-5.5" },
-                { "id": "gpt-5.5", "name": "GPT-5.5" },
-                { "id": "gpt-5.6-luna", "name": "GPT-5.6 Luna" },
-                { "id": "grok-4.3-beta", "name": "Grok 4.3 Beta" },
-                { "id": "doghubx-gpt-5.5", "name": "DogHubX GPT-5.5" },
-                { "id": "murasame-vip/gemini-3.8-flash-high", "name": "Gemini 3.8 Flash High" },
-                { "id": "oc-zen/mimo-v2.5-free", "name": "MiMo v2.5 Free", "reasoning": true }
+                { "id": "deepseek-v4-flash-0731", "name": "DeepSeek V4 Flash 0731", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "deepseek-v4-flash", "name": "DeepSeek V4 Flash", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "codex/gpt-5.6-sol", "name": "GPT 5.6 Sol", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "codex/gpt-5.6-terra", "name": "GPT 5.6 Terra", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "codex/gpt-5.6-luna", "name": "GPT 5.6 Luna", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "codex/gpt-6-astra", "name": "GPT 6 Astra", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "glm-4.7-flash-cf", "name": "GLM 4.7 Flash CF", "input": [ "text", "image" ] },
+                { "id": "codex-gpt-5.5", "name": "Codex GPT-5.5", "input": [ "text", "image" ] },
+                { "id": "gpt-5.5", "name": "GPT-5.5", "input": [ "text", "image" ] },
+                { "id": "gpt-5.6-luna", "name": "GPT-5.6 Luna", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "grok-4.3-beta", "name": "Grok 4.3 Beta", "input": [ "text", "image" ] },
+                { "id": "doghubx-gpt-5.5", "name": "DogHubX GPT-5.5", "input": [ "text", "image" ] },
+                { "id": "murasame-vip/gemini-3.8-flash-high", "name": "Gemini 3.8 Flash High", "input": [ "text", "image" ] },
+                { "id": "oc-zen/mimo-v2.5-free", "name": "MiMo v2.5 Free", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "oc-zen/mimo-v2.6-flash-free", "name": "MiMo v2.6 Flash Free", "reasoning": true, "input": [ "text", "image" ] }
+              ]
+            },
+            "chibang-cn": {
+              "baseUrl": "https://chatapi.transmtf.com/v1",
+              "api": "openai-completions",
+              "apiKey": "${config.sops.placeholder."chibang-cn-api-key"}",
+              "models": [
+                { "id": "glm-5.3-flash", "name": "GLM 5.3 Flash", "input": [ "text", "image" ] },
+                { "id": "deepseek-v4.1-flash-1017", "name": "DeepSeek V4.1 Flash 1017", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "deepseek-v4.1-flash", "name": "DeepSeek V4.1 Flash", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "minimax-m3", "name": "MiniMax M3", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "qwen3.7-plus", "name": "Qwen 3.7 Plus", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "deepseek-v4-pro", "name": "DeepSeek V4 Pro", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "glm-5.3", "name": "GLM 5.3", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "qwen3.8-max", "name": "Qwen 3.8 Max", "reasoning": true, "input": [ "text", "image" ] }
               ]
             },
             "chibang-codex": {
@@ -78,14 +93,15 @@ in
               "api": "openai-completions",
               "apiKey": "${config.sops.placeholder."chibang-codex-api-key"}",
               "models": [
-                { "id": "gpt-5.3-codex", "name": "GPT-5.3 Codex", "reasoning": true },
-                { "id": "gpt-5.3-codex-spark", "name": "GPT-5.3 Codex Spark" },
-                { "id": "gpt-5.4", "name": "GPT-5.4" },
-                { "id": "gpt-5.4-mini", "name": "GPT-5.4 Mini" },
-                { "id": "gpt-5.2", "name": "GPT-5.2" },
-                { "id": "gpt-5.5", "name": "GPT-5.5" },
-                { "id": "gpt-5.6-sol", "name": "GPT-5.6 Sol" },
-                { "id": "gpt-5.6-terra", "name": "GPT-5.6 Terra" }
+                { "id": "gpt-5.3-codex", "name": "GPT-5.3 Codex", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "gpt-5.3-codex-spark", "name": "GPT-5.3 Codex Spark", "input": [ "text", "image" ] },
+                { "id": "gpt-5.4", "name": "GPT-5.4", "input": [ "text", "image" ] },
+                { "id": "gpt-5.4-mini", "name": "GPT-5.4 Mini", "input": [ "text", "image" ] },
+                { "id": "gpt-5.2", "name": "GPT-5.2", "input": [ "text", "image" ] },
+                { "id": "gpt-5.5", "name": "GPT-5.5", "input": [ "text", "image" ] },
+                { "id": "gpt-5.6-sol", "name": "GPT-5.6 Sol", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "gpt-5.6-luna", "name": "GPT-5.6 Luna", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "gpt-5.6-terra", "name": "GPT-5.6 Terra", "reasoning": true, "input": [ "text", "image" ] }
               ]
             },
             "chibang-claude": {
@@ -97,45 +113,53 @@ in
                   "id": "claude-opus-4-8",
                   "name": "Claude Opus 4.8",
                   "reasoning": true,
+                  "input": [ "text", "image" ],
                   "promptCache": { "short": 300, "long": 3600 }
                 },
                 {
                   "id": "claude-opus-4-7",
                   "name": "Claude Opus 4.7",
                   "reasoning": true,
+                  "input": [ "text", "image" ],
                   "promptCache": { "short": 300, "long": 3600 }
                 },
                 {
                   "id": "claude-opus-4-6",
                   "name": "Claude Opus 4.6",
                   "reasoning": true,
+                  "input": [ "text", "image" ],
                   "promptCache": { "short": 300, "long": 3600 }
                 },
                 {
                   "id": "claude-opus-5-5",
                   "name": "Claude Opus 5.5",
                   "reasoning": true,
+                  "input": [ "text", "image" ],
                   "promptCache": { "short": 300, "long": 3600 }
                 },
                 {
                   "id": "claude-sonnet-5",
                   "name": "Claude Sonnet 5",
                   "reasoning": true,
+                  "input": [ "text", "image" ],
                   "promptCache": { "short": 300, "long": 3600 }
                 },
                 {
                   "id": "claude-sonnet-4-6",
                   "name": "Claude Sonnet 4.6",
+                  "input": [ "text", "image" ],
                   "promptCache": { "short": 300, "long": 3600 }
                 },
                 {
                   "id": "claude-sonnet-4-5-20250929",
                   "name": "Claude Sonnet 4.5",
+                  "input": [ "text", "image" ],
                   "promptCache": { "short": 300, "long": 3600 }
                 },
                 {
                   "id": "claude-haiku-4-5-20251001",
                   "name": "Claude Haiku 4.5",
+                  "input": [ "text", "image" ],
                   "promptCache": { "short": 300, "long": 3600 }
                 }
               ]
@@ -218,69 +242,69 @@ in
     home.file.".pi/agent/permission-mode/permission-mode.json".text = builtins.toJSON {
       "$schema" =
         "https://raw.githubusercontent.com/wynainfo/pi-permission-modes/main/schemas/permission-mode.schema.json";
-      defaultMode = "plan";
+      defaultMode = "auto";
       cycleOrder = [
-        "plan"
-        "build"
+        # "plan"
+        # "build"
         "auto"
       ];
       modes = {
-        plan = {
-          label = "Plan";
-          color = "mdLink";
-          permission = {
-            path = {
-              "*" = "allow";
-              "*.env" = "deny";
-              "*.env.*" = "deny";
-            };
-            external_directory = "allow";
-            read = "allow";
-            grep = "allow";
-            find = "allow";
-            ls = "allow";
-            write = "deny";
-            edit = "deny";
-            bash = {
-              "*" = "deny";
-            };
-            web_search = "allow";
-            tool = "allow";
-            skill = "allow";
-          };
-          sandbox = {
-            writable = false;
-          };
-          hideTools = [ ];
-        };
-        build = {
-          label = "Build";
-          color = "accent";
-          permission = {
-            path = {
-              "*" = "allow";
-              "*.env" = "deny";
-              "*.env.*" = "deny";
-            };
-            external_directory = "allow";
-            read = "allow";
-            grep = "allow";
-            find = "allow";
-            ls = "allow";
-            write = "allow";
-            edit = "allow";
-            bash = {
-              "*" = "allow";
-            };
-            web_search = "allow";
-            tool = "allow";
-            skill = "allow";
-          };
-          sandbox = {
-            writable = true;
-          };
-          hideTools = [ ];
-        };
+        # plan = {
+        #   label = "Plan";
+        #   color = "mdLink";
+        #   permission = {
+        #     path = {
+        #       "*" = "allow";
+        #       "*.env" = "deny";
+        #       "*.env.*" = "deny";
+        #     };
+        #     external_directory = "allow";
+        #     read = "allow";
+        #     grep = "allow";
+        #     find = "allow";
+        #     ls = "allow";
+        #     write = "deny";
+        #     edit = "deny";
+        #     bash = {
+        #       "*" = "deny";
+        #     };
+        #     web_search = "allow";
+        #     tool = "allow";
+        #     skill = "allow";
+        #   };
+        #   sandbox = {
+        #     writable = false;
+        #   };
+        #   hideTools = [ ];
+        # };
+        # build = {
+        #   label = "Build";
+        #   color = "accent";
+        #   permission = {
+        #     path = {
+        #       "*" = "allow";
+        #       "*.env" = "deny";
+        #       "*.env.*" = "deny";
+        #     };
+        #     external_directory = "allow";
+        #     read = "allow";
+        #     grep = "allow";
+        #     find = "allow";
+        #     ls = "allow";
+        #     write = "allow";
+        #     edit = "allow";
+        #     bash = {
+        #       "*" = "allow";
+        #     };
+        #     web_search = "allow";
+        #     tool = "allow";
+        #     skill = "allow";
+        #   };
+        #   sandbox = {
+        #     writable = true;
+        #   };
+        #   hideTools = [ ];
+        # };
         auto = {
           label = "Auto";
           color = "error";
@@ -314,6 +338,9 @@ in
       theme = cfg.theme;
       enableInstallTelemetry = false;
       enableAnalytics = false;
+      extensions = [
+        "-builtin:mcp"
+      ];
       modelThinkingLevels = {
         "voidswitch/deepseek-v4-flash" = "low";
         "voidswitch/glm-4.7-flash-cf" = "low";
@@ -336,6 +363,7 @@ in
         "npm:pi-lens@^4.3.0"
         "npm:@juicesharp/rpiv-ask-user-question@^2.12.0"
         "npm:@narumitw/pi-btw@^0.61.1"
+        "npm:pi-wakatime@^1.1.3"
       ];
     };
 

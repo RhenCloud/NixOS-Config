@@ -288,7 +288,9 @@
           ];
           packages = [
             "aicommits"
+            "ant-browser"
             "bt-iso-enable"
+            "cloakbrowser"
             "deploy-rs"
             "herdr-mobile-relay"
             "herdr-plus"
@@ -461,6 +463,7 @@
             "dev.c"
             "dev.certs"
             "dev.emacs"
+            "dev.externals"
             "dev.golang"
             "dev.helix"
             "dev.java"

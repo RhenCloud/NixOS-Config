@@ -23,6 +23,347 @@ services:
     listener:
       type: tcp
 
+  - name: tuic-40000
+    addr: :40000
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40000
+          addr: p.rhencloud.dpdns.org:40000
+
+  - name: tuic-40001
+    addr: :40001
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40001
+          addr: p.rhencloud.dpdns.org:40001
+
+  - name: tuic-40002
+    addr: :40002
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40002
+          addr: p.rhencloud.dpdns.org:40002
+
+  - name: tuic-40003
+    addr: :40003
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40003
+          addr: p.rhencloud.dpdns.org:40003
+
+  - name: tuic-40004
+    addr: :40004
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40004
+          addr: p.rhencloud.dpdns.org:40004
+
+  - name: tuic-40005
+    addr: :40005
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40005
+          addr: p.rhencloud.dpdns.org:40005
+
+  - name: tuic-40006
+    addr: :40006
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40006
+          addr: p.rhencloud.dpdns.org:40006
+
+  - name: tuic-40007
+    addr: :40007
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40007
+          addr: p.rhencloud.dpdns.org:40007
+
+  - name: tuic-40008
+    addr: :40008
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40008
+          addr: p.rhencloud.dpdns.org:40008
+
+  - name: tuic-40009
+    addr: :40009
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40009
+          addr: p.rhencloud.dpdns.org:40009
+
+  - name: tuic-40010
+    addr: :40010
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40010
+          addr: p.rhencloud.dpdns.org:40010
+
+  - name: tuic-40011
+    addr: :40011
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40011
+          addr: p.rhencloud.dpdns.org:40011
+
+  - name: tuic-40012
+    addr: :40012
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40012
+          addr: p.rhencloud.dpdns.org:40012
+
+  - name: tuic-40013
+    addr: :40013
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40013
+          addr: p.rhencloud.dpdns.org:40013
+
+  - name: tuic-40014
+    addr: :40014
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40014
+          addr: p.rhencloud.dpdns.org:40014
+
+  - name: tuic-40015
+    addr: :40015
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40015
+          addr: p.rhencloud.dpdns.org:40015
+
+  - name: tuic-40016
+    addr: :40016
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40016
+          addr: p.rhencloud.dpdns.org:40016
+
+  - name: tuic-40017
+    addr: :40017
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40017
+          addr: p.rhencloud.dpdns.org:40017
+
+  - name: tuic-40018
+    addr: :40018
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40018
+          addr: p.rhencloud.dpdns.org:40018
+
+  - name: tuic-40019
+    addr: :40019
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-40019
+          addr: p.rhencloud.dpdns.org:40019
+
+  - name: tuic-8883
+    addr: :8883
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-tuic-43372
+          addr: 218.252.147.31:43372
+
+  - name: tuic-46091
+    addr: :46091
+    handler:
+      type: udp
+    listener:
+      type: udp
+      metadata:
+        keepAlive: true
+        readBufferSize: 65535
+        writeBufferSize: 65535
+    forwarder:
+      nodes:
+        - name: target-tuic-46091
+          addr: 223.219.47.25:46091
+
+  - name: anytls-8891
+    addr: :8891
+    handler:
+      type: tcp
+    listener:
+      type: tcp
+    forwarder:
+      nodes:
+        - name: target-anytls-13871
+          addr: 218.252.147.31:13871
+
 chains:
   - name: chain-0
     hops:
@@ -53,7 +394,7 @@ chains:
       - name: hop-0
         nodes:
           - name: node-0
-            addr: 218.252.243.113:35717
+            addr: 218.252.147.31:13871
             connector:
               type: tcp
             dialer:

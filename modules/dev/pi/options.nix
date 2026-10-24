@@ -11,6 +11,7 @@
         # "zhi"
         "chibang-codex"
         "chibang-claude"
+        "chibang-cn"
       ];
       default = "voidswitch";
       description = "默认 LLM 供应商";

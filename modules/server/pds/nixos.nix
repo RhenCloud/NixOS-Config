@@ -72,7 +72,7 @@ in
             host = "nixos-homeserver";
           }
           // {
-            mode = "0644";
+            mode = "0400";
           };
         "pds-jwt-secret" =
           snowveil.sops.secret {
@@ -155,7 +155,7 @@ in
             method = "token";
             tokenSource = {
               type = "file";
-              file.path = config.sops.secrets."frp-auth-token".path;
+              file.path = "/run/credentials/frp-bsky-pds.service/frp-auth-token";
             };
           };
           proxies = [
@@ -170,9 +170,13 @@ in
         };
       };
 
+      # frpc 以 DynamicUser 运行，无法读取 root:0400 的 secret，改用 systemd credential 传入
       systemd.services."frp-bsky-pds" = {
         after = [ "sops-install-secrets.service" ];
         requires = [ "sops-install-secrets.service" ];
+        serviceConfig.LoadCredential = [
+          "frp-auth-token:${config.sops.secrets."frp-auth-token".path}"
+        ];
       };
     })
 

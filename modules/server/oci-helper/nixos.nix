@@ -56,7 +56,7 @@ in
 
     sops.templates."oci-helper-application-yml" = {
       owner = "root";
-      mode = "0444";
+      mode = "0400";
       content = ''
         server:
           port: ${toString cfg.port}

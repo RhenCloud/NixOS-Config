@@ -38,20 +38,26 @@ in
 
     sopsHost = mkOption {
       type = types.str;
-      default = config.rhen.host.name;
+      default = config.networking.hostName;
       description = "sops host secrets 文件对应的主机名";
     };
 
     hubUrl = mkOption {
       type = types.str;
-      default = "https://dash.rhen.cloud";
+      default = "https://monitor.siiway.top";
       description = "HUB_URL，agent 连接的 Hub 地址";
     };
 
     dockerSocket = mkOption {
-      type = types.str;
-      default = "/var/run/docker.sock";
-      description = "容器运行时 socket（只读挂载，用于采集容器指标）";
+      type = types.nullOr types.str;
+      default =
+        if config.virtualisation.podman.dockerSocket.enable then
+          "/run/podman/podman.sock"
+        else if config.virtualisation.docker.enable then
+          "/var/run/docker.sock"
+        else
+          null;
+      description = "容器运行时 socket（只读挂载，用于采集容器指标）；设为 null 则禁用容器指标采集";
     };
   };
 
@@ -76,10 +82,26 @@ in
       "d ${cfg.dataDir} 0755 root root -"
     ];
 
-    systemd.services."podman-beszel-agent" = {
-      after = [ "sops-install-secrets.service" ];
-      requires = [ "sops-install-secrets.service" ];
+    systemd.services."${config.virtualisation.oci-containers.backend}-beszel-agent" = {
+      after = [
+        "sops-install-secrets.service"
+      ]
+      ++ optional (
+        cfg.dockerSocket != null && config.virtualisation.podman.dockerSocket.enable
+      ) "podman.socket"
+      ++ optional (cfg.dockerSocket != null && config.virtualisation.docker.enable) "docker.service";
+      requires = [
+        "sops-install-secrets.service"
+      ]
+      ++ optional (
+        cfg.dockerSocket != null && config.virtualisation.podman.dockerSocket.enable
+      ) "podman.socket"
+      ++ optional (cfg.dockerSocket != null && config.virtualisation.docker.enable) "docker.service";
     };
+
+    systemd.sockets.podman.wantedBy = mkIf (
+      cfg.dockerSocket != null && config.virtualisation.podman.dockerSocket.enable
+    ) [ "multi-user.target" ];
 
     virtualisation.oci-containers.containers.beszel-agent = {
       image = cfg.image;
@@ -89,9 +111,9 @@ in
       extraOptions = [ "--network=host" ];
 
       volumes = [
-        "${cfg.dockerSocket}:/var/run/docker.sock:ro"
         "${cfg.dataDir}:/var/lib/beszel-agent"
-      ];
+      ]
+      ++ optional (cfg.dockerSocket != null) "${cfg.dockerSocket}:/var/run/docker.sock:ro";
 
       environmentFiles = [
         config.sops.templates."beszel-agent-env".path
@@ -101,6 +123,9 @@ in
         LISTEN = toString cfg.listen;
         KEY = cfg.key;
         HUB_URL = cfg.hubUrl;
+      }
+      // optionalAttrs (cfg.dockerSocket == null) {
+        DOCKER_HOST = "";
       };
     };
   };
