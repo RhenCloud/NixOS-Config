@@ -7,9 +7,9 @@ from pathlib import Path
 HEADER = """# Rime dictionary
 # encoding: utf-8
 #
-# 由 keytao-custom-phrase-sync 生成，手动修改会在下次同步时被覆盖。
+# 由 cloudkeytao-custom-phrase-sync 生成，手动修改会在下次同步时被覆盖。
 ---
-name: keytao.custom.user
+name: cloudkeytao.custom.user
 version: \"1.0\"
 sort: by_weight
 use_preset_vocabulary: false

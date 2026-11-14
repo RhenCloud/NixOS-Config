@@ -2,11 +2,98 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 with lib;
 let
   cfg = config.rhen.fcitx5;
+
+  # CloudKeyTao 的 Rime 数据包。这里**不做任何加工**：
+  # 内联 schema、词库改名、剔除多方案，全在做包的那一侧（scripts/build.sh）。
+  # 本模块只负责把它放到运行时目录里。
+  cloudkeytao = inputs.cloudkeytao.packages.${pkgs.stdenv.hostPlatform.system}.rime-data;
+
+  # 运行时目录里属于「用户数据」、绝不能被覆盖的东西。
+  #
+  # ⚠️ 这里只能列「产物里压根没有」的文件。若把产物里的表排除掉，
+  #    extended 的 import_tables 会在部署时报
+  #    `source file ... does not exist` 并整个表编译失败 —— 实测踩过。
+  #    所以 cloudkeytao.local / cloudkeytao.custom.user 都必须留在产物里
+  #    （作为空占位表），再由下面两类途径写入实际内容：
+  #      * activation 无条件写 cloudkeytao.local
+  #      * 定时器回流 cloudkeytao.custom.user（写回仓库，再进产物）
+  userOwnedFiles = [
+    "cloudkeytao-email.txt"
+    "cloudkeytao-custom-phrase.txt"
+    "custom_phrase.txt"
+    "build"
+    "user.yaml"
+    "installation.yaml"
+    "sync"
+  ];
+
+  # 从产物目录直接枚举要装的文件。
+  #
+  # 不在 Nix 里硬编码清单：上游加一个词库时这里不用跟着改，
+  # 也就不存在「清单漂移」。目录里的子目录（lua/ opencc/）按递归处理。
+  entries = builtins.readDir cloudkeytao;
+  managedEntries = builtins.filter (
+    n: !(builtins.elem n userOwnedFiles) && builtins.match ".*\\.userdb" n == null
+  ) (builtins.attrNames entries);
+
+  rimeDataFiles = lib.listToAttrs (
+    map (name: {
+      inherit name;
+      value =
+        let
+          t = entries.${name};
+        in
+        {
+          source = cloudkeytao + "/${name}";
+          force = true;
+        }
+        // lib.optionalAttrs (t == "directory") { recursive = true; };
+    }) managedEntries
+  );
+
+  # keytaoUserDict → 独立的 cloudkeytao.local 词库。
+  #
+  # 在 Nix 侧直接生成而不用 activation 脚本拼接：内容不可变、
+  # 可被 Nix 跟踪，而且不需要写临时文件再 mv。
+  # 与 cloudkeytao.user.dict.yaml 分开存：后者是产物，前者是本机私有。
+  localDict = pkgs.writeText "cloudkeytao.local.dict.yaml" (
+    ''
+      # Rime dictionary
+      # encoding: utf-8
+      #
+      # 由 NixOS-Config 的 rhen.fcitx5.keytaoUserDict 生成，勿手改。
+      ---
+      name: cloudkeytao.local
+      version: "1.0"
+      sort: by_weight
+      use_preset_vocabulary: false
+      columns:
+        - text
+        - code
+        - weight
+      ...
+    ''
+    + lib.concatMapStringsSep "\n" (
+      line:
+      let
+        f = lib.splitString "\t" line;
+        n = builtins.length f;
+      in
+      if n == 1 && line == "" then
+        ""
+      else if n == 2 then
+        "${builtins.elemAt f 0}\t${builtins.elemAt f 1}\t999"
+      else
+        line
+    ) (lib.splitString "\n" cfg.keytaoUserDict)
+    + (if cfg.keytaoUserDict == "" then "" else "\n")
+  );
 in
 {
   options.rhen.fcitx5 = {
@@ -97,7 +184,11 @@ in
   options.rhen.fcitx5.enable = mkEnableOption "Fcitx5 RIME (HM)";
 
   config = mkIf cfg.enable {
-    programs.rime-keytao.enable = true;
+    # 旧方案：programs.rime-keytao.enable = true;
+    #
+    # 上游那个 homeManagerModule 用 rsync 把 20+ 个方案的文件倒进运行时目录，
+    # 然后用 activation 脚本 rm/sed/ln 打补丁 —— 两层动作抢同一批文件。
+    # 现在已经完全不需要它：Rime 数据全部由下面的 xdg.dataFile 声明式安装。
 
     # 主题由 noctalia 从壁纸取色生成；深浅两套都指向 noctalia，
     # 否则跟随系统深色时会回退到 DarkTheme 指定的旧主题。
@@ -138,109 +229,76 @@ in
       EnableFractionalScale=True
     '';
 
-    xdg.dataFile = {
-      "fcitx5/themes/dracula" = {
-        source = ./fcitx5/themes/dracula;
-        recursive = true;
-      };
-      "fcitx5/themes/default-dark" = {
-        source = ./themes/default-dark;
-        recursive = true;
-      };
-      "fcitx5/themes/default-light" = {
-        source = ./themes/default-light;
-        recursive = true;
-      };
-      "fcitx5/rime/default.custom.yaml" = {
-        source = ./default.custom.yaml;
-        force = true;
-      };
-      "fcitx5/rime/keytao.custom.yaml" = {
-        source = ./keytao.custom.yaml;
-        force = true;
-      };
-      "fcitx5/rime/lua/defer_emoji_filter.lua" = {
-        source = ./rime/lua/defer_emoji_filter.lua;
-      };
-      "fcitx5/rime/lua/select_character.lua" = {
-        source = ./rime/lua/select_character.lua;
-      };
-      "fcitx5/rime/lua/add_phrase.lua" = {
-        source = ./rime/lua/add_phrase.lua;
-      };
-      "fcitx5/rime/lua/promote_custom_phrase.lua" = {
-        source = ./rime/lua/promote_custom_phrase.lua;
-      };
-      "fcitx5/rime/lua/custom_phrase_live.lua" = {
-        source = ./rime/lua/custom_phrase_live.lua;
-      };
-      "fcitx5/rime/lua/quick_text.lua" = {
-        source = ./rime/lua/quick_text.lua;
-      };
-    };
+    # Rime 数据全部声明式安装。
+    #
+    # 这是本次改造的核心：旧方案是
+    #   1. 上游 homeManagerModule 用 rsync 把 20+ 个方案文件倒进运行时目录
+    #   2. 自己的 activation 再 rm / sed -i / ln -sf 去打补丁
+    # 两层动作抢同一批文件，HOME_MANAGER_BACKUP_EXT 和部署顺序一变就坏。
+    #
+    # 现在只有一层：产物里是什么，装上就是什么。没有补丁脚本。
+    xdg.dataFile = lib.mkMerge [
+      (lib.mapAttrs' (
+        name: v:
+        lib.nameValuePair "fcitx5/rime/${name}" v
+      ) rimeDataFiles)
+      {
+        "fcitx5/themes/dracula" = {
+          source = ./fcitx5/themes/dracula;
+          recursive = true;
+        };
+        "fcitx5/themes/default-dark" = {
+          source = ./themes/default-dark;
+          recursive = true;
+        };
+        "fcitx5/themes/default-light" = {
+          source = ./themes/default-light;
+          recursive = true;
+        };
+      }
+    ];
 
-    home.activation.installRimeLateConfig = lib.hm.dag.entryAfter [ "installRimeKeytao" ] ''
+    # ── 本机私有数据 ────────────────────────────────────────────────────
+    # 以下内容不属于方案本身（不适合放进公开产物），只在这台机器上生成。
+    #
+    # 必须 entryAfter [ "linkGeneration" ]：xdg.dataFile 的软链就是在那个
+    # 阶段落的。若只写 writeBoundary，两者无先后关系，activation 写的
+    # cloudkeytao.local 可能先写后被产物覆盖 —— 那就白写了。
+    home.activation.installRimeLocalData = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         rime_dir=$HOME/.local/share/fcitx5/rime
 
-        printf '%s\n' '${config.rhen.user.email}' > "$rime_dir/keytao-email.txt"
-        ln -sf ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
-        rm -f "$rime_dir/keytao.custom.yaml"
-        ln -sf ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
-
-        for f in xmjd6 liangfen pinyin_simp; do
-          rm -f "$rime_dir/$f"*.*
-        done
-        rm -rf "$rime_dir/lua/xmjd6"* "$rime_dir/opencc/xmjd6" 2>/dev/null || true
-
-        if [ -f "$rime_dir/rime.lua" ]; then
-          # 清理旧版本注册过的 reduce_emoji_filter（现已由 defer_emoji_filter 取代）
-          sed -i '/^reduce_emoji_filter = require("reduce_emoji_filter")$/d' "$rime_dir/rime.lua" 2>/dev/null || true
-          rm -f "$rime_dir/lua/reduce_emoji_filter.lua"
-          # 常量向后追加 lua 模块注册；不用 heredoc，避免 nixfmt 缩进破坏结束符
-          register_lua() {
-            grep -q "^$1 = require(\"$1\")$" "$rime_dir/rime.lua" 2>/dev/null && return 0
-            printf '\n%s = require("%s")\n' "$1" "$1" >> "$rime_dir/rime.lua"
-          }
-          register_lua defer_emoji_filter
-          register_lua select_character
-          register_lua add_phrase
-          register_lua promote_custom_phrase
-          register_lua custom_phrase_live
-      register_lua quick_text
-        fi
+        # 邮箱：quick_text 的 /email 从这里读
+        printf '%s\n' '${config.rhen.user.email}' > "$rime_dir/cloudkeytao-email.txt"
 
         ${lib.optionalString (cfg.extraUserPhrases != "") ''
-          printf '%s\n' '${cfg.extraUserPhrases}' | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF==3 {print}' > "$rime_dir/custom_phrase.txt"
+          {
+            printf '%s\n' '${cfg.extraUserPhrases}'
+          } \
+            | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF==3 {print}' \
+            > "$rime_dir/custom_phrase.txt"
         ''}
 
         ${lib.optionalString (cfg.keytaoUserDict != "") ''
-          if [ -f "$rime_dir/keytao.user.dict.yaml" ]; then
-            sed -i '/^# >>> Nix managed$/,/^# <<< Nix managed$/d' "$rime_dir/keytao.user.dict.yaml"
-            { printf '%s\n' "# >>> Nix managed"; printf '%s\n' '${cfg.keytaoUserDict}' | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; printf '%s\n' "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
-          fi
+          # 内容由 Nix 侧生成（见 localDict），这里只负责放到位。
+          # 产物里这个表是空的，但链接指向 nix store（只读），
+          # 所以先删链接再写实际文件 —— 否则 install 会失败。
+          rm -f "$rime_dir/cloudkeytao.local.dict.yaml"
+          install -m644 ${localDict} "$rime_dir/cloudkeytao.local.dict.yaml"
         ''}
 
-        rm -f "$rime_dir/keytao.custom.user.dict.yaml"
-        cp ${./keytao.custom.user.dict.yaml} "$rime_dir/keytao.custom.user.dict.yaml"
-        if [ -f "$rime_dir/keytao.extended.dict.yaml" ]; then
-          # 本机生成的词典必须写在 YAML 结束符 `...` 之前，否则 Rime 报
-          # "Encode failure" 并忽略该 import。ice2keytao 已停用并清理。
-          sed -i '/^  - ice2keytao$/d' "$rime_dir/keytao.extended.dict.yaml"
-          rm -f "$rime_dir/ice2keytao.dict.yaml"
-          sed -i '/^  - keytao\.custom\.user$/d' "$rime_dir/keytao.extended.dict.yaml"
-          sed -i "/^\.\.\.$/i\\  - keytao.custom.user" "$rime_dir/keytao.extended.dict.yaml"
-          if awk '/^  - keytao\.user$/{user=NR} /^  - keytao\.phrase$/{phrase=NR} END{exit !(user>0 && phrase>0 && user>phrase)}' "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
-            sed -i '/^  - keytao\.user$/d; /^  - keytao\.phrase$/i\  - keytao.user' "$rime_dir/keytao.extended.dict.yaml"
-          fi
-        fi
+        echo "Rime 本机数据已写入"
+    '';
+
+    # 额外的词典 / YAML / Lua 文件（旧机制保留，但改成直白的 cp）
+    home.activation.installRimeExtras = lib.hm.dag.entryAfter [ "installRimeLocalData" ] ''
+        rime_dir=$HOME/.local/share/fcitx5/rime
 
         ${lib.optionalString (cfg.extraDictFiles != { }) ''
           for file in ${
             lib.escapeShellArgs (map (n: cfg.extraDictFiles.${n}.path) (lib.attrNames cfg.extraDictFiles))
           }; do
-            dest="$rime_dir/custom"
-            dest="$dest/$(basename "$file")"
-            cp -R "$file" "$dest"
+            mkdir -p "$rime_dir/custom"
+            cp -R "$file" "$rime_dir/custom/$(basename "$file")"
           done
         ''}
 
@@ -248,41 +306,36 @@ in
           for file in ${
             lib.escapeShellArgs (map (n: cfg.extraYamlFiles.${n}.path) (lib.attrNames cfg.extraYamlFiles))
           }; do
-            dest="$rime_dir/custom"
-            mkdir -p "$dest"
-            dest="$dest/$(basename "$file")"
-            cp -R "$file" "$dest"
+            mkdir -p "$rime_dir/custom"
+            cp -R "$file" "$rime_dir/custom/$(basename "$file")"
           done
         ''}
 
         ${lib.optionalString (cfg.extraLuaFiles != [ ]) ''
-          for filter in ${lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)}; do
-            src="$filter"
-            dest="$rime_dir/custom"
-            cp -R "$src" "$dest"
+          for src in ${
+            lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)
+          }; do
+            mkdir -p "$rime_dir/custom"
+            cp -R "$src" "$rime_dir/custom/"
           done
         ''}
-
-        echo "Rime custom config installed"
     '';
 
-    systemd.user.services.keytao-custom-phrase-sync = {
+    # 把用户自造的词固化回仓库（旧机制保留，仅改为新文件名）
+    systemd.user.services.cloudkeytao-custom-phrase-sync = {
       Unit.Description = "固化键道动态造词";
       Service = {
         Type = "oneshot";
         WorkingDirectory = "%h/Project/NixOS-Config";
-        ExecStart = pkgs.writeShellScript "keytao-custom-phrase-sync" ''
+        ExecStart = pkgs.writeShellScript "cloudkeytao-custom-phrase-sync" ''
           ${pkgs.python3}/bin/python3 ${../../../scripts/sync-keytao-custom-phrases.py} \
-            "$HOME/.local/share/fcitx5/rime/keytao-custom-phrase.txt" \
-            modules/desktop/fcitx5/keytao.custom.user.dict.yaml
-          rm -f "$HOME/.local/share/fcitx5/rime/keytao.custom.user.dict.yaml"
-          cp modules/desktop/fcitx5/keytao.custom.user.dict.yaml \
-            "$HOME/.local/share/fcitx5/rime/keytao.custom.user.dict.yaml"
+            "$HOME/.local/share/fcitx5/rime/cloudkeytao-custom-phrase.txt" \
+            modules/desktop/fcitx5/cloudkeytao.custom.user.dict.yaml
         '';
       };
     };
 
-    systemd.user.timers.keytao-custom-phrase-sync = {
+    systemd.user.timers.cloudkeytao-custom-phrase-sync = {
       Unit.Description = "定期固化键道动态造词";
       Timer = {
         OnCalendar = "weekly";

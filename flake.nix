@@ -163,8 +163,17 @@
       url = "github:andersonjoseph/jailed-agents";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    rime-keytao = {
-      url = "github:xkinput/KeyTao";
+    # CloudKeyTao：本仓库自研的键道6 方案（键道6 的私有 fork）。
+    #
+    # 取代原先直接引用上游 xkinput/KeyTao 的做法。上游产物附带
+    # keytao-bj / keytao-cx / keytao-dz 等多个方案，装进来之后与本机的
+    # keytao.custom.yaml 抢同一批文件，只能靠 activation 脚本里的
+    # rm/sed/ln 打补丁 —— 那就是"部署太脏"的根源。
+    #
+    # CloudKeyTao 的产物只有一个方案 cloudkeytao，词库表名已归一，
+    # 因此这里不再需要任何补丁动作，全部靠 xdg.dataFile 声明式安装。
+    cloudkeytao = {
+      url = "path:/home/rhencloud/Project/CloudKeyTao"; # TODO: 推到 GitHub 后改回 github:RhenCloud/CloudKeyTao
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Google Drive 直连客户端（扫描可达的 Google 前端 IP，绕过封锁）
@@ -316,7 +325,7 @@
             "jailed-pi"
             "mihomo-meta"
             "opencode-zh-cn"
-            "rime-keytao"
+            "cloudkeytao"
             "sandbox"
             "tokens"
             "ttt"

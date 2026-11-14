@@ -3,7 +3,7 @@
 #
 # 由 keytao-custom-phrase-sync 生成，手动修改会在下次同步时被覆盖。
 ---
-name: keytao.custom.user
+name: cloudkeytao.custom.user
 version: "1.0"
 sort: by_weight
 use_preset_vocabulary: false
