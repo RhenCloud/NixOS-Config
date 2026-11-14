@@ -173,7 +173,10 @@
     # CloudKeyTao 的产物只有一个方案 cloudkeytao，词库表名已归一，
     # 因此这里不再需要任何补丁动作，全部靠 xdg.dataFile 声明式安装。
     cloudkeytao = {
-      url = "path:/home/rhencloud/Project/CloudKeyTao"; # TODO: 推到 GitHub 后改回 github:RhenCloud/CloudKeyTao
+      # 私有仓库，用 SSH 拉取：github: scheme 走 api.github.com（匿名 404），
+      # git+ssh 直接 clone，靠 ~/.ssh/id_ed25519 鉴权。
+      # 无此 key 的环境（CI / 新机器）需自行配 deploy key。
+      url = "git+ssh://git@github.com/RhenCloud/CloudKeyTao";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Google Drive 直连客户端（扫描可达的 Google 前端 IP，绕过封锁）
