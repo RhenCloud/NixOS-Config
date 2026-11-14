@@ -19,6 +19,19 @@ in
       enable = true;
       repo = "rhencloud/nixos-config";
       publicKey = "RhenCloud-NixOS-Config-1:N+sDXsxJE6wzn//Hw7ScFANjOPucZKmIsX012iJCJPo=";
+
+      # 上游 nixcache-oci 的 buildRustPackage 未声明 pkg-config、zstd 与 aws-lc，
+      # 导致 zstd-sys 探测 libzstd 失败，以及 aws-lc-sys 在
+      # AWS_LC_SYS_USE_SYSTEM=1 下找不到系统 AWS-LC。
+      package =
+        (import "${inputs.nixcache}/default.nix" { inherit pkgs; }).cache-proxy.overrideAttrs
+          (old: {
+            nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.pkg-config ];
+            buildInputs = (old.buildInputs or [ ]) ++ [
+              pkgs.zstd
+              pkgs.aws-lc
+            ];
+          });
     };
 
     nix.package = pkgs.lixPackageSets.stable.lix;
@@ -32,23 +45,29 @@ in
       accept-flake-config = true;
       max-jobs = "auto";
       builders-use-substitutes = true;
+      # cache.nixos.org 在 25 并发下会被 Fastly 限速排队，
+      # 降低并发并放宽超时可显著减少大量 narinfo 的超时重试。
+      http-connections = 8;
+      connect-timeout = 60;
+      download-attempts = 10;
       auto-optimise-store = false;
       trusted-users = [ "@wheel" ];
       substituters = [
         # "https://cache.rhen.cloud"
-        "https://rhencloud.cachix.org"
+        # "https://rhencloud.cachix.org"
+        # 国内镜像实测最快，放在前面优先命中。
+        "https://mirrors.ustc.edu.cn/nix-channels/store"
+        "https://mirror.sjtu.edu.cn/nix-channels/store"
+        "https://cache.nixos.org"
         "https://hyprland.cachix.org"
         "https://nix-community.cachix.org"
-        "https://cache.nixos.org"
         "https://noctalia.cachix.org"
         "https://niri.cachix.org"
         "https://vicinae.cachix.org"
-        "https://mirrors.ustc.edu.cn/nix-channels/store"
-        "https://mirror.sjtu.edu.cn/nix-channels/store"
       ];
       trusted-substituters = lib.mkForce [
         # "https://cache.rhen.cloud"
-        "https://rhencloud.cachix.org"
+        # "https://rhencloud.cachix.org"
         "https://hyprland.cachix.org"
         "https://nix-community.cachix.org"
         "https://cache.nixos.org"
@@ -61,7 +80,7 @@ in
       # extra-trusted-public-keys 不会被 flake 的 nixConfig.trusted-public-keys 覆盖，
       # 确保 nix run 外部 flake 时 cache.nixos.org 等缓存始终可用。
       extra-trusted-public-keys = [
-        "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
+        # "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
         "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
         "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
@@ -80,11 +99,15 @@ in
       extra-sandbox-paths = [ "/etc/resolv.conf" ];
     };
 
-    systemd.services.nix-daemon.serviceConfig.Environment = [
-      "http_proxy=http://127.0.0.1:7890"
-      "https_proxy=http://127.0.0.1:7890"
-      "all_proxy=http://127.0.0.1:7890"
-    ];
+    # 仅在本机实际运行 mihomo 时才让 nix-daemon 走本地代理，
+    # 否则 127.0.0.1:7890 无监听会导致所有 substituter 下载失败。
+    systemd.services.nix-daemon.serviceConfig.Environment =
+      lib.optionals (config.rhen.services.mihomo.enable or false)
+        [
+          "http_proxy=http://127.0.0.1:7890"
+          "https_proxy=http://127.0.0.1:7890"
+          "all_proxy=http://127.0.0.1:7890"
+        ];
 
     nix.gc = {
       automatic = lib.mkDefault false;

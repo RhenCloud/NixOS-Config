@@ -4,6 +4,7 @@
     rhen = {
       c.enable = true;
       android.enable = true;
+      flutter.enable = true;
       golang.enable = true;
       java.enable = true;
       node.enable = true;
@@ -12,6 +13,7 @@
 
       hmDevPackages.enable = true;
       certs.enable = true;
+      gdirect.enable = true;
 
       opencode.enable = true;
       hmOpenAgent.enable = true;

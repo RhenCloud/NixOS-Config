@@ -25,6 +25,9 @@ in
       ];
     };
 
+    # 本地 DoH 解析器：系统 DNS 由它接管，避免 mihomo DNS 回环与明文投毒
+    rhen.services.dnscryptProxy.enable = true;
+
     zramSwap.enable = true;
 
     hardware.gpgSmartcards.enable = true;

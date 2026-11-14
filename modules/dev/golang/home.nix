@@ -18,6 +18,7 @@ in
         golangci-lint
         gofumpt
         golint
+        tinygo
       ];
       sessionVariables = {
         GOPATH = "$HOME/.local/share/go";

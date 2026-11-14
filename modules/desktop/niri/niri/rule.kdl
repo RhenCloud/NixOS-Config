@@ -139,6 +139,19 @@ window-rule {
   open-maximized true
 }
 
+// im-emoji-picker 是 fcitx5 进程内的 Qt5 浮动窗口。
+// Wayland 下若窗口管理器强制定焦新窗口，拾取器会闪一下就消失，
+// 因此这里禁止自动聚焦，并让它以浮动窗口打开。
+// 该窗口的 app_id 由 Qt 组织域名推导为 xyz.gazatu.fcitx5，
+// 但标题 im-emoji-picker 更稳定，用它匹配。
+window-rule {
+  match title=r"^im-emoji-picker$"
+  open-floating true
+  open-focused false
+  focus-ring { off; }
+  shadow { off; }
+}
+
 // window-rule {
 //     match app-id="io.github.waylyrics.Waylyrics"
 //     mouse-passthrough true

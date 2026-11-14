@@ -66,7 +66,7 @@ in
         network_secret = "${config.sops.placeholder."easytier-network-secret"}"
 
         [flags]
-        enable_private_mode = true
+        private_mode = true
         default_protocol = "tcp"
         dev_name = "swnet-global"
         enable_encryption = true
@@ -118,7 +118,7 @@ in
         network_secret = "${config.sops.placeholder."easytier-network-secret"}"
 
         [flags]
-        enable_private_mode = true
+        private_mode = true
         default_protocol = "tcp"
         dev_name = "swnet-cn"
         enable_encryption = true

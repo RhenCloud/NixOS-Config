@@ -14,7 +14,7 @@ in
 
     image = mkOption {
       type = types.str;
-      default = "ghcr.io/recloudstudio/mailer:latest";
+      default = "ghcr.io/elysola/mailer@sha256:1e26941f06e6cbcc23826e4c0c3cc9e89134b779de85f63a353b71fd4481b1ee";
       description = "Mailer OCI 镜像标签";
     };
 
@@ -57,6 +57,17 @@ in
         mode = "0440";
       };
 
+    sops.secrets."mailer-gmail-client-secret" =
+      snowveil.sops.secret {
+        source = "host";
+        host = "yc-hk-1";
+      }
+      // {
+        owner = "mailer";
+        group = "mailer";
+        mode = "0440";
+      };
+
     sops.templates."mailer-config.yaml" = {
       owner = "mailer";
       group = "mailer";
@@ -80,6 +91,9 @@ in
 
       volumes = [
         "${config.sops.templates."mailer-config.yaml".path}:/app/config.yaml:ro"
+        "${
+          config.sops.secrets."mailer-gmail-client-secret".path
+        }:/run/secrets/mailer-gmail-client-secret:ro"
         "${cfg.dataDir}:/app/data"
       ];
 

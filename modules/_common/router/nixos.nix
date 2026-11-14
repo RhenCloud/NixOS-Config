@@ -46,7 +46,11 @@ in
       remotePort = 3001
     '';
 
+    # 路由器模式由 systemd-networkd 独占网络配置，不能与 NetworkManager
+    # 同时管理同一批网卡，否则切换代际时可能丢失默认路由，导致 SSH 断连。
     networking.useNetworkd = true;
+    networking.networkmanager.enable = lib.mkForce false;
+    systemd.network.wait-online.enable = true;
 
     networking.firewall.allowedUDPPorts = [
       67
@@ -62,6 +66,7 @@ in
       networks = {
         "10-br0" = {
           matchConfig.Name = "br0";
+          linkConfig.RequiredForOnline = "routable";
           networkConfig = {
             Address = "192.168.1.2/24";
             DHCPServer = true;
@@ -89,6 +94,7 @@ in
 
         "30-external" = {
           matchConfig.Name = "enp3s0";
+          linkConfig.RequiredForOnline = "routable";
           networkConfig = {
             DHCP = "yes";
             IPv6AcceptRA = true;
@@ -175,7 +181,6 @@ in
       daemon.settings = {
         registry-mirrors = [
           "https://docker.1ms.run"
-          "https://docker.cattt.net"
         ];
       };
     };
@@ -222,9 +227,10 @@ in
         frpc = {
           description = "frp client";
           after = [
-            "network.target"
+            "network-online.target"
             "sops-install-secrets.service"
           ];
+          wants = [ "network-online.target" ];
           requires = [ "sops-install-secrets.service" ];
           wantedBy = [ "multi-user.target" ];
           serviceConfig = {

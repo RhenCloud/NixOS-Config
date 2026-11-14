@@ -83,19 +83,6 @@ in
 
     home.packages = with pkgs; [
       (symlinkJoin {
-        name = "vesktop-wayland";
-        paths = [ vesktop ];
-        nativeBuildInputs = [ makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/vesktop \
-            --set NIXOS_OZONE_WL 1 \
-            --set ELECTRON_OZONE_PLATFORM_HINT wayland \
-            --add-flags "--enable-features=WebRTCPipeWireCapturer,UseOzonePlatform,WaylandWindowDecorations" \
-            --add-flags "--ozone-platform=wayland"
-        '';
-      })
-
-      (symlinkJoin {
         name = "wechat-wayland";
         paths = [ wechat ];
         nativeBuildInputs = [ makeWrapper ];
@@ -153,6 +140,8 @@ in
       # zoom-us
       thunderbird
       slack
+
+      karere # whatsapp third-party client
     ];
   };
 }

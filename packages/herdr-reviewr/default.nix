@@ -3,6 +3,9 @@
   rustPlatform,
   fetchFromGitHub,
   installShellFiles,
+  pkg-config,
+  oniguruma,
+  libgit2,
 }:
 
 rustPlatform.buildRustPackage {
@@ -18,7 +21,18 @@ rustPlatform.buildRustPackage {
 
   cargoHash = "sha256-043nvKhAbASHRVL0/R+DVvZPC4dAv3J+XAnH7HD8b6Q=";
 
-  nativeBuildInputs = [ installShellFiles ];
+  # onig_sys / libgit2-sys 靠 pkg-config 探测系统库，
+  # nixpkgs 的 rust default-crate-overrides 会设置 RUSTONIG_SYSTEM_LIBONIG
+  # 与 LIBGIT2_NO_VENDOR，缺少对应输入时构建脚本直接 panic。
+  nativeBuildInputs = [
+    installShellFiles
+    pkg-config
+  ];
+
+  buildInputs = [
+    oniguruma
+    libgit2
+  ];
 
   doCheck = false;
 

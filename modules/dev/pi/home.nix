@@ -11,7 +11,7 @@ let
 
   # 各 provider 对应的推荐默认模型
   providerDefaultModels = {
-    "voidswitch" = "deepseek-v4-flash-0731";
+    "voidswitch" = "deepseek-v4.1-flash";
     "chibang-claude" = "claude-opus-5-5";
     "chibang-codex" = "gpt-5.6-terra";
     "chibang-cn" = "glm-5.3-flash";
@@ -50,7 +50,7 @@ in
         {
           "providers": {
             "voidswitch": {
-              "baseUrl": "https://voidswitch.siiway.org/v1",
+              "baseUrl": "https://voidswitch.mfawa.top/v1",
               "api": "openai-completions",
               "apiKey": "${config.sops.placeholder."opencode-voidswitch-api-key"}",
               "headers": { "User-Agent": "pi/${pkgs.pi-coding-agent.version}" },
@@ -58,6 +58,7 @@ in
                 { "id": "deepseek-v4-pro", "name": "DeepSeek V4 Pro", "reasoning": true },
                 { "id": "deepseek-v4-flash-0731", "name": "DeepSeek V4 Flash 0731", "reasoning": true, "input": [ "text", "image" ] },
                 { "id": "deepseek-v4-flash", "name": "DeepSeek V4 Flash", "reasoning": true, "input": [ "text", "image" ] },
+                { "id": "deepseek-v4.1-flash", "name": "DeepSeek V4.1 Flash", "reasoning": true, "input": [ "text", "image" ] },
                 { "id": "codex/gpt-5.6-sol", "name": "GPT 5.6 Sol", "reasoning": true, "input": [ "text", "image" ] },
                 { "id": "codex/gpt-5.6-terra", "name": "GPT 5.6 Terra", "reasoning": true, "input": [ "text", "image" ] },
                 { "id": "codex/gpt-5.6-luna", "name": "GPT 5.6 Luna", "reasoning": true, "input": [ "text", "image" ] },
@@ -74,7 +75,7 @@ in
               ]
             },
             "chibang-cn": {
-              "baseUrl": "https://chatapi.transmtf.com/v1",
+              "baseUrl": "https://ai-api.transcircle.org/v1",
               "api": "openai-completions",
               "apiKey": "${config.sops.placeholder."chibang-cn-api-key"}",
               "models": [

@@ -32,6 +32,7 @@ in
       rustdesk-flutter
       inkscape
       figma-linux
+      ventoy-full-qt
     ];
   };
 }

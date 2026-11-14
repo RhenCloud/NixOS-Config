@@ -36,15 +36,16 @@ in
     enable = true;
     package = pkgs.caddy.withPlugins {
       plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
-      hash = "sha256-xRJ5evsAJ2akg47j3Bt6YDXJOgX88B/rKNP50KSVyNY=";
+      hash = "sha256-QSiwKqKvSxhksWBF4/MlBOpyXba5xOQ2sRwA0R7399E=";
     };
     environmentFile = config.sops.templates."caddy-env".path;
+    # 注意：`trusted_proxies static { ranges ... }` 的块写法在 caddy 2.11 里会被静默忽略
+    # （adapt 后只剩 {"source":"static"}），必须用平铺写法才会生成 ranges。
+    # 136.85.52.129 是外部 CDN 的回源 IP；olist.rhen.cloud 的 A 记录指向 CDN，不指源站。
     globalConfig = ''
       servers {
         trusted_proxies_strict
-        trusted_proxies static {
-          ranges 47.243.223.74
-        }
+        trusted_proxies static 47.243.223.74 136.85.52.129
       }
     '';
     virtualHosts."zen.rhen.cloud" = {
@@ -63,6 +64,17 @@ in
         reverse_proxy 127.0.0.1:9010
       '';
     };
+    # OpenList 文件列表（olist.rhen.cloud）。
+    # 实例跑在本机（与 Google Drive 等需要外网的存储同机，能直连 Google）。
+    # 证书由 Caddy 通过 Cloudflare DNS-01 签发，因此 A 记录可指向 CDN。
+    virtualHosts."olist.rhen.cloud" = {
+      extraConfig = ''
+        tls {
+          dns cloudflare {$CLOUDFLARE_API_TOKEN}
+        }
+        reverse_proxy 127.0.0.1:5244
+      '';
+    };
     virtualHosts."vw.rhen.cloud" = {
       extraConfig = ''
         tls {
@@ -78,6 +90,27 @@ in
           config.sops.secrets."caddy-nb-origin-key".path
         }
         reverse_proxy 127.0.0.1:9089
+      '';
+    };
+    # NextBridge OneBot v11 WebSocket 对外入口（wss://nb.rhen.cloud/onebot/v11/qq_ely），
+    # 仅反代 /onebot/ 路径，其余路径直接 404。
+    # NextBridge 自身要求路径以 / 结尾，且只认 Authorization: Bearer 而不认 OneBot v11
+    # 规范的 ?access_token=；这里做两点兼容，让标准写法也能连。
+    virtualHosts."nb.rhen.cloud" = {
+      extraConfig = ''
+        tls {
+          dns cloudflare {$CLOUDFLARE_API_TOKEN}
+        }
+        handle /onebot/* {
+          @need_slash not path */
+          rewrite @need_slash {http.request.uri.path}/
+          @query_token query access_token=*
+          request_header @query_token Authorization "Bearer {query.access_token}"
+          reverse_proxy 127.0.0.1:9089
+        }
+        handle {
+          respond "Not Found" 404
+        }
       '';
     };
   };
@@ -140,7 +173,11 @@ in
     gost.enable = true;
     rustdesk.enable = true;
     yysong.enable = false; # migrated to 182.92.242.192 (Tencent Cloud) 2026-10-02
-    openlist.enable = true;
+    openlist = {
+      enable = true;
+      # 本机已有镜像，避免每次启动联网校验 pull 卡住（镜像源不稳）
+      pullPolicy = "missing";
+    };
     oci-helper.enable = true;
     beszel-agent = {
       enable = true;

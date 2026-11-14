@@ -18,9 +18,13 @@ in
 
       portal = {
         enable = true;
+        # 注意：不要在这里硬编码 xdg-desktop-portal-hyprland。
+        # programs.hyprland 会把重绑定到最终 Hyprland 包的 portalPackage 加入
+        # extraPortals；再额外加入未重绑定的原始包会出现两个同名不同 store 路径的
+        # 包，导致 systemd user-units 生成时出现
+        # `ln: failed to create symbolic link ...xdg-desktop-portal-hyprland.service: File exists`。
         extraPortals = with pkgs; [
           xdg-desktop-portal-gnome
-          xdg-desktop-portal-hyprland
           xdg-desktop-portal-wlr
         ];
 

@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -7,6 +8,12 @@
 with lib;
 let
   cfg = config.rhen.fcitx5;
+
+  # im-emoji-picker 是 Qt5 Widgets 插件，由 fcitx5 进程 dlopen 后在同进程内创建
+  # QApplication。系统全局设置了 QT_QPA_PLATFORM=wayland，而 Qt5 的 wayland 平台
+  # 插件（qtwayland）不在默认 QT_PLUGIN_PATH 里，缺失时 Qt 会 qFatal 直接终止
+  # fcitx5。这里把 qt5 平台插件目录显式加进 QT_PLUGIN_PATH。
+  qt5PluginPath = "${pkgs.qt5.qtwayland.bin}/${pkgs.qt5.qtbase.qtPluginPrefix}";
 in
 {
   options.rhen.fcitx5.enable = mkEnableOption "Fcitx5 input method";
@@ -28,7 +35,13 @@ in
           (fcitx5-rime.override {
             rimeDataPkgs = with pkgs; [ rime-data ];
           })
+          inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.im-emoji-picker
         ];
+        settings.addons."im-emoji-picker" = {
+          globalSection = { };
+          # fcitx::KeyListOption 序列化为独立 section，形如 [TriggerKey] 0=...
+          sections.TriggerKey."0" = "Control+Alt+period";
+        };
       };
     };
 
@@ -39,6 +52,7 @@ in
       INPUT_METHOD = "fcitx";
       SDL_IM_MODULE = "fcitx";
       GLFW_IM_MODULE = "fcitx";
+      QT_PLUGIN_PATH = [ qt5PluginPath ];
     };
   };
 }

@@ -99,6 +99,9 @@ in
       after = [ "sops-install-secrets.service" ];
       requires = [ "sops-install-secrets.service" ];
       serviceConfig = {
+        # mihomo 同时承载系统 DNS（127.0.0.1:53）与代理，崩溃时必须自动拉起，避免全系统断网
+        Restart = "always";
+        RestartSec = 3;
         ExecStart = lib.mkForce (
           if cfg.ebpf then
             "${lib.getExe package} -d /var/lib/mihomo -f /run/mihomo/config.yaml"
@@ -119,12 +122,14 @@ in
           "CAP_BPF"
           "CAP_NET_RAW"
           "CAP_SYS_ADMIN"
+          "CAP_NET_BIND_SERVICE"
         ];
         AmbientCapabilities = lib.mkForce [
           "CAP_NET_ADMIN"
           "CAP_BPF"
           "CAP_NET_RAW"
           "CAP_SYS_ADMIN"
+          "CAP_NET_BIND_SERVICE"
         ];
         LimitMEMLOCK = "infinity";
       };

@@ -12,7 +12,7 @@
     # ];
     substituters = [
       # "https://cache.rhen.cloud"
-      "https://rhencloud.cachix.org"
+      # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
       "https://cache.nixos.org"
@@ -24,7 +24,7 @@
     ];
     trusted-substituters = [
       # "https://cache.rhen.cloud"
-      "https://rhencloud.cachix.org"
+      # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
       "https://cache.nixos.org"
@@ -35,7 +35,7 @@
       "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
     extra-trusted-public-keys = [
-      "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
+      # "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
@@ -56,6 +56,11 @@
     };
     flake-schemas = {
       url = "github:DeterminateSystems/flake-schemas";
+    };
+    nixcord = {
+      url = "github:4evy/nixcord";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     # ── 频道 / 基础 ────────────────────────────────────
@@ -162,6 +167,12 @@
       url = "github:xkinput/KeyTao";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Google Drive 直连客户端（扫描可达的 Google 前端 IP，绕过封锁）
+    # fork 自 mizorewww/gdirect，提供 gdirect（CLI/TUI）与 gdirect-desktop（GUI）
+    gdirect = {
+      url = "github:RhenCloud/gdirect";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -244,6 +255,7 @@
       nixpkgs.config = {
         allowUnfree = true;
         permittedInsecurePackages = [
+          "ventoy-qt5-1.1.18"
           "electron-39.8.10"
           "pnpm-9.15.9"
           "pnpm-10.29.2"
@@ -300,6 +312,7 @@
             "herdr-tab-rename"
             "herdr-window-title-sync"
             "herdr-worktrunk"
+            "im-emoji-picker"
             "jailed-pi"
             "mihomo-meta"
             "opencode-zh-cn"
@@ -334,6 +347,7 @@
             "mexkey3-ccid"
             "musicfox"
             "niri"
+            "opencode-node-modules-hash"
             "portal-gtk"
             "waylyrics"
             "wechat"
@@ -398,10 +412,12 @@
             "dev.python"
             "dev.rust"
             "dev.tokens"
+            "server.aria2"
             "server.baota-probe"
             "server.beszel-agent"
             "server.easytier"
             "server.frp"
+            "server.frpc"
             "server.gost"
             "server.mailer"
             "server.mihomo-router"
@@ -413,7 +429,9 @@
             "server.roles"
             "server.rustdesk"
             "server.sleepy"
+            "server.snowluma"
             "server.vaultwarden"
+            "server.wifi-ap"
             "server.wyf9s-bot"
             "server.yysong"
             "system"
@@ -447,6 +465,7 @@
             "desktop.kitty"
             "desktop.mango"
             "desktop.misc"
+            "desktop.nixcord"
             "desktop.musicfox"
             "desktop.nemo"
             "desktop.niri"

@@ -1,6 +1,16 @@
 log-level: warning
 sniffer:
   override-destination: true
+# DNS：修复污染问题
+# 1. nameserver-policy 必须写完整 DoH URL 或 IP 形式；裸 IP（如 1.1.1.1）会走明文 UDP 53 在国内投毒
+# 2. 系统 DNS 由 dnscrypt-proxy 接管（监听 127.0.0.1:53，DoH 上游）
+#    mihomo 不再监听 53，避免与其争端口，也避免 mihomo 自身 DNS 回环问题
+# 3. prefer-h3 关闭，避免 QUIC 不可用时行为不定
+# 注：nameserver / nameserver-policy 已在 secrets/mihomo.yaml 中修正，此处不重复声明
+#     （yq 的 *+ 对列表是追加而非替换，重复写入会叠加出污染条目）
+dns:
+  enable: true
+  prefer-h3: false
 tun:
   enable: false
 listeners:

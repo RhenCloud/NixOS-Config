@@ -15,6 +15,12 @@ let
     runtimeInputs = [ pkgs.emote ];
     text = "exec ${lib.getExe pkgs.emote} \"$@\" 2>/dev/null";
   };
+
+  # 上游 nixpkgs 的 splayer-next buildInputs 有 openssl 但没 aws-lc，
+  # 在 AWS_LC_SYS_USE_SYSTEM=1 下会因找不到系统 AWS-LC 而构建失败。
+  splayer-next = pkgs.splayer-next.overrideAttrs (old: {
+    buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.aws-lc ];
+  });
 in
 {
   options.rhen.hmBasePackages.enable = mkEnableOption "base desktop packages";

@@ -54,7 +54,6 @@ in
         "zen-browser",
         "glow",
         "inkscape",
-        "zed",
         "fastfetch",
         "obs",
         "heroiclauncher",

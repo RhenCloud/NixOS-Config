@@ -153,7 +153,12 @@ in
         };
         settings = {
           gpg.program = "${pkgs.gnupg}/bin/gpg";
-          credential.helper = "store";
+          # 仅对 github.com 覆盖凭据助手，改用 gh 的 token；其余 host 仍走 store。
+          # 只读的 ~/.git-credentials 中旧 token 已失效，github 认证统一交给 gh。
+          credential = {
+            helper = "store";
+            "https://github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
+          };
           commit.gpgsign = true;
           tag.gpgSign = true;
           core.hooksPath = gitHooksDir;

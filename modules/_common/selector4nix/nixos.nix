@@ -8,10 +8,9 @@ let
   cfg = config.rhen.selector4nix;
 
   substituters = [
-    {
-      url = "https://cache.nixos.org/";
-      priority = 40;
-    }
+    # 注意：不要在这里重复 cache.nixos.org，
+    # selector4nix 会把列表 prepend 回 nix.settings.substituters，
+    # 重复项会让每个 narinfo 多一轮无效请求。
     {
       url = "https://hyprland.cachix.org/";
       priority = 40;

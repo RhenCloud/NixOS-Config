@@ -323,7 +323,7 @@ services:
         - name: target-40019
           addr: p.rhencloud.dpdns.org:40019
 
-  - name: tuic-8883
+  - name: hy2-8883
     addr: :8883
     handler:
       type: udp
@@ -335,8 +335,8 @@ services:
         writeBufferSize: 65535
     forwarder:
       nodes:
-        - name: target-tuic-43372
-          addr: 218.252.147.31:43372
+        - name: target-hy2-43373
+          addr: hk.685000.xyz:43373
 
   - name: tuic-46091
     addr: :46091
@@ -362,7 +362,7 @@ services:
     forwarder:
       nodes:
         - name: target-anytls-13871
-          addr: 218.252.147.31:13871
+          addr: hk.685000.xyz:13871
 
 chains:
   - name: chain-0
@@ -394,7 +394,7 @@ chains:
       - name: hop-0
         nodes:
           - name: node-0
-            addr: 218.252.147.31:13871
+            addr: hk.685000.xyz:13871
             connector:
               type: tcp
             dialer:

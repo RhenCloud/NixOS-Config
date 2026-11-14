@@ -2,13 +2,11 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 with lib;
 let
   cfg = config.rhen.fcitx5;
-  rimeKeytaoPkg = inputs.rime-keytao.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   options.rhen.fcitx5 = {
@@ -161,8 +159,8 @@ in
         source = ./keytao.custom.yaml;
         force = true;
       };
-      "fcitx5/rime/lua/reduce_emoji_filter.lua" = {
-        source = ./rime/lua/reduce_emoji_filter.lua;
+      "fcitx5/rime/lua/defer_emoji_filter.lua" = {
+        source = ./rime/lua/defer_emoji_filter.lua;
       };
       "fcitx5/rime/lua/select_character.lua" = {
         source = ./rime/lua/select_character.lua;
@@ -176,117 +174,96 @@ in
       "fcitx5/rime/lua/custom_phrase_live.lua" = {
         source = ./rime/lua/custom_phrase_live.lua;
       };
+      "fcitx5/rime/lua/quick_text.lua" = {
+        source = ./rime/lua/quick_text.lua;
+      };
     };
 
     home.activation.installRimeLateConfig = lib.hm.dag.entryAfter [ "installRimeKeytao" ] ''
-            rime_dir=$HOME/.local/share/fcitx5/rime
+        rime_dir=$HOME/.local/share/fcitx5/rime
 
-            rm -f "$rime_dir/default.custom.yaml"
-            ln -sf ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
-            rm -f "$rime_dir/keytao.custom.yaml"
-            ln -sf ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
+        printf '%s\n' '${config.rhen.user.email}' > "$rime_dir/keytao-email.txt"
+        ln -sf ${./default.custom.yaml} "$rime_dir/default.custom.yaml"
+        rm -f "$rime_dir/keytao.custom.yaml"
+        ln -sf ${./keytao.custom.yaml} "$rime_dir/keytao.custom.yaml"
 
-            for f in xmjd6 liangfen pinyin_simp; do
-              rm -f "$rime_dir/$f"*.*
-            done
-            rm -rf "$rime_dir/lua/xmjd6"* "$rime_dir/opencc/xmjd6" 2>/dev/null || true
+        for f in xmjd6 liangfen pinyin_simp; do
+          rm -f "$rime_dir/$f"*.*
+        done
+        rm -rf "$rime_dir/lua/xmjd6"* "$rime_dir/opencc/xmjd6" 2>/dev/null || true
 
-            if [ -f "$rime_dir/rime.lua" ]; then
-              if grep -q "Stub for reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
-                sed -i '/-- Stub for reduce_emoji_filter/,/reduce_emoji_processor = reduce_emoji_filter/d' "$rime_dir/rime.lua"
-              fi
-              if ! grep -q "reduce_emoji_filter" "$rime_dir/rime.lua" 2>/dev/null; then
-                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+        if [ -f "$rime_dir/rime.lua" ]; then
+          # 清理旧版本注册过的 reduce_emoji_filter（现已由 defer_emoji_filter 取代）
+          sed -i '/^reduce_emoji_filter = require("reduce_emoji_filter")$/d' "$rime_dir/rime.lua" 2>/dev/null || true
+          rm -f "$rime_dir/lua/reduce_emoji_filter.lua"
+          # 常量向后追加 lua 模块注册；不用 heredoc，避免 nixfmt 缩进破坏结束符
+          register_lua() {
+            grep -q "^$1 = require(\"$1\")$" "$rime_dir/rime.lua" 2>/dev/null && return 0
+            printf '\n%s = require("%s")\n' "$1" "$1" >> "$rime_dir/rime.lua"
+          }
+          register_lua defer_emoji_filter
+          register_lua select_character
+          register_lua add_phrase
+          register_lua promote_custom_phrase
+          register_lua custom_phrase_live
+      register_lua quick_text
+        fi
 
-      reduce_emoji_filter = require("reduce_emoji_filter")
-      LUAEOF
-              fi
-              if ! grep -q "select_character" "$rime_dir/rime.lua" 2>/dev/null; then
-                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+        ${lib.optionalString (cfg.extraUserPhrases != "") ''
+          printf '%s\n' '${cfg.extraUserPhrases}' | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF==3 {print}' > "$rime_dir/custom_phrase.txt"
+        ''}
 
-      select_character = require("select_character")
-      LUAEOF
-              fi
-              if ! grep -q "add_phrase" "$rime_dir/rime.lua" 2>/dev/null; then
-                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+        ${lib.optionalString (cfg.keytaoUserDict != "") ''
+          if [ -f "$rime_dir/keytao.user.dict.yaml" ]; then
+            sed -i '/^# >>> Nix managed$/,/^# <<< Nix managed$/d' "$rime_dir/keytao.user.dict.yaml"
+            { printf '%s\n' "# >>> Nix managed"; printf '%s\n' '${cfg.keytaoUserDict}' | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; printf '%s\n' "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
+          fi
+        ''}
 
-      add_phrase = require("add_phrase")
-      LUAEOF
-              fi
-              if ! grep -q "promote_custom_phrase" "$rime_dir/rime.lua" 2>/dev/null; then
-                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+        rm -f "$rime_dir/keytao.custom.user.dict.yaml"
+        cp ${./keytao.custom.user.dict.yaml} "$rime_dir/keytao.custom.user.dict.yaml"
+        if [ -f "$rime_dir/keytao.extended.dict.yaml" ]; then
+          # 本机生成的词典必须写在 YAML 结束符 `...` 之前，否则 Rime 报
+          # "Encode failure" 并忽略该 import。ice2keytao 已停用并清理。
+          sed -i '/^  - ice2keytao$/d' "$rime_dir/keytao.extended.dict.yaml"
+          rm -f "$rime_dir/ice2keytao.dict.yaml"
+          sed -i '/^  - keytao\.custom\.user$/d' "$rime_dir/keytao.extended.dict.yaml"
+          sed -i "/^\.\.\.$/i\\  - keytao.custom.user" "$rime_dir/keytao.extended.dict.yaml"
+          if awk '/^  - keytao\.user$/{user=NR} /^  - keytao\.phrase$/{phrase=NR} END{exit !(user>0 && phrase>0 && user>phrase)}' "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
+            sed -i '/^  - keytao\.user$/d; /^  - keytao\.phrase$/i\  - keytao.user' "$rime_dir/keytao.extended.dict.yaml"
+          fi
+        fi
 
-      promote_custom_phrase = require("promote_custom_phrase")
-      LUAEOF
-              fi
-              if ! grep -q "custom_phrase_live" "$rime_dir/rime.lua" 2>/dev/null; then
-                cat >> "$rime_dir/rime.lua" << 'LUAEOF'
+        ${lib.optionalString (cfg.extraDictFiles != { }) ''
+          for file in ${
+            lib.escapeShellArgs (map (n: cfg.extraDictFiles.${n}.path) (lib.attrNames cfg.extraDictFiles))
+          }; do
+            dest="$rime_dir/custom"
+            dest="$dest/$(basename "$file")"
+            cp -R "$file" "$dest"
+          done
+        ''}
 
-      custom_phrase_live = require("custom_phrase_live")
-      LUAEOF
-              fi
-            fi
+        ${lib.optionalString (cfg.extraYamlFiles != { }) ''
+          for file in ${
+            lib.escapeShellArgs (map (n: cfg.extraYamlFiles.${n}.path) (lib.attrNames cfg.extraYamlFiles))
+          }; do
+            dest="$rime_dir/custom"
+            mkdir -p "$dest"
+            dest="$dest/$(basename "$file")"
+            cp -R "$file" "$dest"
+          done
+        ''}
 
-            ${lib.optionalString (cfg.extraUserPhrases != "") ''
-              printf '%s\n' '${cfg.extraUserPhrases}' | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF==3 {print}' > "$rime_dir/custom_phrase.txt"
-            ''}
+        ${lib.optionalString (cfg.extraLuaFiles != [ ]) ''
+          for filter in ${lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)}; do
+            src="$filter"
+            dest="$rime_dir/custom"
+            cp -R "$src" "$dest"
+          done
+        ''}
 
-            ${lib.optionalString (cfg.keytaoUserDict != "") ''
-              if [ -f "$rime_dir/keytao.user.dict.yaml" ]; then
-                sed -i '/^# >>> Nix managed$/,/^# <<< Nix managed$/d' "$rime_dir/keytao.user.dict.yaml"
-                { printf '%s\n' "# >>> Nix managed"; printf '%s\n' '${cfg.keytaoUserDict}' | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF!=2 {print}'; printf '%s\n' "# <<< Nix managed"; } >> "$rime_dir/keytao.user.dict.yaml"
-              fi
-            ''}
-
-            ${pkgs.python3}/bin/python3 ${../../../scripts/convert-rime-ice-to-keytao.py} \
-              "${pkgs.rime-ice}/share/rime-data/cn_dicts" \
-              "${rimeKeytaoPkg}/share/rime-data/keytao.phrase.dict.yaml" \
-              "${rimeKeytaoPkg}/share/rime-data/keytao.single.dict.yaml" \
-              "$rime_dir/ice2keytao.dict.yaml"
-            rm -f "$rime_dir/keytao.custom.user.dict.yaml"
-            cp ${./keytao.custom.user.dict.yaml} "$rime_dir/keytao.custom.user.dict.yaml"
-            if [ -f "$rime_dir/keytao.extended.dict.yaml" ]; then
-              if ! grep -q "ice2keytao" "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
-                sed -i '/^\.\.\.$/a\  - ice2keytao' "$rime_dir/keytao.extended.dict.yaml"
-              fi
-              if awk '/^  - keytao\.user$/{user=NR} /^  - keytao\.phrase$/{phrase=NR} END{exit !(user>0 && phrase>0 && user>phrase)}' "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
-                sed -i '/^  - keytao\.user$/d; /^  - keytao\.phrase$/i\  - keytao.user' "$rime_dir/keytao.extended.dict.yaml"
-              fi
-              if ! grep -q "keytao.custom.user" "$rime_dir/keytao.extended.dict.yaml" 2>/dev/null; then
-                sed -i '/^\.\.\.$/a\  - keytao.custom.user' "$rime_dir/keytao.extended.dict.yaml"
-              fi
-            fi
-
-            ${lib.optionalString (cfg.extraDictFiles != { }) ''
-              for file in ${
-                lib.escapeShellArgs (map (n: cfg.extraDictFiles.${n}.path) (lib.attrNames cfg.extraDictFiles))
-              }; do
-                dest="$rime_dir/custom"
-                dest="$dest/$(basename "$file")"
-                cp -R "$file" "$dest"
-              done
-            ''}
-
-            ${lib.optionalString (cfg.extraYamlFiles != { }) ''
-              for file in ${
-                lib.escapeShellArgs (map (n: cfg.extraYamlFiles.${n}.path) (lib.attrNames cfg.extraYamlFiles))
-              }; do
-                dest="$rime_dir/custom"
-                mkdir -p "$dest"
-                dest="$dest/$(basename "$file")"
-                cp -R "$file" "$dest"
-              done
-            ''}
-
-            ${lib.optionalString (cfg.extraLuaFiles != [ ]) ''
-              for filter in ${lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)}; do
-                src="$filter"
-                dest="$rime_dir/custom"
-                cp -R "$src" "$dest"
-              done
-            ''}
-
-            echo "Rime custom config installed"
+        echo "Rime custom config installed"
     '';
 
     systemd.user.services.keytao-custom-phrase-sync = {

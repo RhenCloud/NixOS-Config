@@ -8,6 +8,12 @@
 with lib;
 let
   cfg = config.rhen.hmDevPackages;
+
+  # 上游 nixpkgs 的 cc-switch buildInputs 漏了 sqlite，
+  # 但 rusqlite 会链接 -lsqlite3，导致链接阶段失败。
+  # cc-switch = pkgs.cc-switch.overrideAttrs (old: {
+  #   buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.sqlite ];
+  # });
 in
 {
   config = mkIf cfg.enable {
@@ -16,10 +22,10 @@ in
     programs.zed-editor = {
       enable = true;
       package = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zed-globalization;
-      userSettings.theme = {
-        mode = "dark";
-        dark = "Noctalia Dark Transparent";
-      };
+      # userSettings.theme = {
+      # mode = "dark";
+      # dark = "Noctalia Dark Transparent";
+      # };
     };
 
     home.packages = with pkgs; [
@@ -32,7 +38,7 @@ in
       codex
       nixd
       # gitkraken
-      cc-switch
+      # cc-switch
       deno
       # claude-code
       openssl

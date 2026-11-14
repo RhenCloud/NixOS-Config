@@ -177,6 +177,7 @@
     theme.enable = true;
     kitty.enable = true;
     chat.enable = true;
+    nixcord.enable = true;
     misc.enable = true;
     hmBasePackages.enable = true;
     hmPolkit.enable = true;

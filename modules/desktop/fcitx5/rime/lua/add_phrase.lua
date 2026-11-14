@@ -3,6 +3,44 @@ local M = {}
 local ACCEPTED = 1
 local NOOP = 2
 local command = "/jc"
+local weight = 1000000
+
+local function save_entry(text, code)
+  local path = rime_api.get_user_data_dir() .. "/keytao-custom-phrase.txt"
+  local entries = {}
+  local found = false
+  local file = io.open(path, "r")
+
+  if file then
+    for line in file:lines() do
+      local old_text, old_code, old_weight = line:match("^([^\t]+)\t([^\t]+)\t(%d+)$")
+      if old_text and old_code then
+        if old_text == text and old_code == code then
+          if not found then
+            entries[#entries + 1] = text .. "\t" .. code .. "\t" .. weight
+            found = true
+          end
+        else
+          entries[#entries + 1] = old_text .. "\t" .. old_code .. "\t" .. old_weight
+        end
+      end
+    end
+    file:close()
+  end
+
+  if not found then
+    entries[#entries + 1] = text .. "\t" .. code .. "\t" .. weight
+  end
+
+  local temp_path = path .. ".tmp"
+  local output = io.open(temp_path, "w")
+  if not output then
+    return
+  end
+  output:write(table.concat(entries, "\n"), "\n")
+  output:close()
+  os.rename(temp_path, path)
+end
 
 function M.init(env)
   env.armed = false
@@ -26,11 +64,7 @@ function M.init(env)
       return
     end
 
-    local file = io.open(rime_api.get_user_data_dir() .. "/keytao-custom-phrase.txt", "a")
-    if file then
-      file:write(env.text .. "\t" .. env.code .. "\t1000000\n")
-      file:close()
-    end
+    save_entry(env.text, env.code)
     env.armed = false
     env.code = ""
     env.text = ""

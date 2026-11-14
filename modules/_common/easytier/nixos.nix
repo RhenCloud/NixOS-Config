@@ -71,7 +71,7 @@ in
           ];
 
           flags = {
-            enable_private_mode = true;
+            private_mode = true;
             default_protocol = "udp";
             dev_name = "swnet-cn";
             enable_encryption = true;
@@ -84,7 +84,7 @@ in
             disable_p2p = false;
             p2p_only = false;
             relay_all_peer_rpc = true;
-            disable_tcp_hole_pumping = false;
+            disable_tcp_hole_punching = false;
             disable_udp_hole_punching = false;
             multi_thread_count = 3;
             relay_network_whitelist = "siiway-server-network-cn";
@@ -120,7 +120,7 @@ in
           ];
 
           flags = {
-            enable_private_mode = true;
+            private_mode = true;
             default_protocol = "udp";
             dev_name = "rhenet";
             enable_encryption = true;
@@ -133,7 +133,7 @@ in
             disable_p2p = false;
             p2p_only = false;
             relay_all_peer_rpc = true;
-            disable_tcp_hole_pumping = false;
+            disable_tcp_hole_punching = false;
             disable_udp_hole_punching = false;
             multi_thread_count = 3;
             relay_network_whitelist = "rhencloud-network";
