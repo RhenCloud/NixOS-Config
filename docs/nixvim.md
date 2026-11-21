@@ -188,8 +188,8 @@ tabline 的迷你标签条。
 
 ## 中文输入（rime）
 
-编辑器内嵌 **rime.nvim**（配置指向 `~/.local/share/nvim/rime`，字典 KeyTao 等由
-`rhen.rime` 包安装），与系统 fcitx5 并行：
+编辑器内嵌 **rime.nvim**（默认沿用 `~/.local/share/fcitx5/rime`，与系统 fcitx5
+共用同一套 CloudKeyTao 词库），与系统 fcitx5 并行：
 
 | 快捷键（插入模式）    | 功能                         |
 | --------------------- | ---------------------------- |

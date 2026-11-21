@@ -2,6 +2,7 @@
 let
   nodes = self.deploy.nodes;
   expectedNodes = [
+    "hd-sg-1"
     "nixos-desktop"
     "nixos-homeserver"
     "yc-hk-1"
@@ -26,11 +27,13 @@ let
         "system"
       ]
     && (nodes.nixos-desktop.profiles ? system)
-    && (nodes.nixos-homeserver.profiles ? system);
+    && (nodes.nixos-homeserver.profiles ? system)
+    && (nodes.hd-sg-1.profiles ? system);
 
   # 结构正确后再强制所有部署 profile 求值。移除 drvPath 字符串上下文，
   # 让检查保持轻量，同时避免 GC 后陈旧 eval cache 引用已删除的 .drv。
   profileDrvs = builtins.mapAttrs (_name: path: builtins.unsafeDiscardStringContext path.drvPath) {
+    hd-sg-1-system = nodes.hd-sg-1.profiles.system.path;
     nixos-desktop = nodes.nixos-desktop.profiles.system.path;
     nixos-homeserver = nodes.nixos-homeserver.profiles.system.path;
     yc-hk-1-system = nodes.yc-hk-1.profiles.system.path;

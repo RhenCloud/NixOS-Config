@@ -28,6 +28,7 @@ in
       # audacity
       kdePackages.kwave
       heroic
+      lutris
       # rustdesk
       rustdesk-flutter
       inkscape

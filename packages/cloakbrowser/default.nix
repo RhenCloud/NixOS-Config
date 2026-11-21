@@ -1,58 +1,59 @@
-{ lib
-, stdenvNoCC
-, fetchurl
-, autoPatchelfHook
-, makeWrapper
-, alsa-lib
-, at-spi2-atk
-, at-spi2-core
-, atk
-, cairo
-, cups
-, dbus
-, expat
-, fontconfig
-, freetype
-, gdk-pixbuf
-, glib
-, gtk3
-, libdrm
-, libgbm
-, libGL
-, libpulseaudio
-, libxkbcommon
-, mesa
-, nspr
-, nss
-, pango
-, systemd
-, wayland
-, libx11
-, libxcb
-, libxcomposite
-, libxcursor
-, libxdamage
-, libxext
-, libxfixes
-, libxi
-, libxrandr
-, libxrender
-, libxscrnsaver
-, libxshmfence
-, libxtst
-, adwaita-icon-theme
-, gsettings-desktop-schemas
-, xdg-utils
-, freefont_ttf
-, ipafont
-, liberation_ttf
-, noto-fonts
-, noto-fonts-cjk-sans
-, noto-fonts-color-emoji
-, tlwg
-, unifont
-, wqy_zenhei
-, makeFontsConf
+{
+  lib,
+  stdenvNoCC,
+  fetchurl,
+  autoPatchelfHook,
+  makeWrapper,
+  alsa-lib,
+  at-spi2-atk,
+  at-spi2-core,
+  atk,
+  cairo,
+  cups,
+  dbus,
+  expat,
+  fontconfig,
+  freetype,
+  gdk-pixbuf,
+  glib,
+  gtk3,
+  libdrm,
+  libgbm,
+  libGL,
+  libpulseaudio,
+  libxkbcommon,
+  mesa,
+  nspr,
+  nss,
+  pango,
+  systemd,
+  wayland,
+  libx11,
+  libxcb,
+  libxcomposite,
+  libxcursor,
+  libxdamage,
+  libxext,
+  libxfixes,
+  libxi,
+  libxrandr,
+  libxrender,
+  libxscrnsaver,
+  libxshmfence,
+  libxtst,
+  adwaita-icon-theme,
+  gsettings-desktop-schemas,
+  xdg-utils,
+  freefont_ttf,
+  ipafont,
+  liberation_ttf,
+  noto-fonts,
+  noto-fonts-cjk-sans,
+  noto-fonts-color-emoji,
+  tlwg,
+  unifont,
+  wqy_zenhei,
+  makeFontsConf,
 }:
 
 let
@@ -96,7 +97,11 @@ let
     libxshmfence
     libxtst
   ];
-  desktopLibraries = [ adwaita-icon-theme gsettings-desktop-schemas xdg-utils ];
+  desktopLibraries = [
+    adwaita-icon-theme
+    gsettings-desktop-schemas
+    xdg-utils
+  ];
   fonts = [
     freefont_ttf
     ipafont
@@ -120,7 +125,10 @@ stdenvNoCC.mkDerivation {
   };
 
   dontUnpack = true;
-  nativeBuildInputs = [ autoPatchelfHook makeWrapper ];
+  nativeBuildInputs = [
+    autoPatchelfHook
+    makeWrapper
+  ];
   buildInputs = runtimeLibraries ++ desktopLibraries;
   runtimeDependencies = runtimeLibraries;
 

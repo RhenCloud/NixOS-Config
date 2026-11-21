@@ -27,7 +27,10 @@ in
 
     systemd.services."cloudflared-tunnel-${tunnelId}" = {
       description = "Cloudflare Tunnel ${tunnelId}";
-      after = [ "network-online.target" "sops-install-secrets.service" ];
+      after = [
+        "network-online.target"
+        "sops-install-secrets.service"
+      ];
       wants = [ "network-online.target" ];
       requires = [ "sops-install-secrets.service" ];
       wantedBy = [ "multi-user.target" ];

@@ -37,7 +37,7 @@ in
       geo
 
       inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.ant-browser
-      
+
       (
         let
           base = pkgs.appimageTools.defaultFhsEnvArgs;

@@ -104,10 +104,12 @@ stdenv.mkDerivation {
     install -Dm755 "$out/share/ant-browser/bin/sing-box" "$out/libexec/ant-browser/bin/sing-box"
     install -d "$out/libexec/ant-browser/data" "$out/libexec/ant-browser/chrome"
 
-    tar -xJf ${fetchurl {
-      url = "https://github.com/adryfish/fingerprint-chromium/releases/download/150.0.7871.186/ungoogled-chromium-150.0.7871.186-1-x86_64_linux.tar.xz";
-      hash = "sha256-SO/4YAU+/ZrUmNUTcPCh9Z+YPfOcAqcq0qhoLN6tQFU=";
-    }} \
+    tar -xJf ${
+      fetchurl {
+        url = "https://github.com/adryfish/fingerprint-chromium/releases/download/150.0.7871.186/ungoogled-chromium-150.0.7871.186-1-x86_64_linux.tar.xz";
+        hash = "sha256-SO/4YAU+/ZrUmNUTcPCh9Z+YPfOcAqcq0qhoLN6tQFU=";
+      }
+    } \
       -C "$out/libexec/ant-browser/chrome" --strip-components=1
     chmod -R u+rwX,go+rX "$out/libexec/ant-browser/chrome"
     mv "$out/libexec/ant-browser/chrome/chrome" "$out/libexec/ant-browser/chrome/chrome-bin"
@@ -116,36 +118,38 @@ stdenv.mkDerivation {
     makeWrapper "$out/libexec/ant-browser/chrome/chrome-wrapper" "$out/libexec/ant-browser/chrome/chrome" \
       --chdir "$out/libexec/ant-browser/chrome" \
       --set CHROME_WRAPPER "$out/libexec/ant-browser/chrome/chrome-wrapper" \
-      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [
-        gtk3
-        glib
-        gdk-pixbuf
-        pango
-        cairo
-        atk
-        webkitgtk_4_1
-        libayatana-appindicator
-        libsoup_3
-        libx11
-        libxcb
-        libxcomposite
-        libxdamage
-        libxext
-        libxfixes
-        libxrandr
-        libxkbcommon
-        nss
-        nspr
-        cups
-        alsa-lib
-        dbus
-        libdrm
-        libgbm
-        mesa
-        udev
-        at-spi2-core
-        expat
-      ]}
+      --prefix LD_LIBRARY_PATH : ${
+        lib.makeLibraryPath [
+          gtk3
+          glib
+          gdk-pixbuf
+          pango
+          cairo
+          atk
+          webkitgtk_4_1
+          libayatana-appindicator
+          libsoup_3
+          libx11
+          libxcb
+          libxcomposite
+          libxdamage
+          libxext
+          libxfixes
+          libxrandr
+          libxkbcommon
+          nss
+          nspr
+          cups
+          alsa-lib
+          dbus
+          libdrm
+          libgbm
+          mesa
+          udev
+          at-spi2-core
+          expat
+        ]
+      }
 
     rm -rf "$out/share/ant-browser/ant-chrome" \
       "$out/share/ant-browser/config.yaml" \
@@ -157,36 +161,38 @@ stdenv.mkDerivation {
       --set GSETTINGS_SCHEMA_DIR "${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}/glib-2.0/schemas" \
       --prefix XDG_DATA_DIRS : "${gsettings-desktop-schemas}/share" \
       --set ANT_BROWSER_CHROME_PATH "$out/libexec/ant-browser/chrome/chrome" \
-      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [
-        gtk3
-        glib
-        gdk-pixbuf
-        pango
-        cairo
-        atk
-        webkitgtk_4_1
-        libayatana-appindicator
-        libsoup_3
-        libx11
-        libxcb
-        libxcomposite
-        libxdamage
-        libxext
-        libxfixes
-        libxrandr
-        libxkbcommon
-        nss
-        nspr
-        cups
-        alsa-lib
-        dbus
-        libdrm
-        libgbm
-        mesa
-        udev
-        at-spi2-core
-        expat
-      ]}
+      --prefix LD_LIBRARY_PATH : ${
+        lib.makeLibraryPath [
+          gtk3
+          glib
+          gdk-pixbuf
+          pango
+          cairo
+          atk
+          webkitgtk_4_1
+          libayatana-appindicator
+          libsoup_3
+          libx11
+          libxcb
+          libxcomposite
+          libxdamage
+          libxext
+          libxfixes
+          libxrandr
+          libxkbcommon
+          nss
+          nspr
+          cups
+          alsa-lib
+          dbus
+          libdrm
+          libgbm
+          mesa
+          udev
+          at-spi2-core
+          expat
+        ]
+      }
 
     install -Dm644 ${./ant-browser.desktop} "$out/share/applications/ant-browser.desktop"
 

@@ -118,7 +118,7 @@ in
       enable = true;
       automatic = true;
       dates = "weekly";
-      deleteOlderThan = "7d";
+      deleteOlderThan = lib.mkDefault "7d";
     };
     services.fast-nix-optimise = {
       enable = true;

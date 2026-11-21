@@ -14,7 +14,7 @@ in
 
     image = mkOption {
       type = types.str;
-      default = "ghcr.io/siiway/nextbridge:unstable";
+      default = "ghcr.io/siiway/nextbridge:dev-2f770bd-amd64";
       description = "NextBridge OCI 镜像标签";
     };
 

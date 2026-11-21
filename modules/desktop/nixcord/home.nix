@@ -256,15 +256,8 @@ in
         splashColor = "rgb(239, 239, 241)";
         splashBackground = "rgb(18, 18, 20)";
       };
-      vesktop.state = {
-        firstLaunch = false;
-        windowBounds = {
-          x = 0;
-          y = 0;
-          width = 1892;
-          height = 1018;
-        };
-      };
+      # 不声明 vesktop.state：state.json 由 Vesktop 运行时写入，
+      # 交给客户端自行管理，避免 Home Manager 每次激活都做 .backup 备份而冲突。
       config = {
         autoUpdate = true;
         autoUpdateNotification = false;

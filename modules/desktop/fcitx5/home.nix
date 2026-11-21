@@ -238,10 +238,7 @@ in
     #
     # 现在只有一层：产物里是什么，装上就是什么。没有补丁脚本。
     xdg.dataFile = lib.mkMerge [
-      (lib.mapAttrs' (
-        name: v:
-        lib.nameValuePair "fcitx5/rime/${name}" v
-      ) rimeDataFiles)
+      (lib.mapAttrs' (name: v: lib.nameValuePair "fcitx5/rime/${name}" v) rimeDataFiles)
       {
         "fcitx5/themes/dracula" = {
           source = ./fcitx5/themes/dracula;
@@ -265,60 +262,58 @@ in
     # 阶段落的。若只写 writeBoundary，两者无先后关系，activation 写的
     # cloudkeytao.local 可能先写后被产物覆盖 —— 那就白写了。
     home.activation.installRimeLocalData = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        rime_dir=$HOME/.local/share/fcitx5/rime
+      rime_dir=$HOME/.local/share/fcitx5/rime
 
-        # 邮箱：quick_text 的 /email 从这里读
-        printf '%s\n' '${config.rhen.user.email}' > "$rime_dir/cloudkeytao-email.txt"
+      # 邮箱：quick_text 的 /email 从这里读
+      printf '%s\n' '${config.rhen.user.email}' > "$rime_dir/cloudkeytao-email.txt"
 
-        ${lib.optionalString (cfg.extraUserPhrases != "") ''
-          {
-            printf '%s\n' '${cfg.extraUserPhrases}'
-          } \
-            | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF==3 {print}' \
-            > "$rime_dir/custom_phrase.txt"
-        ''}
+      ${lib.optionalString (cfg.extraUserPhrases != "") ''
+        {
+          printf '%s\n' '${cfg.extraUserPhrases}'
+        } \
+          | ${pkgs.gawk}/bin/awk -F"\t" 'NF==2 {print $0 "\t999"} NF==3 {print}' \
+          > "$rime_dir/custom_phrase.txt"
+      ''}
 
-        ${lib.optionalString (cfg.keytaoUserDict != "") ''
-          # 内容由 Nix 侧生成（见 localDict），这里只负责放到位。
-          # 产物里这个表是空的，但链接指向 nix store（只读），
-          # 所以先删链接再写实际文件 —— 否则 install 会失败。
-          rm -f "$rime_dir/cloudkeytao.local.dict.yaml"
-          install -m644 ${localDict} "$rime_dir/cloudkeytao.local.dict.yaml"
-        ''}
+      ${lib.optionalString (cfg.keytaoUserDict != "") ''
+        # 内容由 Nix 侧生成（见 localDict），这里只负责放到位。
+        # 产物里这个表是空的，但链接指向 nix store（只读），
+        # 所以先删链接再写实际文件 —— 否则 install 会失败。
+        rm -f "$rime_dir/cloudkeytao.local.dict.yaml"
+        install -m644 ${localDict} "$rime_dir/cloudkeytao.local.dict.yaml"
+      ''}
 
-        echo "Rime 本机数据已写入"
+      echo "Rime 本机数据已写入"
     '';
 
     # 额外的词典 / YAML / Lua 文件（旧机制保留，但改成直白的 cp）
     home.activation.installRimeExtras = lib.hm.dag.entryAfter [ "installRimeLocalData" ] ''
-        rime_dir=$HOME/.local/share/fcitx5/rime
+      rime_dir=$HOME/.local/share/fcitx5/rime
 
-        ${lib.optionalString (cfg.extraDictFiles != { }) ''
-          for file in ${
-            lib.escapeShellArgs (map (n: cfg.extraDictFiles.${n}.path) (lib.attrNames cfg.extraDictFiles))
-          }; do
-            mkdir -p "$rime_dir/custom"
-            cp -R "$file" "$rime_dir/custom/$(basename "$file")"
-          done
-        ''}
+      ${lib.optionalString (cfg.extraDictFiles != { }) ''
+        for file in ${
+          lib.escapeShellArgs (map (n: cfg.extraDictFiles.${n}.path) (lib.attrNames cfg.extraDictFiles))
+        }; do
+          mkdir -p "$rime_dir/custom"
+          cp -R "$file" "$rime_dir/custom/$(basename "$file")"
+        done
+      ''}
 
-        ${lib.optionalString (cfg.extraYamlFiles != { }) ''
-          for file in ${
-            lib.escapeShellArgs (map (n: cfg.extraYamlFiles.${n}.path) (lib.attrNames cfg.extraYamlFiles))
-          }; do
-            mkdir -p "$rime_dir/custom"
-            cp -R "$file" "$rime_dir/custom/$(basename "$file")"
-          done
-        ''}
+      ${lib.optionalString (cfg.extraYamlFiles != { }) ''
+        for file in ${
+          lib.escapeShellArgs (map (n: cfg.extraYamlFiles.${n}.path) (lib.attrNames cfg.extraYamlFiles))
+        }; do
+          mkdir -p "$rime_dir/custom"
+          cp -R "$file" "$rime_dir/custom/$(basename "$file")"
+        done
+      ''}
 
-        ${lib.optionalString (cfg.extraLuaFiles != [ ]) ''
-          for src in ${
-            lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)
-          }; do
-            mkdir -p "$rime_dir/custom"
-            cp -R "$src" "$rime_dir/custom/"
-          done
-        ''}
+      ${lib.optionalString (cfg.extraLuaFiles != [ ]) ''
+        for src in ${lib.escapeShellArgs (map (p: "${p.source}/${p.name}") cfg.extraLuaFiles)}; do
+          mkdir -p "$rime_dir/custom"
+          cp -R "$src" "$rime_dir/custom/"
+        done
+      ''}
     '';
 
     # 把用户自造的词固化回仓库（旧机制保留，仅改为新文件名）

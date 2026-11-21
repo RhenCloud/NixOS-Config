@@ -1,11 +1,20 @@
-name: Build Rime Keytao Config
+name: Build CloudKeyTao Rime Config
+
+# 产物本身由 CloudKeyTao 仓库（scripts/build.sh）构建，本 workflow 只负责
+# 把 flake input 已经算好的 rime-data 打成 fcitx5-android 能直接解压的 zip。
+#
+# 产物本身完全由 CloudKeyTao 仓库的 scripts/build.sh 决定，
+# 这里只把 flake lock 钉住的 rime-data 打给 fcitx5-android 用。
+# 无 SSH 需求，公共仓库 token 匿名拉取即可。
 
 on:
   push:
     paths:
-      - "modules/desktop/fcitx5/**"
+      # zip 的全部内容来自 cloudkeytao 包，只有锁文件变化才会换产物。
       - "flake.nix"
       - "flake.lock"
+      - "modules/desktop/fcitx5/themes/**"
+      - "modules/desktop/fcitx5/fcitx5/themes/**"
       - ".github/workflows/build-rime.yml"
   workflow_dispatch:
 
@@ -34,39 +43,32 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           skipPush: true
 
-      - name: Build rime-keytao package
+      - name: Build cloudkeytao package
         run: |
-          nix build --no-link '.#rime-keytao'
-          rime_dir=$(nix eval --raw '.#rime-keytao.outPath')
+          nix build --no-link '.#cloudkeytao'
+          rime_dir=$(nix eval --raw '.#cloudkeytao.outPath')
           echo "rimedir=$rime_dir" >> "$GITHUB_ENV"
 
       - name: Assemble Rime config
         run: |
-          mkdir -p output/rime/lua
+          # 包的 outPath 就是 Rime 用户目录的内容（不是 share/rime-data 下级）。
+          mkdir -p output/rime
+          cp -r "${{ env.rimedir }}"/. output/rime/
+          chmod -R u+w output/rime
 
-          # 1. 键道基础文件（nix store 为只读，先设可写以便覆盖）
-          cp -r "${{ env.rimedir }}/share/rime-data/"* output/rime/
-          chmod -R +w output/rime/
-
-          # 2. 自定义 Lua 脚本
-          cp modules/desktop/fcitx5/rime/lua/*.lua output/rime/lua/
-
-          # 3. 自定义 YAML 配置
-          cp modules/desktop/fcitx5/default.custom.yaml output/rime/
-          cp modules/desktop/fcitx5/keytao.custom.yaml output/rime/
-
-          # 4. 创建空的 custom_phrase.txt（用户自行编辑）
+          # 产物已自带 default.custom.yaml、cloudkeytao.custom.yaml、lua/ 与 opencc/，
+          # 这里不再覆盖任何文件 —— 只补一个空的用户短语表。
           touch output/rime/custom_phrase.txt
 
       - name: Package Rime config
         run: |
           cd output
-          zip -r ../rime-keytao-config.zip rime/
+          zip -r ../cloudkeytao-rime-config.zip rime/
 
       - uses: actions/upload-artifact@v4
         with:
-          name: rime-keytao-config
-          path: rime-keytao-config.zip
+          name: cloudkeytao-rime-config
+          path: cloudkeytao-rime-config.zip
 
   build-fcitx5-themes:
     runs-on: ubuntu-latest

@@ -187,17 +187,17 @@
         "xmjd6": "xmjd6"
       },
       "locked": {
-        "lastModified": 1794677043,
-        "narHash": "sha256-p9o/REx7paNzd43vYmdgyschPzeFqJbaIbRgroHfwwg=",
-        "ref": "refs/heads/main",
-        "rev": "fad7be287d305749a5ed0dd209f2dd50cda41480",
-        "revCount": 14,
-        "type": "git",
-        "url": "ssh://git@github.com/RhenCloud/CloudKeyTao"
+        "lastModified": 1794726169,
+        "narHash": "sha256-tS3MHxp+VLZ83aW8c0i0no8WjaHqsYCbJmyKkIpybGw=",
+        "owner": "RhenCloud",
+        "repo": "CloudKeyTao",
+        "rev": "47314b3f126439c79fa021ee2a434818a6592fd6",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/RhenCloud/CloudKeyTao"
+        "owner": "RhenCloud",
+        "repo": "CloudKeyTao",
+        "type": "github"
       }
     },
     "crane": {

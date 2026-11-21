@@ -64,5 +64,22 @@ in
       profilesOrder = [ "system" ];
       magicRollback = true;
     };
+
+    hd-sg-1 = {
+      hostname = "81.31.208.183";
+      sshUser = "rhencloud";
+      sshOpts = [
+        "-p"
+        "22222"
+      ];
+      profiles.system = {
+        user = "root";
+        path = (deployLibFor "hd-sg-1").activate.nixos self.nixosConfigurations.hd-sg-1;
+      };
+      profilesOrder = [ "system" ];
+      magicRollback = true;
+      # 首次启用 podman 需要拉取 AB 镜像，放宽激活等待时间避免误判超时。
+      activationTimeout = 900;
+    };
   };
 }
