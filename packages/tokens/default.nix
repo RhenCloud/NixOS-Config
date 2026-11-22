@@ -5,14 +5,16 @@
   autoPatchelfHook,
   glibc,
 }:
-
+let
+  version = "27.2.1";
+in
 stdenv.mkDerivation {
   pname = "tokens";
-  version = "27.1.1";
+  inherit version;
 
   src = fetchurl {
-    url = "https://github.com/missuo/tokens/releases/download/v27.1.1/tokens-v27.1.1-x86_64-unknown-linux-gnu.tar.gz";
-    hash = "sha256-n8kpe6hiAvw3FV813cM2l/61FrSNB6r0uCKLSYB6jns=";
+    url = "https://github.com/missuo/tokens/releases/download/v${version}/tokens-v${version}-x86_64-unknown-linux-gnu.tar.gz";
+    hash = "sha256-cx8slkzQ1CLEdGLcb9kiE66LN2qoELvvecrt4/KYE18=";
   };
 
   nativeBuildInputs = [ autoPatchelfHook ];

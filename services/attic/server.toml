@@ -1,0 +1,53 @@
+# Attic 二进制缓存服务的 server 端配置。
+# 参考：https://github.com/zhaofengli/attic/blob/main/server/src/config-template.toml
+#
+# 改动注意事项：
+#   - [chunking] 一旦有数据就不要改，否则去重率会掉（cutpoints 变了）。
+#   - [jwt] 一旦有令牌就不要改，否则所有客户端令牌立即失效。
+
+listen = "0.0.0.0:8080"
+
+# 生产环境必填，否则任意 Host 头都被接受
+# 双入口：下载走 Cloudflare（cache.），推送走 1Panel 直连（push.）——
+# CF 免费版单请求 100 MB 上限，而 attic push 是整个 NAR 一个 PUT，
+# GB 级包（ant-browser 807 MB、wpsoffice-cn 2 GB）必被 413，所以推送必须直连。
+allowed-hosts = [ "cache.rhen.cloud", "push.rhen.cloud" ]
+
+# API 端点（推送/管理走这里）：指向直连域名。
+# attic 客户端一旦在 cache-config 里看到 api-endpoint，就会把上传端点改写成它
+# （client/src/command/push.rs:155），所以这里必须写直连域，否则又走回 CF 被 413。
+# 必须带结尾斜杠。
+api-endpoint = "https://push.rhen.cloud/"
+
+# 二进制缓存端点（客户端 `substituters = [ .../public ]` 用的那个）：仍走 CF。
+# 不配则回退到 api-endpoint，那样下载也会被引流到直连。
+substituter-endpoint = "https://cache.rhen.cloud/"
+
+[database]
+# SQLite 单文件，跑单实例够用；要迁移到 Postgres 再换 URL
+url = "sqlite:///attic/data/server.db?mode=rwc"
+
+[storage]
+type = "local"
+path = "/attic/storage"
+
+[chunking]
+nar-size-threshold = 65536
+min-size = 16384
+avg-size = 65536
+max-size = 262144
+
+[compression]
+type = "zstd"
+# 分块只有 16–256 KiB，level 19 几乎不涨压缩率却大幅吃 CPU/内存；
+# 实推时 19 + 512m 内存上限直接 OOM，降到 8。
+level = 8
+
+[garbage-collection]
+interval = "12 hours"
+default-retention-period = "30 days"
+
+# 注意：这里**故意不写** [jwt.signing] 段。
+# atticd 的 TOML 枚举要求该段恰好提供 1 个字段，写成空段会报
+# "wanted exactly 1 element, found 0 elements"；
+# 而私钥完全由 atticd.env 的 ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64 提供。

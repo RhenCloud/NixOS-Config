@@ -53,7 +53,9 @@ in
       auto-optimise-store = false;
       trusted-users = [ "@wheel" ];
       substituters = [
-        # "https://cache.rhen.cloud"
+        # 自建 Attic 缓存。Attic 的 substituter URL 要带缓存名 /public；
+        # Priority 50 > cache.nixos.org 的 40，本地独有路径优先命它。
+        "https://cache.rhen.cloud/public"
         # "https://rhencloud.cachix.org"
         # 国内镜像实测最快，放在前面优先命中。
         "https://mirrors.ustc.edu.cn/nix-channels/store"
@@ -66,7 +68,7 @@ in
         "https://vicinae.cachix.org"
       ];
       trusted-substituters = lib.mkForce [
-        # "https://cache.rhen.cloud"
+        "https://cache.rhen.cloud/public"
         # "https://rhencloud.cachix.org"
         "https://hyprland.cachix.org"
         "https://nix-community.cachix.org"
@@ -80,6 +82,8 @@ in
       # extra-trusted-public-keys 不会被 flake 的 nixConfig.trusted-public-keys 覆盖，
       # 确保 nix run 外部 flake 时 cache.nixos.org 等缓存始终可用。
       extra-trusted-public-keys = [
+        # Attic 的公钥名就是缓存名（这里是 "public"）
+        "public:fZVnkMmYL+VX7gXj0zTSKU5dfAuZt7qUj6YtewfK0CU="
         # "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
         "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="

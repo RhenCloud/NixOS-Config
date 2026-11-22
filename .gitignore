@@ -41,3 +41,6 @@ archive.tar.gz
 **/__pycache__/
 
 .playwright-mcp/
+
+# Attic 服务端本地私钥（只在服务器生成，不进仓库）
+services/attic/atticd.env

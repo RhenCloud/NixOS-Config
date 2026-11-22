@@ -11,7 +11,7 @@
     #   "https://yazi.cachix.org"
     # ];
     substituters = [
-      # "https://cache.rhen.cloud"
+      "https://cache.rhen.cloud/public"
       # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
@@ -23,7 +23,7 @@
       "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
     trusted-substituters = [
-      # "https://cache.rhen.cloud"
+      "https://cache.rhen.cloud/public"
       # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
@@ -35,6 +35,7 @@
       "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
     extra-trusted-public-keys = [
+      "public:fZVnkMmYL+VX7gXj0zTSKU5dfAuZt7qUj6YtewfK0CU="
       # "rhencloud.cachix.org-1:ufAOdWG5R+cdEwikK58DG41wK6VrSVKwaSgnXxZ+D+E="
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="

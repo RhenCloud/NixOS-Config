@@ -36,13 +36,15 @@
   at-spi2-core,
   expat,
 }:
-
+let
+  version = "1.8.0";
+in
 stdenv.mkDerivation {
   pname = "ant-browser";
-  version = "1.8.0";
+  inherit version;
 
   src = fetchurl {
-    url = "https://github.com/black-ant/Ant-Browser/releases/download/V1.8.0/ant-browser-linux-amd64.zip";
+    url = "https://github.com/black-ant/Ant-Browser/releases/download/V${version}/ant-browser-linux-amd64.zip";
     hash = "sha256-eapaUef9MOqfeD4PjVOrSdPmMCQwVvjRS49Aokz2bSU=";
   };
 

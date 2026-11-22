@@ -1,0 +1,205 @@
+name: Auto Update Packages
+
+# 每 12 小时升级 packages/* 自有包的版本，构建三个主机闭包 + 全部 flake 包，
+# 推二进制缓存，然后开 PR 并自动合并。
+#
+# 刻意不动 flake.lock：lock 更新由 update-flake-lock.yml 每周开 PR、人工合并。
+# 构建必须全绿才合并 —— 这是自动合并唯一的闸门。
+
+on:
+  schedule:
+    # 每 12 小时（UTC）
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "只报告可升级的包，不写回、不建 PR"
+        type: boolean
+        default: false
+
+concurrency:
+  group: auto-update
+  # 让上一轮跑完，避免两个任务同时改工作树
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  # 推送/API 走直连入口（CF 免费版单请求 100 MB 上限，attic push 是整包一个 PUT）
+  ATTIC_SERVER: https://push.rhen.cloud
+  ATTIC_CACHE: public
+  BRANCH: auto/update
+
+jobs:
+  update:
+    name: Bump packages / build / publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    if: github.repository == 'RhenCloud/NixOS-Config'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # 需要完整历史才能稳定推送 auto/update 分支
+          fetch-depth: 0
+          # wallpapers submodule 是 1 GB 图包，构建完全用不到
+          submodules: false
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            max-jobs = 4
+            cores = 4
+            keep-going = true
+
+      - name: Configure substituters
+        env:
+          ATTIC_KEY: ${{ vars.ATTIC_PUBLIC_KEY }}
+          CACHIX_KEY: ${{ vars.CACHIX_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          subs=(
+            # Attic 的 substituter 要带缓存名（/public），否则 401
+            https://cache.rhen.cloud/public
+            https://rhencloud.cachix.org
+            https://cache.nixos.org
+            https://nix-community.cachix.org
+            https://hyprland.cachix.org
+            https://niri.cachix.org
+            https://noctalia.cachix.org
+            https://vicinae.cachix.org
+          )
+          keys=(
+            # Attic 的公钥名 = 缓存名（public）
+            "public:${ATTIC_KEY}"
+            "rhencloud.cachix.org-1:${CACHIX_KEY}"
+            "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+            "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+            "niri.cachix.org-1:W5oeOxxT1APmUFFJ9YlNYLwdSXL2Nmq1uvgrh5W6Fh0="
+          )
+          {
+            printf 'substituters = %s\n' "${subs[*]}"
+            printf 'trusted-public-keys = %s\n' "${keys[*]}"
+          } | sudo tee -a /etc/nix/nix.conf >/dev/null
+          sudo systemctl restart nix-daemon
+
+      - name: Setup sops age key
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: |
+          if [ -z "$SOPS_AGE_KEY" ]; then
+            echo "SOPS_AGE_KEY 未设置，跳过"
+            exit 0
+          fi
+          mkdir -p ~/.config/sops/age
+          echo "$SOPS_AGE_KEY" > ~/.config/sops/age/keys.txt
+          chmod 600 ~/.config/sops/age/keys.txt
+
+      - name: Install nix-update
+        run: nix profile install nixpkgs#nix-update
+
+      - name: Bump self-packaged versions
+        env:
+          DRY_RUN: ${{ inputs.dry-run && '1' || '0' }}
+        run: ./scripts/auto-update.sh
+
+      - name: Build every target
+        run: |
+          set -euo pipefail
+          # 与 build.yml 一致：复用桌面主机的 pkgs，保证架构 /
+          # nixpkgs.config / 自动发现的 overlays 与本地求值一致。
+          # shellcheck disable=SC2016
+          expr='
+            let
+              flake = builtins.getFlake (toString ./.);
+              lib = flake.inputs.nixpkgs.lib;
+              hosts = [ "nixos-desktop" "yc-hk-1" "nixos-homeserver" ];
+              toplevel = h:
+                flake.nixosConfigurations.${h}.config.system.build.toplevel;
+              pkgs = flake.nixosConfigurations.nixos-desktop.pkgs;
+              system = pkgs.stdenv.hostPlatform.system;
+              flakePkgs = lib.attrValues flake.packages.${system};
+              overlayNames = lib.unique (
+                lib.concatMap
+                  (ov: builtins.attrNames (ov pkgs pkgs))
+                  (builtins.attrValues flake.overlays)
+              );
+            in
+              map toplevel hosts
+              ++ flakePkgs
+              ++ map (n: pkgs.${n}) overlayNames
+          '
+          nix build -L --impure --no-link --print-out-paths --expr "$expr" \
+            | tee "$RUNNER_TEMP/paths.txt"
+          echo "构建成功 $(wc -l < "$RUNNER_TEMP/paths.txt") 个顶层路径"
+
+      - name: Push to binary cache
+        run: |
+          set -euo pipefail
+          mapfile -t paths < "$RUNNER_TEMP/paths.txt"
+          if [ -n "${{ secrets.ATTIC_PUSH_TOKEN }}" ]; then
+            echo "==> 推送到 Attic（$ATTIC_SERVER / $ATTIC_CACHE）"
+            nix profile install nixpkgs#attic-client
+            attic login rhen "$ATTIC_SERVER" "${{ secrets.ATTIC_PUSH_TOKEN }}"
+            attic push "rhen:$ATTIC_CACHE" "${paths[@]}"
+          else
+            echo "==> ATTIC_PUSH_TOKEN 未设置，回落到 Cachix（rhencloud）"
+            nix profile install nixpkgs#cachix
+            cachix push rhencloud "${paths[@]}"
+          fi
+
+      - name: Commit to auto branch
+        id: commit
+        if: inputs.dry-run != true
+        run: |
+          set -euo pipefail
+          bot_email="41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "$bot_email"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "没有需要提交的版本变化"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git checkout -B "$BRANCH"
+          git commit -m "chore(auto): bump self-packaged package versions"
+          git push -f origin "$BRANCH"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          git show --stat --oneline HEAD >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open / update PR and merge
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          body="$RUNNER_TEMP/pr-body.md"
+          {
+            echo "Automated version bumps for \`packages/*\`, produced by"
+            echo "\`.github/workflows/auto-update.yml\`."
+            echo
+            echo "All three host closures and every flake package built"
+            echo "successfully before this PR was opened, and the resulting"
+            echo "store paths were pushed to the binary cache."
+            echo
+            echo "\`flake.lock\` is intentionally untouched: lock updates go"
+            echo "through \`update-flake-lock.yml\` and require manual review."
+          } > "$body"
+
+          if ! gh pr view "$BRANCH" >/dev/null 2>&1; then
+            gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "chore(auto): bump self-packaged package versions" \
+              --body-file "$body" \
+              --label dependencies
+          fi
+          # 前面的 Build every target 已全绿，这里直接合并
+          gh pr merge "$BRANCH" --squash --delete-branch

@@ -1,0 +1,10 @@
+[Unit]
+Description=Backup Attic server database
+Documentation=https://github.com/RhenCloud/NixOS-Config/blob/main/services/attic/README.md
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/atticd-backup
+# 想启用远端备份就取消注释并改成实际目标
+# Environment=ATTIC_BACKUP_REMOTE=rhencloud@yc-hk-1:/var/backups/atticd/

@@ -1,0 +1,31 @@
+# 由 scripts/auto-update.sh 读取的白名单。
+#
+# 格式：`<包名>[ 额外的 nix-update 参数]`
+# 以 # 开头为注释；删掉某行即可停用该包的自动升级。
+#
+# 只放「上游是稳定的 GitHub release/tag」的包。以下类型不要放进来：
+#   - packages/<x>/default.nix 里是 `inputs.<x>…`  → 版本由 flake.lock 带动
+#     （cloudkeytao、ttt、ttt-herdr-plugin、deploy-rs、jailed-pi）
+#   - 源码在本仓库内（bt-iso-enable、herdr-tab-rename、sandbox）
+#
+# 加了参数的行会用该参数跑 nix-update，参数里的正则要加引号。
+
+# —— 全量实测通过（2026-11 一轮：7 升级 / 0 失败）——
+tokens
+herdr-plus
+herdr-sidebar
+herdr-reviewr
+herdr-spreader
+herdr-worktrunk
+aicommits
+
+# 上游没有 release，只有分支 → 按分支日期打版本（0-unstable-YYYY-MM-DD）
+herdr-window-title-sync --version=branch
+im-emoji-picker --version=branch
+
+# —— 暂不启用：需要人工介入 ——
+# mihomo-meta                       # 上游改动让编进二进制的 patch 失效，需 rebase patch
+# ant-browser                       # 资产改名：ant-browser-linux-amd64.zip -> AntBrowser-1.9.x-linux-amd64.tar.gz（要改 fetch 与 unpack）
+# cloakbrowser                      # 源站 cloakbrowser.dev 不是 nix-update 支持的 forge，拿不到 latest
+# herdr-mobile-relay                # 升级后构建失败（多产物/名称模板），待单独排查
+# zed-globalization                 # 上游无 release，资产名 zedg-zh-cn-linux-x86_64-v<ver> 无法推断

@@ -3,15 +3,17 @@
   rustPlatform,
   fetchFromGitHub,
 }:
-
+let
+  version = "0.2.0";
+in
 rustPlatform.buildRustPackage {
   pname = "herdr-spreader";
-  version = "0.2.0";
+  inherit version;
 
   src = fetchFromGitHub {
     owner = "yuk1ty";
     repo = "herdr-spreader";
-    rev = "v0.2.0";
+    rev = "v${version}";
     hash = "sha256-Cb/Tbr+HbUl5nfBbYHhjyJq6x5GLSmXimD9jjI8/qGw=";
   };
 

@@ -1,0 +1,23 @@
+services:
+  atticd:
+    # 固定 digest：Attic 仍是 early prototype，升级等同 DB 迁移，必须显式改 digest
+    # yamllint disable-line rule:line-length
+    image: ghcr.io/zhaofengli/attic@sha256:317924e10e70416e69d401880bb71b3aae69b413ecafcfc54018f61929464526
+    container_name: atticd
+    command: ["-f", "/attic/server.toml", "--mode", "monolithic"]
+    restart: unless-stopped
+    env_file: [./atticd.env]
+    volumes:
+      - ./server.toml:/attic/server.toml:ro
+      - /srv/atticd/data:/attic/data
+      - /srv/atticd/storage:/attic/storage
+    # 只监听回环：TLS 与对外入口由 Cloudflare Tunnel（cloudflared）负责
+    ports: ["127.0.0.1:8080:8080"]
+    # 512m 推大包时会被 OOM 杀掉（dmesg 实测 anon-rss 撞 520 MB 后 SIGKILL），
+    # 宿主 5.9 GiB、已用 ~2 GiB，给 2g 留足余量。
+    mem_limit: 2g
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"

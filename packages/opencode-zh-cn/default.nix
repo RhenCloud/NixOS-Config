@@ -5,13 +5,15 @@
   unzip,
   autoPatchelfHook,
 }:
-
+let
+  version = "8.7.0";
+in
 stdenv.mkDerivation {
   pname = "opencode-zh-cn";
-  version = "8.7.0";
+  inherit version;
 
   src = fetchurl {
-    url = "https://github.com/1186258278/OpenCodeChineseTranslation/releases/download/v8.7.0/opencode-zh-CN-v8.7.0-linux-x64.zip";
+    url = "https://github.com/1186258278/OpenCodeChineseTranslation/releases/download/v${version}/opencode-zh-CN-v${version}-linux-x64.zip";
     hash = "sha256-VEnLFyW48FCX+nMmKXjigjD2wGkfTcR/e1qQd9epV/g=";
   };
 

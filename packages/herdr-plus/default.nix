@@ -3,15 +3,17 @@
   buildGoModule,
   fetchFromGitHub,
 }:
-
+let
+  version = "0.1.16";
+in
 buildGoModule {
   pname = "herdr-plus";
-  version = "0.1.16";
+  inherit version;
 
   src = fetchFromGitHub {
     owner = "cloudmanic";
     repo = "herdr-plus";
-    rev = "v0.1.16";
+    rev = "v${version}";
     hash = "sha256-WWu83LMBB9V0OFF1g4qmIkoTqOgXgWeNynv4Fk84xas=";
   };
 
@@ -22,7 +24,7 @@ buildGoModule {
   ldflags = [
     "-s"
     "-w"
-    "-X internal/version.Version=0.1.16"
+    "-X internal/version.Version=${version}"
   ];
 
   postInstall = ''

@@ -1,4 +1,4 @@
-name: Publish Nix Cache to GHCR
+name: Publish Nix Cache to Attic
 
 on:
   push:
@@ -22,7 +22,17 @@ on:
 
 permissions:
   contents: read
-  packages: write
+
+# 与 auto-update 分开排队：两者都会推缓存，同时跑没有意义
+concurrency:
+  group: publish-cache
+  cancel-in-progress: true
+
+env:
+  # 推送必须走直连入口：CF 免费版单请求 100 MB 上限，
+  # 而 attic push 是整个 NAR 一个 PUT，GB 级包会被 CF 413。
+  ATTIC_SERVER: https://push.rhen.cloud
+  ATTIC_CACHE: public
 
 jobs:
   publish:
@@ -38,12 +48,49 @@ jobs:
         with:
           extra-conf: |
             experimental-features = nix-command flakes
+            # 构建时优先复用已有缓存，少重编
+            extra-substituters = https://cache.rhen.cloud/public
+            extra-trusted-public-keys = public:${{ vars.ATTIC_PUBLIC_KEY }}
 
-      - name: Publish to GHCR
-        uses: shaogme/nixcache-oci@main
-        with:
-          mode: "flake"
-          flake-path: "."
-          signing-key: ${{ secrets.NIX_SIGNING_KEY }}
-          strict: "true"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build all targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP"
+          : > "$RUNNER_TEMP/paths.txt"
+
+          # 三台主机的 toplevel（含 home，embed=true 的两台）
+          for host in nixos-desktop yc-hk-1 nixos-homeserver; do
+            echo "==> nixosConfigurations.${host}"
+            nix build --no-link --print-out-paths \
+              ".#nixosConfigurations.${host}.config.system.build.toplevel" \
+              >> "$RUNNER_TEMP/paths.txt"
+          done
+
+          # 仓库自定义包，用 flake 自身的 packages 属性
+          echo "==> packages"
+          nix build --no-link --print-out-paths \
+            --impure \
+            --expr "let f = builtins.getFlake (toString ./.);\
+              in builtins.attrValues f.packages.\${builtins.currentSystem}" \
+            >> "$RUNNER_TEMP/paths.txt"
+
+          sort -u -o "$RUNNER_TEMP/paths.txt" "$RUNNER_TEMP/paths.txt"
+          echo "==> 待推送路径数: $(wc -l < "$RUNNER_TEMP/paths.txt")"
+
+      - name: Push to Attic
+        shell: bash
+        env:
+          ATTIC_TOKEN: ${{ secrets.ATTIC_PUSH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${ATTIC_TOKEN:-}" ]; then
+            echo "::warning::ATTIC_PUSH_TOKEN 未设置，跳过推送"
+            exit 0
+          fi
+          nix profile install nixpkgs#attic-client
+          # 上游过滤由 Attic 自己做（缓存已登记 6 个上游 key），
+          # 日志里会显示 "N already cached, M in upstream"。
+          attic login rhen "$ATTIC_SERVER" "$ATTIC_TOKEN"
+          mapfile -t paths < "$RUNNER_TEMP/paths.txt"
+          attic push "rhen:${ATTIC_CACHE}" "${paths[@]}"
