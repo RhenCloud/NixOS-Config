@@ -19,7 +19,7 @@ in
       };
       signingKey = mkOption {
         type = types.str;
-        default = "A574A617378C4E0B";
+        default = "0xD785272010032875";
       };
     };
 
