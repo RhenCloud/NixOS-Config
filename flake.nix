@@ -11,7 +11,7 @@
     #   "https://yazi.cachix.org"
     # ];
     substituters = [
-      "https://cache.rhen.cloud/public"
+      # "https://cache.rhen.cloud/public"
       # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
@@ -23,7 +23,7 @@
       "https://mirror.sjtu.edu.cn/nix-channels/store"
     ];
     trusted-substituters = [
-      "https://cache.rhen.cloud/public"
+      # "https://cache.rhen.cloud/public"
       # "https://rhencloud.cachix.org"
       "https://hyprland.cachix.org"
       "https://nix-community.cachix.org"
@@ -208,6 +208,12 @@
     liteloaderqqnt = {
       url = "github:LiteLoaderQQNT/LiteLoaderQQNT/1.4.1";
       flake = false;
+    };
+    # 修复 Linux QQ 在 Wayland 下的屏幕共享、共享电脑声音、剪贴板和截图闪退。
+    # 提供 nixosModules.default（programs.linuxqq-wayland-fix.enable）。
+    linuxqq-wayland-fix = {
+      url = "github:SHORiN-KiWATA/linuxqq-wayland-fix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     opencode-worktree = {
       url = "github:kdcokenny/opencode-worktree";

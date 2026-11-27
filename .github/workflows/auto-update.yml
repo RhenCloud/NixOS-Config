@@ -47,6 +47,17 @@ jobs:
           # wallpapers submodule 是 1 GB 图包，构建完全用不到
           submodules: false
 
+      # ubuntu-latest 可用磁盘只有 ~20GB，预装的 dotnet/android/toolcache
+      # 与 docker 镜像占掉大半，先清掉再给 Nix store 腾地方
+      - name: Free disk space
+        run: |
+          set -euo pipefail
+          df -h / | tail -1
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /usr/local/share/powershell /opt/hostedtoolcache || true
+          docker image prune -af 2>/dev/null || true
+          df -h / | tail -1
+
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -56,6 +67,11 @@ jobs:
             max-jobs = 4
             cores = 4
             keep-going = true
+            # 磁盘见底时 daemon 自动 GC 兜底；构建产物由 ci-build-push.sh
+            # 的 out-link gcroot 保护，不会被误回收
+            # 2 GiB / 6 GiB，nix.conf 只接受字面量
+            min-free = 2147483648
+            max-free = 6442450944
 
       - name: Configure substituters
         env:
@@ -109,50 +125,38 @@ jobs:
           DRY_RUN: ${{ inputs.dry-run && '1' || '0' }}
         run: ./scripts/auto-update.sh
 
-      - name: Build every target
+      - name: Install cache clients
         run: |
           set -euo pipefail
-          # 与 build.yml 一致：复用桌面主机的 pkgs，保证架构 /
-          # nixpkgs.config / 自动发现的 overlays 与本地求值一致。
-          # shellcheck disable=SC2016
-          expr='
-            let
-              flake = builtins.getFlake (toString ./.);
-              lib = flake.inputs.nixpkgs.lib;
-              hosts = [ "nixos-desktop" "yc-hk-1" "nixos-homeserver" ];
-              toplevel = h:
-                flake.nixosConfigurations.${h}.config.system.build.toplevel;
-              pkgs = flake.nixosConfigurations.nixos-desktop.pkgs;
-              system = pkgs.stdenv.hostPlatform.system;
-              flakePkgs = lib.attrValues flake.packages.${system};
-              overlayNames = lib.unique (
-                lib.concatMap
-                  (ov: builtins.attrNames (ov pkgs pkgs))
-                  (builtins.attrValues flake.overlays)
-              );
-            in
-              map toplevel hosts
-              ++ flakePkgs
-              ++ map (n: pkgs.${n}) overlayNames
-          '
-          nix build -L --impure --no-link --print-out-paths --expr "$expr" \
-            | tee "$RUNNER_TEMP/paths.txt"
-          echo "构建成功 $(wc -l < "$RUNNER_TEMP/paths.txt") 个顶层路径"
+          # attic / cachix 都装上，ci-build-push.sh 按 token 是否存在二选一
+          nix profile install nixpkgs#attic-client nixpkgs#cachix
 
-      - name: Push to binary cache
+      - name: Login to binary cache
+        env:
+          ATTIC_PUSH_TOKEN: ${{ secrets.ATTIC_PUSH_TOKEN }}
         run: |
           set -euo pipefail
-          mapfile -t paths < "$RUNNER_TEMP/paths.txt"
-          if [ -n "${{ secrets.ATTIC_PUSH_TOKEN }}" ]; then
-            echo "==> 推送到 Attic（$ATTIC_SERVER / $ATTIC_CACHE）"
-            nix profile install nixpkgs#attic-client
-            attic login rhen "$ATTIC_SERVER" "${{ secrets.ATTIC_PUSH_TOKEN }}"
-            attic push "rhen:$ATTIC_CACHE" "${paths[@]}"
+          if [ -n "$ATTIC_PUSH_TOKEN" ]; then
+            attic login rhen "$ATTIC_SERVER" "$ATTIC_PUSH_TOKEN"
           else
-            echo "==> ATTIC_PUSH_TOKEN 未设置，回落到 Cachix（rhencloud）"
-            nix profile install nixpkgs#cachix
-            cachix push rhencloud "${paths[@]}"
+            echo "ATTIC_PUSH_TOKEN 未设置，推送将回落到 cachix push rhencloud"
           fi
+
+      # 三台主机闭包 + 全部包一次性构建会把 runner 磁盘占满（此前失败原因），
+      # 改为逐组构建 → 推送 → 清理本地 store，后续组的共享依赖从缓存取回。
+      - name: Build, push and clean per target
+        env:
+          ATTIC_PUSH_TOKEN: ${{ secrets.ATTIC_PUSH_TOKEN }}
+        run: |
+          set -euo pipefail
+          for target in \
+            host:nixos-desktop \
+            host:yc-hk-1 \
+            host:nixos-homeserver \
+            flake-packages \
+            overlay-packages; do
+            ./scripts/ci-build-push.sh "$target"
+          done
 
       - name: Commit to auto branch
         id: commit

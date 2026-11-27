@@ -177,6 +177,8 @@
     theme.enable = true;
     kitty.enable = true;
     chat.enable = true;
+    # 把「QQ」菜单入口指向 linuxqq-wayland-fix 修复版启动器
+    qqWaylandFix.enable = true;
     nixcord.enable = true;
     misc.enable = true;
     hmBasePackages.enable = true;

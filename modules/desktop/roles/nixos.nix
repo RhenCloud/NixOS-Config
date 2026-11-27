@@ -31,6 +31,7 @@
       zen.enable = true;
       sunshine.enable = false;
       avahi.enable = true;
+      qqWaylandFix.enable = true;
 
       # service
       bluetooth.enable = true;
@@ -38,6 +39,11 @@
       podman.enable = true;
       displayManagers.enable = true;
       easytier.enable = true;
+      netbird = {
+        enable = true;
+        # 桌面需要托盘式图形客户端
+        ui.enable = true;
+      };
       selector4nix.enable = true;
       sound.enable = true;
       qemu.enable = true;

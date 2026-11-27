@@ -55,7 +55,7 @@ in
       substituters = [
         # 自建 Attic 缓存。Attic 的 substituter URL 要带缓存名 /public；
         # Priority 50 > cache.nixos.org 的 40，本地独有路径优先命它。
-        "https://cache.rhen.cloud/public"
+        # "https://cache.rhen.cloud/public"
         # "https://rhencloud.cachix.org"
         # 国内镜像实测最快，放在前面优先命中。
         "https://mirrors.ustc.edu.cn/nix-channels/store"
@@ -68,7 +68,7 @@ in
         "https://vicinae.cachix.org"
       ];
       trusted-substituters = lib.mkForce [
-        "https://cache.rhen.cloud/public"
+        # "https://cache.rhen.cloud/public"
         # "https://rhencloud.cachix.org"
         "https://hyprland.cachix.org"
         "https://nix-community.cachix.org"

@@ -10,13 +10,9 @@ with lib;
 let
   cfg = config.rhen.opencode;
   system = pkgs.stdenv.hostPlatform.system;
-  voidswitchPlugin =
-    inputs.siiway-oc-plugin.packages.${system}.opencode-voidswitch.overrideAttrs
-      (old: {
-        patches = (old.patches or [ ]) ++ [
-          (snowveil.patches.local ../../../patches/opencode-voidswitch/plugin-default-export.patch)
-        ];
-      });
+  # 上游 0.4.0 起已改为 `export default Plugin.define({ id, setup })`，
+  # 原先的 plugin-default-export.patch 无法应用且已无必要，故直接使用上游包。
+  voidswitchPlugin = inputs.siiway-oc-plugin.packages.${system}.opencode-voidswitch;
   opencodeConfig = {
     "$schema" = "https://opencode.ai/config.json";
     model = "voidswitch/deepseek-v4-pro";

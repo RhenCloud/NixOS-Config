@@ -43,6 +43,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # ubuntu-latest 可用磁盘只有 ~20GB，预装软件占掉大半，先清掉
+      - name: Free disk space
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /usr/local/share/powershell /opt/hostedtoolcache || true
+          docker image prune -af 2>/dev/null || true
+          df -h / | tail -1
+
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
         with:
@@ -51,34 +60,12 @@ jobs:
             # 构建时优先复用已有缓存，少重编
             extra-substituters = https://cache.rhen.cloud/public
             extra-trusted-public-keys = public:${{ vars.ATTIC_PUBLIC_KEY }}
+            # 磁盘见底时自动 GC 兜底；构建产物由 out-link gcroot 保护
+            # 2 GiB / 6 GiB，nix.conf 只接受字面量
+            min-free = 2147483648
+            max-free = 6442450944
 
-      - name: Build all targets
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP"
-          : > "$RUNNER_TEMP/paths.txt"
-
-          # 三台主机的 toplevel（含 home，embed=true 的两台）
-          for host in nixos-desktop yc-hk-1 nixos-homeserver; do
-            echo "==> nixosConfigurations.${host}"
-            nix build --no-link --print-out-paths \
-              ".#nixosConfigurations.${host}.config.system.build.toplevel" \
-              >> "$RUNNER_TEMP/paths.txt"
-          done
-
-          # 仓库自定义包，用 flake 自身的 packages 属性
-          echo "==> packages"
-          nix build --no-link --print-out-paths \
-            --impure \
-            --expr "let f = builtins.getFlake (toString ./.);\
-              in builtins.attrValues f.packages.\${builtins.currentSystem}" \
-            >> "$RUNNER_TEMP/paths.txt"
-
-          sort -u -o "$RUNNER_TEMP/paths.txt" "$RUNNER_TEMP/paths.txt"
-          echo "==> 待推送路径数: $(wc -l < "$RUNNER_TEMP/paths.txt")"
-
-      - name: Push to Attic
+      - name: Install and login Attic
         shell: bash
         env:
           ATTIC_TOKEN: ${{ secrets.ATTIC_PUSH_TOKEN }}
@@ -92,5 +79,23 @@ jobs:
           # 上游过滤由 Attic 自己做（缓存已登记 6 个上游 key），
           # 日志里会显示 "N already cached, M in upstream"。
           attic login rhen "$ATTIC_SERVER" "$ATTIC_TOKEN"
-          mapfile -t paths < "$RUNNER_TEMP/paths.txt"
-          attic push "rhen:${ATTIC_CACHE}" "${paths[@]}"
+
+      # 一次性构建全部目标会把 runner 磁盘占满，改为逐组构建 → 推送 → 清理，
+      # 后续组的共享依赖从刚推送的缓存取回。
+      - name: Build, push and clean per target
+        shell: bash
+        env:
+          ATTIC_PUSH_TOKEN: ${{ secrets.ATTIC_PUSH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${ATTIC_PUSH_TOKEN:-}" ]; then
+            echo "::warning::ATTIC_PUSH_TOKEN 未设置，跳过构建"
+            exit 0
+          fi
+          for target in \
+            host:nixos-desktop \
+            host:yc-hk-1 \
+            host:nixos-homeserver \
+            flake-packages; do
+            ./scripts/ci-build-push.sh "$target"
+          done

@@ -23,6 +23,7 @@
     "desktop.zen"
     "desktop.sunshine"
     "desktop.avahi"
+    "desktop.qq-wayland-fix"
 
     # services
     "_common.bluetooth"
@@ -30,6 +31,7 @@
     "_common.podman"
     "_common.display-managers"
     "_common.easytier"
+    "_common.netbird"
     "_common.selector4nix"
     "_common.sound"
     "_common.qemu"
