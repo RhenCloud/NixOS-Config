@@ -15,7 +15,7 @@ in
 
     serverAddr = mkOption {
       type = types.str;
-      default = "207.57.127.54";
+      default = "85.189.59.172";
       description = "frps 地址";
     };
 

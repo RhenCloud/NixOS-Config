@@ -79,6 +79,7 @@ in
               "api": "openai-completions",
               "apiKey": "${config.sops.placeholder."chibang-cn-api-key"}",
               "models": [
+                { "id": "swe-2-1", "name": "SWE 2.1", "reasoning": true, "input": [ "text", "image" ] },
                 { "id": "glm-5.3-flash", "name": "GLM 5.3 Flash", "input": [ "text", "image" ] },
                 { "id": "deepseek-v4.1-flash-1017", "name": "DeepSeek V4.1 Flash 1017", "reasoning": true, "input": [ "text", "image" ] },
                 { "id": "deepseek-v4.1-flash", "name": "DeepSeek V4.1 Flash", "reasoning": true, "input": [ "text", "image" ] },
