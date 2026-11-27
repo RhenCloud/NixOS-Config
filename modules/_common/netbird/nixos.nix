@@ -12,6 +12,9 @@ let
   # 否则守护进程会报：cannot unmarshal string into Go struct field .ManagementURL of type url.URL。
   managementURLParts = urlParts cfg.managementUrl;
 
+  # 直接注入 url.URL 会绕过 netbird 的 parseURL()，那里本会给缺省端口的 URL
+  # 补上 :443/:80；不补的话 gRPC 拨号会报
+  # dial tcp: address <host>: missing port in address。
   urlParts =
     url:
     let
@@ -20,9 +23,19 @@ let
     if m == null then
       throw "rhen.netbird.managementUrl 必须是 http(s)://host[/path] 形式，收到：${url}"
     else
+      let
+        scheme = builtins.elemAt m 0;
+        authority = builtins.elemAt m 1;
+        defaultPort = if scheme == "https" then ":443" else ":80";
+        # IPv6 字面量形如 [::1]，方括号内的冒号不是端口分隔符。
+        hostPart =
+          if lib.hasPrefix "[" authority then lib.last (lib.splitString "]" authority) else authority;
+        hasExplicitPort =
+          builtins.length (builtins.filter builtins.isString (builtins.split ":" hostPart)) > 1;
+      in
       {
-        Scheme = builtins.elemAt m 0;
-        Host = builtins.elemAt m 1;
+        Scheme = scheme;
+        Host = if hasExplicitPort then authority else authority + defaultPort;
         Path = if builtins.elemAt m 2 == null then "" else builtins.elemAt m 2;
       };
 in
