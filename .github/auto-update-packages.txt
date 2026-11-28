@@ -23,6 +23,11 @@ aicommits
 herdr-window-title-sync --version=branch
 im-emoji-picker --version=branch
 
+# —— 自定义 updater（custom:<脚本> <目标文件>）——
+# 固定 URL / 无法推断版本的包，由 scripts/ 下的专用脚本刷新。
+# 微信 AppImage 是固定下载地址，腾讯发版原地替换文件，hash 必然过期。
+custom:update-wechat-hash.sh overlays/wechat/default.nix
+
 # —— 暂不启用：需要人工介入 ——
 # mihomo-meta                       # 上游改动让编进二进制的 patch 失效，需 rebase patch
 # ant-browser                       # 资产改名：ant-browser-linux-amd64.zip -> AntBrowser-1.9.x-linux-amd64.tar.gz（要改 fetch 与 unpack）

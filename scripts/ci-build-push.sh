@@ -80,16 +80,25 @@ echo "::group::构建 $group"
 expr="$(expr_for "$group")"
 gcroots="$(mktemp -d)"
 
-# out-link 作为临时 gcroot，防止构建后 / 推送前被自动 GC（min-free）回收
+# out-link 作为临时 gcroot，防止构建后 / 推送前被自动 GC（min-free）回收。
+# nix.conf 已开 keep-going：个别包失败时其余目标照常构建完，
+# 已产出的路径仍值得推送缓存，避免下次全部重编。
+build_rc=0
 nix build -L --impure --print-out-paths --out-link "$gcroots/out" \
-  --expr "$expr" | tee "$gcroots/paths.txt"
+  --expr "$expr" | tee "$gcroots/paths.txt" || build_rc=$?
 
 mapfile -t paths < "$gcroots/paths.txt"
 echo "::endgroup::"
 
+if [ "$build_rc" -ne 0 ] && [ "${#paths[@]}" -gt 0 ]; then
+  echo "::warning::$group 部分目标构建失败（rc=$build_rc），仍推送已成功的 ${#paths[@]} 个路径"
+fi
+
 if [ "${#paths[@]}" -eq 0 ]; then
   echo "==> $group 没有产出路径，跳过推送"
   rm -rf "$gcroots"
+  # 构建全挂时以原退出码失败，让 workflow 如实报错
+  [ "$build_rc" -ne 0 ] && exit "$build_rc"
   exit 0
 fi
 
@@ -104,3 +113,10 @@ nix store delete "${paths[@]}" || echo "::warning::部分路径删除失败，�
 nix store gc
 df -h /nix | tail -1
 echo "::endgroup::"
+
+# 部分目标失败时，已成功的路径已推送缓存，但本组不能算全绿：
+# 以非零退出，让 workflow 停在这里、不开自动合并的 PR。
+if [ "$build_rc" -ne 0 ]; then
+  echo "::error::$group 有目标构建失败，已推送成功部分后退出"
+  exit "$build_rc"
+fi

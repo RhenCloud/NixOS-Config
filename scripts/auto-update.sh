@@ -53,8 +53,64 @@ while read -r line; do
   [ -z "$line" ] && continue
 
   pkg=${line%% *}
-  extra=""
-  [ "$pkg" != "$line" ] && extra=${line#"$pkg"}
+
+  # custom:<脚本> 前缀：不走 nix-update，由自定义脚本负责整个刷新流程。
+  # 用于 wechat 这类固定 URL / 无法推断版本的包。脚本接收 TMP 副本路径，
+  # 只改副本里的文件；失败返回非 0 时按快照回滚。
+  custom_script=""
+  if [[ "$pkg" == custom:* ]]; then
+    custom_script="${pkg#custom:}"
+    pkg="${custom_script##*/}"
+    pkg="${pkg#update-}"
+    pkg="${pkg%.sh}"
+    pkg="${pkg%-hash}"
+    # custom 行的第二个字段是目标文件，不属于 nix-update 参数
+    extra=""
+  else
+    extra=""
+    [ "$pkg" != "$line" ] && extra=${line#"$pkg"}
+  fi
+
+  if [ -n "$custom_script" ]; then
+    # 白名单行尾需显式指定目标文件，格式：
+    #   custom:update-wechat-hash.sh overlays/wechat/default.nix
+    # 回滚时对该文件做快照恢复。
+    file=""
+    if [[ "$line" =~ \ (overlays|packages)/[^\ ]+\.nix ]]; then
+      file="${BASH_REMATCH[0]# }"
+    fi
+    if [ -z "$file" ] || [ ! -f "$WS/$file" ]; then
+      echo "SKIP $pkg（custom updater 需在行尾指定目标文件，如 custom:update-wechat-hash.sh overlays/wechat/default.nix）"
+      skip=$((skip + 1))
+      continue
+    fi
+
+    before=$(cat "$TMP/$file")
+
+    if ! (cd "$TMP" && "$WS/scripts/$custom_script" "$TMP"); then
+      echo "FAIL $pkg（自定义 updater 失败，已跳过）"
+      printf '%s' "$before" >"$TMP/$file"
+      fail=$((fail + 1))
+      continue
+    fi
+
+    after=$(cat "$TMP/$file")
+    if [ "$before" = "$after" ]; then
+      echo "SAME $pkg（已是最新）"
+      skip=$((skip + 1))
+      continue
+    fi
+
+    if [ "${DRY_RUN:-0}" = 1 ]; then
+      echo "DRY  $pkg（hash 有更新，未写回）"
+    else
+      cp "$TMP/$file" "$WS/$file"
+      echo "OK   $pkg（hash 已刷新）"
+      echo "$file" >>"$TMP/.changed"
+    fi
+    ok=$((ok + 1))
+    continue
+  fi
 
   file="packages/$pkg/default.nix"
   if [ ! -f "$WS/$file" ]; then
